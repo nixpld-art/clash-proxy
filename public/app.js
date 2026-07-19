@@ -1,5 +1,16 @@
 "use strict";
 
+// Global error handler to catch and display client-side exceptions in the status bar
+window.onerror = function (msg, url, line, col, error) {
+	const file = url ? url.split("/").pop() : "unknown";
+	const text = `Error: ${msg} (${file}:${line})`;
+	console.error("[Clash Proxy Error]", msg, "at", url, "line", line, col, error);
+	const statusText = document.getElementById("status-text");
+	const statusDot = document.getElementById("status-dot");
+	if (statusText) statusText.textContent = text;
+	if (statusDot) statusDot.className = "status-dot error";
+};
+
 // ============================================================
 // DOM References
 // ============================================================
@@ -63,18 +74,42 @@ async function initScramjet() {
 	const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
 
 	// Wait until the SW actually controls this page before we initialise the
-	// controller. On first install Render's HTTPS origin needs a reload to
-	// activate the SW; on subsequent loads it is already the controller.
+	// controller. If the SW is already active but not controlling the page,
+	// we request it to claim the client.
 	if (!navigator.serviceWorker.controller) {
 		await new Promise((resolve) => {
-			// 'controllerchange' fires when the SW takes control of the page
-			navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
+			let resolved = false;
+			const done = () => {
+				if (resolved) return;
+				resolved = true;
+				resolve();
+			};
 
-			// Trigger skipWaiting → clients.claim() path by telling the waiting
-			// SW to activate immediately, then reload so this page is claimed.
+			// 'controllerchange' fires when the SW takes control of the page
+			navigator.serviceWorker.addEventListener("controllerchange", done, { once: true });
+
+			// Timeout after 3 seconds to avoid hanging the init process
+			setTimeout(() => {
+				if (!resolved) {
+					console.warn("[Clash Proxy] Timeout waiting for service worker controller change.");
+					// If we are not controlled but the SW is active, try a reload once as a last resort
+					if (reg.active && !sessionStorage.getItem("clash_sw_reloaded")) {
+						sessionStorage.setItem("clash_sw_reloaded", "true");
+						location.reload();
+					} else {
+						done();
+					}
+				}
+			}, 3000);
+
+			// Trigger skipWaiting / claim path
+			if (reg.active) {
+				reg.active.postMessage({ type: "CLAIM" });
+			}
 			if (reg.waiting) {
 				reg.waiting.postMessage({ type: "SKIP_WAITING" });
-			} else if (reg.installing) {
+			}
+			if (reg.installing) {
 				reg.installing.addEventListener("statechange", (e) => {
 					if (e.target.state === "installed") {
 						reg.waiting?.postMessage({ type: "SKIP_WAITING" });
@@ -82,11 +117,13 @@ async function initScramjet() {
 				});
 			}
 		});
+	} else {
+		sessionStorage.removeItem("clash_sw_reloaded");
 	}
 
 	setStatus("loading", "Initializing proxy engine...");
 	controller = new $scramjetController.Controller({
-		serviceworker: navigator.serviceWorker.controller,
+		serviceworker: navigator.serviceWorker.controller || reg.active,
 		transport,
 		config: _CONFIG.controllerConfig,
 	});

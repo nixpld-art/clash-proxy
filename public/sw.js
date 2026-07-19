@@ -9,11 +9,14 @@ self.addEventListener("activate", (event) => {
 	event.waitUntil(self.clients.claim());
 });
 
-// Allow the page to trigger skipWaiting programmatically when it
-// detects the SW is waiting (avoids the page-reload hack on first load).
+// Allow the page to trigger skipWaiting or clients.claim programmatically when it
+// detects the SW is waiting or active but not controlling (avoids the page-reload hack).
 self.addEventListener("message", (event) => {
 	if (event.data?.type === "SKIP_WAITING") {
 		self.skipWaiting();
+	}
+	if (event.data?.type === "CLAIM") {
+		self.clients.claim();
 	}
 });
 
