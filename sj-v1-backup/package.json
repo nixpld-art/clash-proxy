@@ -1,0 +1,29 @@
+{
+	"name": "clash-proxy",
+	"version": "1.0.0",
+	"description": "Clash Proxy — A premium privacy-focused web proxy powered by Scramjet.",
+	"type": "module",
+	"engines": {
+		"npm": ">=7.0.0",
+		"node": ">=16.0.0"
+	},
+	"scripts": {
+		"start": "node src/index.js"
+	},
+	"keywords": [
+		"proxy",
+		"privacy",
+		"scramjet",
+		"clash"
+	],
+	"author": "Clash Proxy",
+	"license": "MIT",
+	"dependencies": {
+		"fastify": "^5.7.4",
+		"@fastify/static": "^9.0.0",
+		"@mercuryworkshop/scramjet": "https://github.com/MercuryWorkshop/scramjet/releases/download/v1.1.0/mercuryworkshop-scramjet-1.1.0.tgz",
+		"@mercuryworkshop/bare-mux": "^2.1.9",
+		"@mercuryworkshop/libcurl-transport": "^1.5.2",
+		"@mercuryworkshop/wisp-js": "^0.4.1"
+	}
+}

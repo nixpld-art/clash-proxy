@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+	<title>Clash Proxy</title>
+	<meta name="description" content="Clash Proxy — A fast, premium privacy-focused web proxy for secure browsing." />
+	<meta name="theme-color" content="#0a0a0f" />
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+	<!-- Google Fonts: Inter (thick, modern, bold) -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+	<!-- Scramjet + BareMux (must load before app scripts) -->
+	<script src="/scram/scramjet.all.js"></script>
+	<script src="/baremux/index.js"></script>
+
+	<!-- Styles -->
+	<link rel="stylesheet" href="styles.css" />
+
+	<!-- App Scripts (deferred) -->
+	<script src="config.js" defer></script>
+	<script src="register-sw.js" defer></script>
+	<script src="search.js" defer></script>
+	<script src="particles.js" defer></script>
+	<script src="app.js" defer></script>
+</head>
+
+<body>
+	<!-- Animated particle background -->
+	<canvas id="particle-canvas"></canvas>
+
+	<!-- Sidebar -->
+	<aside id="sidebar" class="sidebar">
+		<div class="sidebar-header">
+			<span class="sidebar-logo">⚡</span>
+			<span class="sidebar-title">Menu</span>
+			<button id="sidebar-close-btn" class="sidebar-close" aria-label="Close menu">&times;</button>
+		</div>
+
+		<nav class="sidebar-nav">
+			<a href="#" id="nav-proxy" class="sidebar-link active" data-page="proxy">
+				<span class="sidebar-icon">🌐</span>
+				<span>Proxy</span>
+			</a>
+
+			<!-- === FUTURE OPTIONS — Add new sidebar links below === -->
+			<a href="#" id="nav-games" class="sidebar-link disabled" data-page="games">
+				<span class="sidebar-icon">🎮</span>
+				<span>Games</span>
+				<span class="badge">Soon</span>
+			</a>
+			<a href="#" id="nav-settings" class="sidebar-link disabled" data-page="settings">
+				<span class="sidebar-icon">⚙️</span>
+				<span>Settings</span>
+				<span class="badge">Soon</span>
+			</a>
+			<!-- === END FUTURE OPTIONS === -->
+		</nav>
+
+		<div class="sidebar-footer">
+			<span class="sidebar-version">v1.0.0</span>
+		</div>
+	</aside>
+
+	<!-- Sidebar overlay (for mobile) -->
+	<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+	<!-- ============================================================
+	     Browser Chrome (visible when browsing)
+	     ============================================================ -->
+	<div id="browser-chrome" class="browser-chrome hidden">
+		<!-- Tab Bar -->
+		<div class="tab-bar">
+			<div id="tab-list" class="tab-list">
+				<!-- Tabs are created dynamically by app.js -->
+			</div>
+			<button id="new-tab-btn" class="new-tab-btn" aria-label="New tab" title="New Tab">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+					<line x1="12" y1="5" x2="12" y2="19"></line>
+					<line x1="5" y1="12" x2="19" y2="12"></line>
+				</svg>
+			</button>
+		</div>
+
+		<!-- Navigation Bar -->
+		<div class="nav-bar">
+			<button id="nav-back-btn" class="nav-btn" aria-label="Back" title="Back" disabled>
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="15 18 9 12 15 6"></polyline>
+				</svg>
+			</button>
+			<button id="nav-forward-btn" class="nav-btn" aria-label="Forward" title="Forward" disabled>
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="9 6 15 12 9 18"></polyline>
+				</svg>
+			</button>
+			<button id="nav-refresh-btn" class="nav-btn" aria-label="Refresh" title="Refresh">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="23 4 23 10 17 10"></polyline>
+					<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+				</svg>
+			</button>
+			<div class="nav-url-wrapper">
+				<input type="text" id="nav-url-input" class="nav-url-input" placeholder="Search or enter URL..." spellcheck="false" autocomplete="off" />
+			</div>
+			<button id="nav-home-btn" class="nav-btn" aria-label="Home" title="Home">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+					<polyline points="9 22 9 12 15 12 15 22"></polyline>
+				</svg>
+			</button>
+			<button id="nav-fullscreen-btn" class="nav-btn" aria-label="Fullscreen" title="Toggle Fullscreen">
+				<svg id="fullscreen-icon-enter" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="15 3 21 3 21 9"></polyline>
+					<polyline points="9 21 3 21 3 15"></polyline>
+					<line x1="21" y1="3" x2="14" y2="10"></line>
+					<line x1="3" y1="21" x2="10" y2="14"></line>
+				</svg>
+				<svg id="fullscreen-icon-exit" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+					<polyline points="4 14 10 14 10 20"></polyline>
+					<polyline points="20 10 14 10 14 4"></polyline>
+					<line x1="14" y1="10" x2="21" y2="3"></line>
+					<line x1="3" y1="21" x2="10" y2="14"></line>
+				</svg>
+			</button>
+			<button id="nav-sidebar-btn" class="nav-btn hamburger-nav" aria-label="Menu" title="Menu">
+				<span></span><span></span><span></span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Proxy Frames Container (iframes go here) -->
+	<div id="frames-container" class="frames-container hidden"></div>
+
+	<!-- ============================================================
+	     Main Content (Landing Page)
+	     ============================================================ -->
+	<main id="main-content" class="main-content">
+		<!-- Top bar -->
+		<header class="top-bar">
+			<button id="sidebar-toggle-btn" class="hamburger-btn" aria-label="Open menu">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
+			<div class="top-bar-spacer"></div>
+		</header>
+
+		<!-- Hero / Proxy Section -->
+		<section id="page-proxy" class="page active">
+			<div class="hero">
+				<h1 class="hero-title">Clash Proxy.</h1>
+				<p class="hero-subtitle">Fast. Private. Unrestricted.</p>
+
+				<form id="proxy-form" class="search-form" autocomplete="off">
+					<div class="search-wrapper">
+						<span class="search-icon">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="11" cy="11" r="8"></circle>
+								<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+							</svg>
+						</span>
+						<input
+							type="text"
+							id="proxy-input"
+							class="search-input"
+							placeholder="Search the web or enter a URL..."
+							spellcheck="false"
+							autocomplete="off"
+							required
+						/>
+						<button type="submit" id="proxy-submit-btn" class="search-submit" aria-label="Go">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<line x1="5" y1="12" x2="19" y2="12"></line>
+								<polyline points="12 5 19 12 12 19"></polyline>
+							</svg>
+						</button>
+					</div>
+				</form>
+
+				<!-- Error display -->
+				<div id="proxy-error" class="error-display hidden">
+					<p id="proxy-error-message" class="error-message"></p>
+				</div>
+
+				<!-- Status indicator -->
+				<div class="status-bar">
+					<span class="status-dot" id="status-dot"></span>
+					<span class="status-text" id="status-text">Ready — Enter a URL or search query</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- === FUTURE PAGES === -->
+		<section id="page-games" class="page">
+			<div class="hero">
+				<h1 class="hero-title">Games</h1>
+				<p class="hero-subtitle">Coming soon.</p>
+			</div>
+		</section>
+
+		<section id="page-settings" class="page">
+			<div class="hero">
+				<h1 class="hero-title">Settings</h1>
+				<p class="hero-subtitle">Coming soon.</p>
+			</div>
+		</section>
+	</main>
+</body>
+</html>
