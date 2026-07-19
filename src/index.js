@@ -4,6 +4,7 @@ import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import compress from "@fastify/compress";
+import ytSearch from "yt-search";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 const scramjetDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/scramjet/dist/", import.meta.url));
@@ -80,6 +81,29 @@ fastify.register(fastifyStatic, {
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
+});
+
+// API: Music Search (YouTube)
+fastify.get("/api/music/search", async (req, reply) => {
+	const q = req.query.q;
+	if (!q || q.trim().length === 0) {
+		return reply.code(400).send({ error: "Query required" });
+	}
+	try {
+		const results = await ytSearch(q.trim());
+		const videos = (results.videos || []).slice(0, 12).map((v) => ({
+			id: v.videoId,
+			title: v.title,
+			thumbnail: v.thumbnail || `https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg`,
+			duration: v.timestamp || "0:00",
+			author: v.author?.name || "Unknown",
+			url: v.url,
+			views: v.views,
+		}));
+		return reply.code(200).type("application/json").send({ results: videos });
+	} catch (err) {
+		return reply.code(500).send({ error: err.message });
+	}
 });
 
 // 404 handler
