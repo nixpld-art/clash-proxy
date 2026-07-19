@@ -1,0 +1,7 @@
+node_modules/
+sj-v1-backup/
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+*.log
