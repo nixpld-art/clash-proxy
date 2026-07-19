@@ -1,6 +1,5 @@
 import { createServer } from "node:http";
 import { fileURLToPath } from "url";
-import { hostname } from "node:os";
 import { resolve } from "node:path";
 import { existsSync } from "node:fs";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
@@ -12,7 +11,8 @@ const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 const scramjetDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/scramjet/dist/", import.meta.url));
 const controllerDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/scramjet-controller/dist/", import.meta.url));
 const transportDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/epoxy-transport/dist/", import.meta.url));
-const gamesLoaderDir = resolve(publicPath, "../../../../Games loader/games");
+// Use GAMES_DIR env var when deployed (e.g. Render), or fall back to the local dev path
+const gamesLoaderDir = process.env.GAMES_DIR || resolve(publicPath, "../../../../Games loader/games");
 
 // ============================================================
 // Wisp Configuration
@@ -41,7 +41,10 @@ const fastify = Fastify({
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				if (req.url && req.url.endsWith("/wisp/")) {
+				// Match /wisp/ with or without trailing slash and ignore any query string.
+				// Render's reverse proxy can strip trailing slashes, which breaks the
+				// strict endsWith("/wisp/") check and silently kills the WebSocket.
+				if (req.url && /^\/wisp(\/?)(\?.*)?$/.test(req.url)) {
 					wisp.routeRequest(req, socket, head);
 				} else {
 					socket.end();
@@ -120,12 +123,14 @@ fastify
 
 fastify.server.on("listening", () => {
 	const address = fastify.server.address();
+	// Render sets RENDER_EXTERNAL_URL automatically
+	const publicUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${address.port}`;
 	console.log("");
 	console.log("  ╔═══════════════════════════════════════╗");
 	console.log("  ║         ⚡ CLASH PROXY ⚡              ║");
 	console.log("  ╠═══════════════════════════════════════╣");
 	console.log(`  ║  Local:   http://localhost:${address.port}`.padEnd(43) + "║");
-	console.log(`  ║  Network: http://${hostname()}:${address.port}`.padEnd(43) + "║");
+	console.log(`  ║  Public:  ${publicUrl}`.padEnd(43) + "║");
 	console.log("  ╚═══════════════════════════════════════╝");
 	console.log("");
 });

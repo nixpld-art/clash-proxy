@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: clash-proxy
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Render injects PORT automatically; the server already reads process.env.PORT
+    envVars:
+      - key: NODE_ENV
+        value: production
+    # Keep the instance alive — required for WebSocket (Wisp) connections
+    autoDeploy: true
+    # Health check — Render will poll this to confirm the service is up
+    healthCheckPath: /
