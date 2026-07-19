@@ -2,3 +2,5 @@ node_modules/
 *.log
 .DS_Store
 .env
+public/games/
+sj-v1-backup/

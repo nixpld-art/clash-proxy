@@ -1,7 +1,5 @@
 import { createServer } from "node:http";
 import { fileURLToPath } from "url";
-import { resolve } from "node:path";
-import { existsSync } from "node:fs";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
@@ -11,8 +9,7 @@ const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 const scramjetDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/scramjet/dist/", import.meta.url));
 const controllerDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/scramjet-controller/dist/", import.meta.url));
 const transportDist = fileURLToPath(new URL("../node_modules/@mercuryworkshop/epoxy-transport/dist/", import.meta.url));
-// Use GAMES_DIR env var when deployed (e.g. Render), or fall back to the local dev path
-const gamesLoaderDir = process.env.GAMES_DIR || resolve(publicPath, "../../../../Games loader/games");
+// Games are bundled in public/games/ and served by the public static handler below.
 
 // ============================================================
 // Wisp Configuration
@@ -79,20 +76,7 @@ fastify.register(fastifyStatic, {
 	decorateReply: false,
 });
 
-// Game files (served from Games Loader directory — only if the directory exists)
-if (existsSync(gamesLoaderDir)) {
-	fastify.register(fastifyStatic, {
-		root: gamesLoaderDir,
-		prefix: "/games/",
-		decorateReply: false,
-	});
-	console.log("  [Games] Serving game files from:", gamesLoaderDir);
-} else {
-	console.warn("  [Games] Games directory not found:", gamesLoaderDir);
-	console.warn("  [Games] Game files will not be served. Games may not load.");
-}
-
-// Public frontend files (root fallback — must be registered last to avoid hijacking prefixes)
+// Public frontend files — serves everything in /public including /games/
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
