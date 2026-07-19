@@ -9,6 +9,14 @@ self.addEventListener("activate", (event) => {
 	event.waitUntil(self.clients.claim());
 });
 
+// Allow the page to trigger skipWaiting programmatically when it
+// detects the SW is waiting (avoids the page-reload hack on first load).
+self.addEventListener("message", (event) => {
+	if (event.data?.type === "SKIP_WAITING") {
+		self.skipWaiting();
+	}
+});
+
 self.addEventListener("fetch", (event) => {
 	// Guard: if the controller hasn't initialized yet, let the request pass through
 	if (typeof $scramjetController === "undefined" || !$scramjetController) return;

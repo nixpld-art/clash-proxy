@@ -61,26 +61,32 @@ async function initScramjet() {
 
 	setStatus("loading", "Registering service worker...");
 	const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-	await navigator.serviceWorker.ready;
 
-	// If the page is not yet controlled by the service worker, reload to establish control
+	// Wait until the SW actually controls this page before we initialise the
+	// controller. On first install Render's HTTPS origin needs a reload to
+	// activate the SW; on subsequent loads it is already the controller.
 	if (!navigator.serviceWorker.controller) {
-		const reloaded = sessionStorage.getItem("clash_sw_reloaded");
-		if (!reloaded) {
-			sessionStorage.setItem("clash_sw_reloaded", "true");
-			console.log("[Clash Proxy] Reloading to establish service worker control...");
-			location.reload();
-			return new Promise(() => {}); // Halt execution while reloading
-		} else {
-			console.warn("[Clash Proxy] Service worker not controlling page even after reload.");
-		}
-	} else {
-		sessionStorage.removeItem("clash_sw_reloaded");
+		await new Promise((resolve) => {
+			// 'controllerchange' fires when the SW takes control of the page
+			navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
+
+			// Trigger skipWaiting → clients.claim() path by telling the waiting
+			// SW to activate immediately, then reload so this page is claimed.
+			if (reg.waiting) {
+				reg.waiting.postMessage({ type: "SKIP_WAITING" });
+			} else if (reg.installing) {
+				reg.installing.addEventListener("statechange", (e) => {
+					if (e.target.state === "installed") {
+						reg.waiting?.postMessage({ type: "SKIP_WAITING" });
+					}
+				});
+			}
+		});
 	}
 
 	setStatus("loading", "Initializing proxy engine...");
 	controller = new $scramjetController.Controller({
-		serviceworker: navigator.serviceWorker.controller || reg.active,
+		serviceworker: navigator.serviceWorker.controller,
 		transport,
 		config: _CONFIG.controllerConfig,
 	});
