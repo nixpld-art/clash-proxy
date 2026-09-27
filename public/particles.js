@@ -112,7 +112,13 @@
 	}
 
 	// --- Animation loop ---
+	let running = true;
+
 	function animate() {
+		if (!running) {
+			animationId = null;
+			return;
+		}
 		ctx.clearRect(0, 0, width, height);
 
 		particles.forEach((p) => {
@@ -124,6 +130,28 @@
 
 		animationId = requestAnimationFrame(animate);
 	}
+
+	// Draw the field once, without animating (Chromebook Optimizer)
+	function renderStatic() {
+		ctx.clearRect(0, 0, width, height);
+		particles.forEach((p) => p.draw());
+		drawLinks();
+	}
+
+	// Public switch used by Settings → Chromebook Optimizer
+	window.clashSetStaticBg = function (enabled) {
+		if (enabled) {
+			running = false;
+			if (animationId) {
+				cancelAnimationFrame(animationId);
+				animationId = null;
+			}
+			renderStatic();
+		} else if (!running) {
+			running = true;
+			animate();
+		}
+	};
 
 	// --- Mouse tracking ---
 	window.addEventListener("mousemove", (e) => {
@@ -140,9 +168,17 @@
 	window.addEventListener("resize", () => {
 		resize();
 		initParticles();
+		if (document.documentElement.classList.contains("static-bg")) {
+			renderStatic();
+		}
 	});
 
 	resize();
 	initParticles();
-	animate();
+	if (document.documentElement.classList.contains("static-bg")) {
+		running = false;
+		renderStatic();
+	} else {
+		animate();
+	}
 })();

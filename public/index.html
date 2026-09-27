@@ -1,69 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-	<title>Clash Proxy</title>
-	<meta name="description" content="Clash Proxy — A fast, premium privacy-focused web proxy for secure browsing." />
-	<meta name="theme-color" content="#0a0a0f" />
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Clash Proxy — Unrestricted Web & Arcade</title>
 
-	<!-- Google Fonts: Inter (thick, modern, bold) -->
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/logo.png" />
+
+	<!-- Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-	<!-- Scramjet v2 Engine + Controller (IIFE bundles, must load before app) -->
-	<script src="/scramjet/scramjet.js"></script>
+	<!-- Scramjet V2 Dependencies -->
+	<script src="/baremux/index.js"></script>
+	<script src="/scram/scramjet.js"></script>
 	<script src="/controller/controller.api.js"></script>
 
 	<!-- Styles -->
-	<link rel="stylesheet" href="styles.css" />
+	<link rel="stylesheet" href="styles.css?v=2" />
+
+	<!-- Chromebook Optimizer: apply saved perf settings before first paint -->
+	<script>
+		try {
+			var __clashPerf = JSON.parse(localStorage.getItem("clash_perf") || "{}");
+			if (__clashPerf.staticBg) document.documentElement.classList.add("static-bg");
+			if (__clashPerf.lightUi) document.documentElement.classList.add("light-ui");
+			var __clashScale = parseFloat(__clashPerf.resolution);
+			if (__clashScale > 0 && __clashScale <= 1) document.documentElement.style.setProperty("--game-scale", __clashScale);
+		} catch (e) {}
+	</script>
 
 	<!-- App Scripts (deferred) -->
-	<script src="config.js" defer></script>
-	<script src="search.js" defer></script>
-	<script src="particles.js" defer></script>
-	<script src="games-data.js" defer></script>
-	<script src="app.js" defer></script>
-	<script src="music.js" defer></script>
+	<script src="config.js?v=30" defer></script>
+	<script src="register-sw.js?v=30" defer></script>
+	<script src="search.js?v=30" defer></script>
+	<script src="shield.js?v=30" defer></script>
+	<script src="particles.js?v=31" defer></script>
+	<script src="app.js?v=33" defer></script>
+	<script src="clash-ai.js?v=1" defer></script>
 </head>
 
 <body>
 	<!-- Animated particle background -->
 	<canvas id="particle-canvas"></canvas>
 
+	<!-- Toast Container for Notifications -->
+	<div id="toast-container" class="toast-container"></div>
+
 	<!-- Sidebar -->
 	<aside id="sidebar" class="sidebar">
 		<div class="sidebar-header">
-			<span class="sidebar-logo">⚡</span>
+			<span class="sidebar-logo">
+				<img src="/logo.png" alt="Clash Proxy Logo" class="sidebar-logo-img" />
+			</span>
 			<span class="sidebar-title">Menu</span>
 			<button id="sidebar-close-btn" class="sidebar-close" aria-label="Close menu">&times;</button>
 		</div>
 
 		<nav class="sidebar-nav">
 			<a href="#" id="nav-proxy" class="sidebar-link active" data-page="proxy">
-				<span class="sidebar-icon">🌐</span>
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="10"></circle>
+						<line x1="2" y1="12" x2="22" y2="12"></line>
+						<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+					</svg>
+				</span>
 				<span>Proxy</span>
 			</a>
 
 			<a href="#" id="nav-games" class="sidebar-link" data-page="games">
-				<span class="sidebar-icon">🎮</span>
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="6" y1="12" x2="10" y2="12"></line>
+						<line x1="8" y1="10" x2="8" y2="14"></line>
+						<circle cx="15" cy="13" r="1"></circle>
+						<circle cx="17.5" cy="10.5" r="1"></circle>
+						<path d="M18.7 18.7a8.5 8.5 0 0 0 2.3-5.7v-2a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v2a8.5 8.5 0 0 0 2.3 5.7L7 21h10l1.7-2.3z"></path>
+					</svg>
+				</span>
 				<span>Games</span>
+				<span id="games-count-badge" class="badge">2,600+</span>
 			</a>
-			<a href="#" id="nav-settings" class="sidebar-link disabled" data-page="settings">
-				<span class="sidebar-icon">⚙️</span>
+
+			<a href="#" id="nav-profile" class="sidebar-link" data-page="profile">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+						<circle cx="12" cy="7" r="4"></circle>
+					</svg>
+				</span>
+				<span>Profile</span>
+			</a>
+
+			<a href="#" id="nav-friends" class="sidebar-link" data-page="friends">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+						<circle cx="9" cy="7" r="4"></circle>
+						<path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+						<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+					</svg>
+				</span>
+				<span>Friends</span>
+				<span id="friends-badge" class="badge hidden">0</span>
+			</a>
+
+			<a href="#" id="nav-chat" class="sidebar-link" data-page="chat">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+					</svg>
+				</span>
+				<span>Chat</span>
+				<span id="chat-nav-unread-badge" class="badge chat-nav-unread-badge hidden">0</span>
+			</a>
+
+			<a href="#" id="nav-leaderboard" class="sidebar-link" data-page="leaderboard">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+						<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+						<path d="M4 22h16"></path>
+						<path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"></path>
+						<path d="M18 14.66V17c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-2.34"></path>
+						<path d="M6 4h12a2 2 0 0 1 2 2v7a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2Z"></path>
+					</svg>
+				</span>
+				<span>Leaderboard</span>
+			</a>
+
+			<a href="#" id="nav-lounge" class="sidebar-link" data-page="lounge">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="2" y="6" width="20" height="12" rx="4"></rect>
+						<line x1="6" y1="12" x2="10" y2="12"></line>
+						<line x1="8" y1="10" x2="8" y2="14"></line>
+						<circle cx="15" cy="13" r="1"></circle>
+						<circle cx="17" cy="11" r="1"></circle>
+					</svg>
+				</span>
+				<span>Clash Lounge</span>
+				<span id="nav-lounge-badge" class="badge lounge-badge">🎮 LOUNGE</span>
+			</a>
+
+			<a href="#" id="nav-settings" class="sidebar-link" data-page="settings">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="3"></circle>
+						<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+					</svg>
+				</span>
 				<span>Settings</span>
-				<span class="badge">Soon</span>
 			</a>
+
+			<a href="http://localhost:8081/" id="nav-owner-panel" class="sidebar-link" data-page="owner-panel" target="_blank" style="display:none" title="Open the separate Owner Panel (localhost:8081, owner PC only)">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M2 19h20v2H2v-2zm1.5-3L6 8l5 5 7-9 2.5 12H3.5z"></path>
+					</svg>
+				</span>
+				<span>Owner Panel</span>
+				<span class="badge admin-root-badge">ROOT</span>
+			</a>
+
 		</nav>
 
 		<div class="sidebar-footer">
-			<span class="sidebar-version">v2.0.0</span>
+			<span class="sidebar-version">v3.0.0 Social</span>
 		</div>
 	</aside>
 
-	<!-- Sidebar overlay (for mobile) -->
+	<!-- Sidebar overlay -->
 	<div id="sidebar-overlay" class="sidebar-overlay"></div>
 
 	<!-- ============================================================
@@ -73,7 +184,7 @@
 		<!-- Tab Bar -->
 		<div class="tab-bar">
 			<div id="tab-list" class="tab-list">
-				<!-- Tabs are created dynamically by app.js -->
+				<!-- Tabs created dynamically by app.js -->
 			</div>
 			<button id="new-tab-btn" class="new-tab-btn" aria-label="New tab" title="New Tab">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -85,12 +196,12 @@
 
 		<!-- Navigation Bar -->
 		<div class="nav-bar">
-			<button id="nav-back-btn" class="nav-btn" aria-label="Back" title="Back">
+			<button id="nav-back-btn" class="nav-btn" aria-label="Back" title="Back" disabled>
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 					<polyline points="15 18 9 12 15 6"></polyline>
 				</svg>
 			</button>
-			<button id="nav-forward-btn" class="nav-btn" aria-label="Forward" title="Forward">
+			<button id="nav-forward-btn" class="nav-btn" aria-label="Forward" title="Forward" disabled>
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 					<polyline points="9 6 15 12 9 18"></polyline>
 				</svg>
@@ -103,13 +214,81 @@
 			</button>
 			<div class="nav-url-wrapper">
 				<input type="text" id="nav-url-input" class="nav-url-input" placeholder="Search or enter URL..." spellcheck="false" autocomplete="off" />
+				<button id="nav-bookmark-btn" class="nav-bookmark-btn" aria-label="Bookmark page" title="Bookmark page">
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+					</svg>
+				</button>
 			</div>
+
+			<!-- Clash Shield Button & Popover -->
+			<div class="nav-shield-wrapper">
+				<button id="nav-shield-btn" class="nav-btn nav-shield-btn" aria-label="Clash Shield" title="Clash Shield — AdBlock & Performance">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+					</svg>
+					<span id="shield-count-badge" class="shield-badge">0</span>
+				</button>
+
+				<div id="shield-popover" class="shield-popover hidden">
+					<div class="shield-popover-header">
+						<div class="shield-status-pill active" id="shield-status-pill">
+							<span class="shield-status-dot"></span>
+							<span id="shield-status-text">Shield Active</span>
+						</div>
+						<span class="shield-popover-title">Clash Shield</span>
+					</div>
+
+					<div class="shield-stats-banner">
+						<span id="popover-shield-count" class="shield-stats-num">0</span>
+						<span class="shield-stats-label">Ads & Trackers Blocked on Tab</span>
+					</div>
+
+					<div class="shield-toggles-list">
+						<div class="shield-toggle-item">
+							<span class="shield-toggle-label">Block Ads & Trackers</span>
+							<label class="toggle-switch toggle-sm">
+								<input type="checkbox" id="popover-toggle-adblock" checked />
+								<span class="toggle-slider"></span>
+							</label>
+						</div>
+						<div class="shield-toggle-item">
+							<span class="shield-toggle-label">Block Popups</span>
+							<label class="toggle-switch toggle-sm">
+								<input type="checkbox" id="popover-toggle-popups" checked />
+								<span class="toggle-slider"></span>
+							</label>
+						</div>
+						<div class="shield-toggle-item">
+							<span class="shield-toggle-label">Force Dark Mode</span>
+							<label class="toggle-switch toggle-sm">
+								<input type="checkbox" id="popover-toggle-darkmode" />
+								<span class="toggle-slider"></span>
+							</label>
+						</div>
+					</div>
+
+					<div class="shield-popover-footer">
+						<button id="shield-whitelist-btn" class="shield-whitelist-btn">
+							Pause on this site
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<button id="nav-home-btn" class="nav-btn" aria-label="Home" title="Home">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
 					<polyline points="9 22 9 12 15 12 15 22"></polyline>
 				</svg>
 			</button>
+			<!-- ⚡ Game Tools, CloudVault & Tamper Button -->
+			<button id="nav-toolkit-btn" class="nav-btn nav-toolkit-btn" aria-label="Game Controls" title="⚡ Game Controls (Speed, Dark Mode, FPS & Tweaks)">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+				</svg>
+			</button>
+
 			<button id="nav-fullscreen-btn" class="nav-btn" aria-label="Fullscreen" title="Toggle Fullscreen">
 				<svg id="fullscreen-icon-enter" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 					<polyline points="15 3 21 3 21 9"></polyline>
@@ -124,29 +303,51 @@
 					<line x1="3" y1="21" x2="10" y2="14"></line>
 				</svg>
 			</button>
+			<button id="nav-aboutblank-btn" class="nav-btn" aria-label="Open in about:blank" title="Open in about:blank">
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+					<polyline points="15 3 21 3 21 9"></polyline>
+					<line x1="10" y1="14" x2="21" y2="3"></line>
+				</svg>
+			</button>
 			<button id="nav-sidebar-btn" class="nav-btn hamburger-nav" aria-label="Menu" title="Menu">
 				<span></span><span></span><span></span>
 			</button>
 		</div>
 	</div>
 
+	<!-- Floating Game Controls Bar (Back, Fullscreen, Open in about:blank) -->
+	<div id="game-controls-bar" class="game-controls-bar hidden">
+		<button id="game-ctrl-back" class="game-ctrl-btn" title="Back to Games Arcade">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="15 18 9 12 15 6"></polyline>
+			</svg>
+			<span>Back</span>
+		</button>
+		<button id="game-ctrl-fullscreen" class="game-ctrl-btn" title="Fullscreen Game">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+				<polyline points="15 3 21 3 21 9"></polyline>
+				<polyline points="9 21 3 21 3 15"></polyline>
+				<line x1="21" y1="3" x2="14" y2="10"></line>
+				<line x1="3" y1="21" x2="10" y2="14"></line>
+			</svg>
+			<span>Fullscreen</span>
+		</button>
+		<button id="game-ctrl-aboutblank" class="game-ctrl-btn" title="Open Game in about:blank">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+				<polyline points="15 3 21 3 21 9"></polyline>
+				<line x1="10" y1="14" x2="21" y2="3"></line>
+			</svg>
+			<span>about:blank</span>
+		</button>
+	</div>
+
 	<!-- Proxy Frames Container (iframes go here) -->
 	<div id="frames-container" class="frames-container hidden"></div>
 
-	<!-- Game Theater (overlay for playing games) -->
-	<div id="theater" class="theater hidden">
-		<div class="theater-toolbar">
-			<button id="theater-close" class="theater-btn">&larr; Back</button>
-			<span class="theater-title" id="theater-title">Game</span>
-			<div class="theater-actions">
-				<button id="theater-fullscreen" class="theater-btn" title="Fullscreen">⛶</button>
-			</div>
-		</div>
-		<iframe id="theater-frame" class="theater-frame" allowfullscreen allow="autoplay;fullscreen;gamepad;microphone;camera"></iframe>
-	</div>
-
 	<!-- ============================================================
-	     Main Content (Landing Page)
+	     Main Content
 	     ============================================================ -->
 	<main id="main-content" class="main-content">
 		<!-- Top bar -->
@@ -156,19 +357,23 @@
 				<span></span>
 				<span></span>
 			</button>
+
 			<div class="top-bar-spacer"></div>
-			<button id="frog-music-btn" class="hamburger-btn" aria-label="Toggle Music Player" title="Toggle Music Player" style="display: flex; align-items: center; justify-content: center;">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-			</button>
+
+			<!-- User Header Widget -->
+			<div id="user-header-widget" class="user-header-widget">
+				<!-- Rendered dynamically by app.js (Login button or User Pill) -->
+			</div>
 		</header>
 
 		<!-- Hero / Proxy Section -->
 		<section id="page-proxy" class="page active">
 			<div class="hero">
+				<img src="/logo-symbol.png" alt="" class="hero-logo" />
 				<h1 class="hero-title">Clash Proxy.</h1>
 				<p class="hero-subtitle">Fast. Private. Unrestricted.</p>
 
-				<form id="proxy-form" class="search-form" autocomplete="off">
+				<form id="proxy-form" class="search-form" autocomplete="off" onsubmit="event.preventDefault();">
 					<div class="search-wrapper">
 						<span class="search-icon">
 							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -204,97 +409,898 @@
 					<span class="status-dot" id="status-dot"></span>
 					<span class="status-text" id="status-text">Ready — Enter a URL or search query</span>
 				</div>
-			</div>
-		</section>
 
-		<section id="page-games" class="page">
-			<div class="games-page">
-				<div class="games-header">
-					<h1 class="games-title">Games</h1>
-					<div class="games-search-wrapper">
-						<input type="text" id="games-search" class="games-search" placeholder="Search games..." spellcheck="false" autocomplete="off" />
-						<span class="games-count" id="games-count">0</span>
+				<!-- Speed Dial Section -->
+				<div class="speed-dial-section">
+					<div class="speed-dial-header">
+						<span class="speed-dial-heading">⚡ Speed Dial & Bookmarks</span>
+						<button id="add-shortcut-btn" class="speed-dial-add-btn" title="Add Shortcut">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+							<span>Add Shortcut</span>
+						</button>
+					</div>
+					<div id="speed-dial-grid" class="speed-dial-grid">
+						<!-- Pinned shortcut tiles rendered dynamically -->
 					</div>
 				</div>
-				<div id="games-grid" class="games-grid"></div>
 			</div>
 		</section>
 
+		<!-- Games Section -->
+		<section id="page-games" class="page">
+			<div class="games-container">
+				<div class="games-header">
+					<h1 class="games-title">Arcade Games</h1>
+					<p class="games-subtitle">Play 2,600+ unblocked HTML games right in your browser</p>
+					
+					<div class="games-search-wrapper search-wrapper">
+						<span class="search-icon">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="11" cy="11" r="8"></circle>
+								<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+							</svg>
+						</span>
+						<input
+							type="text"
+							id="games-search-input"
+							class="search-input"
+							placeholder="Search games by title..."
+							spellcheck="false"
+							autocomplete="off"
+						/>
+					</div>
+				</div>
+
+				<div id="games-grid" class="games-grid">
+					<!-- Game cards rendered dynamically by app.js -->
+					<div class="games-loading">Loading games library...</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Profile Section -->
+		<section id="page-profile" class="page">
+			<div class="profile-container">
+				<!-- Profile Hero -->
+				<div class="profile-card profile-hero-card">
+					<div class="profile-avatar-wrapper">
+						<div id="profile-avatar-display" class="profile-avatar avatar-1"></div>
+						<button id="change-avatar-btn" class="change-avatar-btn" title="Choose Avatar">✏️</button>
+					</div>
+
+					<div class="profile-info">
+						<div class="profile-title-row">
+							<h2 id="profile-display-name" class="profile-name">Guest User</h2>
+							<span id="profile-level-badge" class="level-badge">Lv. 1</span>
+							<span id="profile-rank-title" class="rank-title">Novice Navigator</span>
+						</div>
+						<p id="profile-username-tag" class="profile-tag">@guest</p>
+						<p id="profile-bio" class="profile-bio">Sign in to save your level, XP, friends, and achievements!</p>
+					</div>
+
+					<div class="profile-actions">
+						<button id="edit-profile-btn" class="btn btn-secondary">Edit Profile</button>
+						<button id="logout-btn" class="btn btn-danger hidden">Log Out</button>
+						<button id="profile-login-btn" class="btn btn-primary">Sign In</button>
+					</div>
+				</div>
+
+				<!-- Level & XP Progression Card -->
+				<div class="profile-card xp-progress-card">
+					<div class="xp-header">
+						<div>
+							<h3 class="card-heading">Level Progression</h3>
+							<p class="card-subheading">Earn XP by browsing sites, playing arcade games, and connecting with friends</p>
+						</div>
+						<div class="xp-stats-text">
+							<span id="xp-current-display">0</span> / <span id="xp-next-display">100</span> XP
+						</div>
+					</div>
+
+					<div class="xp-bar-container">
+						<div id="xp-bar-fill" class="xp-bar-fill" style="width: 0%;"></div>
+					</div>
+				</div>
+
+				<!-- Stats Counter Grid -->
+				<div class="stats-grid">
+					<div class="stat-card">
+						<div class="stat-icon">🎮</div>
+						<div class="stat-data">
+							<span id="stat-games-played" class="stat-number">0</span>
+							<span class="stat-label">Games Played</span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon">🌐</div>
+						<div class="stat-data">
+							<span id="stat-sites-visited" class="stat-number">0</span>
+							<span class="stat-label">Websites Visited</span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon">🔥</div>
+						<div class="stat-data">
+							<span id="stat-login-streak" class="stat-number">1</span>
+							<span class="stat-label">Day Streak</span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon">🏆</div>
+						<div class="stat-data">
+							<span id="stat-badges-unlocked" class="stat-number">0 / 8</span>
+							<span class="stat-label">Achievements</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Badges / Achievements Showcase -->
+				<div class="profile-card badges-card">
+					<h3 class="card-heading">Achievements & Badges</h3>
+					<div id="badges-grid" class="badges-grid">
+						<!-- Badges rendered dynamically by app.js -->
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Friends Section -->
+		<section id="page-friends" class="page">
+			<div class="friends-container">
+				<div class="friends-header">
+					<div>
+						<h1 class="page-title">Friends Network</h1>
+						<p class="page-subtitle">See what your friends are playing, invite them to games, and track presence.</p>
+					</div>
+
+					<!-- Add Friend Bar -->
+					<form id="add-friend-form" class="add-friend-form" autocomplete="off">
+						<input type="text" id="friend-username-input" class="add-friend-input" placeholder="Add friend by @username..." required />
+						<button type="submit" class="btn btn-primary">Add Friend</button>
+					</form>
+				</div>
+
+				<!-- Pending Requests Section (Conditional) -->
+				<div id="pending-requests-section" class="friends-section hidden">
+					<h3 class="section-title">Pending Requests (<span id="pending-count">0</span>)</h3>
+					<div id="pending-requests-list" class="friends-list"></div>
+				</div>
+
+				<!-- Online Friends Section -->
+				<div class="friends-section">
+					<h3 class="section-title">Online Friends (<span id="online-friends-count">0</span>)</h3>
+					<div id="online-friends-list" class="friends-list">
+						<div class="friends-empty-msg">No friends online right now. Add friends using their @username!</div>
+					</div>
+				</div>
+
+				<!-- Offline Friends Section -->
+				<div class="friends-section">
+					<h3 class="section-title">Offline (<span id="offline-friends-count">0</span>)</h3>
+					<div id="offline-friends-list" class="friends-list"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Leaderboard Section -->
+		<section id="page-leaderboard" class="page">
+			<div class="leaderboard-container">
+				<div class="leaderboard-header">
+					<h1 class="page-title">Global Leaderboard</h1>
+					<p class="page-subtitle">Top ranked Clash Proxy players & navigators ranked by XP</p>
+				</div>
+
+				<div class="leaderboard-card">
+					<div class="leaderboard-table-header">
+						<span class="col-rank">Rank</span>
+						<span class="col-user">User</span>
+						<span class="col-level">Level</span>
+						<span class="col-xp">Total XP</span>
+					</div>
+					<div id="leaderboard-list" class="leaderboard-list">
+						<div class="leaderboard-loading">Loading top rankings...</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Settings Section -->
 		<section id="page-settings" class="page">
-			<div class="hero">
-				<h1 class="hero-title">Settings</h1>
-				<p class="hero-subtitle">Coming soon.</p>
+			<div class="settings-container">
+				<div class="settings-header">
+					<h1 class="page-title">Settings & Privacy</h1>
+					<p class="page-subtitle">Configure privacy isolation, themes, cloaking, and sound effects.</p>
+				</div>
+
+				<!-- Ghost Mode Card -->
+				<div class="settings-card">
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">👻 Ghost Mode (Zero-Trace Privacy)</div>
+							<div class="settings-item-desc">Hides your online activity from all friends and pauses XP tracking for complete anonymity.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-ghost-mode" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+				</div>
+
+				<!-- Clash Shield & Performance Card -->
+				<div class="settings-card">
+					<div class="settings-card-header-flex">
+						<div>
+							<h3 class="card-heading">🛡️ Clash Shield & Performance</h3>
+							<p class="card-subheading">Block advertisements, trackers, popups, and force dark mode across all websites.</p>
+						</div>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Block Ads & Telemetry</div>
+							<div class="settings-item-desc">Silently prevents ad networks, banners, and third-party trackers from loading.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-shield-adblock" checked />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Block Annoying Popups</div>
+							<div class="settings-item-desc">Prevents aggressive redirects and unwanted popunder windows from spawning.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-shield-popups" checked />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Force Dark Mode on Websites</div>
+							<div class="settings-item-desc">Intelligently inverts bright websites into sleek dark themes without distorting images or videos.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-shield-darkmode" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="shield-stats-summary">
+						<div class="shield-stat-box">
+							<span id="setting-shield-total-blocked" class="shield-stat-val">0</span>
+							<span class="shield-stat-lbl">Lifetime Ads Blocked</span>
+						</div>
+						<div class="shield-stat-box">
+							<span id="setting-shield-data-saved" class="shield-stat-val">0 KB</span>
+							<span class="shield-stat-lbl">Bandwidth Saved</span>
+						</div>
+						<button id="setting-shield-clear-stats" class="btn btn-secondary shield-clear-btn" title="Reset Shield Statistics">Reset Stats</button>
+					</div>
+				</div>
+
+				<!-- Chromebook Optimizer -->
+				<div class="settings-card">
+					<div class="settings-card-header-flex">
+						<div>
+							<h3 class="card-heading">🖥️ Chromebook Optimizer</h3>
+							<p class="card-subheading">Reduces GPU &amp; CPU load for smoother browsing and higher in-game FPS on low-end devices.</p>
+						</div>
+					</div>
+
+					<div class="settings-item" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; margin-top: 12px;">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Static Background</div>
+							<div class="settings-item-desc">Freezes the animated particle field into a static version, saving CPU while you browse.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-perf-staticbg" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Light Interface</div>
+							<div class="settings-item-desc">Disables blur effects, shadows, and transitions across the interface for a snappier feel.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-perf-lightui" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Smooth Frame Boost</div>
+							<div class="settings-item-desc">Forces high-performance GPU mode in games and clamps pixel density so they render faster and hold higher FPS.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-perf-frameboost" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="settings-item">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Game Rendering Resolution</div>
+							<div class="settings-item-desc">Renders games at a lower resolution and upscales them — big FPS gains. Applies to newly opened games.</div>
+						</div>
+						<select id="setting-perf-resolution" class="form-input" style="width: 160px; flex: none;">
+							<option value="1">100% (Native)</option>
+							<option value="0.85">85%</option>
+							<option value="0.7">70%</option>
+							<option value="0.5">50% (Max FPS)</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- Cloak Settings -->
+				<div class="settings-card">
+					<h3 class="card-heading">Tab Cloaking</h3>
+					<p class="card-subheading">Disguise browser tab title and favicon to appear as educational websites.</p>
+					
+					<div class="cloak-options">
+						<button class="cloak-btn active" data-cloak="default">Default (Clash)</button>
+						<button class="cloak-btn" data-cloak="google">Google Search</button>
+						<button class="cloak-btn" data-cloak="drive">Google Drive</button>
+						<button class="cloak-btn" data-cloak="classroom">Google Classroom</button>
+						<button class="cloak-btn" data-cloak="canvas">Canvas LMS</button>
+					</div>
+				</div>
+
+				<!-- About:Blank Cloaking Settings -->
+				<div class="settings-card">
+					<div class="settings-card-header-flex">
+						<div>
+							<h3 class="card-heading">👻 About:Blank Cloaking</h3>
+							<p class="card-subheading">Hides Clash Proxy by embedding it in an <code>about:blank</code> tab, while instantly redirecting this original tab to an educational decoy website of your choice.</p>
+						</div>
+					</div>
+
+					<div class="settings-item" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; margin-top: 12px;">
+						<div class="settings-item-text">
+							<div class="settings-item-title">⚡ Auto-Launch in About:Blank</div>
+							<div class="settings-item-desc">Automatically launch into an about:blank cloaked window whenever Clash Proxy is opened, redirecting this tab immediately.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-aboutblank-autocloak" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="form-group" style="margin-top: 16px;">
+						<label style="display: block; font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 6px;">Decoy Replacement URL (Old Tab)</label>
+						<div style="display: flex; gap: 8px; align-items: center;">
+							<input type="url" id="setting-aboutblank-decoy-url" class="form-input" style="flex: 1;" placeholder="https://classroom.google.com" value="https://classroom.google.com" />
+							<button id="setting-aboutblank-launch-btn" type="button" class="btn btn-primary" style="white-space: nowrap;">
+								🚀 Launch in About:Blank
+							</button>
+						</div>
+						<div class="aboutblank-presets-row" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;">
+							<button type="button" class="aboutblank-preset-btn active" data-url="https://classroom.google.com">Google Classroom</button>
+							<button type="button" class="aboutblank-preset-btn" data-url="https://docs.google.com">Google Docs</button>
+							<button type="button" class="aboutblank-preset-btn" data-url="https://drive.google.com">Google Drive</button>
+							<button type="button" class="aboutblank-preset-btn" data-url="https://canvas.instructure.com">Canvas LMS</button>
+							<button type="button" class="aboutblank-preset-btn" data-url="https://www.wikipedia.org">Wikipedia</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Theme Selector -->
+				<div class="settings-card">
+					<h3 class="card-heading">Color Themes</h3>
+					<p class="card-subheading">Personalize your Clash Proxy visual theme.</p>
+					
+					<div class="theme-options">
+						<button class="theme-btn active" data-theme="neon-purple">
+							<span class="theme-color-preview" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7);"></span>
+							<span>Neon Purple</span>
+						</button>
+						<button class="theme-btn" data-theme="cyber-blue">
+							<span class="theme-color-preview" style="background: linear-gradient(135deg, #00d2ff, #3a7bd5);"></span>
+							<span>Cyber Blue</span>
+						</button>
+						<button class="theme-btn" data-theme="emerald-matrix">
+							<span class="theme-color-preview" style="background: linear-gradient(135deg, #00b894, #00cec9);"></span>
+							<span>Emerald</span>
+						</button>
+						<button class="theme-btn" data-theme="crimson-flame">
+							<span class="theme-color-preview" style="background: linear-gradient(135deg, #ff7675, #d63031);"></span>
+							<span>Crimson</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     Bazaar Cosmetic Shop Page
+		     ============================================================ -->
+		<!-- ============================================================
+		     Chat Messenger Page (Full-Featured)
+		     ============================================================ -->
+		<section id="page-chat" class="page">
+			<div class="chat-page-container">
+				<!-- Left Column: Conversations List Panel -->
+				<div class="chat-page-sidebar">
+					<div class="chat-page-sidebar-header">
+						<div class="chat-page-sidebar-title">
+							<div style="display: flex; align-items: center; gap: 8px;">
+								<span style="font-size: 1.25rem;">💬</span>
+								<h2 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Messages</h2>
+							</div>
+							<span id="chat-page-online-count" class="badge chat-online-badge">0 Online</span>
+						</div>
+						<div class="chat-page-search-wrap">
+							<input type="text" id="chat-search-input" class="form-input chat-search-input" placeholder="Search friends & conversations..." />
+						</div>
+					</div>
+
+					<div id="chat-conversations-list" class="chat-conversations-list">
+						<div class="chat-sidebar-loading">Loading conversations...</div>
+					</div>
+				</div>
+
+				<!-- Right Column: Active Conversation Pane -->
+				<div id="chat-page-main" class="chat-page-main">
+					<!-- State A: Empty (no conversation selected) -->
+					<div id="chat-empty-selection" class="chat-empty-selection">
+						<div class="chat-empty-icon-wrap">
+							<span class="chat-empty-icon">💬</span>
+						</div>
+						<h3 class="chat-empty-title">Your Messages</h3>
+						<p class="chat-empty-desc">Select a friend on the left to start chatting, share arcade games, or view their live status.</p>
+					</div>
+
+					<!-- State B: Active Conversation Feed (Hidden until friend selected) -->
+					<div id="chat-active-feed-wrap" class="chat-active-feed-wrap hidden">
+						<!-- Active Friend Header -->
+						<div class="chat-active-header">
+							<div class="chat-header-user-info">
+								<div class="chat-avatar-ring">
+									<div id="chat-active-avatar" class="chat-avatar avatar-1"></div>
+									<span id="chat-active-status-dot" class="chat-status-dot offline"></span>
+								</div>
+								<div class="chat-header-meta">
+									<div class="chat-header-name-row">
+										<span id="chat-active-name" class="chat-active-name">Friend</span>
+										<span id="chat-active-username" class="chat-active-handle">@username</span>
+									</div>
+									<span id="chat-active-presence" class="chat-active-presence">Offline</span>
+								</div>
+							</div>
+							<div class="chat-header-actions">
+								<button id="chat-header-invite-btn" class="btn btn-secondary btn-sm" title="Invite to play current game">
+									🎮 Invite to Game
+								</button>
+								<button id="chat-header-profile-btn" class="btn btn-outline btn-sm" title="View Profile">
+									👤 Profile
+								</button>
+							</div>
+						</div>
+
+						<!-- Messages Container -->
+						<div id="chat-page-messages" class="chat-page-messages">
+							<!-- Message bubbles rendered dynamically -->
+						</div>
+
+						<!-- Typing Indicator Banner -->
+						<div id="chat-page-typing" class="chat-page-typing hidden">
+							<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+							<span id="chat-page-typing-text">Friend is typing...</span>
+						</div>
+
+						<!-- Compose Toolbar -->
+						<div class="chat-compose-container">
+							<!-- Quick Reaction Emojis -->
+							<div class="chat-quick-emojis-row">
+								<button type="button" class="quick-emoji-btn" data-emoji="🔥">🔥</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="🎮">🎮</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="⚡">⚡</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="😎">😎</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="👋">👋</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="💀">💀</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="🎉">🎉</button>
+								<button type="button" class="quick-emoji-btn" data-emoji="❤️">❤️</button>
+								<div style="flex: 1;"></div>
+								<button id="chat-page-share-game-btn" type="button" class="btn btn-ghost btn-sm chat-attach-btn" title="Share current game in chat">
+									🎮 Share Game
+								</button>
+								<button id="chat-page-share-tab-btn" type="button" class="btn btn-ghost btn-sm chat-attach-btn" title="Share current tab page in chat">
+									🌐 Share Page
+								</button>
+							</div>
+
+							<!-- Message Input Form -->
+							<form id="chat-page-form" class="chat-page-form" autocomplete="off">
+								<input type="text" id="chat-page-input" class="form-input chat-page-input" placeholder="Type a message to friend... (Press Enter to send)" maxlength="1000" required />
+								<button type="submit" id="chat-page-send-btn" class="btn btn-primary chat-page-send-btn">
+									<span>Send</span>
+									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+										<line x1="22" y1="2" x2="11" y2="13"></line>
+										<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+									</svg>
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     Clash Lounge Multiplayer Party Rooms Page
+		     ============================================================ -->
+		<section id="page-lounge" class="page">
+			<div class="lounge-container">
+				<!-- Hero Card -->
+				<div class="lounge-hero-card">
+					<div class="lounge-hero-info">
+						<div class="lounge-hero-badge">
+							<span class="lounge-icon">🎮</span>
+							<h1 class="lounge-title">Clash Lounge</h1>
+						</div>
+						<p class="lounge-subtitle">Create private multiplayer gaming rooms, voice/chat with friends in real-time, and jump into games together.</p>
+					</div>
+
+					<div class="lounge-actions-box">
+						<button id="lounge-open-create-btn" class="btn btn-primary">
+							+ Create Party Room
+						</button>
+						<div class="lounge-quick-join">
+							<input type="text" id="lounge-join-code-input" class="form-input lounge-code-input" placeholder="Room Code (e.g. CLASH-88)" maxlength="12" />
+							<button id="lounge-join-code-btn" class="btn btn-secondary">
+								Join
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Create Room Drawer (Hidden by default) -->
+				<div id="lounge-create-drawer" class="lounge-create-drawer hidden">
+					<div class="lounge-drawer-header">
+						<div style="font-weight: 800; font-size: 1.1rem; color: #fff;">✨ Create Party Room</div>
+						<button id="lounge-create-close" class="modal-close-btn" style="font-size: 1.4rem;">&times;</button>
+					</div>
+					<form id="lounge-create-form" class="lounge-create-form">
+						<div class="form-group">
+							<label>Room Name</label>
+							<input type="text" id="lounge-input-name" class="form-input" placeholder="e.g. Ted's Arcade Hangout" maxlength="40" required />
+						</div>
+						<div class="form-row" style="display: flex; gap: 12px;">
+							<div class="form-group" style="flex: 2;">
+								<label>Featured Party Game</label>
+								<select id="lounge-select-game" class="form-input">
+									<option value="Free Play|">🎮 Free Play (Any Game)</option>
+									<option value="Drive Mad|/games/cldrivemady.html">🚗 Drive Mad</option>
+									<option value="Slope|/games/clslope.html">⚡ Slope</option>
+									<option value="Retro Bowl|/games/clretrobowl.html">🏈 Retro Bowl</option>
+									<option value="Cookie Clicker|/games/clcookieclicker.html">🍪 Cookie Clicker</option>
+									<option value="1v1.LOL|/games/cl1v1lol.html">🎯 1v1.LOL</option>
+									<option value="Subway Surfers|/games/clsubwaysurfers.html">🏃 Subway Surfers</option>
+								</select>
+							</div>
+							<div class="form-group" style="flex: 1;">
+								<label>Max Players</label>
+								<select id="lounge-select-max" class="form-input">
+									<option value="4">4 Players</option>
+									<option value="8" selected>8 Players</option>
+									<option value="16">16 Players</option>
+								</select>
+							</div>
+						</div>
+						<div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+							<button type="button" id="lounge-create-cancel" class="btn btn-secondary">Cancel</button>
+							<button type="submit" class="btn btn-primary">🚀 Launch Room</button>
+						</div>
+					</form>
+				</div>
+
+				<!-- View A: Lobby / Rooms List (When NOT in a room) -->
+				<div id="lounge-lobby-view" class="lounge-view">
+					<div class="lounge-section-header">
+						<div class="lounge-section-title">
+							<span>🔥 Active Public Parties</span>
+							<span id="lounge-active-count" class="lounge-count-badge">0 active</span>
+						</div>
+						<button id="lounge-refresh-rooms-btn" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+					</div>
+
+					<div id="lounge-rooms-grid" class="lounge-rooms-grid">
+						<div class="lounge-empty-state">No public parties active right now. Click "+ Create Party Room" above to start one!</div>
+					</div>
+				</div>
+
+				<!-- View B: Active Party Room (When inside a room) -->
+				<div id="lounge-active-room-view" class="lounge-view hidden">
+					<!-- Room Top Bar -->
+					<div class="lounge-room-header">
+						<div class="lounge-room-meta">
+							<div class="lounge-room-name-wrap">
+								<span class="lounge-room-icon">👑</span>
+								<h2 id="lounge-room-title" class="lounge-room-title">Party Room</h2>
+								<span id="lounge-room-code-badge" class="lounge-code-badge" title="Click to copy code">CLASH-0000 📋</span>
+							</div>
+							<div id="lounge-featured-game-pill" class="lounge-game-pill">🎮 Featured: Free Play</div>
+						</div>
+						<div class="lounge-room-actions">
+							<button id="lounge-launch-game-btn" class="btn btn-primary btn-sm">
+								🚀 Launch Game
+							</button>
+							<button id="lounge-leave-room-btn" class="btn btn-danger btn-sm">
+								🚪 Leave Room
+							</button>
+						</div>
+					</div>
+
+					<!-- Two-Column Room Layout -->
+					<div class="lounge-room-body">
+						<!-- Left: Members Roster -->
+						<div class="lounge-members-panel">
+							<div class="lounge-panel-title">
+								<span>Party Members</span>
+								<span id="lounge-members-count" class="lounge-members-count">1/8</span>
+							</div>
+							<div id="lounge-members-list" class="lounge-members-list">
+								<!-- Rendered dynamically -->
+							</div>
+						</div>
+
+						<!-- Right: Real-time Party Chat -->
+						<div class="lounge-chat-panel">
+							<div class="lounge-panel-title">
+								<span>Party Chat</span>
+								<span class="lounge-chat-status">🟢 Live</span>
+							</div>
+							<div id="lounge-chat-messages" class="lounge-chat-messages">
+								<div class="lounge-chat-system">Welcome to the Lounge Party! Chat here with your party members in real-time.</div>
+							</div>
+							<form id="lounge-chat-form" class="lounge-chat-form">
+								<input type="text" id="lounge-chat-input" class="form-input lounge-chat-input" placeholder="Send a message to party..." maxlength="300" autocomplete="off" required />
+								<button type="submit" class="btn btn-primary btn-sm">Send</button>
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
 	</main>
 
-	<!-- Music Player -->
-	<div id="music-player" class="music-minimized music-hidden">
-		<div id="music-header">
-			<div id="music-now-playing" class="music-compact">
-				<img id="music-thumb" src="" alt="">
-				<div class="music-info">
-					<span id="music-title">No track</span>
-					<span id="music-author"></span>
+	<!-- ============================================================
+	     Auth Modal (Login / Register)
+	     ============================================================ -->
+	<div id="auth-modal" class="modal-overlay hidden">
+		<div class="modal-card">
+			<div class="modal-header">
+				<div class="modal-logo">
+					<img src="/logo.png" alt="Clash Logo" />
+					<span class="modal-title">Clash Passport</span>
+				</div>
+				<button id="auth-modal-close" class="modal-close-btn">&times;</button>
+			</div>
+
+			<div class="auth-tabs">
+				<button id="tab-login-btn" class="auth-tab active">Sign In</button>
+				<button id="tab-register-btn" class="auth-tab">Create Account</button>
+			</div>
+
+			<!-- Login Form -->
+			<form id="login-form" class="auth-form" autocomplete="off">
+				<div class="form-group">
+					<label for="login-username">Username</label>
+					<input type="text" id="login-username" class="form-input" placeholder="Enter your username" required />
+				</div>
+				<div class="form-group">
+					<label for="login-password">Password</label>
+					<input type="password" id="login-password" class="form-input" placeholder="Enter your password" required />
+				</div>
+				<div id="login-error" class="auth-error-msg hidden"></div>
+				<button type="submit" class="btn btn-primary btn-block">Sign In</button>
+			</form>
+
+			<!-- Register Form -->
+			<form id="register-form" class="auth-form hidden" autocomplete="off">
+				<div class="form-group">
+					<label for="reg-username">Username</label>
+					<input type="text" id="reg-username" class="form-input" placeholder="Choose a username (3-20 chars)" required />
+				</div>
+				<div class="form-group">
+					<label for="reg-displayname">Display Name (Optional)</label>
+					<input type="text" id="reg-displayname" class="form-input" placeholder="How you appear to friends" />
+				</div>
+				<div class="form-group">
+					<label for="reg-password">Password</label>
+					<input type="password" id="reg-password" class="form-input" placeholder="At least 6 characters" required />
+				</div>
+				<div id="register-error" class="auth-error-msg hidden"></div>
+				<button type="submit" class="btn btn-primary btn-block">Create Account</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Edit Profile & Avatar Selector Modal
+	     ============================================================ -->
+	<div id="profile-modal" class="modal-overlay hidden">
+		<div class="modal-card">
+			<div class="modal-header">
+				<span class="modal-title">Edit Profile</span>
+				<button id="profile-modal-close" class="modal-close-btn">&times;</button>
+			</div>
+
+			<form id="edit-profile-form" class="auth-form" autocomplete="off">
+				<div class="form-group">
+					<label>Choose Avatar</label>
+					<div class="avatar-picker-grid">
+						<div class="avatar-option avatar-1 selected" data-avatar="avatar-1"></div>
+						<div class="avatar-option avatar-2" data-avatar="avatar-2"></div>
+						<div class="avatar-option avatar-3" data-avatar="avatar-3"></div>
+						<div class="avatar-option avatar-4" data-avatar="avatar-4"></div>
+						<div class="avatar-option avatar-5" data-avatar="avatar-5"></div>
+						<div class="avatar-option avatar-6" data-avatar="avatar-6"></div>
+						<div class="avatar-option avatar-7" data-avatar="avatar-7"></div>
+						<div class="avatar-option avatar-8" data-avatar="avatar-8"></div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-display-name">Display Name</label>
+					<input type="text" id="edit-display-name" class="form-input" maxlength="30" />
+				</div>
+
+				<div class="form-group">
+					<label for="edit-bio">Bio</label>
+					<textarea id="edit-bio" class="form-input form-textarea" maxlength="250" rows="3" placeholder="Tell friends about yourself..."></textarea>
+				</div>
+
+				<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Add Speed Dial Shortcut Modal
+	     ============================================================ -->
+	<div id="shortcut-modal" class="modal-overlay hidden">
+		<div class="modal-card">
+			<div class="modal-header">
+				<span class="modal-title">Add Speed Dial Shortcut</span>
+				<button id="shortcut-modal-close" class="modal-close-btn">&times;</button>
+			</div>
+
+			<form id="shortcut-form" class="auth-form" autocomplete="off">
+				<div class="form-group">
+					<label for="shortcut-title">Title</label>
+					<input type="text" id="shortcut-title" class="form-input" placeholder="e.g. YouTube, Discord, Wikipedia" maxlength="40" required />
+				</div>
+
+				<div class="form-group">
+					<label for="shortcut-url">URL</label>
+					<input type="text" id="shortcut-url" class="form-input" placeholder="https://..." required />
+				</div>
+
+				<div class="form-group">
+					<label for="shortcut-icon">Icon or Emoji (Optional)</label>
+					<input type="text" id="shortcut-icon" class="form-input" placeholder="e.g. 🌐, 🎮, ⚡, 🚀" maxlength="4" />
+				</div>
+
+				<button type="submit" class="btn btn-primary btn-block">Add to Speed Dial</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Floating Direct Message (DM) Chat Drawer
+	     ============================================================ -->
+	<div id="chat-drawer" class="chat-drawer hidden">
+		<div class="chat-drawer-header">
+			<div class="chat-user-info">
+				<div id="chat-friend-avatar" class="chat-avatar avatar-1"></div>
+				<div class="chat-user-meta">
+					<span id="chat-friend-name" class="chat-friend-name">Friend</span>
+					<span id="chat-friend-status" class="chat-friend-status">Offline</span>
 				</div>
 			</div>
-			<div class="music-header-btns">
-				<button id="music-search-toggle" class="music-icon-btn" title="Search">
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+			<div class="chat-drawer-actions">
+				<button id="chat-minimize-btn" class="chat-header-btn" title="Minimize">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
 				</button>
-				<button id="music-toggle-btn" class="music-icon-btn" title="Minimize">
-					<svg id="music-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-				</button>
+				<button id="chat-close-btn" class="chat-header-btn" title="Close">&times;</button>
 			</div>
 		</div>
-		<div id="music-body">
-			<div id="music-search-area" class="music-hidden">
-				<div class="music-search-wrap">
-					<input id="music-search-input" type="text" placeholder="Search songs..." autocomplete="off">
+
+		<!-- Chat Messages Stream -->
+		<div id="chat-messages-container" class="chat-messages-container">
+			<div class="chat-empty-state">No messages yet. Say hello! 👋</div>
+		</div>
+
+		<!-- Quick Share Actions Bar -->
+		<div class="chat-share-bar">
+			<button id="chat-share-game-btn" class="chat-share-btn" title="Share current game with friend">
+				<span>🎮 Share Game</span>
+			</button>
+			<button id="chat-share-tab-btn" class="chat-share-btn" title="Share current tab with friend">
+				<span>🌐 Share Page</span>
+			</button>
+		</div>
+
+		<!-- Chat Input Form -->
+		<form id="chat-input-form" class="chat-input-form" autocomplete="off">
+			<input type="text" id="chat-message-input" class="chat-input" placeholder="Type a message..." maxlength="1000" required />
+			<button type="submit" id="chat-send-btn" class="chat-send-btn" aria-label="Send">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="22" y1="2" x2="11" y2="13"></line>
+					<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+				</svg>
+			</button>
+		</form>
+	</div>
+
+	<!-- ============================================================
+	     Game Toolkit Modal (CloudVault & Clash Tamper)
+	     ============================================================ -->
+	<div id="game-toolkit-modal" class="modal-overlay hidden">
+		<div class="modal-card toolkit-modal-card">
+			<div class="modal-header">
+				<div class="toolkit-modal-title-wrap">
+					<span class="toolkit-icon">⚡</span>
+					<span class="modal-title">Game Controls & Tweaks</span>
+					<span id="toolkit-active-game-pill" class="toolkit-game-pill">No Active Game</span>
 				</div>
-				<div id="music-results"></div>
+				<button id="game-toolkit-modal-close" class="modal-close-btn">&times;</button>
 			</div>
-			<div id="music-player-area">
-				<div id="music-youtube-player"></div>
-				<div id="music-controls">
-					<div id="music-controls-row">
-						<button id="music-prev" title="Previous">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-						</button>
-						<button id="music-play-pause" title="Play/Pause">
-							<svg id="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-						</button>
-						<button id="music-next" title="Next">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zm-5.5 6l-8.5 6V6z"/></svg>
-						</button>
-					</div>
-					<div id="music-progress">
-						<span id="music-time-current">0:00</span>
-						<input type="range" id="music-seek" min="0" max="100" value="0">
-						<span id="music-time-total">0:00</span>
-					</div>
-					<div id="music-controls-row2">
-						<button id="music-shuffle" title="Shuffle">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
-						</button>
-						<button id="music-repeat" title="Repeat">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-						</button>
-						<button id="music-volume-btn" title="Volume">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-						</button>
-						<input type="range" id="music-volume-slider" min="0" max="100" value="100">
-						<button id="music-queue-toggle" title="Queue">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-						</button>
+
+			<!-- Speed & Tweaks Content -->
+			<div id="toolkit-tab-speed" class="toolkit-tab-content active" style="padding-top: 10px;">
+				<div class="tweaks-section">
+					<label class="tweaks-label">Game Speed Multiplier</label>
+					<div class="speed-buttons-row">
+						<button class="speed-btn" data-speed="0.25">0.25x</button>
+						<button class="speed-btn" data-speed="0.5">0.5x</button>
+						<button class="speed-btn active" data-speed="1.0">1.0x (Normal)</button>
+						<button class="speed-btn" data-speed="1.5">1.5x</button>
+						<button class="speed-btn" data-speed="2.0">2.0x</button>
+						<button class="speed-btn" data-speed="3.0">3.0x</button>
+						<button class="speed-btn" data-speed="5.0">5.0x</button>
 					</div>
 				</div>
-				<div id="music-queue" style="display: none;">
-					<div class="music-queue-header">
-						<span>Queue</span>
-						<span id="music-queue-count">0 songs</span>
+
+				<div class="tweaks-toggles-grid">
+					<div class="tweak-card">
+						<div>
+							<div class="tweak-card-name">Smart Force Dark Mode</div>
+							<div class="tweak-card-desc">Inject ultra-high contrast dark theme into the current tab.</div>
+						</div>
+						<label class="toggle-switch toggle-sm">
+							<input type="checkbox" id="tweak-toggle-darkmode" />
+							<span class="toggle-slider"></span>
+						</label>
 					</div>
-					<div id="music-queue-list"></div>
+
+					<div class="tweak-card">
+						<div>
+							<div class="tweak-card-name">Live FPS & Performance Monitor</div>
+							<div class="tweak-card-desc">Display real-time rendering FPS in the corner of the frame.</div>
+						</div>
+						<label class="toggle-switch toggle-sm">
+							<input type="checkbox" id="tweak-toggle-fps" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+
+					<div class="tweak-card">
+						<div>
+							<div class="tweak-card-name">Rapid Auto-Clicker Bot</div>
+							<div class="tweak-card-desc">Automatic rapid-fire clicks at cursor location (Clicker games helper).</div>
+						</div>
+						<label class="toggle-switch toggle-sm">
+							<input type="checkbox" id="tweak-toggle-autoclick" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>

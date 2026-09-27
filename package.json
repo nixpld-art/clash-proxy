@@ -1,32 +1,38 @@
 {
 	"name": "clash-proxy",
 	"version": "2.0.0",
-	"description": "Clash Proxy — A premium privacy-focused web proxy powered by Scramjet v2.",
+	"description": "Clash Proxy — Premium privacy-focused web proxy powered by Scramjet V2.",
 	"type": "module",
 	"engines": {
 		"npm": ">=7.0.0",
-		"node": ">=20.0.0"
+		"node": ">=16.0.0"
 	},
 	"scripts": {
-		"start": "node src/index.js"
+		"start": "node src/index.js",
+		"owner": "node \"clash owner pannel/server.js\""
 	},
 	"keywords": [
 		"proxy",
 		"privacy",
 		"scramjet",
-		"clash"
+		"clash",
+		"games"
 	],
 	"author": "Clash Proxy",
 	"license": "MIT",
 	"dependencies": {
-		"@fastify/compress": "^9.1.0",
 		"@fastify/static": "^9.0.0",
-		"@mercuryworkshop/epoxy-transport": "^3.0.1",
-		"@mercuryworkshop/proxy-transports": "1.0.2",
-		"@mercuryworkshop/scramjet": "2.0.67-alpha.2",
+		"@mercuryworkshop/bare-mux": "^2.1.9",
+		"@mercuryworkshop/epoxy-transport": "^2.1.28",
+		"@mercuryworkshop/libcurl-transport": "^1.5.2",
+		"@mercuryworkshop/proxy-transports": "^1.0.2",
+		"@mercuryworkshop/scramjet": "^2.0.67-alpha.2",
 		"@mercuryworkshop/scramjet-controller": "^0.0.14",
 		"@mercuryworkshop/wisp-js": "^0.4.1",
+		"bcryptjs": "^3.0.3",
+		"better-sqlite3": "^13.0.3",
 		"fastify": "^5.7.4",
-		"yt-search": "^2.13.1"
+		"jsonwebtoken": "^9.0.3",
+		"ws": "^8.21.3"
 	}
 }

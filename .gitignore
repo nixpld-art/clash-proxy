@@ -3,3 +3,24 @@ node_modules/
 .DS_Store
 .env
 sj-v1-backup/
+
+# runtime state & secrets — never in git
+*.db
+*.db-shm
+*.db-wal
+data/.jwt-secret
+jarvis-key.txt
+clash owner pannel/jarvis-key.txt
+clash owner pannel/backups/
+*.cpbak
+chrome-prof-*
+
+# game content lives on disk (638 MB) — source of truth is the live folder + harvester
+games/
+
+# local tooling
+.opencode/
+
+# old test scratch
+scratch/
+scratch-test.mjs

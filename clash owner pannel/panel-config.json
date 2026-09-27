@@ -1,0 +1,68 @@
+{
+	"economy": {
+		"rankPointsPerXp": 1,
+		"tokenCostBadge": 50,
+		"conversionRate": 10
+	},
+	"defaults": {
+		"theme": "dark",
+		"sound": 0.7,
+		"graphics": "auto"
+	},
+	"siteTheme": "dark",
+	"motd": "Welcome to Clash Proxy!",
+	"modules": {
+		"lounge": true,
+		"chat": true,
+		"leaderboard": true,
+		"friends": true,
+		"bazaar": false,
+		"games": true
+	},
+	"rateLimit": {
+		"pps": 500,
+		"chatFlood": 5
+	},
+	"alerts": {
+		"enabled": false,
+		"webhookUrl": "",
+		"events": [
+			"crash",
+			"ban",
+			"maintenance"
+		]
+	},
+	"emoji": [
+		{
+			"code": ":clash:",
+			"value": "⚡"
+		},
+		{
+			"code": ":crown:",
+			"value": "👑"
+		},
+		{
+			"code": ":gg:",
+			"value": "🎮"
+		}
+	],
+	"mapRotation": {
+		"Platformer": [
+			"Classic Run",
+			"Sky Dash"
+		],
+		"Arcade": [
+			"Neon Grid",
+			"Retro Arena"
+		]
+	},
+	"slotCaps": {
+		"Lobby A": 16,
+		"Lobby B": 8
+	},
+	"sim": {
+		"instances": [],
+		"matches": []
+	},
+	"backupKey": "301493b4cfc42ec3b7b6b8025380a26dbe4be8e4065302cfd9e579c68a2f380a"
+}

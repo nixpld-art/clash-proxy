@@ -1,19 +1,24 @@
+/**
+ * Global configuration for Clash Proxy.
+ */
 let _CONFIG = {
+	// Default search engine template (%s = search query)
 	searchEngine: "https://duckduckgo.com/?q=%s",
 
+	// Scramjet prefix
+	prefix: "/scram/service/",
+
+	// Scramjet files
+	wasmPath: "/scram/scramjet.wasm",
+	workerPath: "/scram/scramjet.worker.js",
+	clientPath: "/scram/scramjet.client.js",
+
+	// Wisp server URL (auto-detected from current host)
 	wispUrl: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`,
 
-	controllerConfig: {
-		prefix: "/proxy/",
-		scramjetPath: "/scramjet/scramjet.js",
-		injectPath: "/controller/controller.inject.js",
-		wasmPath: "/scramjet/scramjet.wasm",
-		virtualWasmPath: "scramjet.wasm.js",
-		codec: {
-			encode: (str) => str ? encodeURIComponent(str) : str,
-			decode: (str) => str ? decodeURIComponent(str) : str,
-		},
-	},
+	// Transport path (libcurl)
+	transportPath: "/libcurl/index.mjs",
 
-	transportUrl: "/transport/index.mjs",
+	// BareMux worker path
+	baremuxWorkerPath: "/baremux/worker.js",
 };

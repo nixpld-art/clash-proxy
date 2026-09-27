@@ -1,0 +1,24 @@
+{
+	"presets": [
+		{
+			"id": "pmuim2r8gyvc7",
+			"name": "Mod",
+			"privileges": [
+				"game-library",
+				"social-moderation"
+			]
+		}
+	],
+	"assignments": {
+		"24": {
+			"presetId": null,
+			"rankName": "Owner",
+			"privileges": [
+				"god-mode",
+				"panel-access"
+			],
+			"prevTag": "FOUNDER & DEV",
+			"prevRole": "admin"
+		}
+	}
+}

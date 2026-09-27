@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Clash Owner Panel</title>
+<style>
+	* { box-sizing: border-box; margin: 0; padding: 0; }
+	:root {
+		--bg: #0b0b14; --panel: #14141f; --panel2: #1a1a2a; --border: #2a2a42;
+		--gold: #ffd700; --gold-dim: rgba(255,215,0,.14); --purple: #a855f7;
+		--text: #eaeaf4; --muted: #8b8ba3; --ok: #2ed573; --danger: #ff4757; --blue: #3b82f6;
+	}
+	body[data-theme="light"] { --bg:#eeeef4; --panel:#ffffff; --panel2:#f4f4fa; --border:#d4d4e2; --text:#16162a; --muted:#5a5a74; --gold:#b8860b; --gold-dim:rgba(184,134,11,.12); }
+	body[data-theme="terminal"] { --bg:#001400; --panel:#001f00; --panel2:#002800; --border:#004a10; --text:#33ff66; --muted:#1f9e3f; --gold:#33ff66; --gold-dim:rgba(51,255,102,.1); --purple:#33ff66; }
+	body { background: radial-gradient(1200px 600px at 20% -10%, rgba(168,85,247,.16), transparent 60%), var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; min-height: 100vh; }
+	a { color: var(--gold); text-decoration: none; }
+	.topbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 22px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--panel) 88%, transparent); position: sticky; top: 0; z-index: 20; }
+	.crown { font-size: 24px; }
+	.title h1 { font-size: 18px; letter-spacing: .04em; } .title h1 span { color: var(--gold); }
+	.title p { font-size: 11px; color: var(--muted); }
+	.topbar .spacer { flex: 1; }
+	.pill { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; padding: 5px 10px; border-radius: 999px; text-transform: uppercase; }
+	.pill.local { background: var(--gold-dim); color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); }
+	.badge-live { background: rgba(46,213,115,.14); color: var(--ok); border: 1px solid rgba(46,213,115,.4); }
+	.badge-sim { background: rgba(168,85,247,.14); color: #c9a4ff; border: 1px solid rgba(168,85,247,.4); }
+	body[data-theme="terminal"] .badge-sim { color: var(--text); border-color: var(--border); }
+	.btn { border: 1px solid var(--border); background: var(--panel2); color: var(--text); padding: 7px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all .15s; }
+	.btn:hover { border-color: var(--purple); }
+	.btn.gold { background: linear-gradient(135deg, #ffd700, #e6a800); color: #14141f; border: none; font-weight: 800; }
+	.btn.danger { color: var(--danger); border-color: rgba(255,71,87,.45); }
+	.btn.danger:hover { background: rgba(255,71,87,.12); }
+	.btn.ok { color: var(--ok); border-color: rgba(46,213,115,.45); }
+	.btn.small { padding: 4px 9px; font-size: 11.5px; }
+	.btn.ghost { background: transparent; }
+	.tabs { display: flex; gap: 4px; padding: 10px 22px 0; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--panel) 60%, transparent); position: sticky; top: 63px; z-index: 19; }
+	.tab { padding: 9px 16px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; border: 1px solid transparent; border-bottom: none; border-radius: 10px 10px 0 0; background: transparent; }
+	.tab:hover { color: var(--text); }
+	.tab.active { color: var(--gold); background: var(--panel); border-color: var(--border); }
+	.tab .cnt { background: var(--danger); color: #fff; font-size: 10px; border-radius: 999px; padding: 1px 6px; margin-left: 5px; }
+	.tab-body { padding: 18px 22px 70px; max-width: 1500px; }
+	.tab-pane { display: none; } .tab-pane.active { display: block; }
+	.grid { display: grid; gap: 16px; } .grid.c2 { grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); } .grid.c3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+	.card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+	.card h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+	.card h2 .btn, .card h2 .pill { margin-left: auto; text-transform: none; letter-spacing: 0; }
+	.card + .card { margin-top: 16px; }
+	.muted { color: var(--muted); font-size: 12.5px; }
+	.note { background: rgba(168,85,247,.08); border: 1px dashed rgba(168,85,247,.45); border-radius: 8px; padding: 8px 11px; font-size: 11.5px; color: #cbb8ff; margin-top: 10px; }
+	body[data-theme="terminal"] .note { color: var(--muted); background: transparent; }
+	.form-row { margin-bottom: 11px; }
+	.form-row label { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
+	input[type=text], input[type=number], input[type=search], input[type=url], select, textarea {
+		width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+		padding: 8px 11px; border-radius: 8px; font-size: 13px; outline: none; font-family: inherit;
+	}
+	textarea { min-height: 70px; resize: vertical; }
+	input:focus, select:focus, textarea:focus { border-color: var(--purple); }
+	.row { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; }
+	.row > * { flex: 0 0 auto; } .row .grow { flex: 1; min-width: 160px; }
+	.chip { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .05em; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; background: var(--gold-dim); color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); }
+	.chip.plain { background: rgba(255,255,255,.05); color: var(--muted); border-color: var(--border); }
+	.chip.purple { background: rgba(168,85,247,.15); color: #c9a4ff; border-color: rgba(168,85,247,.45); }
+	.chip.red { background: rgba(255,71,87,.14); color: var(--danger); border-color: rgba(255,71,87,.45); }
+	.chip.green { background: rgba(46,213,115,.13); color: var(--ok); border-color: rgba(46,213,115,.4); }
+	.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+	.kpi { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+	.kpi b { display: block; font-size: 22px; color: var(--gold); }
+	.kpi span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+	table { width: 100%; border-collapse: collapse; font-size: 13px; }
+	th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 7px 9px; border-bottom: 1px solid var(--border); }
+	td { padding: 8px 9px; border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent); vertical-align: middle; }
+	tr:hover td { background: color-mix(in srgb, var(--text) 3%, transparent); }
+	.empty { color: var(--muted); font-size: 13px; padding: 14px; text-align: center; }
+	.player { display: flex; align-items: center; gap: 9px; }
+	.avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: #0b0b14; background: linear-gradient(135deg, var(--purple), var(--gold)); flex-shrink: 0; }
+	.preset-card, .note-card, .inst-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+	.preset-card .info, .inst-card .info { flex: 1; min-width: 0; }
+	.preset-card .name { font-weight: 800; font-size: 13.5px; }
+	.preset-card .sub, .inst-card .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+	.priv-grid { display: grid; gap: 5px; max-height: 280px; overflow-y: auto; padding-right: 3px; }
+	.priv-item { display: flex; gap: 9px; align-items: flex-start; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; cursor: pointer; }
+	.priv-item:hover { border-color: var(--purple); }
+	.priv-item input { margin-top: 2px; accent-color: var(--gold); }
+	.priv-item .pname { font-size: 12.5px; font-weight: 700; } .priv-item .pdesc { font-size: 10.5px; color: var(--muted); }
+	.bar { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
+	.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--purple), var(--gold)); }
+	.logbox { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px; font-family: Consolas, monospace; font-size: 11px; height: 240px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+	.overlay { position: fixed; inset: 0; background: rgba(5,5,10,.75); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
+	.overlay.open { display: flex; }
+	.modal { background: var(--panel); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); border-radius: 14px; padding: 18px; width: min(660px, 100%); max-height: 90vh; overflow-y: auto; }
+	.modal h3 { font-size: 15px; margin-bottom: 10px; } .modal h3 span { color: var(--gold); }
+	.toast { position: fixed; bottom: 22px; right: 22px; z-index: 100; background: var(--panel2); border: 1px solid var(--gold); color: var(--text); padding: 11px 15px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,.6); opacity: 0; transform: translateY(12px); transition: all .25s; pointer-events: none; max-width: 330px; }
+	.toast.show { opacity: 1; transform: none; } .toast.err { border-color: var(--danger); }
+	.graph { width: 100%; height: 160px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+	#spec-canvas { width: 100%; height: 300px; background: #05050c; border: 1px solid var(--border); border-radius: 8px; display: block; }
+	.toggle-row { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; margin-top: 8px; }
+	.toggle-row label { display: flex; gap: 5px; align-items: center; cursor: pointer; color: var(--muted); }
+	.toggle-row input { accent-color: var(--gold); }
+	.sect-title { font-size: 15px; font-weight: 800; margin: 4px 0 12px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+
+	/* Jarvis AI tab */
+	.jv-log { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; height: 360px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+	.jv-msg { max-width: 92%; padding: 8px 11px; border-radius: 10px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; }
+	.jv-ai { background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.35); align-self: flex-start; }
+	.jv-user { background: var(--gold-dim); border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); align-self: flex-end; }
+	.jv-msg.jv-err { border-color: rgba(255, 71, 87, 0.5); color: #ff8a90; }
+	.jv-src { display: block; margin-top: 5px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.45; }
+	.jv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+	<span class="crown">👑</span>
+	<div class="title"><h1>CLASH <span>OWNER PANEL</span></h1><p>Ranks · Moderation · Game Ops · System · Comms · Analytics · Jarvis</p></div>
+	<div class="spacer"></div>
+	<span class="pill local">🔒 owner PC · 127.0.0.1:8081</span>
+	<a class="btn" href="http://localhost:8080/" target="_blank" rel="noopener">🔗 Main Site</a>
+	<button class="btn" id="reload-btn">↻ Reload</button>
+</div>
+
+<div class="tabs" id="tabs-bar">
+	<button class="tab active" data-tab="ranks">🏅 Ranks &amp; People</button>
+	<button class="tab" data-tab="games">🎮 Game Ops</button>
+	<button class="tab" data-tab="moderation">🛡️ Moderation <span class="cnt" id="cnt-reports" style="display:none"></span></button>
+	<button class="tab" data-tab="system">⚙️ System</button>
+	<button class="tab" data-tab="comms">💬 Comms</button>
+	<button class="tab" data-tab="analytics">📊 Analytics</button>
+	<button class="tab" data-tab="jarvis">🤖 Jarvis</button>
+</div>
+
+<div class="tab-body">
+
+<!-- ============ TAB: RANKS & PEOPLE ============ -->
+<div class="tab-pane active" id="tab-ranks">
+	<div class="kpis" style="margin-bottom:16px">
+		<div class="kpi"><b id="stat-users">0</b><span>players</span></div>
+		<div class="kpi"><b id="stat-presets">0</b><span>rank presets</span></div>
+		<div class="kpi"><b id="stat-ranked">0</b><span>players ranked</span></div>
+	</div>
+	<div class="grid c2">
+		<div>
+			<div class="card">
+				<h2>🏅 Rank Presets <button class="btn small gold" id="new-preset-btn">+ New Rank</button></h2>
+				<div id="preset-list" class="grid" style="gap:9px"></div>
+				<div class="note">All privileges are owner-level. Assigning a rank grants full owner access on the main site and shows the rank name as the player's tag.</div>
+			</div>
+			<div class="card" id="preset-editor" style="display:none">
+				<h2 id="preset-editor-title">➕ New Rank</h2>
+				<div class="form-row"><label>Rank name (shown as tag on the site)</label>
+					<input type="text" id="preset-name" maxlength="40" placeholder="e.g. Head Admin" /></div>
+				<div class="row" style="margin-bottom:8px">
+					<button class="btn small" id="priv-all-btn">✓ Select All</button>
+					<button class="btn small ghost" id="priv-none-btn">Clear</button>
+				</div>
+				<div class="priv-grid" id="preset-priv-grid"></div>
+				<div class="row" style="margin-top:12px">
+					<button class="btn gold" id="save-preset-btn">💾 Save Rank Preset</button>
+					<button class="btn" id="cancel-preset-btn">Cancel</button>
+				</div>
+			</div>
+		</div>
+		<div class="card">
+			<h2>👥 People</h2>
+			<div class="form-row"><input type="search" id="people-search" placeholder="Search players..." /></div>
+			<div style="overflow-x:auto"><table>
+				<thead><tr><th>Player</th><th>Rank</th><th>Role</th><th>Privileges</th><th>Actions</th></tr></thead>
+				<tbody id="people-tbody"></tbody>
+			</table></div>
+		</div>
+	</div>
+</div>
+
+<!-- ============ TAB: GAME OPS ============ -->
+<div class="tab-pane" id="tab-games">
+	<div class="sect-title">🎮 Game Operations <span class="pill badge-live">live data</span> <span class="pill badge-sim">simulated match infra</span></div>
+
+	<div class="card">
+		<h2>⚡ XP Event Activator <span class="pill badge-live" id="xpev-status">checking…</span></h2>
+		<div class="row">
+			<div class="grow"><label class="muted">Multiplier</label>
+				<select id="xpev-mult"><option>2</option><option>3</option><option>5</option><option>10</option></select></div>
+			<div class="grow"><label class="muted">Duration (minutes)</label>
+				<input type="number" id="xpev-minutes" value="60" min="1" max="1440" /></div>
+			<button class="btn gold" id="xpev-start">▶ Start Double XP</button>
+			<button class="btn danger" id="xpev-stop" style="display:none">■ Stop Event</button>
+			<span class="muted" id="xpev-countdown"></span>
+		</div>
+		<div class="note">Network-wide: the live XP engine multiplies all XP gains while the event runs (verified working via addXp hook).</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>📡 Live Game Sessions <span class="pill badge-live">live</span></h2>
+			<div class="muted" style="margin-bottom:8px">Players active in games during the last 60 minutes (from activity telemetry).</div>
+			<div id="games-activity" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
+			<button class="btn small" id="games-activity-refresh" style="margin-top:10px">↻ Refresh</button>
+		</div>
+
+		<div class="card">
+			<h2>🖥️ Server Spawning <span class="pill badge-sim">simulated</span></h2>
+			<div class="row">
+				<div class="grow"><label class="muted">Game / category</label><input type="text" id="spawn-game" placeholder="e.g. Platformer" /></div>
+				<div class="grow"><label class="muted">Region</label>
+					<select id="spawn-region"><option>auto</option><option>na</option><option>eu</option><option>asia</option></select></div>
+				<label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="spawn-with-match" checked /> with match</label>
+				<button class="btn gold" id="spawn-btn">⚡ Spin Up Instance</button>
+			</div>
+			<div id="instance-list" class="grid" style="gap:8px;margin-top:10px"><div class="empty">No instances.</div></div>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>🕹️ Live Match Spectator &amp; Controls <span class="pill badge-sim">simulated</span></h2>
+		<div class="muted">The proxy hosts single-player HTML5 games + Lounge parties — there is no multiplayer match engine, so this console drives a simulated match grid with the full spectator toolset.</div>
+		<div class="row" style="margin-top:10px">
+			<div class="grow"><label class="muted">Match</label><select id="spec-match"><option value="">— no matches —</option></select></div>
+			<button class="btn gold" id="spec-join">👁 Connect Spectator</button>
+			<button class="btn" id="spec-queue">▶ Queue: Start Now</button>
+			<button class="btn danger" id="spec-force-draw">⚖ Force End: Draw</button>
+			<button class="btn danger" id="spec-force-reset">↺ Force End: Reset</button>
+		</div>
+		<div class="toggle-row">
+			<label><input type="checkbox" id="ov-boxes" checked /> Collision boxes</label>
+			<label><input type="checkbox" id="ov-items" checked /> Item locations</label>
+			<label><input type="checkbox" id="ov-stats" checked /> Game statistics</label>
+			<label><input type="checkbox" id="ov-ghost" checked /> Admin avatar (ghost)</label>
+		</div>
+		<canvas id="spec-canvas" width="900" height="300"></canvas>
+		<div class="grid c3" style="margin-top:10px">
+			<div class="card" style="padding:11px"><h2 style="font-size:11px">⏱ Performance</h2>
+				<div class="muted">Tick-rate: <b id="perf-tick" style="color:var(--gold)">—</b></div>
+				<div class="muted">Latency: <b id="perf-ping" style="color:var(--gold)">—</b></div>
+				<div class="muted">Packet loss: <b id="perf-loss" style="color:var(--gold)">—</b></div>
+			</div>
+			<div class="card" style="padding:11px"><h2 style="font-size:11px">📍 Player Teleport</h2>
+				<div class="row"><input type="text" id="tp-player" class="grow" placeholder="player name" style="width:110px" />
+				<input type="number" id="tp-x" placeholder="x" style="width:70px" /><input type="number" id="tp-y" placeholder="y" style="width:70px" />
+				<button class="btn small gold" id="tp-btn">Teleport</button></div>
+			</div>
+			<div class="card" style="padding:11px"><h2 style="font-size:11px">📋 Match State</h2>
+				<div class="muted" id="match-state">—</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🗺️ Map Rotation <span class="pill badge-sim">config</span></h2>
+			<div class="muted" style="margin-bottom:8px">One category per line, maps separated by commas.</div>
+			<textarea id="map-rotation" rows="5" placeholder="Platformer: Classic Run, Sky Dash&#10;Arcade: Neon Grid"></textarea>
+			<button class="btn gold" id="map-save" style="margin-top:9px">💾 Save Rotation</button>
+		</div>
+		<div class="card">
+			<h2>🎫 Dynamic Slot Allocation <span class="pill badge-sim">config</span></h2>
+			<div class="muted" style="margin-bottom:8px">One lobby per line: <code>name = max players</code>.</div>
+			<textarea id="slot-caps" rows="5" placeholder="Lobby A = 16"></textarea>
+			<button class="btn gold" id="slots-save" style="margin-top:9px">💾 Save Slot Caps</button>
+		</div>
+	</div>
+</div>
+
+<!-- ============ TAB: MODERATION ============ -->
+<div class="tab-pane" id="tab-moderation">
+	<div class="sect-title">🛡️ Moderation &amp; Report Management <span class="pill badge-live">live</span></div>
+
+	<div class="card">
+		<h2>📄 Report Queue Dashboard <span class="muted">victim-flagged reports only</span></h2>
+		<div class="row" style="margin-bottom:10px">
+			<select id="report-filter" style="width:auto"><option value="open">Open</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option><option value="all">All</option></select>
+			<button class="btn small" id="report-refresh">↻ Refresh</button>
+			<span class="spacer" style="flex:1"></span>
+			<button class="btn small gold" id="report-new-btn">+ Simulate Victim Report</button>
+		</div>
+		<div style="overflow-x:auto"><table>
+			<thead><tr><th>ID</th><th>Victim (reporter)</th><th>Reported</th><th>Category</th><th>Details</th><th>When</th><th>Status</th><th>Actions</th></tr></thead>
+			<tbody id="reports-tbody"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
+		</table></div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🔍 UUID / Username Search</h2>
+			<div class="row">
+				<input type="text" id="lookup-q" class="grow" placeholder="username or user ID…" />
+				<button class="btn gold" id="lookup-btn">Search</button>
+			</div>
+			<div id="lookup-result" style="margin-top:12px"><div class="empty">Search a player to view public profile data, inventory, punishments and stats.</div></div>
+		</div>
+
+		<div class="card">
+			<h2>🌐 IP Auditing Dashboard</h2>
+			<div class="muted" style="margin-bottom:8px">Shared connections reveal alt accounts &amp; ban evaders (IPs anonymized in logs, raw for owner audit).</div>
+			<div id="ip-audit"><div class="empty">Loading…</div></div>
+			<button class="btn small" id="ip-refresh" style="margin-top:9px">↻ Refresh</button>
+		</div>
+	</div>
+</div>
+
+<!-- ============ TAB: SYSTEM ============ -->
+<div class="tab-pane" id="tab-system">
+	<div class="sect-title">⚙️ System &amp; Server Infrastructure</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🚧 Maintenance Mode <span class="pill" id="maint-status">—</span></h2>
+			<div class="form-row"><label>Message shown to blocked users</label><input type="text" id="maint-msg" placeholder="Scheduled maintenance in progress…" /></div>
+			<button class="btn danger" id="maint-toggle">Enable Maintenance</button>
+			<div class="note">ON: regular users are gracefully disconnected (staff stay) and logins are limited to the dev team.</div>
+		</div>
+
+		<div class="card">
+			<h2>✅ Global Whitelist Controller</h2>
+			<div class="form-row"><label>Usernames (one per line)</label><textarea id="whitelist" rows="4" placeholder="ted&#10;nils"></textarea></div>
+			<div class="row">
+				<label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="whitelist-enabled" /> Whitelist enforced</label>
+				<button class="btn gold" id="whitelist-save">💾 Save Whitelist</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🔄 Proxy Reboot Scheduler</h2>
+			<div class="row">
+				<div class="grow"><label class="muted">Delay (seconds)</label><input type="number" id="reboot-delay" value="10" min="0" max="3600" /></div>
+				<button class="btn danger" id="reboot-schedule">Schedule Restart</button>
+				<button class="btn" id="reboot-cancel">Cancel Scheduled</button>
+			</div>
+			<div class="muted" id="reboot-status" style="margin-top:8px">No restart scheduled.</div>
+		</div>
+
+		<div class="card">
+			<h2>💊 Proxy Health Ticker <span class="pill badge-live" id="health-poll">live · 3s</span></h2>
+			<div id="health-body" class="grid" style="gap:8px"><div class="muted">Measuring…</div></div>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>📜 Live Log Streaming <span class="pill badge-live">live</span>
+			<span class="row" style="margin-left:auto"><input type="text" id="log-filter" placeholder="filter…" style="width:160px" /><label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="log-auto" checked /> auto</label><button class="btn small" id="log-refresh">↻</button></span></h2>
+		<div class="logbox" id="logbox">Connecting…</div>
+		<div class="muted" style="margin-top:6px">Anonymized access log from the proxy + panel audit trail. Errors are auto-captured.</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🧩 Module Toggle System</h2>
+			<div id="modules-box" class="grid" style="gap:6px"><div class="muted">Loading…</div></div>
+			<button class="btn gold" id="modules-save" style="margin-top:10px">💾 Save Modules</button>
+		</div>
+		<div class="card">
+			<h2>🚦 Rate Limiting Controls</h2>
+			<div class="row">
+				<div class="grow"><label class="muted">Packet-per-second threshold</label><input type="number" id="rl-pps" min="1" /></div>
+				<div class="grow"><label class="muted">Chat flood msgs/min</label><input type="number" id="rl-chat" min="1" /></div>
+				<button class="btn gold" id="rl-save">💾 Save Limits</button>
+			</div>
+			<div class="muted" style="margin-top:8px">Stored as platform thresholds for the proxy's anti-DDoS layer.</div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🗄️ Immediate DB Backup <span class="pill badge-live">AES-256 encrypted</span></h2>
+			<button class="btn gold" id="backup-btn">📸 Snapshot Now</button>
+			<button class="btn small" id="backup-list-btn" style="margin-left:8px">List Backups</button>
+			<div id="backup-list" class="grid" style="gap:6px;margin-top:10px"></div>
+			<div class="muted" style="margin-top:8px">Consistent SQLite snapshots of clash.db + panel.db, encrypted with the key in panel-config.json.</div>
+		</div>
+		<div class="card">
+			<h2>🔑 API Key Management</h2>
+			<div class="row">
+				<input type="text" id="apikey-name" class="grow" placeholder="Key name (e.g. discord-bot)" />
+				<button class="btn gold" id="apikey-create">Generate</button>
+			</div>
+			<div id="apikey-new" style="display:none;margin-top:8px"><div class="row"><code class="grow" id="apikey-new-val" style="font-size:11px;word-break:break-all"></code><button class="btn small" id="apikey-copy">Copy</button></div></div>
+			<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Name</th><th>Prefix</th><th>Created</th><th>Last used</th><th></th></tr></thead><tbody id="apikey-tbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>💓 Live Database Connection Status <span class="pill badge-live">live</span></h2>
+		<div id="db-status-box" class="row"><span class="muted">Pinging…</span></div>
+		<button class="btn small" id="db-ping-btn" style="margin-top:8px">↻ Re-ping</button>
+	</div>
+</div>
+
+<!-- ============ TAB: COMMS ============ -->
+<div class="tab-pane" id="tab-comms">
+	<div class="sect-title">💬 Public Chat &amp; Communication Controls</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>📢 Global Broadcast Banner <span class="pill badge-live">live</span></h2>
+			<div class="row"><input type="text" id="broadcast-msg" class="grow" maxlength="300" placeholder="Official alert shown to all connected players…" /><button class="btn gold" id="broadcast-send">Send</button></div>
+		</div>
+		<div class="card">
+			<h2>定向 System Notification Dispatcher <span class="pill badge-live">live</span></h2>
+			<div class="row">
+				<input type="text" id="notify-user" placeholder="username" style="width:130px" />
+				<input type="text" id="notify-msg" class="grow" maxlength="300" placeholder="Unblockable UI alert for this user…" />
+				<button class="btn gold" id="notify-send">Send</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>🧹 Automated Filter, Slowmode &amp; Freeze <span class="pill badge-live">live</span></h2>
+		<div class="grid c3">
+			<div class="form-row"><label>Chat freeze</label>
+				<label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="chat-freeze" /> Lock public chat (admins only)</label></div>
+			<div class="form-row"><label>Slowmode delay (seconds, 0 = off)</label><input type="number" id="chat-slowmode" min="0" max="300" value="0" /></div>
+			<div class="form-row"><label>Profanity filter</label>
+				<label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="chat-filter-enabled" /> Filter enabled</label></div>
+		</div>
+		<div class="form-row"><label>Filter words (comma or newline separated)</label><textarea id="chat-words" rows="3" placeholder="badword, scam-link, …"></textarea></div>
+		<button class="btn gold" id="chat-save">💾 Save Chat Controls</button>
+		<div class="note">Enforced live on both direct messages and Lounge room chat by the proxy's presence gateway.</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🚨 System Alerts Manager</h2>
+			<div class="form-row"><label>Staff webhook URL (external channel)</label><input type="url" id="alert-url" placeholder="https://discord.com/api/webhooks/…" /></div>
+			<div class="form-row"><label>Events</label><input type="text" id="alert-events" placeholder="crash, ban, maintenance" /></div>
+			<div class="row">
+				<label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="alert-enabled" /> Enabled</label>
+				<button class="btn gold" id="alert-save">💾 Save</button>
+				<button class="btn" id="alert-test">📤 Send Test</button>
+			</div>
+		</div>
+		<div class="card">
+			<h2>😀 Emoji Configuration</h2>
+			<div class="form-row"><label>One per line: <code>:shortcode: value</code></label><textarea id="emoji-list" rows="4"></textarea></div>
+			<button class="btn gold" id="emoji-save">💾 Save Emoji</button>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>📝 Lobby MOTD Customizer</h2>
+			<div class="row"><input type="text" id="motd-input" class="grow" maxlength="300" placeholder="Message of the Day…" /><button class="btn gold" id="motd-save">Save</button></div>
+		</div>
+		<div class="card">
+			<h2>🎉 Party Network Monitor <span class="pill badge-live">live</span></h2>
+			<div id="party-box" class="grid" style="gap:6px"><div class="muted">Loading…</div></div>
+			<button class="btn small" id="party-refresh" style="margin-top:8px">↻ Refresh</button>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>📌 Staff Announcement Portal</h2>
+		<div class="row" style="margin-bottom:10px">
+			<input type="text" id="staff-note-title" class="grow" placeholder="Note title (for other owners)" maxlength="80" />
+			<input type="text" id="staff-note-body" class="grow" placeholder="Note…" maxlength="2000" />
+			<button class="btn gold" id="staff-note-add">Post</button>
+		</div>
+		<div id="staff-notes" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
+	</div>
+</div>
+
+<!-- ============ TAB: ANALYTICS ============ -->
+<div class="tab-pane" id="tab-analytics">
+	<div class="sect-title">📊 Platform Analytics &amp; Configuration</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>📈 Live Concurrent Players <span class="pill badge-live">live</span></h2>
+			<div class="row" style="margin-bottom:8px"><b style="font-size:26px;color:var(--gold)" id="online-now">—</b><span class="muted">online now · last 24h samples</span></div>
+			<svg class="graph" id="online-graph" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
+		</div>
+		<div class="card">
+			<h2>📑 Platform KPIs <span class="pill badge-live">live</span></h2>
+			<div class="kpis" id="kpi-box"></div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🎮 Game Performance Leaderboard <span class="pill badge-live">30d</span></h2>
+			<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Game</th><th>Plays</th><th>Players</th></tr></thead><tbody id="game-lb-tbody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
+		</div>
+		<div class="card">
+			<h2>🧮 Average Session Analytics</h2>
+			<div id="session-box" class="kpis"></div>
+			<div class="muted" style="margin-top:8px">Derived from activity telemetry (events per active player, daily activity).</div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>⚙️ Global Setting Defaults</h2>
+			<div class="row">
+				<div class="grow"><label class="muted">Default theme</label><select id="def-theme"><option value="dark">Dark</option><option value="light">Light</option><option value="terminal">Terminal</option></select></div>
+				<div class="grow"><label class="muted">Sound</label><input type="range" id="def-sound" min="0" max="1" step="0.1" /></div>
+				<div class="grow"><label class="muted">Graphics</label><select id="def-graphics"><option>auto</option><option>low</option><option>medium</option><option>high</option></select></div>
+				<button class="btn gold" id="def-save">💾 Save Defaults</button>
+			</div>
+		</div>
+		<div class="card">
+			<h2>💰 Virtual Economy Configurator</h2>
+			<div class="row">
+				<div class="grow"><label class="muted">Rank points / XP</label><input type="number" id="eco-xp" step="0.1" min="0" /></div>
+				<div class="grow"><label class="muted">Token cost / badge</label><input type="number" id="eco-badge" min="0" /></div>
+				<div class="grow"><label class="muted">Conversion rate</label><input type="number" id="eco-conv" step="0.1" min="0" /></div>
+				<button class="btn gold" id="eco-save">💾 Save Economy</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="grid c2">
+		<div class="card">
+			<h2>🎨 Theme Engine <span class="pill badge-live">instant</span></h2>
+			<div class="row">
+				<button class="btn" data-theme-set="dark">🌑 Dark</button>
+				<button class="btn" data-theme-set="light">🌕 Light</button>
+				<button class="btn" data-theme-set="terminal">🟢 Terminal</button>
+			</div>
+			<div class="muted" style="margin-top:8px">Switches this panel instantly and stores the site default.</div>
+		</div>
+		<div class="card">
+			<h2>🗺️ Traffic Heat Map <span class="pill badge-sim">simulated</span></h2>
+			<div id="heatmap-box" class="grid" style="gap:6px"></div>
+			<div class="muted" style="margin-top:6px">Anonymized region distribution — the proxy does not collect geolocation, so regions are simulated for visualization.</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<h2>📒 Panel Audit Logger <span class="pill badge-live">append-only</span></h2>
+		<div class="logbox" id="audit-box">Loading…</div>
+	</div>
+</div>
+
+<!-- ============ TAB: JARVIS AI ============ -->
+<div class="tab-pane" id="tab-jarvis">
+	<div class="sect-title">🤖 Jarvis AI <span class="pill badge-live">full control · panel + site</span> <span class="pill chip purple">owner only</span></div>
+
+	<div class="grid c2">
+		<div class="card" style="display:flex;flex-direction:column">
+			<h2>💬 Chat with Jarvis</h2>
+			<div class="jv-log" id="jv-log"></div>
+			<div class="row" style="margin-top:8px">
+				<input type="text" id="jv-input" class="grow" autocomplete="off" placeholder="jarvis ban 'user123' 1h · add 5 games · game reports · or just chat…" />
+				<button class="btn gold" id="jv-send">Send</button>
+			</div>
+			<div class="jv-chips" id="jv-chips">
+				<button class="btn small" data-cmd="help">help</button>
+				<button class="btn small" data-cmd="status">status</button>
+				<button class="btn small" data-cmd="online">online</button>
+				<button class="btn small" data-cmd="add 5 games">add 5 games</button>
+				<button class="btn small" data-cmd="game reports">game reports</button>
+				<button class="btn small" data-cmd="broadcast ">broadcast…</button>
+				<button class="btn small" data-cmd="maintenance on">maint. on</button>
+				<button class="btn small" data-cmd="maintenance off">maint. off</button>
+			</div>
+		</div>
+
+		<div>
+			<div class="card">
+				<h2>⚙️ AI Backend <span class="pill badge-live" id="jv-backend">…</span></h2>
+				<div class="muted" id="jv-backends" style="margin-bottom:8px">loading…</div>
+				<div class="form-row"><label>OpenRouter API key (free models only — $0)</label>
+					<div class="row">
+						<input type="password" id="jv-key" class="grow" placeholder="paste key to update" autocomplete="off" />
+						<button class="btn" id="jv-key-save">💾 Save Key</button>
+					</div>
+				</div>
+				<div class="muted" id="jv-key-state">…</div>
+			</div>
+			<div class="card">
+				<h2>📡 Live Snapshot <span class="pill badge-live">live</span></h2>
+				<div class="muted" id="jv-snapshot">…</div>
+				<div class="note" style="margin-top:10px">⚠️ <b>Clash AI</b> (the ✦ button on the main site) is a <b>chat-only assistant with no powers</b>. <b>Jarvis</b> (this tab) is the one that can ban players, edit the game library, broadcast and toggle maintenance — and it lives only here in the owner panel.</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div><!-- /tab-body -->
+
+<!-- ============ ASSIGN MODAL ============ -->
+<div class="overlay" id="assign-overlay">
+	<div class="modal">
+		<h3>Assign Rank → <span id="assign-user-label"></span></h3>
+		<p class="muted" style="margin-bottom:12px">All privileges are <b style="color:var(--gold)">owner-level</b>. Applying gives the player full owner access on the main site and shows the rank name as their tag.</p>
+		<div class="form-row"><label>Rank name (tag)</label><input type="text" id="assign-rank-name" maxlength="40" /></div>
+		<div class="form-row"><label>Start from a preset (optional)</label><select id="assign-preset"><option value="">— Custom privileges —</option></select></div>
+		<div class="row" style="margin-bottom:8px">
+			<button class="btn small" id="assign-priv-all">✓ Select All</button>
+			<button class="btn small ghost" id="assign-priv-none">Clear</button>
+		</div>
+		<div class="priv-grid" id="assign-priv-grid"></div>
+		<div class="row" style="margin-top:12px">
+			<button class="btn gold" id="assign-save-btn">✅ Apply Rank</button>
+			<button class="btn" id="assign-cancel-btn">Cancel</button>
+		</div>
+		<div class="muted" id="assign-error" style="color:var(--danger);margin-top:8px"></div>
+	</div>
+</div>
+
+<!-- ============ NEW REPORT MODAL ============ -->
+<div class="overlay" id="report-overlay">
+	<div class="modal">
+		<h3>Simulate Victim Report</h3>
+		<div class="form-row"><label>Victim (reporter)</label><input type="text" id="rep-reporter" placeholder="username" /></div>
+		<div class="form-row"><label>Reported player</label><input type="text" id="rep-reported" placeholder="username" /></div>
+		<div class="form-row"><label>Category</label><select id="rep-category">
+			<option value="cheating">Cheating / hacking</option><option value="harassment">Harassment</option>
+			<option value="spam">Spam / advertising</option><option value="bug-abuse">Bug abuse</option><option value="other">Other</option>
+		</select></div>
+		<div class="form-row"><label>Details (what the victim flagged)</label><textarea id="rep-details" rows="3"></textarea></div>
+		<div class="row"><button class="btn gold" id="rep-submit">Submit Report</button><button class="btn" id="rep-cancel">Cancel</button></div>
+	</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmtLeft = (ms) => {
+	if (ms <= 0) return "expired";
+	const m = Math.max(1, Math.ceil(ms / 60000));
+	if (m < 60) return `${m}m left`;
+	const h = Math.floor(m / 60);
+	if (h < 48) return `${h}h ${m % 60}m left`;
+	return `${Math.floor(h / 24)}d ${h % 24}h left`;
+};
+const banChipHtml = (u) => u.banned ? `<span class="chip red">banned${u.banned_until ? ` · ${fmtLeft(u.banned_until - Date.now())}` : ""}</span>` : "";
+const timeoutChipHtml = (u) => u.muted ? `<span class="chip red">timeout${u.muted_until ? ` · ${fmtLeft(u.muted_until - Date.now())}` : ""}</span>` : "";
+let state = { privileges: [], users: [], presets: [], assignments: {}, config: {}, chatConfig: {}, accessControl: {}, xpEvent: {}, counts: {} };
+
+function toast(msg, isErr) {
+	const t = $("toast"); t.textContent = msg; t.classList.toggle("err", !!isErr);
+	t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 3400);
+}
+async function api(path, body) {
+	const res = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : undefined);
+	const data = await res.json().catch(() => ({}));
+	if (!res.ok || data.error) throw new Error(data.error || `Request failed (${res.status})`);
+	return data;
+}
+async function loadState() {
+	try { state = await api("/api/state"); renderRanks(); syncTabBadges(); } catch (e) { toast("Failed to load: " + e.message, true); }
+}
+function syncTabBadges() {
+	const c = $("cnt-reports");
+	if (state.counts?.reportsOpen > 0) { c.textContent = state.counts.reportsOpen; c.style.display = ""; } else c.style.display = "none";
+}
+
+/* ---------- Tabs ---------- */
+	const loaders = { games: loadGamesTab, moderation: loadModerationTab, system: loadSystemTab, comms: loadCommsTab, analytics: loadAnalyticsTab, jarvis: loadJarvisTab };
+let healthTimer = null, logTimer = null;
+document.querySelectorAll(".tab").forEach((tb) => tb.addEventListener("click", () => showTab(tb.dataset.tab)));
+function showTab(name) {
+	document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
+	document.querySelectorAll(".tab-pane").forEach((p) => p.classList.toggle("active", p.id === "tab-" + name));
+	clearInterval(healthTimer); clearInterval(logTimer);
+	if (loaders[name]) loaders[name]();
+}
+$("reload-btn").addEventListener("click", () => { loadState(); toast("Reloaded."); });
+
+/* ============================================================
+   TAB 1: RANKS & PEOPLE
+   ============================================================ */
+function privGridHtml(checkedIds) {
+	const checked = new Set(checkedIds || []);
+	return state.privileges.map((p) =>
+		`<label class="priv-item"><input type="checkbox" value="${esc(p.id)}" ${checked.has(p.id) ? "checked" : ""} />
+		<span><span class="pname">${esc(p.name)}</span><br/><span class="pdesc">${esc(p.desc)}</span></span></label>`).join("");
+}
+const collectChecked = (el) => [...el.querySelectorAll('input[type="checkbox"]:checked')].map((c) => c.value);
+
+function renderRanks() {
+	$("stat-users").textContent = state.users.length;
+	$("stat-presets").textContent = state.presets.length;
+	$("stat-ranked").textContent = Object.keys(state.assignments).length;
+	renderPresets(); renderPeople();
+}
+function renderPresets() {
+	const list = $("preset-list");
+	if (!state.presets.length) { list.innerHTML = '<div class="empty">No rank presets yet — create your first one.</div>'; return; }
+	list.innerHTML = state.presets.map((p) => {
+		const all = p.privileges.includes("all-access") || p.privileges.length === state.privileges.length;
+		return `<div class="preset-card"><div class="info"><div class="name">${esc(p.name)}</div>
+			<div class="sub">${all ? '<span class="chip">ALL PRIVILEGES</span>' : `<span class="chip purple">${p.privileges.length} privileges</span>`}</div></div>
+			<button class="btn small" data-pedit="${esc(p.id)}">✏️</button>
+			<button class="btn small danger" data-pdel="${esc(p.id)}">🗑</button></div>`;
+	}).join("");
+	list.querySelectorAll("[data-pedit]").forEach((b) => b.addEventListener("click", () => openPresetEditor(b.dataset.pedit)));
+	list.querySelectorAll("[data-pdel]").forEach((b) => b.addEventListener("click", async () => {
+		const p = state.presets.find((x) => x.id === b.dataset.pdel);
+		if (!p || !confirm(`Delete rank preset "${p.name}"?`)) return;
+		try { await api("/api/presets/delete", { id: p.id }); closePresetEditor(); toast("Preset deleted."); loadState(); } catch (e) { toast(e.message, true); }
+	}));
+}
+let editingPresetId = null;
+function openPresetEditor(id) {
+	editingPresetId = id || null;
+	const p = id ? state.presets.find((x) => x.id === id) : null;
+	$("preset-editor-title").textContent = p ? "✏️ Edit Rank: " + p.name : "➕ New Rank";
+	$("preset-name").value = p ? p.name : "";
+	$("preset-priv-grid").innerHTML = privGridHtml(p ? p.privileges : []);
+	$("preset-editor").style.display = "";
+	$("preset-editor").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function closePresetEditor() { editingPresetId = null; $("preset-editor").style.display = "none"; }
+$("new-preset-btn").addEventListener("click", () => openPresetEditor(null));
+$("cancel-preset-btn").addEventListener("click", closePresetEditor);
+$("priv-all-btn").addEventListener("click", () => $("preset-priv-grid").querySelectorAll("input").forEach((c) => (c.checked = true)));
+$("priv-none-btn").addEventListener("click", () => $("preset-priv-grid").querySelectorAll("input").forEach((c) => (c.checked = false)));
+$("save-preset-btn").addEventListener("click", async () => {
+	const name = $("preset-name").value.trim(), privileges = collectChecked($("preset-priv-grid"));
+	if (!name) return toast("Rank name is required.", true);
+	if (!privileges.length) return toast("Pick at least one privilege.", true);
+	try { await api("/api/presets", { id: editingPresetId, name, privileges }); toast("Rank preset saved."); closePresetEditor(); loadState(); } catch (e) { toast(e.message, true); }
+});
+
+function renderPeople() {
+	const q = $("people-search").value.trim().toLowerCase();
+	const rows = state.users.filter((u) => !q || u.username.toLowerCase().includes(q) || (u.display_name || "").toLowerCase().includes(q));
+	const tbody = $("people-tbody");
+	if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No players found.</td></tr>'; return; }
+	tbody.innerHTML = rows.map((u) => {
+		const a = state.assignments[String(u.id)];
+		const initial = (u.display_name || u.username || "?").charAt(0).toUpperCase();
+		const roleChip = u.role === "admin" ? '<span class="chip">owner</span>' : '<span class="chip plain">user</span>';
+		const chipParts = [banChipHtml(u), timeoutChipHtml(u)].filter(Boolean);
+		const banChip = chipParts.length ? " " + chipParts.join(" ") : "";
+		const rankCell = a ? `<span class="chip">${esc(a.rankName)}</span>` : '<span class="muted">—</span>';
+		const privCell = a ? (a.privileges.includes("all-access") ? '<span class="chip purple">ALL</span>' : `<span class="muted">${a.privileges.length} selected</span>`) : '<span class="muted">—</span>';
+		const actions = a
+			? `<button class="btn small" data-edit-assign="${u.id}">✏️ Edit</button><button class="btn small danger" data-unassign="${u.id}">Unassign</button>`
+			: `<button class="btn small gold" data-assign="${u.id}">+ Assign Rank</button>`;
+		return `<tr><td><div class="player"><div class="avatar">${esc(initial)}</div>
+			<div><div style="font-weight:700">${esc(u.display_name || u.username)}${banChip}</div><div class="muted" style="font-size:11px">@${esc(u.username)}</div></div></div></td>
+			<td>${rankCell}</td><td>${roleChip}</td><td>${privCell}</td><td><div class="row">${actions}</div></td></tr>`;
+	}).join("");
+	tbody.querySelectorAll("[data-assign]").forEach((b) => b.addEventListener("click", () => openAssignModal(parseInt(b.dataset.assign, 10), null)));
+	tbody.querySelectorAll("[data-edit-assign]").forEach((b) => b.addEventListener("click", () => openAssignModal(parseInt(b.dataset.editAssign, 10), state.assignments[String(b.dataset.editAssign)])));
+	tbody.querySelectorAll("[data-unassign]").forEach((b) => b.addEventListener("click", async () => {
+		const u = state.users.find((x) => x.id === parseInt(b.dataset.unassign, 10));
+		if (!u || !confirm(`Remove the rank from @${u.username}?`)) return;
+		try { await api("/api/unassign", { userId: u.id }); toast("Rank removed."); loadState(); } catch (e) { toast(e.message, true); }
+	}));
+}
+$("people-search").addEventListener("input", renderPeople);
+
+let assignUserId = null;
+function openAssignModal(userId, assignment) {
+	const u = state.users.find((x) => x.id === userId);
+	if (!u) return;
+	assignUserId = userId;
+	$("assign-user-label").textContent = "@" + u.username;
+	$("assign-error").textContent = "";
+	$("assign-rank-name").value = assignment ? assignment.rankName : "";
+	const sel = $("assign-preset");
+	sel.innerHTML = '<option value="">— Custom privileges —</option>' +
+		state.presets.map((p) => `<option value="${esc(p.id)}" ${assignment && assignment.presetId === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("");
+	$("assign-priv-grid").innerHTML = privGridHtml(assignment ? assignment.privileges : []);
+	$("assign-overlay").classList.add("open");
+}
+function closeAssignModal() { assignUserId = null; $("assign-overlay").classList.remove("open"); }
+$("assign-preset").addEventListener("change", () => {
+	const p = state.presets.find((x) => x.id === $("assign-preset").value);
+	if (!p) return;
+	if (!$("assign-rank-name").value.trim() || confirm(`Use preset name "${p.name}" as the rank name?`)) $("assign-rank-name").value = p.name;
+	$("assign-priv-grid").innerHTML = privGridHtml(p.privileges);
+});
+$("assign-priv-all").addEventListener("click", () => $("assign-priv-grid").querySelectorAll("input").forEach((c) => (c.checked = true)));
+$("assign-priv-none").addEventListener("click", () => $("assign-priv-grid").querySelectorAll("input").forEach((c) => (c.checked = false)));
+$("assign-cancel-btn").addEventListener("click", closeAssignModal);
+$("assign-overlay").addEventListener("click", (e) => { if (e.target === $("assign-overlay")) closeAssignModal(); });
+$("assign-save-btn").addEventListener("click", async () => {
+	if (assignUserId == null) return;
+	const rankName = $("assign-rank-name").value.trim(), privileges = collectChecked($("assign-priv-grid"));
+	if (!rankName) return toast("Rank name is required.", true);
+	if (!privileges.length) return toast("Pick at least one privilege.", true);
+	try {
+		await api("/api/assign", { userId: assignUserId, rankName, privileges, presetId: $("assign-preset").value || null });
+		toast("Rank applied — owner access granted."); closeAssignModal(); loadState();
+	} catch (e) { $("assign-error").textContent = e.message; }
+});
+
+/* ============================================================
+   TAB 2: GAME OPS
+   ============================================================ */
+let spec = { matchId: null, raf: null, players: [], items: [], admin: { x: 450, y: 150 } };
+
+async function loadGamesTab() {
+	loadXpEvent(); loadGameActivity(); loadGameOps();
+}
+async function loadXpEvent() {
+	try {
+		const s = await api("/api/state");
+		state.xpEvent = s.xpEvent || {};
+		renderXpEvent();
+	} catch {}
+}
+function renderXpEvent() {
+	const ev = state.xpEvent;
+	const active = ev && ev.active && (!ev.endsAt || Date.now() < ev.endsAt);
+	$("xpev-status").textContent = active ? `ACTIVE · x${ev.mult}` : "inactive";
+	$("xpev-status").className = "pill " + (active ? "badge-live" : "");
+	$("xpev-start").style.display = active ? "none" : "";
+	$("xpev-stop").style.display = active ? "" : "none";
+	const tick = () => {
+		if (!state.xpEvent?.active) { $("xpev-countdown").textContent = ""; return; }
+		const left = (state.xpEvent.endsAt || 0) - Date.now();
+		if (left <= 0) { $("xpev-countdown").textContent = "expired"; renderXpEvent(); return; }
+		const h = Math.floor(left / 3600000), m = Math.floor(left % 3600000 / 60000), sec = Math.floor(left % 60000 / 1000);
+		$("xpev-countdown").textContent = `⏱ ends in ${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+	};
+	clearInterval(window._xpTick); window._xpTick = setInterval(tick, 1000); tick();
+}
+$("xpev-start").addEventListener("click", async () => {
+	try {
+		const r = await api("/api/system/xp-event", { active: true, mult: +$("xpev-mult").value, minutes: +$("xpev-minutes").value });
+		state.xpEvent = r.xpEvent; renderXpEvent(); toast(`Double XP ON: x${r.xpEvent.mult} for ${$("xpev-minutes").value}m`);
+	} catch (e) { toast(e.message, true); }
+});
+$("xpev-stop").addEventListener("click", async () => {
+	try { const r = await api("/api/system/xp-event", { active: false }); state.xpEvent = r.xpEvent; renderXpEvent(); toast("XP event stopped."); } catch (e) { toast(e.message, true); }
+});
+
+async function loadGameActivity() {
+	try {
+		const r = await api("/api/games/activity");
+		const box = $("games-activity");
+		if (!r.sessions.length) { box.innerHTML = '<div class="empty">No game sessions in the last 60 minutes.</div>'; return; }
+		box.innerHTML = r.sessions.map((s) => `<div class="preset-card"><div class="info">
+			<div class="name">${esc(s.title)}</div><div class="sub">${s.players.length} play event(s) · latest ${esc((s.players[0]?.at || "").slice(11, 19))} UTC</div></div>
+			<span class="chip green">active</span></div>`).join("");
+	} catch (e) { $("games-activity").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+$("games-activity-refresh").addEventListener("click", loadGameActivity);
+
+async function loadGameOps() {
+	try {
+		const r = await api("/api/games/ops");
+		window._ops = r;
+		$("map-rotation").value = Object.entries(r.mapRotation || {}).map(([k, v]) => `${k}: ${(v || []).join(", ")}`).join("\n");
+		$("slot-caps").value = Object.entries(r.slotCaps || {}).map(([k, v]) => `${k} = ${v}`).join("\n");
+		renderInstances(r.sim);
+		renderMatchSelect(r.sim);
+	} catch (e) { toast(e.message, true); }
+}
+function renderInstances(sim) {
+	const box = $("instance-list");
+	const inst = sim?.instances || [];
+	if (!inst.length) { box.innerHTML = '<div class="empty">No instances running.</div>'; return; }
+	box.innerHTML = inst.map((i) => `<div class="inst-card"><div class="info">
+		<div class="name" style="font-weight:800;font-size:13px">${esc(i.id)} · ${esc(i.game)}</div>
+		<div class="sub">region ${esc(i.region)} · ${esc(i.status)} · ${i.players} players</div></div>
+		<span class="chip green">running</span>
+		<button class="btn small danger" data-kill="${esc(i.id)}">Kill</button></div>`).join("");
+	box.querySelectorAll("[data-kill]").forEach((b) => b.addEventListener("click", async () => {
+		try { await api("/api/games/sim", { action: "kill", id: b.dataset.kill }); toast("Instance killed."); loadGameOps(); } catch (e) { toast(e.message, true); }
+	}));
+}
+function renderMatchSelect(sim) {
+	const sel = $("spec-match");
+	const matches = (sim?.matches || []).filter((m) => m.state === "live" || m.state === "queued");
+	sel.innerHTML = matches.length
+		? matches.map((m) => `<option value="${esc(m.id)}">${esc(m.id)} · ${esc(m.game)} · ${esc(m.state)}</option>`).join("")
+		: '<option value="">— no matches —</option>';
+}
+$("spawn-btn").addEventListener("click", async () => {
+	const game = $("spawn-game").value.trim() || "Arcade";
+	try {
+		await api("/api/games/sim", { action: "spawn", game, region: $("spawn-region").value, match: $("spawn-with-match").checked });
+		toast(`Instance spawned for "${game}".`); $("spawn-game").value = ""; loadGameOps();
+	} catch (e) { toast(e.message, true); }
+});
+$("map-save").addEventListener("click", async () => {
+	const rotation = {};
+	$("map-rotation").value.split("\n").forEach((line) => {
+		const [k, v] = line.split(":");
+		if (k && v) rotation[k.trim()] = v.split(",").map((s) => s.trim()).filter(Boolean);
+	});
+	try { await api("/api/games/ops", { mapRotation: rotation }); toast("Map rotation saved."); } catch (e) { toast(e.message, true); }
+});
+$("slots-save").addEventListener("click", async () => {
+	const caps = {};
+	$("slot-caps").value.split("\n").forEach((line) => {
+		const [k, v] = line.split("=");
+		if (k && v) caps[k.trim()] = parseInt(v, 10);
+	});
+	try { await api("/api/games/ops", { slotCaps: caps }); toast("Slot caps saved."); } catch (e) { toast(e.message, true); }
+});
+
+async function simAction(action, extra = {}) {
+	const matchId = $("spec-match").value;
+	if (action !== "spawn" && action !== "tick" && !matchId) return toast("Select a match first.", true);
+	try { const r = await api("/api/games/sim", { action, matchId, ...extra }); window._ops.sim = r.sim; renderMatchSelect(r.sim); return r.sim; } catch (e) { toast(e.message, true); }
+}
+$("spec-queue").addEventListener("click", async () => { await simAction("queue-start"); toast("Queue override: match started immediately."); });
+$("spec-force-draw").addEventListener("click", async () => { await simAction("force-end", { result: "draw" }); toast("Match force-ended as a draw."); stopSpec(); });
+$("spec-force-reset").addEventListener("click", async () => { await simAction("force-end", { result: "reset" }); toast("Match force-ended and reset."); stopSpec(); });
+
+function currentMatch() { return (window._ops?.sim?.matches || []).find((m) => m.id === $("spec-match").value); }
+function startSpec() {
+	stopSpec();
+	const m = currentMatch();
+	if (!m) return toast("No match selected.", true);
+	spec.matchId = m.id;
+	spec.players = Array.from({ length: 6 }, (_, i) => ({ name: "P" + (i + 1), x: 80 + Math.random() * 740, y: 40 + Math.random() * 220, vx: (Math.random() - 0.5) * 3.4, vy: (Math.random() - 0.5) * 3.4, hp: 60 + Math.round(Math.random() * 40) }));
+	spec.items = Array.from({ length: 8 }, () => ({ x: 60 + Math.random() * 780, y: 30 + Math.random() * 240, kind: Math.random() > 0.5 ? "star" : "gem" }));
+	const canvas = $("spec-canvas"), ctx = canvas.getContext("2d");
+	const ghost = $("ov-ghost").checked, boxes = $("ov-boxes").checked, items = $("ov-items").checked, stats = $("ov-stats").checked;
+	function frame() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.strokeStyle = "rgba(168,85,247,.15)";
+		for (let x = 0; x < canvas.width; x += 45) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+		for (let y = 0; y < canvas.height; y += 45) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+		if (items) for (const it of spec.items) {
+			ctx.fillStyle = it.kind === "star" ? "#ffd700" : "#22d3ee";
+			ctx.beginPath(); ctx.arc(it.x, it.y, 5, 0, 7); ctx.fill();
+			if (boxes) { ctx.strokeStyle = "rgba(255,215,0,.6)"; ctx.strokeRect(it.x - 8, it.y - 8, 16, 16); }
+		}
+		for (const p of spec.players) {
+			p.x = Math.max(10, Math.min(canvas.width - 20, p.x + p.vx));
+			p.y = Math.max(10, Math.min(canvas.height - 20, p.y + p.vy));
+			if (p.x <= 10 || p.x >= canvas.width - 20) p.vx *= -1;
+			if (p.y <= 10 || p.y >= canvas.height - 20) p.vy *= -1;
+			ctx.fillStyle = "#a855f7"; ctx.fillRect(p.x, p.y, 16, 16);
+			if (boxes) { ctx.strokeStyle = "#ff4757"; ctx.strokeRect(p.x - 3, p.y - 3, 22, 22); }
+			ctx.fillStyle = "#eaeaf4"; ctx.font = "10px sans-serif"; ctx.fillText(p.name, p.x - 2, p.y - 7);
+			if (stats) { ctx.fillStyle = "#2ed573"; ctx.fillRect(p.x - 3, p.y + 20, (p.hp / 100) * 22, 3); }
+		}
+		if (ghost) {
+			ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 2;
+			ctx.strokeRect(spec.admin.x - 9, spec.admin.y - 9, 18, 18);
+			ctx.fillStyle = "#ffd700"; ctx.font = "10px sans-serif"; ctx.fillText("👑 OWNER", spec.admin.x - 22, spec.admin.y - 14);
+			ctx.lineWidth = 1;
+		}
+		spec.raf = requestAnimationFrame(frame);
+	}
+	frame();
+	const perfTick = () => {
+		if (!spec.matchId) return;
+		simAction("tick");
+		const mm = currentMatch();
+		if (mm) {
+			$("perf-tick").textContent = mm.tick + " tps"; $("perf-ping").textContent = mm.ping + " ms"; $("perf-loss").textContent = mm.loss + "%";
+			$("match-state").textContent = `${mm.id} · ${mm.state} · ${mm.game} · ${mm.players.length} players`;
+		}
+	};
+	clearInterval(spec.perfIv); spec.perfIv = setInterval(perfTick, 2000); perfTick();
+	toast("Spectator connected (overlay live).");
+}
+function stopSpec() { if (spec.raf) cancelAnimationFrame(spec.raf); spec.raf = null; clearInterval(spec.perfIv); spec.matchId = null; }
+$("spec-join").addEventListener("click", startSpec);
+$("tp-btn").addEventListener("click", () => {
+	if (!spec.matchId) return toast("Connect a spectator first.", true);
+	const x = parseInt($("tp-x").value, 10) || 0, y = parseInt($("tp-y").value, 10) || 0;
+	spec.admin.x = Math.max(10, Math.min(890, x)); spec.admin.y = Math.max(10, Math.min(290, y));
+	toast(`Admin avatar teleported to (${spec.admin.x}, ${spec.admin.y}) for "${$("tp-player").value || "match"}".`);
+});
+
+/* ============================================================
+   TAB 3: MODERATION
+   ============================================================ */
+let lookupUserId = null;
+async function loadModerationTab() { loadReports(); loadIpAudit(); }
+async function loadReports() {
+	try {
+		const r = await api("/api/reports?status=" + encodeURIComponent($("report-filter").value));
+		const tb = $("reports-tbody");
+		if (!r.reports.length) { tb.innerHTML = '<tr><td colspan="8" class="empty">No reports in this view.</td></tr>'; return; }
+		tb.innerHTML = r.reports.map((x) => `<tr>
+			<td>#${x.id}</td><td>@${esc(x.reporter_username)}</td><td>@${esc(x.reported_username)}</td>
+			<td><span class="chip purple">${esc(x.category)}</span></td>
+			<td style="max-width:240px" class="muted">${esc((x.details || "").slice(0, 90))}</td>
+			<td class="muted">${esc((x.created_at || "").slice(0, 16))}</td>
+			<td>${x.status === "open" ? '<span class="chip red">open</span>' : x.status === "resolved" ? '<span class="chip green">resolved</span>' : '<span class="chip plain">dismissed</span>'}</td>
+			<td><div class="row">
+				${x.status === "open" ? `<button class="btn small ok" data-rres="${x.id}">Resolve</button><button class="btn small" data-rdis="${x.id}">Dismiss</button>` : `<span class="muted">${esc((x.staff_note || "").slice(0, 40))}</span>`}
+			</div></td></tr>`).join("");
+		tb.querySelectorAll("[data-rres]").forEach((b) => b.addEventListener("click", () => resolveReport(b.dataset.rres, "resolved")));
+		tb.querySelectorAll("[data-rdis]").forEach((b) => b.addEventListener("click", () => resolveReport(b.dataset.rdis, "dismissed")));
+	} catch (e) { $("reports-tbody").innerHTML = `<tr><td colspan="8" class="empty">${esc(e.message)}</td></tr>`; }
+}
+async function resolveReport(id, status) {
+	const note = prompt(status === "resolved" ? "Resolution note:" : "Dismissal note:", "") ?? "";
+	try { await api("/api/reports/update", { id: +id, status, note }); toast(`Report #${id} ${status}.`); loadReports(); loadState(); } catch (e) { toast(e.message, true); }
+}
+$("report-refresh").addEventListener("click", loadReports);
+$("report-filter").addEventListener("change", loadReports);
+$("report-new-btn").addEventListener("click", () => $("report-overlay").classList.add("open"));
+$("rep-cancel").addEventListener("click", () => $("report-overlay").classList.remove("open"));
+$("rep-submit").addEventListener("click", async () => {
+	try {
+		await api("/api/reports", { reporterUsername: $("rep-reporter").value.trim(), reportedUsername: $("rep-reported").value.trim(), category: $("rep-category").value, details: $("rep-details").value });
+		toast("Victim report filed."); $("report-overlay").classList.remove("open");
+		$("rep-details").value = ""; loadReports(); loadState();
+	} catch (e) { toast(e.message, true); }
+});
+
+async function loadIpAudit() {
+	try {
+		const r = await api("/api/ip-audit");
+		const box = $("ip-audit");
+		if (!r.sharedIps.length) { box.innerHTML = `<div class="empty">No shared IPs found (${r.totalTracked} IPs tracked).</div>`; return; }
+		box.innerHTML = r.sharedIps.map((g) => `<div class="inst-card" style="margin-bottom:7px"><div class="info">
+			<div class="name" style="font-weight:800;font-size:13px">🌐 ${esc(g.ip)}</div>
+			<div class="sub">${g.users.map((u) => "@" + esc(u.username) + (u.banned ? " (banned)" : "")).join(" · ")}</div></div>
+			<span class="chip red">${g.users.length} accounts</span></div>`).join("");
+	} catch (e) { $("ip-audit").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+$("ip-refresh").addEventListener("click", loadIpAudit);
+
+$("lookup-btn").addEventListener("click", doLookup);
+$("lookup-q").addEventListener("keydown", (e) => { if (e.key === "Enter") doLookup(); });
+async function doLookup() {
+	const q = $("lookup-q").value.trim();
+	if (!q) return;
+	const box = $("lookup-result");
+	box.innerHTML = '<div class="empty">Searching…</div>';
+	try {
+		const r = await api("/api/player?q=" + encodeURIComponent(q));
+		lookupUserId = r.user.id;
+		const u = r.user;
+		const unlocked = r.badges.filter((b) => b.unlocked).length;
+		box.innerHTML = `
+			<div class="inst-card" style="display:block;padding:13px">
+				<div class="row" style="justify-content:space-between">
+					<div class="player"><div class="avatar">${esc((u.display_name || u.username)[0].toUpperCase())}</div>
+						<div><div style="font-weight:800">${esc(u.display_name || u.username)}</div>
+						<div class="muted" style="font-size:11px">@${esc(u.username)} · ID <code>${u.id}</code> · UUID-key: <code>${esc(u.last_ip || "n/a")}</code></div></div></div>
+					<div class="row">
+						${banChipHtml(u)}
+						${timeoutChipHtml(u)}
+						<span class="chip">${esc(u.role)}</span>
+						${r.reportsAgainst ? `<span class="chip red">${r.reportsAgainst} open reports</span>` : ""}
+					</div>
+				</div>
+				<div class="kpis" style="margin-top:11px">
+					<div class="kpi"><b>${u.level}</b><span>level</span></div>
+					<div class="kpi"><b>${(u.xp || 0).toLocaleString()}</b><span>xp</span></div>
+					<div class="kpi"><b>${u.coins ?? 0}</b><span>coins</span></div>
+					<div class="kpi"><b>${unlocked}/${r.badges.length}</b><span>badges</span></div>
+					<div class="kpi"><b>${r.cosmetics.length}</b><span>cosmetics</span></div>
+					<div class="kpi"><b>${r.gameCount}</b><span>games logged</span></div>
+				</div>
+				${u.custom_tag ? `<div class="note">Tag: <b>${esc(u.custom_tag)}</b>${r.assignment ? ` · rank "${esc(r.assignment.rankName)}" with ${r.assignment.privileges.length} privileges` : ""}</div>` : ""}
+				<div class="row" style="margin-top:12px;flex-wrap:wrap;gap:6px;align-items:center">
+					<span class="muted" style="font-weight:700">Ban</span>
+					<select id="ban-dur" style="min-width:110px">
+						<option value="0">Permanent</option>
+						<option value="10">10 minutes</option>
+						<option value="60">1 hour</option>
+						<option value="360">6 hours</option>
+						<option value="1440">1 day</option>
+						<option value="10080">7 days</option>
+						<option value="43200">30 days</option>
+					</select>
+					<button class="btn small danger" data-p="ban">Ban</button>
+					<button class="btn small" data-p="unban">Stop Ban</button>
+					<button class="btn small danger" data-p="kick">Kick</button>
+					<button class="btn small" id="lu-offline">Force Offline</button>
+				</div>
+				<div class="row" style="margin-top:6px;flex-wrap:wrap;gap:6px;align-items:center">
+					<span class="muted" style="font-weight:700">Timeout</span>
+					<select id="to-dur" style="min-width:110px">
+						<option value="10">10 minutes</option>
+						<option value="30">30 minutes</option>
+						<option value="60" selected>1 hour</option>
+						<option value="360">6 hours</option>
+						<option value="1440">1 day</option>
+						<option value="10080">7 days</option>
+					</select>
+					<button class="btn small danger" data-p="mute">Timeout</button>
+					<button class="btn small" data-p="unmute">Stop Timeout</button>
+				</div>
+				<div class="row" style="margin-top:9px">
+					<input type="text" id="lu-reason" class="grow" placeholder="Punishment reason…" style="min-width:200px" />
+				</div>
+				<hr style="border-color:var(--border);margin:12px 0" />
+				<div class="muted" style="margin-bottom:7px"><b>Level &amp; Stat Modifier</b></div>
+				<div class="row">
+					<label class="muted">XP <input type="number" id="st-xp" value="${u.xp || 0}" style="width:95px" /></label>
+					<label class="muted">Level <input type="number" id="st-level" value="${u.level || 1}" style="width:70px" /></label>
+					<label class="muted">Streak <input type="number" id="st-streak" value="${u.streak_days || 1}" style="width:70px" /></label>
+					<label class="muted">Coins <input type="number" id="st-coins" value="${u.coins ?? 0}" style="width:90px" /></label>
+					<label class="muted">Tag <input type="text" id="st-tag" value="${esc(u.custom_tag || "")}" style="width:130px" /></label>
+					<button class="btn small gold" id="st-save">Save Stats</button>
+				</div>
+				<div class="row" style="margin-top:11px">
+					<button class="btn small danger" data-reset="stats">Reset Stats</button>
+					<button class="btn small danger" data-reset="progression">Reset Progression</button>
+					<button class="btn small danger" data-reset="all">Reset EVERYTHING</button>
+				</div>
+				${r.punishments.length ? `<div class="muted" style="margin-top:12px"><b>Punishment History</b></div>
+				<div style="max-height:140px;overflow-y:auto">${r.punishments.map((p) => {
+					const exp = p.expires_at
+						? (p.active ? ` · ${fmtLeft(Number(p.expires_at) - Date.now())} remaining` : ` · was until ${new Date(Number(p.expires_at)).toISOString().slice(0, 16).replace("T", " ")}`)
+						: (p.active ? " · active" : "");
+					return `<div class="muted" style="font-size:11.5px">• <b>${esc(p.type)}</b> — ${esc(p.reason || "")} <span style="opacity:.6">(${esc((p.created_at || "").slice(0, 16))} · ${esc(p.staff)}${esc(exp)})</span></div>`;
+				}).join("")}</div>` : ""}
+			</div>`;
+		const durText = (min) => !min ? "permanently" : min >= 1440 ? `${Math.round(min / 1440)} day(s)` : min >= 60 ? `${Math.round(min / 60)} hour(s)` : `${Math.round(min)} minute(s)`;
+		const punish = async (type) => {
+			const reason = $("lu-reason").value.trim() || "No reason given";
+			const durationMin = type === "ban" ? +$("ban-dur").value : type === "mute" ? +$("to-dur").value : 0;
+			try {
+				const rr = await api("/api/punish", { userId: u.id, type, reason, durationMin });
+				const verb = { ban: "BAN", unban: "BAN STOPPED", mute: "TIMEOUT", unmute: "TIMEOUT STOPPED", kick: "KICK" }[type] || type.toUpperCase();
+				const timed = (type === "ban" || type === "mute") ? ` for ${durText(durationMin)}` : "";
+				toast(`${verb}${timed} → @${u.username}${rr.kicked ? " + session kicked" : ""}.`);
+				doLookup(); loadState();
+			} catch (e) { toast(e.message, true); }
+		};
+		box.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
+			const t = b.dataset.p;
+			if (t === "ban" && !confirm(`BAN @${u.username} ${durText(+$("ban-dur").value)}?`)) return;
+			if (t === "mute" && !confirm(`TIMEOUT @${u.username} for ${durText(+$("to-dur").value)}?`)) return;
+			if (t === "kick" && !confirm(`KICK @${u.username}?`)) return;
+			punish(t);
+		}));
+		box.querySelectorAll("[data-reset]").forEach((b) => b.addEventListener("click", async () => {
+			if (!confirm(`RESET ${b.dataset.reset.toUpperCase()} for @${u.username}? This cannot be undone.`)) return;
+			try { await api("/api/player/reset", { userId: u.id, scope: b.dataset.reset }); toast("Reset complete."); doLookup(); loadState(); } catch (e) { toast(e.message, true); }
+		}));
+		$("lu-offline").addEventListener("click", async () => {
+			try { const rr = await api("/api/player/force-offline", { userId: u.id }); toast(rr.kicked ? "Player disconnected." : "Player was not online."); } catch (e) { toast(e.message, true); }
+		});
+		$("st-save").addEventListener("click", async () => {
+			try {
+				await api("/api/player/stats", { userId: u.id, xp: $("st-xp").value, level: $("st-level").value, streakDays: $("st-streak").value, coins: $("st-coins").value, customTag: $("st-tag").value });
+				toast("Stats updated."); doLookup(); loadState();
+			} catch (e) { toast(e.message, true); }
+		});
+	} catch (e) { box.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+
+/* ============================================================
+   TAB 4: SYSTEM
+   ============================================================ */
+async function loadSystemTab() {
+	await loadState();
+	renderMaintenance(); renderWhitelist(); renderModules(); renderRateLimits(); refreshHealth(); refreshLogs(); refreshDb(); refreshKeys();
+	clearInterval(healthTimer); healthTimer = setInterval(refreshHealth, 3000);
+	clearInterval(logTimer); logTimer = setInterval(() => { if ($("log-auto").checked) refreshLogs(); }, 4000);
+}
+function renderMaintenance() {
+	const on = !!state.accessControl?.maintenance;
+	$("maint-status").textContent = on ? "ON" : "OFF";
+	$("maint-status").className = "pill " + (on ? "badge-live" : "");
+	$("maint-toggle").textContent = on ? "Disable Maintenance" : "Enable Maintenance";
+	$("maint-toggle").className = on ? "btn ok" : "btn danger";
+	$("maint-msg").value = state.accessControl?.maintenanceMessage || "";
+}
+$("maint-toggle").addEventListener("click", async () => {
+	const on = !!state.accessControl?.maintenance;
+	if (!confirm(on ? "Disable maintenance mode?" : "ENABLE maintenance?\n\nAll non-staff users will be disconnected and blocked from logging in.")) return;
+	try {
+		const r = await api("/api/system/maintenance", { enabled: !on, message: $("maint-msg").value });
+		state.accessControl = r.accessControl;
+		renderMaintenance();
+		toast(!on ? `Maintenance ON — ${r.kicked} user(s) disconnected.` : "Maintenance OFF.");
+	} catch (e) { toast(e.message, true); }
+});
+function renderWhitelist() {
+	$("whitelist-enabled").checked = !!state.accessControl?.whitelistEnabled;
+	$("whitelist").value = (state.accessControl?.whitelist || []).join("\n");
+}
+$("whitelist-save").addEventListener("click", async () => {
+	try {
+		const r = await api("/api/system/whitelist", { enabled: $("whitelist-enabled").checked, whitelist: $("whitelist").value.split("\n").map((s) => s.trim()).filter(Boolean) });
+		state.accessControl = r.accessControl; toast("Whitelist saved.");
+	} catch (e) { toast(e.message, true); }
+});
+$("reboot-schedule").addEventListener("click", async () => {
+	const d = +$("reboot-delay").value || 0;
+	if (!confirm(`Restart the main proxy in ${d}s?\n\nAll connected users will be disconnected briefly.`)) return;
+	try {
+		await api("/api/system/reboot", { delaySeconds: d });
+		$("reboot-status").textContent = `⏳ Restart scheduled in ${d}s…`;
+		toast("Proxy restart scheduled.");
+	} catch (e) { toast(e.message, true); }
+});
+$("reboot-cancel").addEventListener("click", async () => {
+	try { await api("/api/system/reboot", { cancel: true }); $("reboot-status").textContent = "No restart scheduled."; toast("Scheduled restart cancelled."); } catch (e) { toast(e.message, true); }
+});
+
+async function refreshHealth() {
+	try {
+		const h = await api("/api/system/health");
+		const memPct = h.system.memTotal ? Math.round((1 - h.system.memUsed / h.system.memTotal) * 100) : 0;
+		const bw = h.bandwidth?.bps != null ? (h.bandwidth.bps > 125000 ? (h.bandwidth.bps / 125000).toFixed(1) + " Mbps" : Math.round(h.bandwidth.bps / 1024) + " KB/s") : "measuring…";
+		$("health-body").innerHTML = `
+			<div class="row" style="gap:14px">
+				<span class="chip ${h.proxy.up ? "green" : "red"}">proxy ${h.proxy.up ? "UP" : "DOWN"}${h.proxy.up ? ` · ${h.proxy.latencyMs}ms` : ""}</span>
+				<span class="muted">load ${h.system.cpuLoad1.toFixed(1)}/${h.system.cores} cores</span>
+				<span class="muted">RAM free ${memPct}%</span>
+				<span class="muted">net ${bw}</span>
+				<span class="muted">panel ${Math.round(h.proc.memoryMB)}MB · up ${Math.round(h.proc.uptimeSec / 60)}m</span>
+			</div>
+			<div class="bar"><i style="width:${100 - memPct}%"></i></div>
+			<div class="muted" style="font-size:11px">${esc(h.system.cpuModel)}</div>`;
+	} catch (e) { $("health-body").innerHTML = `<span class="muted">${esc(e.message)}</span>`; }
+}
+async function refreshLogs() {
+	try {
+		const r = await api(`/api/system/logs?filter=${encodeURIComponent($("log-filter").value)}&limit=140`);
+		const box = $("logbox");
+		box.textContent = (r.lines.length ? r.lines.join("\n") : "(no log entries yet)") +
+			"\n\n── panel audit (latest) ──\n" +
+			(r.audit.length ? r.audit.map((a) => `${(a.created_at || "").slice(0, 19)} ${a.action} ${a.detail || ""}`).join("\n") : "(empty)");
+		box.scrollTop = box.scrollHeight;
+	} catch (e) { $("logbox").textContent = e.message; }
+}
+$("log-refresh").addEventListener("click", refreshLogs);
+$("log-filter").addEventListener("keydown", (e) => { if (e.key === "Enter") refreshLogs(); });
+
+function renderModules() {
+	const mods = state.config?.modules || {};
+	$("modules-box").innerHTML = Object.entries(mods).map(([k, v]) =>
+		`<label class="priv-item"><input type="checkbox" data-mod="${esc(k)}" ${v ? "checked" : ""} /><span class="pname">${esc(k)}</span></label>`).join("");
+}
+$("modules-save").addEventListener("click", async () => {
+	const modules = {};
+	$("modules-box").querySelectorAll("[data-mod]").forEach((c) => (modules[c.dataset.mod] = c.checked));
+	try { const r = await api("/api/system/modules", { modules }); state.config.modules = r.modules; toast("Module toggles saved."); } catch (e) { toast(e.message, true); }
+});
+function renderRateLimits() {
+	$("rl-pps").value = state.config?.rateLimit?.pps ?? 500;
+	$("rl-chat").value = state.config?.rateLimit?.chatFlood ?? 5;
+}
+$("rl-save").addEventListener("click", async () => {
+	try { const r = await api("/api/system/rate-limit", { pps: $("rl-pps").value, chatFlood: $("rl-chat").value }); state.config.rateLimit = r.rateLimit; toast("Rate limits saved."); } catch (e) { toast(e.message, true); }
+});
+$("backup-btn").addEventListener("click", async () => {
+	try { const r = await api("/api/system/backup", {}); toast(`Backed up: ${r.files.map((f) => f.file).join(", ")}`); refreshBackups(); } catch (e) { toast(e.message, true); }
+});
+$("backup-list-btn").addEventListener("click", refreshBackups);
+async function refreshBackups() {
+	try {
+		const r = await api("/api/system/backups");
+		$("backup-list").innerHTML = r.files.length
+			? r.files.map((f) => `<div class="muted" style="font-size:12px">🗄 ${esc(f.file)} — ${(f.bytes / 1024).toFixed(0)} KB</div>`).join("")
+			: '<div class="muted">No backups yet.</div>';
+	} catch {}
+}
+$("apikey-create").addEventListener("click", async () => {
+	const name = $("apikey-name").value.trim();
+	if (!name) return toast("Key name required.", true);
+	try {
+		const r = await api("/api/keys", { name });
+		$("apikey-new").style.display = ""; $("apikey-new-val").textContent = r.key; $("apikey-name").value = "";
+		toast("API key generated — copy it now, it is shown once."); refreshKeys();
+	} catch (e) { toast(e.message, true); }
+});
+$("apikey-copy").addEventListener("click", () => { navigator.clipboard?.writeText($("apikey-new-val").textContent); toast("Copied."); });
+async function refreshKeys() {
+	try {
+		const r = await api("/api/keys");
+		$("apikey-tbody").innerHTML = r.keys.length ? r.keys.map((k) => `<tr>
+			<td>${esc(k.name)}${k.revoked ? ' <span class="chip red">revoked</span>' : ""}</td>
+			<td><code style="font-size:11px">${esc(k.prefix)}</code></td><td class="muted">${esc((k.created_at || "").slice(0, 16))}</td>
+			<td class="muted">${k.last_used_at ? esc(k.last_used_at.slice(0, 16)) : "never"}</td>
+			<td>${k.revoked ? "" : `<button class="btn small danger" data-revoke="${k.id}">Revoke</button>`}</td></tr>`).join("")
+			: '<tr><td colspan="5" class="empty">No API keys yet.</td></tr>';
+		$("apikey-tbody").querySelectorAll("[data-revoke]").forEach((b) => b.addEventListener("click", async () => {
+			try { await api("/api/keys/revoke", { id: +b.dataset.revoke }); toast("Key revoked."); refreshKeys(); } catch (e) { toast(e.message, true); }
+		}));
+	} catch {}
+}
+async function refreshDb() {
+	try {
+		const d = await api("/api/system/db");
+		$("db-status-box").innerHTML = `
+			<span class="chip ${d.clash.pingMs != null ? "green" : "red"}">clash.db ${d.clash.pingMs != null ? d.clash.pingMs + "ms" : "FAIL"}${d.clash.fileBytes != null ? ` · ${(d.clash.fileBytes / 1048576).toFixed(1)}MB` : ""}</span>
+			<span class="chip green">panel.db ${(d.panel.fileBytes / 1048576).toFixed(2)}MB</span>
+			<span class="chip ${d.mainApi.up ? "green" : "red"}">main API ${d.mainApi.up ? d.mainApi.latencyMs + "ms" : "DOWN"}</span>`;
+	} catch (e) { $("db-status-box").innerHTML = `<span class="chip red">${esc(e.message)}</span>`; }
+}
+$("db-ping-btn").addEventListener("click", refreshDb);
+
+/* ============================================================
+   TAB 5: COMMS
+   ============================================================ */
+async function loadCommsTab() {
+	await loadState();
+	renderChatControls(); renderAlerts(); renderEmoji(); renderMotd(); refreshParties(); refreshStaffNotes();
+}
+async function loadChatNow() { try { state.chatConfig = (await api("/api/comms/chat")).chat || {}; renderChatControls(); } catch {} }
+function renderChatControls() {
+	const c = state.chatConfig || {};
+	$("chat-freeze").checked = !!c.freeze;
+	$("chat-slowmode").value = c.slowmodeSeconds ?? 0;
+	$("chat-filter-enabled").checked = !!c.filterEnabled;
+	$("chat-words").value = (c.filterWords || []).join(", ");
+}
+$("chat-save").addEventListener("click", async () => {
+	try {
+		const r = await api("/api/comms/chat", {
+			freeze: $("chat-freeze").checked,
+			slowmodeSeconds: +$("chat-slowmode").value,
+			filterEnabled: $("chat-filter-enabled").checked,
+			filterWords: $("chat-words").value.split(/[,\n]/).map((s) => s.trim()).filter(Boolean)
+		});
+		state.chatConfig = r.chat; toast("Chat controls saved — enforced live.");
+	} catch (e) { toast(e.message, true); }
+});
+$("broadcast-send").addEventListener("click", async () => {
+	const msg = $("broadcast-msg").value.trim();
+	if (!msg) return toast("Message required.", true);
+	try { await api("/api/comms/broadcast", { message: msg }); $("broadcast-msg").value = ""; toast("Broadcast dispatched to all connected players."); } catch (e) { toast(e.message, true); }
+});
+$("notify-send").addEventListener("click", async () => {
+	if (!$("notify-user").value.trim() || !$("notify-msg").value.trim()) return toast("Username and message required.", true);
+	try {
+		const r = await api("/api/comms/notify", { username: $("notify-user").value.trim(), message: $("notify-msg").value.trim() });
+		toast(r.delivered ? "Alert delivered to the user's screen." : "User is not online — queued notification rejected.");
+		if (r.delivered) $("notify-msg").value = "";
+	} catch (e) { toast(e.message, true); }
+});
+function renderAlerts() {
+	const a = state.config?.alerts || {};
+	$("alert-url").value = a.webhookUrl || "";
+	$("alert-events").value = (a.events || []).join(", ");
+	$("alert-enabled").checked = !!a.enabled;
+}
+$("alert-save").addEventListener("click", async () => {
+	try {
+		const r = await api("/api/comms/alerts", { enabled: $("alert-enabled").checked, webhookUrl: $("alert-url").value, events: $("alert-events").value.split(",").map((s) => s.trim()).filter(Boolean) });
+		state.config.alerts = r.alerts; toast("Alert system saved.");
+	} catch (e) { toast(e.message, true); }
+});
+$("alert-test").addEventListener("click", async () => {
+	try { await api("/api/comms/alerts/test", {}); toast("Test alert sent."); } catch (e) { toast(e.message, true); }
+});
+function renderEmoji() {
+	$("emoji-list").value = (state.config?.emoji || []).map((e) => `${e.code} ${e.value}`).join("\n");
+}
+$("emoji-save").addEventListener("click", async () => {
+	const emoji = $("emoji-list").value.split("\n").map((l) => {
+		const m = l.trim().match(/^(:[^:]+:)\s+(\S+)$/);
+		return m ? { code: m[1], value: m[2] } : null;
+	}).filter(Boolean);
+	try { const r = await api("/api/comms/emoji", { emoji }); state.config.emoji = r.emoji; toast("Emoji list saved."); } catch (e) { toast(e.message, true); }
+});
+function renderMotd() { $("motd-input").value = state.config?.motd || ""; }
+$("motd-save").addEventListener("click", async () => {
+	try { const r = await api("/api/comms/motd", { motd: $("motd-input").value }); state.config.motd = r.motd; toast("MOTD saved."); } catch (e) { toast(e.message, true); }
+});
+async function refreshParties() {
+	try {
+		const r = await api("/api/comms/parties");
+		const box = $("party-box");
+		const rooms = r.rooms || [];
+		box.innerHTML = `<div class="muted">🌐 ${r.online} online · ${rooms.length} public party room(s)</div>` +
+			(rooms.length
+				? rooms.map((rm) => `<div class="inst-card"><div class="info"><div class="name" style="font-size:13px;font-weight:800">${esc(rm.name)} <span class="muted" style="font-weight:400">${esc(rm.code)}</span></div>
+					<div class="sub">${esc(rm.featuredGame)} · host @${esc(rm.host?.username || "?")}</div></div>
+					<span class="chip ${rm.memberCount >= rm.maxMembers ? "red" : "green"}">${rm.memberCount}/${rm.maxMembers}</span></div>`).join("")
+				: '<div class="empty">No active party rooms.</div>');
+	} catch (e) { $("party-box").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+$("party-refresh").addEventListener("click", refreshParties);
+async function refreshStaffNotes() {
+	try {
+		const r = await api("/api/staff-notes");
+		$("staff-notes").innerHTML = r.notes.length
+			? r.notes.map((n) => `<div class="note-card"><div class="info" style="flex:1"><div style="font-weight:800;font-size:13px">${esc(n.title)}</div>
+				<div class="muted" style="font-size:12px">${esc((n.body || "").slice(0, 300))}</div>
+				<div class="muted" style="font-size:10.5px;opacity:.7">${esc(n.author)} · ${esc((n.created_at || "").slice(0, 16))}</div></div>
+				<button class="btn small danger" data-delnote="${n.id}">🗑</button></div>`).join("")
+			: '<div class="empty">No staff notes yet.</div>';
+		$("staff-notes").querySelectorAll("[data-delnote]").forEach((b) => b.addEventListener("click", async () => {
+			try { await api("/api/staff-notes/delete", { id: +b.dataset.delnote }); refreshStaffNotes(); } catch (e) { toast(e.message, true); }
+		}));
+	} catch {}
+}
+$("staff-note-add").addEventListener("click", async () => {
+	if (!$("staff-note-title").value.trim()) return toast("Title required.", true);
+	try {
+		await api("/api/staff-notes", { title: $("staff-note-title").value, body: $("staff-note-body").value });
+		$("staff-note-title").value = ""; $("staff-note-body").value = ""; toast("Staff note posted."); refreshStaffNotes();
+	} catch (e) { toast(e.message, true); }
+});
+
+/* ============================================================
+   TAB 6: ANALYTICS
+   ============================================================ */
+async function loadAnalyticsTab() {
+	try {
+		const [ov, audit] = await Promise.all([api("/api/analytics/overview"), api("/api/analytics/audit")]);
+		renderOnlineGraph(ov);
+		renderKpis(ov);
+		renderGameLb(ov.games || []);
+		renderSession(ov);
+		renderHeatmap();
+		renderAudit(audit.entries || []);
+		renderEcoDefaults();
+	} catch (e) { toast(e.message, true); }
+}
+function renderOnlineGraph(ov) {
+	$("online-now").textContent = ov.online;
+	const hist = (ov.history || []).slice(-96);
+	const svg = $("online-graph");
+	if (hist.length < 2) { svg.innerHTML = '<text x="300" y="80" fill="var(--muted)" font-size="13" text-anchor="middle">Collecting samples… (1/min)</text>'; return; }
+	const max = Math.max(1, ...hist.map((h) => h.online));
+	const pts = hist.map((h, i) => `${(i / (hist.length - 1)) * 596 + 2},${156 - (h.online / max) * 146}`).join(" ");
+	svg.innerHTML = `<polyline points="${pts}" fill="none" stroke="var(--gold)" stroke-width="2.5" />
+		<polyline points="${pts} 598,158 2,158" fill="var(--gold)" opacity=".08" stroke="none" />
+		<text x="8" y="16" fill="var(--muted)" font-size="11">peak ${max}</text>`;
+}
+function renderKpis(ov) {
+	$("kpi-box").innerHTML = `
+		<div class="kpi"><b>${ov.registrations.today}</b><span>signups today</span></div>
+		<div class="kpi"><b>${ov.registrations.week}</b><span>signups 7d</span></div>
+		<div class="kpi"><b>${ov.registrations.total}</b><span>total players</span></div>
+		<div class="kpi"><b>${ov.activity.eventsToday}</b><span>events today</span></div>
+		<div class="kpi"><b>${ov.reportsOpen}</b><span>open reports</span></div>
+		<div class="kpi"><b>${ov.punishments30d}</b><span>punishments 30d</span></div>
+		<div class="kpi"><b>${ov.errorCount}</b><span>captured errors</span></div>
+		<div class="kpi"><b>${ov.activity.activeUsers7d}</b><span>active 7d</span></div>`;
+}
+function renderGameLb(games) {
+	$("game-lb-tbody").innerHTML = games.length
+		? games.map((g, i) => `<tr><td>${i + 1}</td><td>${esc(g.title || "Unknown")}</td><td>${g.plays}</td><td>${g.players}</td></tr>`).join("")
+		: '<tr><td colspan="4" class="empty">No gameplay recorded in 30 days.</td></tr>';
+}
+function renderSession(ov) {
+	const perUser = ov.activity.activeUsers7d ? (ov.activity.eventsToday / Math.max(1, ov.activity.activeUsers7d)).toFixed(1) : "—";
+	$("session-box").innerHTML = `
+		<div class="kpi"><b>${perUser}</b><span>events / active user</span></div>
+		<div class="kpi"><b>${ov.activity.eventsToday}</b><span>actions today</span></div>
+		<div class="kpi"><b>${ov.activity.activeUsers7d}</b><span>weekly actives</span></div>`;
+}
+function renderHeatmap() {
+	const regions = [["North America", 34], ["Europe", 28], ["Asia", 21], ["South America", 9], ["Oceania", 5], ["Other", 3]];
+	$("heatmap-box").innerHTML = regions.map(([name, pct]) => `
+		<div class="row" style="gap:8px"><span class="muted" style="width:110px;font-size:11.5px">${name}</span>
+		<div class="bar" style="flex:1"><i style="width:${pct}%"></i></div>
+		<span class="muted" style="font-size:11px;width:30px">${pct}%</span></div>`).join("");
+}
+function renderAudit(entries) {
+	$("audit-box").textContent = entries.length
+		? entries.map((a) => `${(a.created_at || "").replace("T", " ").slice(0, 19)}  ${a.action.padEnd(24)} ${a.detail || ""}`).join("\n")
+		: "(no panel actions recorded yet)";
+}
+function renderEcoDefaults() {
+	const e = state.config?.economy || {}, d = state.config?.defaults || {};
+	$("eco-xp").value = e.rankPointsPerXp ?? 1; $("eco-badge").value = e.tokenCostBadge ?? 50; $("eco-conv").value = e.conversionRate ?? 10;
+	$("def-theme").value = d.theme || "dark"; $("def-sound").value = d.sound ?? 0.7; $("def-graphics").value = d.graphics || "auto";
+}
+$("eco-save").addEventListener("click", async () => {
+	try { const r = await api("/api/analytics/economy", { rankPointsPerXp: $("eco-xp").value, tokenCostBadge: $("eco-badge").value, conversionRate: $("eco-conv").value }); state.config.economy = r.economy; toast("Economy config saved."); } catch (e) { toast(e.message, true); }
+});
+$("def-save").addEventListener("click", async () => {
+	try { const r = await api("/api/analytics/defaults", { theme: $("def-theme").value, sound: $("def-sound").value, graphics: $("def-graphics").value }); state.config.defaults = r.defaults; toast("New-user defaults saved."); } catch (e) { toast(e.message, true); }
+});
+document.querySelectorAll("[data-theme-set]").forEach((b) => b.addEventListener("click", async () => {
+	document.body.dataset.theme = b.dataset.themeSet;
+	try { await api("/api/analytics/theme", { theme: b.dataset.themeSet }); toast(`Theme: ${b.dataset.themeSet}`); } catch (e) { toast(e.message, true); }
+}));
+
+/* ============================================================
+   TAB 7: JARVIS AI (full-control owner assistant)
+   ============================================================ */
+let jvHistory = [], jvInited = false, jvBusy = false;
+
+async function loadJarvisTab() {
+	if (!jvInited) {
+		jvInited = true;
+		jvPush("ai", "Jarvis online — I have FULL control of Clash Proxy: moderation, game library, broadcasts, maintenance, live stats. Type `help` for commands, or just talk to me.\n(Clash AI on the main site is the chat-only one with no powers.)");
+		$("jv-send").addEventListener("click", jvSend);
+		$("jv-input").addEventListener("keydown", (e) => { if (e.key === "Enter") jvSend(); });
+		document.querySelectorAll("#jv-chips .btn").forEach((b) => b.addEventListener("click", () => { $("jv-input").value = b.dataset.cmd; jvSend(); }));
+		$("jv-key-save").addEventListener("click", async () => {
+			const key = $("jv-key").value.trim();
+			if (!key) return toast("Paste an OpenRouter key first.", true);
+			try {
+				const r = await api("/api/jarvis/key", { key });
+				$("jv-key").value = "";
+				if (r.probeValid) toast("Key saved — verified working (free models, $0).");
+				else toast("Key saved, but OpenRouter rejected it: " + (r.probeDetail || "unknown"), true);
+				jvLoadInfo();
+			} catch (e) { toast(e.message, true); }
+		});
+	}
+	jvLoadInfo();
+}
+async function jvLoadInfo() {
+	try {
+		const info = await api("/api/jarvis/info");
+		$("jv-backend").textContent = info.keySet ? "key set" : "free tier";
+		$("jv-backends").textContent = info.backends;
+		$("jv-key-state").textContent = info.keySet
+			? (info.keyValid
+				? `Active key: ${info.keyPreview} — verified working (free models, $0).`
+				: `Active key: ${info.keyPreview} — ⚠ rejected by OpenRouter. Smart chat is offline until you paste a fresh free key (commands still work.)`)
+			: "No key yet — using anonymous free models (heavier rate limits).";
+		$("jv-snapshot").textContent =
+			`${info.knownGames} catalog games · ${info.testerAccounts} Game Tester account(s) · ` +
+			`${info.testerReports} open tester report(s) · ${info.openReports} open report(s) total`;
+	} catch (e) { $("jv-backend").textContent = "offline"; }
+}
+function jvPush(who, text, src) {
+	const log = $("jv-log");
+	const el = document.createElement("div");
+	el.className = "jv-msg " + (who === "user" ? "jv-user" : "jv-ai");
+	el.textContent = text;
+	if (src) { const s = document.createElement("span"); s.className = "jv-src"; s.textContent = src; el.appendChild(s); }
+	log.appendChild(el);
+	log.scrollTop = log.scrollHeight;
+	return el;
+}
+async function jvSend() {
+	const input = $("jv-input");
+	const text = input.value.trim();
+	if (!text || jvBusy) return;
+	input.value = "";
+	jvPush("user", text);
+	jvHistory.push({ role: "user", content: text });
+	jvBusy = true;
+	const pend = jvPush("ai", "thinking…");
+	try {
+		const r = await api("/api/jarvis/chat", { messages: jvHistory.slice(-12) });
+		pend.textContent = r.reply;
+		if (r.source && r.source !== "command") {
+			const s = document.createElement("span");
+			s.className = "jv-src";
+			s.textContent = r.source === "llm" ? "ai" : "local fallback";
+			pend.appendChild(s);
+		}
+		jvHistory.push({ role: "assistant", content: r.reply });
+	} catch (e) {
+		pend.classList.add("jv-err");
+		pend.textContent = "⚠ " + e.message;
+	} finally {
+		jvBusy = false;
+		const log = $("jv-log");
+		log.scrollTop = log.scrollHeight;
+	}
+}
+
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeAssignModal(); $("report-overlay").classList.remove("open"); } });
+
+(async function init() {
+	await loadState();
+	if (state.config?.siteTheme) document.body.dataset.theme = state.config.siteTheme;
+})();
+</script>
+</body>
+</html>
