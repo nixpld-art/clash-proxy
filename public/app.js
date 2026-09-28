@@ -1004,6 +1004,45 @@ function renderUserHeader() {
 	// Reveal Owner Panel sidebar link (separate localhost:8081 server, owner PC only) for privileged users
 	if (navOwnerPanel) {
 		navOwnerPanel.style.display = (isTed || currentUser.role === "admin") ? "" : "none";
+		if (!navOwnerPanel.dataset.bound) {
+			navOwnerPanel.dataset.bound = "1";
+			navOwnerPanel.addEventListener("click", (e) => {
+				e.preventDefault();
+				location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
+			});
+		}
+	}
+
+	// Rank chip → opens YOUR panel (Owner → control panel, Game Tester → testing panel)
+	const rankChip = userHeaderWidget.querySelector(".user-pill-badge");
+	if (rankChip) {
+		rankChip.style.cursor = "pointer";
+		rankChip.title = "Open your panel";
+		const applyRankName = (d) => { if (d && d.rankName) rankChip.textContent = d.rankName; };
+		applyRankName(window.__myRankCache);
+		if (!window.__myRankCache && authToken) {
+			fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } })
+				.then((r) => (r.ok ? r.json() : null))
+				.then((d) => { if (d) { window.__myRankCache = d; applyRankName(d); } })
+				.catch(() => {});
+		}
+		if (!rankChip.dataset.bound) {
+			rankChip.dataset.bound = "1";
+			rankChip.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				const tokenQ = "?token=" + encodeURIComponent(authToken || "");
+				if (isTed || currentUser.role === "admin") { location.href = "/panel/" + tokenQ; return; }
+				let d = window.__myRankCache;
+				if (!d) {
+					try {
+						const r = await fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } });
+						if (r.ok) { d = await r.json(); window.__myRankCache = d; applyRankName(d); }
+					} catch {}
+				}
+				if (d && (d.privileges || []).includes("game-testing")) { location.href = "/panel/testing/" + tokenQ; return; }
+				document.getElementById("nav-profile")?.click();
+			});
+		}
 	}
 
 	const pill = document.getElementById("user-header-pill");

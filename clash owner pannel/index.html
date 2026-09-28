@@ -108,6 +108,7 @@
 	.jv-src { display: block; margin-top: 5px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.45; }
 	.jv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 </style>
+<style>.sec-hint{display:block;margin:-2px 0 14px;font-size:12.5px;line-height:1.5;color:#9b9bc0;max-width:86ch}</style>
 </head>
 <body>
 <div class="topbar">
@@ -142,11 +143,13 @@
 		<div>
 			<div class="card">
 				<h2>🏅 Rank Presets <button class="btn small gold" id="new-preset-btn">+ New Rank</button></h2>
+				<p class="sec-hint">Create ranks (like Moderator or Game Tester) and choose exactly which powers each rank gets.</p>
 				<div id="preset-list" class="grid" style="gap:9px"></div>
 				<div class="note">All privileges are owner-level. Assigning a rank grants full owner access on the main site and shows the rank name as the player's tag.</div>
 			</div>
 			<div class="card" id="preset-editor" style="display:none">
 				<h2 id="preset-editor-title">➕ New Rank</h2>
+				<p class="sec-hint">Name the rank, tick the powers it should have, then hit save.</p>
 				<div class="form-row"><label>Rank name (shown as tag on the site)</label>
 					<input type="text" id="preset-name" maxlength="40" placeholder="e.g. Head Admin" /></div>
 				<div class="row" style="margin-bottom:8px">
@@ -162,6 +165,7 @@
 		</div>
 		<div class="card">
 			<h2>👥 People</h2>
+			<p class="sec-hint">Every player on the site — assign them a rank, or take one away.</p>
 			<div class="form-row"><input type="search" id="people-search" placeholder="Search players..." /></div>
 			<div style="overflow-x:auto"><table>
 				<thead><tr><th>Player</th><th>Rank</th><th>Role</th><th>Privileges</th><th>Actions</th></tr></thead>
@@ -177,6 +181,7 @@
 
 	<div class="card">
 		<h2>⚡ XP Event Activator <span class="pill badge-live" id="xpev-status">checking…</span></h2>
+		<p class="sec-hint">Start a limited-time XP boost for everyone, with a live countdown.</p>
 		<div class="row">
 			<div class="grow"><label class="muted">Multiplier</label>
 				<select id="xpev-mult"><option>2</option><option>3</option><option>5</option><option>10</option></select></div>
@@ -192,6 +197,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>📡 Live Game Sessions <span class="pill badge-live">live</span></h2>
+			<p class="sec-hint">Who is playing what, right now.</p>
 			<div class="muted" style="margin-bottom:8px">Players active in games during the last 60 minutes (from activity telemetry).</div>
 			<div id="games-activity" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
 			<button class="btn small" id="games-activity-refresh" style="margin-top:10px">↻ Refresh</button>
@@ -199,6 +205,7 @@
 
 		<div class="card">
 			<h2>🖥️ Server Spawning <span class="pill badge-sim">simulated</span></h2>
+			<p class="sec-hint">Spin up simulated game servers (demo controls — not wired to real hosts yet).</p>
 			<div class="row">
 				<div class="grow"><label class="muted">Game / category</label><input type="text" id="spawn-game" placeholder="e.g. Platformer" /></div>
 				<div class="grow"><label class="muted">Region</label>
@@ -212,6 +219,7 @@
 
 	<div class="card">
 		<h2>🕹️ Live Match Spectator &amp; Controls <span class="pill badge-sim">simulated</span></h2>
+		<p class="sec-hint">Watch and manage live matches (simulated preview controls).</p>
 		<div class="muted">The proxy hosts single-player HTML5 games + Lounge parties — there is no multiplayer match engine, so this console drives a simulated match grid with the full spectator toolset.</div>
 		<div class="row" style="margin-top:10px">
 			<div class="grow"><label class="muted">Match</label><select id="spec-match"><option value="">— no matches —</option></select></div>
@@ -229,16 +237,19 @@
 		<canvas id="spec-canvas" width="900" height="300"></canvas>
 		<div class="grid c3" style="margin-top:10px">
 			<div class="card" style="padding:11px"><h2 style="font-size:11px">⏱ Performance</h2>
+			<p class="sec-hint">Quick CPU / memory snapshot of the server.</p>
 				<div class="muted">Tick-rate: <b id="perf-tick" style="color:var(--gold)">—</b></div>
 				<div class="muted">Latency: <b id="perf-ping" style="color:var(--gold)">—</b></div>
 				<div class="muted">Packet loss: <b id="perf-loss" style="color:var(--gold)">—</b></div>
 			</div>
 			<div class="card" style="padding:11px"><h2 style="font-size:11px">📍 Player Teleport</h2>
+			<p class="sec-hint">Jump any player to a location (simulated).</p>
 				<div class="row"><input type="text" id="tp-player" class="grow" placeholder="player name" style="width:110px" />
 				<input type="number" id="tp-x" placeholder="x" style="width:70px" /><input type="number" id="tp-y" placeholder="y" style="width:70px" />
 				<button class="btn small gold" id="tp-btn">Teleport</button></div>
 			</div>
 			<div class="card" style="padding:11px"><h2 style="font-size:11px">📋 Match State</h2>
+			<p class="sec-hint">See or reset the current match state (simulated).</p>
 				<div class="muted" id="match-state">—</div>
 			</div>
 		</div>
@@ -247,12 +258,14 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🗺️ Map Rotation <span class="pill badge-sim">config</span></h2>
+			<p class="sec-hint">Pick which maps cycle in order on servers.</p>
 			<div class="muted" style="margin-bottom:8px">One category per line, maps separated by commas.</div>
 			<textarea id="map-rotation" rows="5" placeholder="Platformer: Classic Run, Sky Dash&#10;Arcade: Neon Grid"></textarea>
 			<button class="btn gold" id="map-save" style="margin-top:9px">💾 Save Rotation</button>
 		</div>
 		<div class="card">
 			<h2>🎫 Dynamic Slot Allocation <span class="pill badge-sim">config</span></h2>
+			<p class="sec-hint">How many player slots each server gets.</p>
 			<div class="muted" style="margin-bottom:8px">One lobby per line: <code>name = max players</code>.</div>
 			<textarea id="slot-caps" rows="5" placeholder="Lobby A = 16"></textarea>
 			<button class="btn gold" id="slots-save" style="margin-top:9px">💾 Save Slot Caps</button>
@@ -266,6 +279,7 @@
 
 	<div class="card">
 		<h2>📄 Report Queue Dashboard <span class="muted">victim-flagged reports only</span></h2>
+		<p class="sec-hint">Reports players filed — review one, then warn, mute, ban or dismiss it.</p>
 		<div class="row" style="margin-bottom:10px">
 			<select id="report-filter" style="width:auto"><option value="open">Open</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option><option value="all">All</option></select>
 			<button class="btn small" id="report-refresh">↻ Refresh</button>
@@ -281,6 +295,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🔍 UUID / Username Search</h2>
+			<p class="sec-hint">Find any account by username or ID to inspect it.</p>
 			<div class="row">
 				<input type="text" id="lookup-q" class="grow" placeholder="username or user ID…" />
 				<button class="btn gold" id="lookup-btn">Search</button>
@@ -290,6 +305,7 @@
 
 		<div class="card">
 			<h2>🌐 IP Auditing Dashboard</h2>
+			<p class="sec-hint">See which accounts share an IP — good for catching alt accounts.</p>
 			<div class="muted" style="margin-bottom:8px">Shared connections reveal alt accounts &amp; ban evaders (IPs anonymized in logs, raw for owner audit).</div>
 			<div id="ip-audit"><div class="empty">Loading…</div></div>
 			<button class="btn small" id="ip-refresh" style="margin-top:9px">↻ Refresh</button>
@@ -304,6 +320,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🚧 Maintenance Mode <span class="pill" id="maint-status">—</span></h2>
+			<p class="sec-hint">Lock the site so only owners can get in — use while fixing things.</p>
 			<div class="form-row"><label>Message shown to blocked users</label><input type="text" id="maint-msg" placeholder="Scheduled maintenance in progress…" /></div>
 			<button class="btn danger" id="maint-toggle">Enable Maintenance</button>
 			<div class="note">ON: regular users are gracefully disconnected (staff stay) and logins are limited to the dev team.</div>
@@ -311,6 +328,7 @@
 
 		<div class="card">
 			<h2>✅ Global Whitelist Controller</h2>
+			<p class="sec-hint">The only usernames allowed in while maintenance mode is on.</p>
 			<div class="form-row"><label>Usernames (one per line)</label><textarea id="whitelist" rows="4" placeholder="ted&#10;nils"></textarea></div>
 			<div class="row">
 				<label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="whitelist-enabled" /> Whitelist enforced</label>
@@ -322,6 +340,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🔄 Proxy Reboot Scheduler</h2>
+			<p class="sec-hint">Schedule a full restart of the proxy server.</p>
 			<div class="row">
 				<div class="grow"><label class="muted">Delay (seconds)</label><input type="number" id="reboot-delay" value="10" min="0" max="3600" /></div>
 				<button class="btn danger" id="reboot-schedule">Schedule Restart</button>
@@ -332,6 +351,7 @@
 
 		<div class="card">
 			<h2>💊 Proxy Health Ticker <span class="pill badge-live" id="health-poll">live · 3s</span></h2>
+			<p class="sec-hint">Live heartbeat: uptime and whether the server is healthy.</p>
 			<div id="health-body" class="grid" style="gap:8px"><div class="muted">Measuring…</div></div>
 		</div>
 	</div>
@@ -339,6 +359,7 @@
 	<div class="card">
 		<h2>📜 Live Log Streaming <span class="pill badge-live">live</span>
 			<span class="row" style="margin-left:auto"><input type="text" id="log-filter" placeholder="filter…" style="width:160px" /><label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="log-auto" checked /> auto</label><button class="btn small" id="log-refresh">↻</button></span></h2>
+		<p class="sec-hint">The server's messages in real time — look here first when something breaks.</p>
 		<div class="logbox" id="logbox">Connecting…</div>
 		<div class="muted" style="margin-top:6px">Anonymized access log from the proxy + panel audit trail. Errors are auto-captured.</div>
 	</div>
@@ -346,11 +367,13 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🧩 Module Toggle System</h2>
+			<p class="sec-hint">Turn whole site features (chat, lounge, games…) on or off for everyone.</p>
 			<div id="modules-box" class="grid" style="gap:6px"><div class="muted">Loading…</div></div>
 			<button class="btn gold" id="modules-save" style="margin-top:10px">💾 Save Modules</button>
 		</div>
 		<div class="card">
 			<h2>🚦 Rate Limiting Controls</h2>
+			<p class="sec-hint">How many requests a user gets before being slowed — anti-spam.</p>
 			<div class="row">
 				<div class="grow"><label class="muted">Packet-per-second threshold</label><input type="number" id="rl-pps" min="1" /></div>
 				<div class="grow"><label class="muted">Chat flood msgs/min</label><input type="number" id="rl-chat" min="1" /></div>
@@ -363,6 +386,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🗄️ Immediate DB Backup <span class="pill badge-live">AES-256 encrypted</span></h2>
+			<p class="sec-hint">Snapshot the database right now, encrypted — do this before big changes.</p>
 			<button class="btn gold" id="backup-btn">📸 Snapshot Now</button>
 			<button class="btn small" id="backup-list-btn" style="margin-left:8px">List Backups</button>
 			<div id="backup-list" class="grid" style="gap:6px;margin-top:10px"></div>
@@ -370,6 +394,7 @@
 		</div>
 		<div class="card">
 			<h2>🔑 API Key Management</h2>
+			<p class="sec-hint">Keys that let outside tools talk to your server — create or revoke them here.</p>
 			<div class="row">
 				<input type="text" id="apikey-name" class="grow" placeholder="Key name (e.g. discord-bot)" />
 				<button class="btn gold" id="apikey-create">Generate</button>
@@ -381,6 +406,7 @@
 
 	<div class="card">
 		<h2>💓 Live Database Connection Status <span class="pill badge-live">live</span></h2>
+		<p class="sec-hint">Is the database connected, and how much it has grown.</p>
 		<div id="db-status-box" class="row"><span class="muted">Pinging…</span></div>
 		<button class="btn small" id="db-ping-btn" style="margin-top:8px">↻ Re-ping</button>
 	</div>
@@ -407,6 +433,7 @@
 
 	<div class="card">
 		<h2>🧹 Automated Filter, Slowmode &amp; Freeze <span class="pill badge-live">live</span></h2>
+		<p class="sec-hint">Anti-spam for chat: filter words, slow messages down, or freeze chat completely.</p>
 		<div class="grid c3">
 			<div class="form-row"><label>Chat freeze</label>
 				<label class="muted" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="chat-freeze" /> Lock public chat (admins only)</label></div>
@@ -422,6 +449,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🚨 System Alerts Manager</h2>
+			<p class="sec-hint">Choose which automatic warnings (raid, errors…) get shown.</p>
 			<div class="form-row"><label>Staff webhook URL (external channel)</label><input type="url" id="alert-url" placeholder="https://discord.com/api/webhooks/…" /></div>
 			<div class="form-row"><label>Events</label><input type="text" id="alert-events" placeholder="crash, ban, maintenance" /></div>
 			<div class="row">
@@ -432,6 +460,7 @@
 		</div>
 		<div class="card">
 			<h2>😀 Emoji Configuration</h2>
+			<p class="sec-hint">Add or remove the custom emoji used in chat.</p>
 			<div class="form-row"><label>One per line: <code>:shortcode: value</code></label><textarea id="emoji-list" rows="4"></textarea></div>
 			<button class="btn gold" id="emoji-save">💾 Save Emoji</button>
 		</div>
@@ -440,10 +469,12 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>📝 Lobby MOTD Customizer</h2>
+			<p class="sec-hint">The welcome message shown at the top of the lobby.</p>
 			<div class="row"><input type="text" id="motd-input" class="grow" maxlength="300" placeholder="Message of the Day…" /><button class="btn gold" id="motd-save">Save</button></div>
 		</div>
 		<div class="card">
 			<h2>🎉 Party Network Monitor <span class="pill badge-live">live</span></h2>
+			<p class="sec-hint">Who is grouped into which party, live.</p>
 			<div id="party-box" class="grid" style="gap:6px"><div class="muted">Loading…</div></div>
 			<button class="btn small" id="party-refresh" style="margin-top:8px">↻ Refresh</button>
 		</div>
@@ -451,6 +482,7 @@
 
 	<div class="card">
 		<h2>📌 Staff Announcement Portal</h2>
+		<p class="sec-hint">Send a server-wide announcement that everyone sees.</p>
 		<div class="row" style="margin-bottom:10px">
 			<input type="text" id="staff-note-title" class="grow" placeholder="Note title (for other owners)" maxlength="80" />
 			<input type="text" id="staff-note-body" class="grow" placeholder="Note…" maxlength="2000" />
@@ -467,11 +499,13 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>📈 Live Concurrent Players <span class="pill badge-live">live</span></h2>
+			<p class="sec-hint">How many people are online this second.</p>
 			<div class="row" style="margin-bottom:8px"><b style="font-size:26px;color:var(--gold)" id="online-now">—</b><span class="muted">online now · last 24h samples</span></div>
 			<svg class="graph" id="online-graph" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
 		</div>
 		<div class="card">
 			<h2>📑 Platform KPIs <span class="pill badge-live">live</span></h2>
+			<p class="sec-hint">The big numbers: signups, sessions and growth.</p>
 			<div class="kpis" id="kpi-box"></div>
 		</div>
 	</div>
@@ -479,10 +513,12 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🎮 Game Performance Leaderboard <span class="pill badge-live">30d</span></h2>
+			<p class="sec-hint">Your most-played games over the last 30 days.</p>
 			<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Game</th><th>Plays</th><th>Players</th></tr></thead><tbody id="game-lb-tbody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
 		</div>
 		<div class="card">
 			<h2>🧮 Average Session Analytics</h2>
+			<p class="sec-hint">How long players typically stay on the site.</p>
 			<div id="session-box" class="kpis"></div>
 			<div class="muted" style="margin-top:8px">Derived from activity telemetry (events per active player, daily activity).</div>
 		</div>
@@ -491,6 +527,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>⚙️ Global Setting Defaults</h2>
+			<p class="sec-hint">Default settings every new account starts with.</p>
 			<div class="row">
 				<div class="grow"><label class="muted">Default theme</label><select id="def-theme"><option value="dark">Dark</option><option value="light">Light</option><option value="terminal">Terminal</option></select></div>
 				<div class="grow"><label class="muted">Sound</label><input type="range" id="def-sound" min="0" max="1" step="0.1" /></div>
@@ -500,6 +537,7 @@
 		</div>
 		<div class="card">
 			<h2>💰 Virtual Economy Configurator</h2>
+			<p class="sec-hint">Coins: how players earn them and what they cost.</p>
 			<div class="row">
 				<div class="grow"><label class="muted">Rank points / XP</label><input type="number" id="eco-xp" step="0.1" min="0" /></div>
 				<div class="grow"><label class="muted">Token cost / badge</label><input type="number" id="eco-badge" min="0" /></div>
@@ -512,6 +550,7 @@
 	<div class="grid c2">
 		<div class="card">
 			<h2>🎨 Theme Engine <span class="pill badge-live">instant</span></h2>
+			<p class="sec-hint">Site colors — the change applies instantly for everyone.</p>
 			<div class="row">
 				<button class="btn" data-theme-set="dark">🌑 Dark</button>
 				<button class="btn" data-theme-set="light">🌕 Light</button>
@@ -521,6 +560,7 @@
 		</div>
 		<div class="card">
 			<h2>🗺️ Traffic Heat Map <span class="pill badge-sim">simulated</span></h2>
+			<p class="sec-hint">Which hours get the most visits (simulated preview).</p>
 			<div id="heatmap-box" class="grid" style="gap:6px"></div>
 			<div class="muted" style="margin-top:6px">Anonymized region distribution — the proxy does not collect geolocation, so regions are simulated for visualization.</div>
 		</div>
@@ -528,6 +568,7 @@
 
 	<div class="card">
 		<h2>📒 Panel Audit Logger <span class="pill badge-live">append-only</span></h2>
+		<p class="sec-hint">A permanent list of every action taken in this panel — who did what, when.</p>
 		<div class="logbox" id="audit-box">Loading…</div>
 	</div>
 </div>
@@ -539,6 +580,7 @@
 	<div class="grid c2">
 		<div class="card" style="display:flex;flex-direction:column">
 			<h2>💬 Chat with Jarvis</h2>
+			<p class="sec-hint">Your AI assistant with real powers: add games, ban players, broadcast. Type "help" for commands.</p>
 			<div class="jv-log" id="jv-log"></div>
 			<div class="row" style="margin-top:8px">
 				<input type="text" id="jv-input" class="grow" autocomplete="off" placeholder="jarvis ban 'user123' 1h · add 5 games · game reports · or just chat…" />
@@ -559,6 +601,7 @@
 		<div>
 			<div class="card">
 				<h2>⚙️ AI Backend <span class="pill badge-live" id="jv-backend">…</span></h2>
+				<p class="sec-hint">Which AI model is answering Jarvis right now.</p>
 				<div class="muted" id="jv-backends" style="margin-bottom:8px">loading…</div>
 				<div class="form-row"><label>OpenRouter API key (free models only — $0)</label>
 					<div class="row">
@@ -570,6 +613,7 @@
 			</div>
 			<div class="card">
 				<h2>📡 Live Snapshot <span class="pill badge-live">live</span></h2>
+				<p class="sec-hint">Instant status: players online, games, reports.</p>
 				<div class="muted" id="jv-snapshot">…</div>
 				<div class="note" style="margin-top:10px">⚠️ <b>Clash AI</b> (the ✦ button on the main site) is a <b>chat-only assistant with no powers</b>. <b>Jarvis</b> (this tab) is the one that can ban players, edit the game library, broadcast and toggle maintenance — and it lives only here in the owner panel.</div>
 			</div>
@@ -643,7 +687,7 @@ async function api(path, body) {
 	return data;
 }
 async function loadState() {
-	try { state = await api("/api/state"); renderRanks(); syncTabBadges(); } catch (e) { toast("Failed to load: " + e.message, true); }
+	try { state = await api("api/state"); renderRanks(); syncTabBadges(); } catch (e) { toast("Failed to load: " + e.message, true); }
 }
 function syncTabBadges() {
 	const c = $("cnt-reports");
@@ -693,7 +737,7 @@ function renderPresets() {
 	list.querySelectorAll("[data-pdel]").forEach((b) => b.addEventListener("click", async () => {
 		const p = state.presets.find((x) => x.id === b.dataset.pdel);
 		if (!p || !confirm(`Delete rank preset "${p.name}"?`)) return;
-		try { await api("/api/presets/delete", { id: p.id }); closePresetEditor(); toast("Preset deleted."); loadState(); } catch (e) { toast(e.message, true); }
+		try { await api("api/presets/delete", { id: p.id }); closePresetEditor(); toast("Preset deleted."); loadState(); } catch (e) { toast(e.message, true); }
 	}));
 }
 let editingPresetId = null;
@@ -715,7 +759,7 @@ $("save-preset-btn").addEventListener("click", async () => {
 	const name = $("preset-name").value.trim(), privileges = collectChecked($("preset-priv-grid"));
 	if (!name) return toast("Rank name is required.", true);
 	if (!privileges.length) return toast("Pick at least one privilege.", true);
-	try { await api("/api/presets", { id: editingPresetId, name, privileges }); toast("Rank preset saved."); closePresetEditor(); loadState(); } catch (e) { toast(e.message, true); }
+	try { await api("api/presets", { id: editingPresetId, name, privileges }); toast("Rank preset saved."); closePresetEditor(); loadState(); } catch (e) { toast(e.message, true); }
 });
 
 function renderPeople() {
@@ -743,7 +787,7 @@ function renderPeople() {
 	tbody.querySelectorAll("[data-unassign]").forEach((b) => b.addEventListener("click", async () => {
 		const u = state.users.find((x) => x.id === parseInt(b.dataset.unassign, 10));
 		if (!u || !confirm(`Remove the rank from @${u.username}?`)) return;
-		try { await api("/api/unassign", { userId: u.id }); toast("Rank removed."); loadState(); } catch (e) { toast(e.message, true); }
+		try { await api("api/unassign", { userId: u.id }); toast("Rank removed."); loadState(); } catch (e) { toast(e.message, true); }
 	}));
 }
 $("people-search").addEventListener("input", renderPeople);
@@ -779,7 +823,7 @@ $("assign-save-btn").addEventListener("click", async () => {
 	if (!rankName) return toast("Rank name is required.", true);
 	if (!privileges.length) return toast("Pick at least one privilege.", true);
 	try {
-		await api("/api/assign", { userId: assignUserId, rankName, privileges, presetId: $("assign-preset").value || null });
+		await api("api/assign", { userId: assignUserId, rankName, privileges, presetId: $("assign-preset").value || null });
 		toast("Rank applied — owner access granted."); closeAssignModal(); loadState();
 	} catch (e) { $("assign-error").textContent = e.message; }
 });
@@ -794,7 +838,7 @@ async function loadGamesTab() {
 }
 async function loadXpEvent() {
 	try {
-		const s = await api("/api/state");
+		const s = await api("api/state");
 		state.xpEvent = s.xpEvent || {};
 		renderXpEvent();
 	} catch {}
@@ -817,17 +861,17 @@ function renderXpEvent() {
 }
 $("xpev-start").addEventListener("click", async () => {
 	try {
-		const r = await api("/api/system/xp-event", { active: true, mult: +$("xpev-mult").value, minutes: +$("xpev-minutes").value });
+		const r = await api("api/system/xp-event", { active: true, mult: +$("xpev-mult").value, minutes: +$("xpev-minutes").value });
 		state.xpEvent = r.xpEvent; renderXpEvent(); toast(`Double XP ON: x${r.xpEvent.mult} for ${$("xpev-minutes").value}m`);
 	} catch (e) { toast(e.message, true); }
 });
 $("xpev-stop").addEventListener("click", async () => {
-	try { const r = await api("/api/system/xp-event", { active: false }); state.xpEvent = r.xpEvent; renderXpEvent(); toast("XP event stopped."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/system/xp-event", { active: false }); state.xpEvent = r.xpEvent; renderXpEvent(); toast("XP event stopped."); } catch (e) { toast(e.message, true); }
 });
 
 async function loadGameActivity() {
 	try {
-		const r = await api("/api/games/activity");
+		const r = await api("api/games/activity");
 		const box = $("games-activity");
 		if (!r.sessions.length) { box.innerHTML = '<div class="empty">No game sessions in the last 60 minutes.</div>'; return; }
 		box.innerHTML = r.sessions.map((s) => `<div class="preset-card"><div class="info">
@@ -839,7 +883,7 @@ $("games-activity-refresh").addEventListener("click", loadGameActivity);
 
 async function loadGameOps() {
 	try {
-		const r = await api("/api/games/ops");
+		const r = await api("api/games/ops");
 		window._ops = r;
 		$("map-rotation").value = Object.entries(r.mapRotation || {}).map(([k, v]) => `${k}: ${(v || []).join(", ")}`).join("\n");
 		$("slot-caps").value = Object.entries(r.slotCaps || {}).map(([k, v]) => `${k} = ${v}`).join("\n");
@@ -857,7 +901,7 @@ function renderInstances(sim) {
 		<span class="chip green">running</span>
 		<button class="btn small danger" data-kill="${esc(i.id)}">Kill</button></div>`).join("");
 	box.querySelectorAll("[data-kill]").forEach((b) => b.addEventListener("click", async () => {
-		try { await api("/api/games/sim", { action: "kill", id: b.dataset.kill }); toast("Instance killed."); loadGameOps(); } catch (e) { toast(e.message, true); }
+		try { await api("api/games/sim", { action: "kill", id: b.dataset.kill }); toast("Instance killed."); loadGameOps(); } catch (e) { toast(e.message, true); }
 	}));
 }
 function renderMatchSelect(sim) {
@@ -870,7 +914,7 @@ function renderMatchSelect(sim) {
 $("spawn-btn").addEventListener("click", async () => {
 	const game = $("spawn-game").value.trim() || "Arcade";
 	try {
-		await api("/api/games/sim", { action: "spawn", game, region: $("spawn-region").value, match: $("spawn-with-match").checked });
+		await api("api/games/sim", { action: "spawn", game, region: $("spawn-region").value, match: $("spawn-with-match").checked });
 		toast(`Instance spawned for "${game}".`); $("spawn-game").value = ""; loadGameOps();
 	} catch (e) { toast(e.message, true); }
 });
@@ -880,7 +924,7 @@ $("map-save").addEventListener("click", async () => {
 		const [k, v] = line.split(":");
 		if (k && v) rotation[k.trim()] = v.split(",").map((s) => s.trim()).filter(Boolean);
 	});
-	try { await api("/api/games/ops", { mapRotation: rotation }); toast("Map rotation saved."); } catch (e) { toast(e.message, true); }
+	try { await api("api/games/ops", { mapRotation: rotation }); toast("Map rotation saved."); } catch (e) { toast(e.message, true); }
 });
 $("slots-save").addEventListener("click", async () => {
 	const caps = {};
@@ -888,13 +932,13 @@ $("slots-save").addEventListener("click", async () => {
 		const [k, v] = line.split("=");
 		if (k && v) caps[k.trim()] = parseInt(v, 10);
 	});
-	try { await api("/api/games/ops", { slotCaps: caps }); toast("Slot caps saved."); } catch (e) { toast(e.message, true); }
+	try { await api("api/games/ops", { slotCaps: caps }); toast("Slot caps saved."); } catch (e) { toast(e.message, true); }
 });
 
 async function simAction(action, extra = {}) {
 	const matchId = $("spec-match").value;
 	if (action !== "spawn" && action !== "tick" && !matchId) return toast("Select a match first.", true);
-	try { const r = await api("/api/games/sim", { action, matchId, ...extra }); window._ops.sim = r.sim; renderMatchSelect(r.sim); return r.sim; } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/games/sim", { action, matchId, ...extra }); window._ops.sim = r.sim; renderMatchSelect(r.sim); return r.sim; } catch (e) { toast(e.message, true); }
 }
 $("spec-queue").addEventListener("click", async () => { await simAction("queue-start"); toast("Queue override: match started immediately."); });
 $("spec-force-draw").addEventListener("click", async () => { await simAction("force-end", { result: "draw" }); toast("Match force-ended as a draw."); stopSpec(); });
@@ -967,7 +1011,7 @@ let lookupUserId = null;
 async function loadModerationTab() { loadReports(); loadIpAudit(); }
 async function loadReports() {
 	try {
-		const r = await api("/api/reports?status=" + encodeURIComponent($("report-filter").value));
+		const r = await api("api/reports?status=" + encodeURIComponent($("report-filter").value));
 		const tb = $("reports-tbody");
 		if (!r.reports.length) { tb.innerHTML = '<tr><td colspan="8" class="empty">No reports in this view.</td></tr>'; return; }
 		tb.innerHTML = r.reports.map((x) => `<tr>
@@ -985,7 +1029,7 @@ async function loadReports() {
 }
 async function resolveReport(id, status) {
 	const note = prompt(status === "resolved" ? "Resolution note:" : "Dismissal note:", "") ?? "";
-	try { await api("/api/reports/update", { id: +id, status, note }); toast(`Report #${id} ${status}.`); loadReports(); loadState(); } catch (e) { toast(e.message, true); }
+	try { await api("api/reports/update", { id: +id, status, note }); toast(`Report #${id} ${status}.`); loadReports(); loadState(); } catch (e) { toast(e.message, true); }
 }
 $("report-refresh").addEventListener("click", loadReports);
 $("report-filter").addEventListener("change", loadReports);
@@ -993,7 +1037,7 @@ $("report-new-btn").addEventListener("click", () => $("report-overlay").classLis
 $("rep-cancel").addEventListener("click", () => $("report-overlay").classList.remove("open"));
 $("rep-submit").addEventListener("click", async () => {
 	try {
-		await api("/api/reports", { reporterUsername: $("rep-reporter").value.trim(), reportedUsername: $("rep-reported").value.trim(), category: $("rep-category").value, details: $("rep-details").value });
+		await api("api/reports", { reporterUsername: $("rep-reporter").value.trim(), reportedUsername: $("rep-reported").value.trim(), category: $("rep-category").value, details: $("rep-details").value });
 		toast("Victim report filed."); $("report-overlay").classList.remove("open");
 		$("rep-details").value = ""; loadReports(); loadState();
 	} catch (e) { toast(e.message, true); }
@@ -1001,7 +1045,7 @@ $("rep-submit").addEventListener("click", async () => {
 
 async function loadIpAudit() {
 	try {
-		const r = await api("/api/ip-audit");
+		const r = await api("api/ip-audit");
 		const box = $("ip-audit");
 		if (!r.sharedIps.length) { box.innerHTML = `<div class="empty">No shared IPs found (${r.totalTracked} IPs tracked).</div>`; return; }
 		box.innerHTML = r.sharedIps.map((g) => `<div class="inst-card" style="margin-bottom:7px"><div class="info">
@@ -1020,7 +1064,7 @@ async function doLookup() {
 	const box = $("lookup-result");
 	box.innerHTML = '<div class="empty">Searching…</div>';
 	try {
-		const r = await api("/api/player?q=" + encodeURIComponent(q));
+		const r = await api("api/player?q=" + encodeURIComponent(q));
 		lookupUserId = r.user.id;
 		const u = r.user;
 		const unlocked = r.badges.filter((b) => b.unlocked).length;
@@ -1106,7 +1150,7 @@ async function doLookup() {
 			const reason = $("lu-reason").value.trim() || "No reason given";
 			const durationMin = type === "ban" ? +$("ban-dur").value : type === "mute" ? +$("to-dur").value : 0;
 			try {
-				const rr = await api("/api/punish", { userId: u.id, type, reason, durationMin });
+				const rr = await api("api/punish", { userId: u.id, type, reason, durationMin });
 				const verb = { ban: "BAN", unban: "BAN STOPPED", mute: "TIMEOUT", unmute: "TIMEOUT STOPPED", kick: "KICK" }[type] || type.toUpperCase();
 				const timed = (type === "ban" || type === "mute") ? ` for ${durText(durationMin)}` : "";
 				toast(`${verb}${timed} → @${u.username}${rr.kicked ? " + session kicked" : ""}.`);
@@ -1122,14 +1166,14 @@ async function doLookup() {
 		}));
 		box.querySelectorAll("[data-reset]").forEach((b) => b.addEventListener("click", async () => {
 			if (!confirm(`RESET ${b.dataset.reset.toUpperCase()} for @${u.username}? This cannot be undone.`)) return;
-			try { await api("/api/player/reset", { userId: u.id, scope: b.dataset.reset }); toast("Reset complete."); doLookup(); loadState(); } catch (e) { toast(e.message, true); }
+			try { await api("api/player/reset", { userId: u.id, scope: b.dataset.reset }); toast("Reset complete."); doLookup(); loadState(); } catch (e) { toast(e.message, true); }
 		}));
 		$("lu-offline").addEventListener("click", async () => {
-			try { const rr = await api("/api/player/force-offline", { userId: u.id }); toast(rr.kicked ? "Player disconnected." : "Player was not online."); } catch (e) { toast(e.message, true); }
+			try { const rr = await api("api/player/force-offline", { userId: u.id }); toast(rr.kicked ? "Player disconnected." : "Player was not online."); } catch (e) { toast(e.message, true); }
 		});
 		$("st-save").addEventListener("click", async () => {
 			try {
-				await api("/api/player/stats", { userId: u.id, xp: $("st-xp").value, level: $("st-level").value, streakDays: $("st-streak").value, coins: $("st-coins").value, customTag: $("st-tag").value });
+				await api("api/player/stats", { userId: u.id, xp: $("st-xp").value, level: $("st-level").value, streakDays: $("st-streak").value, coins: $("st-coins").value, customTag: $("st-tag").value });
 				toast("Stats updated."); doLookup(); loadState();
 			} catch (e) { toast(e.message, true); }
 		});
@@ -1157,7 +1201,7 @@ $("maint-toggle").addEventListener("click", async () => {
 	const on = !!state.accessControl?.maintenance;
 	if (!confirm(on ? "Disable maintenance mode?" : "ENABLE maintenance?\n\nAll non-staff users will be disconnected and blocked from logging in.")) return;
 	try {
-		const r = await api("/api/system/maintenance", { enabled: !on, message: $("maint-msg").value });
+		const r = await api("api/system/maintenance", { enabled: !on, message: $("maint-msg").value });
 		state.accessControl = r.accessControl;
 		renderMaintenance();
 		toast(!on ? `Maintenance ON — ${r.kicked} user(s) disconnected.` : "Maintenance OFF.");
@@ -1169,7 +1213,7 @@ function renderWhitelist() {
 }
 $("whitelist-save").addEventListener("click", async () => {
 	try {
-		const r = await api("/api/system/whitelist", { enabled: $("whitelist-enabled").checked, whitelist: $("whitelist").value.split("\n").map((s) => s.trim()).filter(Boolean) });
+		const r = await api("api/system/whitelist", { enabled: $("whitelist-enabled").checked, whitelist: $("whitelist").value.split("\n").map((s) => s.trim()).filter(Boolean) });
 		state.accessControl = r.accessControl; toast("Whitelist saved.");
 	} catch (e) { toast(e.message, true); }
 });
@@ -1177,18 +1221,18 @@ $("reboot-schedule").addEventListener("click", async () => {
 	const d = +$("reboot-delay").value || 0;
 	if (!confirm(`Restart the main proxy in ${d}s?\n\nAll connected users will be disconnected briefly.`)) return;
 	try {
-		await api("/api/system/reboot", { delaySeconds: d });
+		await api("api/system/reboot", { delaySeconds: d });
 		$("reboot-status").textContent = `⏳ Restart scheduled in ${d}s…`;
 		toast("Proxy restart scheduled.");
 	} catch (e) { toast(e.message, true); }
 });
 $("reboot-cancel").addEventListener("click", async () => {
-	try { await api("/api/system/reboot", { cancel: true }); $("reboot-status").textContent = "No restart scheduled."; toast("Scheduled restart cancelled."); } catch (e) { toast(e.message, true); }
+	try { await api("api/system/reboot", { cancel: true }); $("reboot-status").textContent = "No restart scheduled."; toast("Scheduled restart cancelled."); } catch (e) { toast(e.message, true); }
 });
 
 async function refreshHealth() {
 	try {
-		const h = await api("/api/system/health");
+		const h = await api("api/system/health");
 		const memPct = h.system.memTotal ? Math.round((1 - h.system.memUsed / h.system.memTotal) * 100) : 0;
 		const bw = h.bandwidth?.bps != null ? (h.bandwidth.bps > 125000 ? (h.bandwidth.bps / 125000).toFixed(1) + " Mbps" : Math.round(h.bandwidth.bps / 1024) + " KB/s") : "measuring…";
 		$("health-body").innerHTML = `
@@ -1224,22 +1268,22 @@ function renderModules() {
 $("modules-save").addEventListener("click", async () => {
 	const modules = {};
 	$("modules-box").querySelectorAll("[data-mod]").forEach((c) => (modules[c.dataset.mod] = c.checked));
-	try { const r = await api("/api/system/modules", { modules }); state.config.modules = r.modules; toast("Module toggles saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/system/modules", { modules }); state.config.modules = r.modules; toast("Module toggles saved."); } catch (e) { toast(e.message, true); }
 });
 function renderRateLimits() {
 	$("rl-pps").value = state.config?.rateLimit?.pps ?? 500;
 	$("rl-chat").value = state.config?.rateLimit?.chatFlood ?? 5;
 }
 $("rl-save").addEventListener("click", async () => {
-	try { const r = await api("/api/system/rate-limit", { pps: $("rl-pps").value, chatFlood: $("rl-chat").value }); state.config.rateLimit = r.rateLimit; toast("Rate limits saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/system/rate-limit", { pps: $("rl-pps").value, chatFlood: $("rl-chat").value }); state.config.rateLimit = r.rateLimit; toast("Rate limits saved."); } catch (e) { toast(e.message, true); }
 });
 $("backup-btn").addEventListener("click", async () => {
-	try { const r = await api("/api/system/backup", {}); toast(`Backed up: ${r.files.map((f) => f.file).join(", ")}`); refreshBackups(); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/system/backup", {}); toast(`Backed up: ${r.files.map((f) => f.file).join(", ")}`); refreshBackups(); } catch (e) { toast(e.message, true); }
 });
 $("backup-list-btn").addEventListener("click", refreshBackups);
 async function refreshBackups() {
 	try {
-		const r = await api("/api/system/backups");
+		const r = await api("api/system/backups");
 		$("backup-list").innerHTML = r.files.length
 			? r.files.map((f) => `<div class="muted" style="font-size:12px">🗄 ${esc(f.file)} — ${(f.bytes / 1024).toFixed(0)} KB</div>`).join("")
 			: '<div class="muted">No backups yet.</div>';
@@ -1249,7 +1293,7 @@ $("apikey-create").addEventListener("click", async () => {
 	const name = $("apikey-name").value.trim();
 	if (!name) return toast("Key name required.", true);
 	try {
-		const r = await api("/api/keys", { name });
+		const r = await api("api/keys", { name });
 		$("apikey-new").style.display = ""; $("apikey-new-val").textContent = r.key; $("apikey-name").value = "";
 		toast("API key generated — copy it now, it is shown once."); refreshKeys();
 	} catch (e) { toast(e.message, true); }
@@ -1257,7 +1301,7 @@ $("apikey-create").addEventListener("click", async () => {
 $("apikey-copy").addEventListener("click", () => { navigator.clipboard?.writeText($("apikey-new-val").textContent); toast("Copied."); });
 async function refreshKeys() {
 	try {
-		const r = await api("/api/keys");
+		const r = await api("api/keys");
 		$("apikey-tbody").innerHTML = r.keys.length ? r.keys.map((k) => `<tr>
 			<td>${esc(k.name)}${k.revoked ? ' <span class="chip red">revoked</span>' : ""}</td>
 			<td><code style="font-size:11px">${esc(k.prefix)}</code></td><td class="muted">${esc((k.created_at || "").slice(0, 16))}</td>
@@ -1265,13 +1309,13 @@ async function refreshKeys() {
 			<td>${k.revoked ? "" : `<button class="btn small danger" data-revoke="${k.id}">Revoke</button>`}</td></tr>`).join("")
 			: '<tr><td colspan="5" class="empty">No API keys yet.</td></tr>';
 		$("apikey-tbody").querySelectorAll("[data-revoke]").forEach((b) => b.addEventListener("click", async () => {
-			try { await api("/api/keys/revoke", { id: +b.dataset.revoke }); toast("Key revoked."); refreshKeys(); } catch (e) { toast(e.message, true); }
+			try { await api("api/keys/revoke", { id: +b.dataset.revoke }); toast("Key revoked."); refreshKeys(); } catch (e) { toast(e.message, true); }
 		}));
 	} catch {}
 }
 async function refreshDb() {
 	try {
-		const d = await api("/api/system/db");
+		const d = await api("api/system/db");
 		$("db-status-box").innerHTML = `
 			<span class="chip ${d.clash.pingMs != null ? "green" : "red"}">clash.db ${d.clash.pingMs != null ? d.clash.pingMs + "ms" : "FAIL"}${d.clash.fileBytes != null ? ` · ${(d.clash.fileBytes / 1048576).toFixed(1)}MB` : ""}</span>
 			<span class="chip green">panel.db ${(d.panel.fileBytes / 1048576).toFixed(2)}MB</span>
@@ -1287,7 +1331,7 @@ async function loadCommsTab() {
 	await loadState();
 	renderChatControls(); renderAlerts(); renderEmoji(); renderMotd(); refreshParties(); refreshStaffNotes();
 }
-async function loadChatNow() { try { state.chatConfig = (await api("/api/comms/chat")).chat || {}; renderChatControls(); } catch {} }
+async function loadChatNow() { try { state.chatConfig = (await api("api/comms/chat")).chat || {}; renderChatControls(); } catch {} }
 function renderChatControls() {
 	const c = state.chatConfig || {};
 	$("chat-freeze").checked = !!c.freeze;
@@ -1297,7 +1341,7 @@ function renderChatControls() {
 }
 $("chat-save").addEventListener("click", async () => {
 	try {
-		const r = await api("/api/comms/chat", {
+		const r = await api("api/comms/chat", {
 			freeze: $("chat-freeze").checked,
 			slowmodeSeconds: +$("chat-slowmode").value,
 			filterEnabled: $("chat-filter-enabled").checked,
@@ -1309,12 +1353,12 @@ $("chat-save").addEventListener("click", async () => {
 $("broadcast-send").addEventListener("click", async () => {
 	const msg = $("broadcast-msg").value.trim();
 	if (!msg) return toast("Message required.", true);
-	try { await api("/api/comms/broadcast", { message: msg }); $("broadcast-msg").value = ""; toast("Broadcast dispatched to all connected players."); } catch (e) { toast(e.message, true); }
+	try { await api("api/comms/broadcast", { message: msg }); $("broadcast-msg").value = ""; toast("Broadcast dispatched to all connected players."); } catch (e) { toast(e.message, true); }
 });
 $("notify-send").addEventListener("click", async () => {
 	if (!$("notify-user").value.trim() || !$("notify-msg").value.trim()) return toast("Username and message required.", true);
 	try {
-		const r = await api("/api/comms/notify", { username: $("notify-user").value.trim(), message: $("notify-msg").value.trim() });
+		const r = await api("api/comms/notify", { username: $("notify-user").value.trim(), message: $("notify-msg").value.trim() });
 		toast(r.delivered ? "Alert delivered to the user's screen." : "User is not online — queued notification rejected.");
 		if (r.delivered) $("notify-msg").value = "";
 	} catch (e) { toast(e.message, true); }
@@ -1327,12 +1371,12 @@ function renderAlerts() {
 }
 $("alert-save").addEventListener("click", async () => {
 	try {
-		const r = await api("/api/comms/alerts", { enabled: $("alert-enabled").checked, webhookUrl: $("alert-url").value, events: $("alert-events").value.split(",").map((s) => s.trim()).filter(Boolean) });
+		const r = await api("api/comms/alerts", { enabled: $("alert-enabled").checked, webhookUrl: $("alert-url").value, events: $("alert-events").value.split(",").map((s) => s.trim()).filter(Boolean) });
 		state.config.alerts = r.alerts; toast("Alert system saved.");
 	} catch (e) { toast(e.message, true); }
 });
 $("alert-test").addEventListener("click", async () => {
-	try { await api("/api/comms/alerts/test", {}); toast("Test alert sent."); } catch (e) { toast(e.message, true); }
+	try { await api("api/comms/alerts/test", {}); toast("Test alert sent."); } catch (e) { toast(e.message, true); }
 });
 function renderEmoji() {
 	$("emoji-list").value = (state.config?.emoji || []).map((e) => `${e.code} ${e.value}`).join("\n");
@@ -1342,15 +1386,15 @@ $("emoji-save").addEventListener("click", async () => {
 		const m = l.trim().match(/^(:[^:]+:)\s+(\S+)$/);
 		return m ? { code: m[1], value: m[2] } : null;
 	}).filter(Boolean);
-	try { const r = await api("/api/comms/emoji", { emoji }); state.config.emoji = r.emoji; toast("Emoji list saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/comms/emoji", { emoji }); state.config.emoji = r.emoji; toast("Emoji list saved."); } catch (e) { toast(e.message, true); }
 });
 function renderMotd() { $("motd-input").value = state.config?.motd || ""; }
 $("motd-save").addEventListener("click", async () => {
-	try { const r = await api("/api/comms/motd", { motd: $("motd-input").value }); state.config.motd = r.motd; toast("MOTD saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/comms/motd", { motd: $("motd-input").value }); state.config.motd = r.motd; toast("MOTD saved."); } catch (e) { toast(e.message, true); }
 });
 async function refreshParties() {
 	try {
-		const r = await api("/api/comms/parties");
+		const r = await api("api/comms/parties");
 		const box = $("party-box");
 		const rooms = r.rooms || [];
 		box.innerHTML = `<div class="muted">🌐 ${r.online} online · ${rooms.length} public party room(s)</div>` +
@@ -1364,7 +1408,7 @@ async function refreshParties() {
 $("party-refresh").addEventListener("click", refreshParties);
 async function refreshStaffNotes() {
 	try {
-		const r = await api("/api/staff-notes");
+		const r = await api("api/staff-notes");
 		$("staff-notes").innerHTML = r.notes.length
 			? r.notes.map((n) => `<div class="note-card"><div class="info" style="flex:1"><div style="font-weight:800;font-size:13px">${esc(n.title)}</div>
 				<div class="muted" style="font-size:12px">${esc((n.body || "").slice(0, 300))}</div>
@@ -1372,14 +1416,14 @@ async function refreshStaffNotes() {
 				<button class="btn small danger" data-delnote="${n.id}">🗑</button></div>`).join("")
 			: '<div class="empty">No staff notes yet.</div>';
 		$("staff-notes").querySelectorAll("[data-delnote]").forEach((b) => b.addEventListener("click", async () => {
-			try { await api("/api/staff-notes/delete", { id: +b.dataset.delnote }); refreshStaffNotes(); } catch (e) { toast(e.message, true); }
+			try { await api("api/staff-notes/delete", { id: +b.dataset.delnote }); refreshStaffNotes(); } catch (e) { toast(e.message, true); }
 		}));
 	} catch {}
 }
 $("staff-note-add").addEventListener("click", async () => {
 	if (!$("staff-note-title").value.trim()) return toast("Title required.", true);
 	try {
-		await api("/api/staff-notes", { title: $("staff-note-title").value, body: $("staff-note-body").value });
+		await api("api/staff-notes", { title: $("staff-note-title").value, body: $("staff-note-body").value });
 		$("staff-note-title").value = ""; $("staff-note-body").value = ""; toast("Staff note posted."); refreshStaffNotes();
 	} catch (e) { toast(e.message, true); }
 });
@@ -1389,7 +1433,7 @@ $("staff-note-add").addEventListener("click", async () => {
    ============================================================ */
 async function loadAnalyticsTab() {
 	try {
-		const [ov, audit] = await Promise.all([api("/api/analytics/overview"), api("/api/analytics/audit")]);
+		const [ov, audit] = await Promise.all([api("api/analytics/overview"), api("api/analytics/audit")]);
 		renderOnlineGraph(ov);
 		renderKpis(ov);
 		renderGameLb(ov.games || []);
@@ -1451,14 +1495,14 @@ function renderEcoDefaults() {
 	$("def-theme").value = d.theme || "dark"; $("def-sound").value = d.sound ?? 0.7; $("def-graphics").value = d.graphics || "auto";
 }
 $("eco-save").addEventListener("click", async () => {
-	try { const r = await api("/api/analytics/economy", { rankPointsPerXp: $("eco-xp").value, tokenCostBadge: $("eco-badge").value, conversionRate: $("eco-conv").value }); state.config.economy = r.economy; toast("Economy config saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/analytics/economy", { rankPointsPerXp: $("eco-xp").value, tokenCostBadge: $("eco-badge").value, conversionRate: $("eco-conv").value }); state.config.economy = r.economy; toast("Economy config saved."); } catch (e) { toast(e.message, true); }
 });
 $("def-save").addEventListener("click", async () => {
-	try { const r = await api("/api/analytics/defaults", { theme: $("def-theme").value, sound: $("def-sound").value, graphics: $("def-graphics").value }); state.config.defaults = r.defaults; toast("New-user defaults saved."); } catch (e) { toast(e.message, true); }
+	try { const r = await api("api/analytics/defaults", { theme: $("def-theme").value, sound: $("def-sound").value, graphics: $("def-graphics").value }); state.config.defaults = r.defaults; toast("New-user defaults saved."); } catch (e) { toast(e.message, true); }
 });
 document.querySelectorAll("[data-theme-set]").forEach((b) => b.addEventListener("click", async () => {
 	document.body.dataset.theme = b.dataset.themeSet;
-	try { await api("/api/analytics/theme", { theme: b.dataset.themeSet }); toast(`Theme: ${b.dataset.themeSet}`); } catch (e) { toast(e.message, true); }
+	try { await api("api/analytics/theme", { theme: b.dataset.themeSet }); toast(`Theme: ${b.dataset.themeSet}`); } catch (e) { toast(e.message, true); }
 }));
 
 /* ============================================================
@@ -1477,7 +1521,7 @@ async function loadJarvisTab() {
 			const key = $("jv-key").value.trim();
 			if (!key) return toast("Paste an OpenRouter key first.", true);
 			try {
-				const r = await api("/api/jarvis/key", { key });
+				const r = await api("api/jarvis/key", { key });
 				$("jv-key").value = "";
 				if (r.probeValid) toast("Key saved — verified working (free models, $0).");
 				else toast("Key saved, but OpenRouter rejected it: " + (r.probeDetail || "unknown"), true);
@@ -1489,7 +1533,7 @@ async function loadJarvisTab() {
 }
 async function jvLoadInfo() {
 	try {
-		const info = await api("/api/jarvis/info");
+		const info = await api("api/jarvis/info");
 		$("jv-backend").textContent = info.keySet ? "key set" : "free tier";
 		$("jv-backends").textContent = info.backends;
 		$("jv-key-state").textContent = info.keySet
@@ -1522,7 +1566,7 @@ async function jvSend() {
 	jvBusy = true;
 	const pend = jvPush("ai", "thinking…");
 	try {
-		const r = await api("/api/jarvis/chat", { messages: jvHistory.slice(-12) });
+		const r = await api("api/jarvis/chat", { messages: jvHistory.slice(-12) });
 		pend.textContent = r.reply;
 		if (r.source && r.source !== "command") {
 			const s = document.createElement("span");

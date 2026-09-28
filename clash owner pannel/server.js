@@ -40,6 +40,7 @@ const PRIVILEGES = [
 	{ id: "content-moderation", name: "Content Moderation", desc: "Moderate chat, lounge & messages" },
 	{ id: "shield-control", name: "Clash Shield Control", desc: "Configure Clash Shield & whitelists" },
 	{ id: "game-library", name: "Game Library", desc: "Manage the game library & titles" },
+	{ id: "game-testing", name: "Game Testing", desc: "Approve, publish & reject staged games before they go live" },
 	{ id: "script-control", name: "Script Control", desc: "Manage userscripts" },
 	{ id: "save-access", name: "Save Data Access", desc: "Access game saves" },
 	{ id: "server-control", name: "Server Control", desc: "Server configuration & restart" },
@@ -351,6 +352,50 @@ async function restartMain() {
 // ============================================================
 // Router
 // ============================================================
+// ---------- rank privilege grants (never forces the admin role) ----------
+function grantPrivilege(userId, privilege, on) {
+	const store = loadStore();
+	let a = store.assignments[String(userId)];
+	if (!a) {
+		const u = db.prepare("SELECT role, custom_tag FROM users WHERE id = ?").get(userId);
+		if (!u) return null;
+		a = { presetId: null, rankName: "Game Tester", privileges: [], prevTag: u.custom_tag || null, prevRole: u.role || "user" };
+		store.assignments[String(userId)] = a;
+	}
+	const set = new Set(Array.isArray(a.privileges) ? a.privileges : []);
+	if (on) set.add(privilege); else set.delete(privilege);
+	a.privileges = [...set];
+	saveStore(store);
+	return a;
+}
+
+// ---------- staged game queue (Jarvis downloads await tester approval) ----------
+const PENDING_DIR = path.join(DATA_DIR, "pending-games");
+const QUEUE_PATH = path.join(PENDING_DIR, "queue.json");
+function loadQueue() {
+	try { return JSON.parse(fs.readFileSync(QUEUE_PATH, "utf8")); }
+	catch { return { pending: [], rejected: [], published: [], liveReview: [] }; }
+}
+function saveQueue(q) {
+	fs.mkdirSync(PENDING_DIR, { recursive: true });
+	fs.writeFileSync(QUEUE_PATH, JSON.stringify(q, null, "\t"));
+}
+function stageDownloaded(filename, title, sourceUrl) {
+	const id = "g" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+	const stem = filename.replace(/\.html$/i, "");
+	fs.mkdirSync(PENDING_DIR, { recursive: true });
+	try { fs.renameSync(path.join(GAMES_DIR, filename), path.join(PENDING_DIR, filename)); }
+	catch { return null; }
+	try {
+		const srcDir = path.join(GAMES_DIR, stem);
+		if (fs.existsSync(srcDir)) fs.renameSync(srcDir, path.join(PENDING_DIR, stem));
+	} catch {}
+	const q = loadQueue();
+	q.pending.unshift({ id, title, filename, sourceUrl: sourceUrl || "", addedAt: Date.now() });
+	saveQueue(q);
+	return id;
+}
+
 const server = http.createServer(async (req, res) => {
 	let pathname = "/";
 	try { pathname = new URL(req.url, `http://${req.headers.host || "localhost"}`).pathname; } catch {}
@@ -362,6 +407,92 @@ const server = http.createServer(async (req, res) => {
 			res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Content-Length": html.length });
 			res.end(html);
 			return;
+		}
+
+		// ---------- TESTER PANEL ----------
+		if (req.method === "GET" && (pathname === "/testing" || pathname === "/testing/")) {
+			try {
+				const html = fs.readFileSync(path.join(__dirname, "testing.html"));
+				res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Content-Length": html.length });
+				res.end(html);
+			} catch {
+				res.writeHead(500, { "Content-Type": "text/plain" });
+				res.end("testing.html missing");
+			}
+			return;
+		}
+		if (req.method === "GET" && pathname === "/api/testing/queue") {
+			const q = loadQueue();
+			return json(res, 200, { pending: q.pending || [], liveReview: q.liveReview || [], rejectedCount: (q.rejected || []).length, publishedCount: (q.published || []).length });
+		}
+		if (req.method === "POST" && pathname === "/api/testing/pass") {
+			const body = await readBody(req);
+			const q = loadQueue();
+			const e = (q.pending || []).find((x) => x.id === body.id);
+			if (!e) return json(res, 404, { error: "Not in the queue." });
+			const stem = e.filename.replace(/\.html$/i, "");
+			const src = path.join(PENDING_DIR, e.filename);
+			if (!fs.existsSync(src)) return json(res, 404, { error: "Staged file is missing." });
+			try {
+				fs.renameSync(src, path.join(GAMES_DIR, e.filename));
+				const sa = path.join(PENDING_DIR, stem);
+				if (fs.existsSync(sa)) {
+					const da = path.join(GAMES_DIR, stem);
+					if (fs.existsSync(da)) fs.rmSync(da, { recursive: true, force: true });
+					fs.renameSync(sa, da);
+				}
+			} catch (err) {
+				return json(res, 500, { error: "publish failed: " + err.message });
+			}
+			addGameTitleEntry(e.filename, e.title);
+			await reloadGameCache();
+			q.pending = q.pending.filter((x) => x.id !== body.id);
+			(q.published = q.published || []).unshift({ ...e, publishedAt: Date.now(), reviewedBy: String(body.by || "tester") });
+			saveQueue(q);
+			audit("game.approve", `${e.title} → live`);
+			return json(res, 200, { ok: true, title: e.title, filename: e.filename });
+		}
+		if (req.method === "POST" && pathname === "/api/testing/fail") {
+			const body = await readBody(req);
+			const q = loadQueue();
+			const e = (q.pending || []).find((x) => x.id === body.id);
+			if (!e) return json(res, 404, { error: "Not in the queue." });
+			const reason = String(body.reason || "").slice(0, 300);
+			const stem = e.filename.replace(/\.html$/i, "");
+			try {
+				const src = path.join(PENDING_DIR, e.filename);
+				if (fs.existsSync(src)) fs.renameSync(src, path.join(PENDING_DIR, stem + ".rejected.html"));
+			} catch {}
+			q.pending = q.pending.filter((x) => x.id !== body.id);
+			(q.rejected = q.rejected || []).unshift({ ...e, rejectedAt: Date.now(), reason });
+			saveQueue(q);
+			audit("game.reject", `${e.title}: ${reason || "no reason"}`);
+			return json(res, 200, { ok: true });
+		}
+
+		// ---------- RANK PRIVILEGE GRANTS (does NOT force the admin role) ----------
+		if (req.method === "POST" && pathname === "/api/grants") {
+			const body = await readBody(req);
+			let userId = parseInt(body.userId, 10);
+			if (!Number.isInteger(userId) && body.username) {
+				const u = findUser(String(body.username));
+				if (u) userId = u.id;
+			}
+			const priv = String(body.privilege || "").trim();
+			if (!Number.isInteger(userId)) return json(res, 400, { error: "userId or username required." });
+			if (!PRIVILEGES.some((p) => p.id === priv)) return json(res, 400, { error: "Unknown privilege." });
+			const a = grantPrivilege(userId, priv, body.on !== false);
+			if (!a) return json(res, 404, { error: "User not found." });
+			const u = db.prepare("SELECT username FROM users WHERE id = ?").get(userId);
+			audit("rank.grant", `@${u?.username || userId}: ${body.on !== false ? "+" : "-"}${priv}`);
+			return json(res, 200, { ok: true, privileges: a.privileges });
+		}
+		if (req.method === "GET" && pathname === "/api/grants") {
+			const username = String(q.username || "").trim();
+			const u = username ? findUser(username) : null;
+			if (!u) return json(res, 404, { error: "User not found." });
+			const a = loadStore().assignments[String(u.id)];
+			return json(res, 200, { userId: u.id, privileges: (a && a.privileges) || [], rankName: a?.rankName || null });
 		}
 
 		// ---------- STATE ----------
@@ -1470,9 +1601,12 @@ async function jarvisDownloadGame(sourceUrl, titleHint, depth = 0) {
 async function jarvisAddGameSmart(title, url) {
 	const dl = await jarvisDownloadGame(url, title || "");
 	if (dl && dl.ok) {
-		addGameTitleEntry(dl.filename, dl.title);
-		await reloadGameCache();
-		return { mode: "downloaded", title: dl.title, filename: dl.filename, assets: dl.assets, bytes: dl.bytes, host: (() => { try { return new URL(dl.finalUrl || url).hostname; } catch { return url; } })() };
+		const id = stageDownloaded(dl.filename, dl.title, url);
+		if (id) {
+			await reloadGameCache();
+			return { mode: "staged", title: dl.title, id, filename: dl.filename, assets: dl.assets, bytes: dl.bytes, host: (() => { try { return new URL(dl.finalUrl || url).hostname; } catch { return url; } })() };
+		}
+		return { mode: "failed", reason: "could not stage the download for tester approval" };
 	}
 	if (dl && dl.reason === "exists") return { mode: "existed", title: dl.title };
 	const t2 = safeTitle(title || guessTitleFromUrl(url)).trim();
@@ -1480,6 +1614,11 @@ async function jarvisAddGameSmart(title, url) {
 	const c = await jarvisAddCustomGame(t2, url);
 	if (!c) return { mode: "failed", reason: (dl && dl.reason) || "invalid title/url" };
 	if (c.existed) return { mode: "existed", title: c.title };
+	const id = stageDownloaded(gameSlug(c.title) + ".html", c.title, url);
+	if (id) {
+		await reloadGameCache();
+		return { mode: "staged-embed", title: c.title, id, url, reason: (dl && dl.reason) || "" };
+	}
 	return { mode: "embed", title: c.title, url, reason: (dl && dl.reason) || "" };
 }
 
@@ -1497,17 +1636,27 @@ async function jarvisAddFromInternet(name) {
 	const reasons = [];
 	for (const url of candidates.slice(0, 4)) {
 		const r = await jarvisAddGameSmart(name, url);
-		if (r.mode === "downloaded" || r.mode === "existed") return r;
+		if (["staged", "staged-embed", "downloaded", "existed"].includes(r.mode)) return r;
 		if (r.reason) reasons.push(r.reason);
 	}
 	// nothing downloadable → live embed of the best search hit
 	const c = await jarvisAddCustomGame(name || guessTitleFromUrl(candidates[0]), candidates[0]);
-	if (c && !c.existed) return { mode: "embed", title: c.title, url: candidates[0], reason: reasons[0] || "" };
+	if (c && !c.existed) {
+		const id = stageDownloaded(gameSlug(c.title) + ".html", c.title, candidates[0]);
+		if (id) {
+			await reloadGameCache();
+			return { mode: "staged-embed", title: c.title, id, url: candidates[0], reason: reasons[0] || "" };
+		}
+	}
 	if (c && c.existed) return { mode: "existed", title: c.title };
 	return { mode: "failed", reason: reasons[0] || "all candidate sources failed" };
 }
 
 function jarvisAddReply(r) {
+	if (r.mode === "staged") return `Pulled the code for "${r.title}"${r.host ? ` from ${r.host}` : ""}` +
+		(r.assets ? ` — ${r.assets} asset file${r.assets > 1 ? "s" : ""}, ${Math.max(1, Math.round(r.bytes / 1024))} KB` : "") +
+		`. Staged in the tester queue — it goes live when a Game Tester approves it.`;
+	if (r.mode === "staged-embed") return `"${r.title}" — couldn't pull that code${r.reason ? ` (${r.reason})` : ""}, so I staged a live proxied embed of ${r.url} in the tester queue for approval.`;
 	if (r.mode === "downloaded") return `Pulled the code for "${r.title}" from ${r.host} and saved it locally` +
 		(r.assets ? ` — ${r.assets} asset file${r.assets > 1 ? "s" : ""}, ${Math.max(1, Math.round(r.bytes / 1024))} KB (${r.filename})` : ` (${r.filename})`) +
 		". It now plays straight from our own server.";
@@ -1646,6 +1795,8 @@ const JARVIS_HELP =
 	'  embed game "My Title" <url>    — quick proxied embed, no download\n' +
 	"  add 5 games                    — add games from the built-in catalog\n" +
 	"  scan games                     — refresh the library list\n" +
+	"  give @user game testing        — grant Game Tester access (rank chip → testing panel)\n" +
+	"  revoke @user game testing      — take it away\n" +
 	"  game reports                   — open reports filed by Game Tester-rank staff\n" +
 	"  fix <game>                     — diagnose & repair (backs up first)\n" +
 	"  replace <game> [url]           — swap the file (backup kept)\n" +
@@ -1723,6 +1874,24 @@ async function jarvisCommand(text) {
 		if (!user) return { reply: `No player named "${m[1]}" exists.` };
 		const r = await applyPunishment(user, "kick", cleanReason(m[2]), 0);
 		return { reply: r.kicked ? `Kicked @${user.username}.` : `@${user.username} is not connected right now (kick recorded anyway).` };
+	}
+
+	/* ----- rank privileges ----- */
+	m = t.match(/^\s*(?:jarvis[,\s]+)?(?:please\s+)?(?:give|grant|allow)\s+["']?@?([a-z0-9_.-]{2,32})["']?\s+(?:the\s+)?game[\s-]*testing\s*$/i);
+	if (m) {
+		const user = findUser(m[1]);
+		if (!user) return { reply: `No player named "${m[1]}" exists.` };
+		const a = grantPrivilege(user.id, "game-testing", true);
+		if (!a) return { reply: "Could not update that player's rank." };
+		return { reply: `@${user.username} now has the Game Tester privilege — their rank chip opens the testing panel.` };
+	}
+	m = t.match(/^\s*(?:jarvis[,\s]+)?(?:please\s+)?(?:revoke|remove|take\s+away|take)\s+["']?@?([a-z0-9_.-]{2,32})["']?\s+(?:the\s+)?game[\s-]*testing\s*$/i);
+	if (m) {
+		const user = findUser(m[1]);
+		if (!user) return { reply: `No player named "${m[1]}" exists.` };
+		const a = grantPrivilege(user.id, "game-testing", false);
+		if (!a) return { reply: "Could not update that player's rank." };
+		return { reply: `Removed the Game Tester privilege from @${user.username}.` };
 	}
 
 	/* ----- games: add with explicit URL (pulls the code) ----- */

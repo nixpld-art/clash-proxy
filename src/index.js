@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer, request as httpRequest } from "node:http";
 import { fileURLToPath } from "url";
 import { hostname } from "node:os";
 import { dirname, join } from "node:path";
@@ -105,7 +105,8 @@ import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
-import { isPrivilegedUsername } from "./auth-utils.js";
+import { isPrivilegedUsername, extractAuthUser, isAdminUser } from "./auth-utils.js";
+import { hasPrivilege, userRank } from "./ranks.js";
 
 // ============================================================
 // Fastify Server
@@ -443,6 +444,110 @@ fastify.setNotFoundHandler((req, reply) => {
 		<body><div class="c"><h1>404</h1><p>Page not found.</p><a href="/" target="_top">← Back to Clash Proxy</a></div></body></html>
 	`);
 });
+
+// ============================================================
+// Owner Panel — in-site reverse proxy (/panel → 127.0.0.1:8081)
+// Owner gate is server-side: ?token on first click (pins HttpOnly
+// cookie), then cookie/Bearer checked on EVERY /panel/* request.
+// ============================================================
+const PANEL_COOKIE = "cp_panel";
+const PANEL_403 = `<!doctype html><html><head><title>403 — Owner only</title>
+<style>body{background:#0a0a0f;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.c{text-align:center}h1{font-size:3rem;font-weight:900}p{opacity:.6}a{color:#a29bfe}</style></head>
+<body><div class="c"><h1>403</h1><p>This area is Owner-only.</p><a href="/">← Back to Clash Proxy</a></div></body></html>`;
+
+function panelTokenFrom(req) {
+	try {
+		for (const part of String(req.headers.cookie || "").split(";")) {
+			const s = part.trim();
+			if (s.startsWith(PANEL_COOKIE + "=")) {
+				const v = decodeURIComponent(s.slice(PANEL_COOKIE.length + 1));
+				if (v) return v;
+			}
+		}
+	} catch {}
+	const auth = req.headers.authorization;
+	if (auth && auth.startsWith("Bearer ")) return auth.slice(7).trim();
+	if (req.query && req.query.token) return String(req.query.token);
+	return null;
+}
+
+function panelProxy(req, reply) {
+	const pathOnly = req.url.split("?")[0];
+	const isTestingPath = pathOnly.startsWith("/panel/testing") || pathOnly.startsWith("/panel/api/testing");
+	const token = panelTokenFrom(req);
+	const user = token ? extractAuthUser({ headers: { authorization: "Bearer " + token } }) : null;
+	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : isAdminUser(user));
+	if (!allowed) {
+		reply.code(403).type("text/html; charset=utf-8").send(PANEL_403);
+		return;
+	}
+	// First arrival via the app link: pin token into HttpOnly cookie, strip it from the URL
+	if (req.query && req.query.token) {
+		reply.header("Set-Cookie", `${PANEL_COOKIE}=${encodeURIComponent(token)}; HttpOnly; Path=/panel; Max-Age=2592000; SameSite=Lax`);
+		reply.redirect(pathOnly.endsWith("/") ? pathOnly : pathOnly + "/", 302);
+		return;
+	}
+	// Keep the trailing slash so relative API paths resolve correctly
+	if (pathOnly === "/panel" || pathOnly === "/panel/testing") {
+		reply.redirect(pathOnly + "/", 302);
+		return;
+	}
+	const basePath = pathOnly.endsWith("/") ? pathOnly : pathOnly + "/";
+	let target = req.url.slice("/panel".length);
+	if (!target.startsWith("/")) target = "/" + target;
+	reply.hijack();
+	const preq = httpRequest(
+		{ host: "127.0.0.1", port: 8081, path: target, method: req.method, headers: { ...req.headers, host: "127.0.0.1:8081" } },
+		(pres) => {
+			const ct = String(pres.headers["content-type"] || "");
+			const outHeaders = { ...pres.headers };
+			delete outHeaders["content-length"];
+			delete outHeaders["transfer-encoding"];
+			if (ct.includes("text/html")) {
+				const chunks = [];
+				pres.on("data", (c) => chunks.push(c));
+				pres.on("end", () => {
+					let html = Buffer.concat(chunks).toString("utf8");
+					if (/<head[^>]*>/i.test(html)) html = html.replace(/<head([^>]*)>/i, (m, a) => `<head${a}><base href="${basePath}">`);
+					else html = `<base href="${basePath}">` + html;
+					html = html.replace(/href="http:\/\/localhost:8080\/?"/g, 'href="/"');
+					outHeaders["content-length"] = Buffer.byteLength(html);
+					try {
+						reply.raw.writeHead(pres.statusCode || 200, outHeaders);
+						reply.raw.end(html);
+					} catch {}
+				});
+				pres.on("error", () => {});
+				return;
+			}
+			try {
+				reply.raw.writeHead(pres.statusCode || 200, outHeaders);
+			} catch {
+				return;
+			}
+			pres.pipe(reply.raw);
+		}
+	);
+	preq.on("error", () => {
+		try {
+			if (!reply.raw.headersSent) reply.raw.writeHead(502, { "content-type": "text/plain" });
+			reply.raw.end("Owner Panel backend unreachable");
+		} catch {}
+	});
+	if (req.method === "GET" || req.method === "HEAD") preq.end();
+	else req.pipe(preq);
+}
+
+fastify.get("/api/me/ranks", async (req, reply) => {
+	const user = extractAuthUser(req);
+	if (!user) return reply.code(401).send({ error: "unauthorized" });
+	const r = userRank(user);
+	return { rankName: r.rankName || (isAdminUser(user) ? "Owner" : null), privileges: r.privileges, admin: isAdminUser(user) };
+});
+
+fastify.all("/panel", panelProxy);
+fastify.all("/panel/*", panelProxy);
 
 // ============================================================
 // Start Server

@@ -66,10 +66,13 @@ export default async function authRoutes(fastify) {
 			const passwordHash = hashPassword(password);
 			const dispName = (displayName && typeof displayName === "string" && displayName.trim()) || cleanUsername;
 			const isTed = isPrivilegedUsername(cleanUsername);
-			const role = isTed ? "admin" : "user";
-			const customTag = isTed ? "FOUNDER & DEV" : null;
-			const initialCoins = isTed ? 999999 : 350;
-			const initialFrame = isTed ? "frame-sovereign-gold" : "none";
+			// Fresh site (users table empty): the very first account to register becomes the owner
+			const isFirstUser = !db.prepare("SELECT id FROM users LIMIT 1").get();
+			const isOwner = isTed || isFirstUser;
+			const role = isOwner ? "admin" : "user";
+			const customTag = isOwner ? "FOUNDER & DEV" : null;
+			const initialCoins = isOwner ? 999999 : 350;
+			const initialFrame = isOwner ? "frame-sovereign-gold" : "none";
 
 			const result = db.prepare(`
 				INSERT INTO users (username, password_hash, display_name, avatar_url, xp, level, streak_days, last_login_date, role, custom_tag, coins, equipped_frame)
@@ -95,8 +98,8 @@ export default async function authRoutes(fastify) {
 					equippedFrame: newUser.equipped_frame || "none",
 					equippedNameTheme: newUser.equipped_name_theme || "none",
 					equippedChatTheme: newUser.equipped_chat_theme || "none",
-					role: newUser.role || (isTed ? "admin" : "user"),
-					customTag: newUser.custom_tag || (isTed ? "FOUNDER & DEV" : ""),
+					role: newUser.role || (isOwner ? "admin" : "user"),
+					customTag: newUser.custom_tag || (isOwner ? "FOUNDER & DEV" : ""),
 					settings: JSON.parse(newUser.settings_json || "{}"),
 					currentLevelXp: getXpRequiredForLevel(newUser.level),
 					nextLevelXp: getXpForNextLevel(newUser.level)

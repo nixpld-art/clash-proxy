@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Testing — Clash Proxy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0f;color:#e8e8f4;font-family:Inter,system-ui,sans-serif;min-height:100vh;padding:28px}
+h1{font-size:1.6rem;font-weight:900;margin-bottom:4px}
+.sub{color:#8b8ba3;margin-bottom:22px;font-size:.92rem;max-width:70ch}
+.stats{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.stat{background:#14141d;border:1px solid #24243a;border-radius:12px;padding:12px 18px}
+.stat b{display:block;font-size:1.4rem}
+.stat span{color:#8b8ba3;font-size:.8rem}
+.card{background:#14141d;border:1px solid #24243a;border-radius:14px;padding:16px;margin-bottom:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.card h3{font-size:1.05rem}
+.meta{color:#8b8ba3;font-size:.8rem;margin-top:3px;word-break:break-all}
+.spacer{flex:1}
+button{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:.9rem}
+.b-play{background:#1d1d2e;color:#a29bfe;border:1px solid #24243a}
+.b-pass{background:#2ecc71;color:#04140a}
+.b-fail{background:#ff5c6c;color:#2a0508}
+.reason{display:none;gap:8px;width:100%}
+.reason.open{display:flex}
+.reason input{flex:1;background:#0d0d15;border:1px solid #24243a;border-radius:8px;color:#e8e8f4;padding:10px}
+.empty{color:#8b8ba3;text-align:center;padding:60px 0;font-size:1.05rem}
+a{color:#a29bfe}
+.toast{position:fixed;bottom:22px;right:22px;background:#1c1c2c;border:1px solid #24243a;padding:12px 18px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>Game Testing</h1>
+<p class="sub">Games Jarvis downloaded sit here first. Play the original to check it works, then publish it — or send it back so Jarvis finds another source. Nothing goes live without you.</p>
+<div class="stats">
+	<div class="stat"><b id="s-pending">0</b><span>awaiting approval</span></div>
+	<div class="stat"><b id="s-live">0</b><span>live — awaiting review</span></div>
+	<div class="stat"><b id="s-pub">0</b><span>published by testers</span></div>
+	<div class="stat"><b id="s-rej">0</b><span>rejected</span></div>
+</div>
+<div id="list"></div>
+<div class="empty" id="empty" style="display:none">Queue empty — nothing waiting on you.</div>
+<div class="toast" id="toast"></div>
+<script>
+const esc = (s) => String(s || "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+const api = (p, body) => fetch("/panel" + p, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}).then((r) => r.json());
+function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2600); }
+async function load() {
+	const q = await api("/api/testing/queue");
+	if (q.error) { document.getElementById("list").innerHTML = `<div class="empty">${esc(q.error)}</div>`; return; }
+	document.getElementById("s-pending").textContent = (q.pending || []).length;
+	document.getElementById("s-live").textContent = (q.liveReview || []).length;
+	document.getElementById("s-pub").textContent = q.publishedCount || 0;
+	document.getElementById("s-rej").textContent = q.rejectedCount || 0;
+	document.getElementById("empty").style.display = (q.pending || []).length ? "none" : "block";
+	const list = document.getElementById("list");
+	list.innerHTML = (q.pending || []).map((e) => {
+		const src = /^https?:/i.test(e.sourceUrl || "") ? e.sourceUrl : "";
+		return `
+		<div class="card" data-id="${esc(e.id)}">
+			<div>
+				<h3>${esc(e.title)}</h3>
+				<div class="meta">${src ? `<a href="${esc(src)}" target="_blank" rel="noopener">${esc(src)}</a> · ` : ""}staged ${new Date(e.addedAt).toLocaleString()}</div>
+			</div>
+			<div class="spacer"></div>
+			${src ? `<button class="b-play" data-act="play">▶ Play original</button>` : ""}
+			<button class="b-pass" data-act="pass">Works — go live</button>
+			<button class="b-fail" data-act="fail">Not working</button>
+			<div class="reason"><input placeholder="Why? (Jarvis will find another source)" maxlength="300"><button class="b-fail" data-act="send">Send back</button></div>
+		</div>`;
+	}).join("");
+	list.querySelectorAll(".card").forEach((card) => {
+		card.querySelectorAll("button[data-act]").forEach((btn) => {
+			btn.addEventListener("click", async () => {
+				const id = card.dataset.id;
+				const act = btn.dataset.act;
+				if (act === "play") { window.open(card.querySelector("a")?.href || "_blank", "_blank"); return; }
+				if (act === "fail") { card.querySelector(".reason").classList.toggle("open"); return; }
+				if (act === "pass") {
+					const r = await api("/api/testing/pass", { id, by: "tester" });
+					if (r.ok) { toast(`"${r.title}" is live!`); load(); } else toast(r.error || "failed");
+					return;
+				}
+				if (act === "send") {
+					const r = await api("/api/testing/fail", { id, reason: card.querySelector(".reason input").value });
+					if (r.ok) { toast("Sent back to Jarvis"); load(); } else toast(r.error || "failed");
+				}
+			});
+		});
+	});
+}
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>
