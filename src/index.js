@@ -106,7 +106,7 @@ import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
-import { isPrivilegedUsername, extractAuthUser, isAdminUser } from "./auth-utils.js";
+import { isPrivilegedUsername, extractAuthUser, isAdminUser, verifyToken } from "./auth-utils.js";
 import { hasPrivilege, userRank } from "./ranks.js";
 
 // ============================================================
@@ -452,10 +452,13 @@ fastify.setNotFoundHandler((req, reply) => {
 // cookie), then cookie/Bearer checked on EVERY /panel/* request.
 // ============================================================
 const PANEL_COOKIE = "cp_panel";
-const PANEL_403 = `<!doctype html><html><head><title>403 — Owner only</title>
+function panel403(reasonHtml) {
+	return `<!doctype html><html><head><title>403 — Owner only</title>
 <style>body{background:#0a0a0f;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
-.c{text-align:center}h1{font-size:3rem;font-weight:900}p{opacity:.6}a{color:#a29bfe}</style></head>
-<body><div class="c"><h1>403</h1><p>This area is Owner-only.</p><a href="/">← Back to Clash Proxy</a></div></body></html>`;
+.c{text-align:center;max-width:520px;padding:0 24px}h1{font-size:3rem;font-weight:900}p{opacity:.7;line-height:1.6}a{display:inline-block;margin-top:14px;color:#a29bfe}</style></head>
+<body><div class="c"><h1>403</h1><p>${reasonHtml}</p><a href="/">← Back to Clash Proxy</a></div></body></html>`;
+}
+const PANEL_403 = panel403("This area is Owner-only.");
 
 function panelTokenFrom(req) {
 	try {
@@ -473,14 +476,37 @@ function panelTokenFrom(req) {
 	return null;
 }
 
+function panelDeny(reply, reasonHtml, clearCookie) {
+	if (clearCookie) reply.header("Set-Cookie", `${PANEL_COOKIE}=; HttpOnly; Path=/panel; Max-Age=0`);
+	reply.code(403).type("text/html; charset=utf-8").send(panel403(reasonHtml));
+}
+
 function panelProxy(req, reply) {
 	const pathOnly = req.url.split("?")[0];
 	const isTestingPath = pathOnly.startsWith("/panel/testing") || pathOnly.startsWith("/panel/api/testing");
 	const token = panelTokenFrom(req);
-	const user = token ? extractAuthUser({ headers: { authorization: "Bearer " + token } }) : null;
+
+	if (!token) {
+		panelDeny(reply, "You're not signed in. Sign in as the Owner account, then open the panel from the sidebar.");
+		return;
+	}
+	const decoded = verifyToken(token);
+	if (!decoded) {
+		panelDeny(reply, "Your session expired or the server was updated. Sign in again, then reopen the panel.", true);
+		return;
+	}
+	// Role comes from the DATABASE, not the token — survives stale logins
+	// and refreshes instantly after role changes.
+	let dbRow = null;
+	try { dbRow = db.prepare("SELECT username, role FROM users WHERE id = ?").get(decoded.id); } catch {}
+	if (!dbRow) {
+		panelDeny(reply, "Your account could not be found on the server (it may have been reset). Sign in again — if you own this site, register with the Owner Key to reclaim it.", true);
+		return;
+	}
+	const user = { ...decoded, role: dbRow.role, username: dbRow.username };
 	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : isAdminUser(user));
 	if (!allowed) {
-		reply.code(403).type("text/html; charset=utf-8").send(PANEL_403);
+		panelDeny(reply, `You're signed in as <b>${String(dbRow.username).replace(/[<>&"]/g, "")}</b>, but this area is Owner-only.`, true);
 		return;
 	}
 	// First arrival via the app link: pin token into HttpOnly cookie, strip it from the URL
