@@ -1,4 +1,5 @@
 import { createServer, request as httpRequest } from "node:http";
+import { spawn } from "node:child_process";
 import { fileURLToPath } from "url";
 import { hostname } from "node:os";
 import { dirname, join } from "node:path";
@@ -548,6 +549,27 @@ fastify.get("/api/me/ranks", async (req, reply) => {
 
 fastify.all("/panel", panelProxy);
 fastify.all("/panel/*", panelProxy);
+
+// ============================================================
+// Owner Panel backend — auto-start the panel process
+// (127.0.0.1:8081) when nothing is listening yet, so /panel
+// works everywhere the site runs (local + Render).
+// ============================================================
+(async () => {
+	try {
+		await fetch("http://127.0.0.1:8081/api/system/health", { signal: AbortSignal.timeout(900) });
+	} catch {
+		try {
+			const child = spawn(process.execPath, [fileURLToPath(new URL("../clash owner pannel/server.js", import.meta.url))], {
+				cwd: fileURLToPath(new URL("../", import.meta.url)),
+				stdio: "ignore",
+				detached: false,
+			});
+			child.on("error", () => {});
+			process.on("exit", () => { try { child.kill(); } catch {} });
+		} catch {}
+	}
+})();
 
 // ============================================================
 // Start Server

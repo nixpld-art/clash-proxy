@@ -1004,13 +1004,6 @@ function renderUserHeader() {
 	// Reveal Owner Panel sidebar link (separate localhost:8081 server, owner PC only) for privileged users
 	if (navOwnerPanel) {
 		navOwnerPanel.style.display = (isTed || currentUser.role === "admin") ? "" : "none";
-		if (!navOwnerPanel.dataset.bound) {
-			navOwnerPanel.dataset.bound = "1";
-			navOwnerPanel.addEventListener("click", (e) => {
-				e.preventDefault();
-				location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
-			});
-		}
 	}
 
 	// Rank chip → opens YOUR panel (Owner → control panel, Game Tester → testing panel)
@@ -4159,11 +4152,11 @@ sidebarLinks.forEach((link) => {
 		e.preventDefault();
 		const targetPage = link.dataset.page;
 
-		// Owner Panel opens the separate localhost:8081 server in a new tab (no SPA page)
+		// Owner Panel opens INSIDE the site (server proxies it, owner-gated)
 		if (targetPage === "owner-panel") {
 			e.stopPropagation();
-			window.open("http://localhost:8081/", "_blank", "noopener");
 			closeSidebar();
+			location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
 			return;
 		}
 
