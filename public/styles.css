@@ -1,8 +1,14 @@
 /* ============================================================
-   CLASH PROXY — Premium Dark Theme
+   CLASH PROXY �?" Premium Dark Theme
    Design System: Dark glassmorphism with accent glows
    Font: Inter (Google Fonts)
    ============================================================ */
+
+/* Global utility: anything the JS marks with .hidden must actually hide.
+   Without this rule the auth modal showed BOTH forms at once. */
+.hidden {
+	display: none !important;
+}
 
 /* --- CSS Custom Properties (Design Tokens) --- */
 :root {
