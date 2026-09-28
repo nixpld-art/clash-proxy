@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<base href="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/style.css" type="text/css">
+
+<script>
+/* Keyboard fix */
+window.addEventListener("keydown", function(e) {
+  if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) e.preventDefault();
+}, false);
+
+/* Ad SDK fallbacks: prevents Construct 3 runtime from crashing when ad SDK is missing */
+(function () {
+  const done = function () { return Promise.resolve({ completed: true }); };
+  const noop = function () { return undefined; };
+
+  window.gdsdk = window.gdsdk || {
+    showAd: done,
+    preloadAd: done,
+    showBanner: done,
+    hideBanner: noop,
+    cancelAd: noop
+  };
+
+  window.PokiSDK = window.PokiSDK || {
+    init: done,
+    commercialBreak: done,
+    rewardedBreak: done,
+    gameplayStart: noop,
+    gameplayStop: noop,
+    happyTime: noop,
+    setDebug: noop
+  };
+
+  window.CrazyGames = window.CrazyGames || {};
+  window.CrazyGames.SDK = window.CrazyGames.SDK || {
+    init: done,
+    ad: {
+      requestAd: function () { return done(); },
+      hasAdblock: function () { return Promise.resolve(false); }
+    },
+    game: {
+      gameplayStart: noop,
+      gameplayStop: noop,
+      happytime: noop
+    },
+    user: {
+      getUser: function () { return Promise.resolve(null); }
+    }
+  };
+
+  window.GameMonetize = window.GameMonetize || {
+    SDK_OPTIONS: {
+      gameId: "",
+      onEvent: noop
+    }
+  };
+
+  window.SDK_OPTIONS = window.SDK_OPTIONS || {
+    gameId: "",
+    onEvent: noop
+  };
+
+  window.YaGames = window.YaGames || {
+    init: function () {
+      return Promise.resolve({
+        adv: {
+          showFullscreenAdv: function (o) {
+            if (o && o.callbacks && typeof o.callbacks.onClose === "function") o.callbacks.onClose();
+            return Promise.resolve();
+          },
+          showRewardedVideo: function (o) {
+            if (o && o.callbacks && typeof o.callbacks.onRewarded === "function") o.callbacks.onRewarded();
+            if (o && o.callbacks && typeof o.callbacks.onClose === "function") o.callbacks.onClose();
+            return Promise.resolve();
+          }
+        },
+        getPlayer: function () { return Promise.resolve({ getMode: function () { return "lite"; } }); },
+        getLeaderboards: function () { return Promise.resolve(null); }
+      });
+    }
+  };
+
+  window.addEventListener("unhandledrejection", function (event) {
+    const msg = String(event.reason && (event.reason.message || event.reason) || "");
+    if (msg.indexOf("showAd") !== -1 || msg.indexOf("advert") !== -1 || msg.indexOf("SDK") !== -1) {
+      event.preventDefault();
+      console.warn("Ad SDK fallback handled:", msg);
+    }
+  });
+
+  window.addEventListener("error", function (event) {
+    const msg = String(event.message || "");
+    if (msg.indexOf("showAd") !== -1 || msg.indexOf("advert") !== -1 || msg.indexOf("SDK") !== -1) {
+      event.preventDefault();
+      console.warn("Ad SDK error ignored:", msg);
+      return true;
+    }
+  }, true);
+})();
+</script>
+</head>
+<body>
+<div id="fb-root"></div>
+<script src="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/box2d.wasm.js"></script>
+<noscript>
+  <div id="notSupportedWrap">
+    <h2 id="notSupportedTitle">This content requires JavaScript</h2>
+    <p class="notSupportedMessage">JavaScript appears to be disabled. Please enable it to view this content.</p>
+    <p class="notSupportedMessage">This content was made with Construct.</p>
+  </div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/scripts/supportcheck.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/scripts/offlineclient.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/yrgen73/janibatt@2be2779d6614a2a81660ba5a02fdded10d3ec337/scripts/main.js"></script>
+<!-- register-sw.js removed intentionally: service workers do not work reliably inside embedded/srcdoc pages. -->
+</body>
+</html>

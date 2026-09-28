@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Big Tall Small</title>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MENBM6GSNY"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-MENBM6GSNY")</script>
+	<script src="https://124694175-581627131838102819.preview.editmysite.com/uploads/b/147685986-198614590559530448/files/progress.js"></script>
+	<script>
+		window.addEventListener ("touchmove", function (event) { event.preventDefault (); }, { capture: false, passive: false });
+		if (typeof window.devicePixelRatio !='undefined' && window.devicePixelRatio > 2) {
+			var meta = document.getElementById ("viewport");
+			meta.setAttribute ('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
+		}
+	</script>
+	
+	<style>
+		html,body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+		#openfl-content { background: #000000; width: 100%; height: 100%; }
+		#progress { position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50%; }
+
+	</style>
+	
+</head>
+<body>
+	
+	<noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this page.</noscript>
+	
+	<div id="openfl-content"><progress id="progress" value="0" max ="1"></progress></div>
+	
+	<script>
+		
+		var __filesToLoad = {
+			"https://124694175-581627131838102819.preview.editmysite.com/uploads/b/147685986-198614590559530448/files/BigTallSmall.js": {total: 2627628}
+		}
+		
+		var __progressBar;
+		
+		var __progressListener = function __progressListener(progress) {
+			if(!__progressBar) __progressBar = document.getElementById("progress");
+			if(__progressBar) __progressBar.value = progress;
+		};
+
+		var __completionCallback = function __completionCallback() {
+			__progressBar.parentNode.removeChild(__progressBar);
+			lime.embed ("Big Tall Small", "openfl-content", 720, 480, { parameters: {} });
+		};
+
+		__loadWithProgress(__filesToLoad, __progressListener, __completionCallback);
+		
+	</script>
+	<script src="https://cdn.jsdelivr.net/gh/st39/sdk@main/api.js"></script>
+	
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
+<title>Cube Online</title>
+<style>
+body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;
+  overscroll-behavior:none;touch-action:none;user-select:none;-webkit-user-select:none}
+body{display:flex;justify-content:center;align-items:center}
+#canvas{width:100%;height:100%;display:block;touch-action:none;
+  -webkit-tap-highlight-color:transparent;outline:0}
+#loading{position:fixed;inset:0;width:100%;height:100%;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;z-index:10;touch-action:none;overflow:hidden;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 2px,transparent 2px 4px),
+             linear-gradient(180deg,#7bb6e8 0,#9fcdf0 45%,#c9def0 100%);
+  image-rendering:pixelated;transition:opacity .5s ease}
+#loading.done{opacity:0;pointer-events:none}
+#loading::before{content:"";position:absolute;top:16%;left:50%;transform:translateX(-50%);
+  width:80px;height:80px;background:#fff3c4;
+  box-shadow:0 0 0 10px rgba(255,243,196,.35),0 0 60px 20px rgba(255,243,196,.45);
+  animation:sunBob 4s ease-in-out infinite;pointer-events:none}
+@keyframes sunBob{0%,100%{transform:translateX(-50%) translateY(0)}
+                  50%{transform:translateX(-50%) translateY(-8px)}}
+#progress-bar-wrap{position:relative;width:240px;height:18px;background:#2b2018;
+  border:3px solid #1a120c;box-shadow:inset 0 0 0 3px #4a382a,0 4px 0 rgba(0,0,0,.25);
+  image-rendering:pixelated}
+#progress-bar{height:100%;width:0%;
+  background:repeating-linear-gradient(90deg,#7ec850 0 12px,#6fb840 12px 24px);
+  transition:width .25s steps(8);
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.22),inset 0 4px 0 rgba(255,255,255,.18)}
+#progress-pct{margin-top:16px;font:700 16px/1 ui-monospace,Consolas,monospace;
+  letter-spacing:3px;color:#fffef2;text-shadow:2px 2px 0 #3a2a1a,0 0 12px rgba(0,0,0,.4)}
+#ad-countdown{position:fixed;inset:0;z-index:20;display:none;align-items:center;
+  justify-content:center;background:rgba(0,0,0,.82);color:#fffef2;
+  font:700 28px/1.4 ui-monospace,Consolas,monospace;text-align:center;letter-spacing:2px}
+</style>
+</head><body>
+<div id="loading">
+  <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  <div id="progress-pct">0%</div>
+</div>
+<div id="ad-countdown"><span id="ad-countdown-text"></span></div>
+<canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+
+<script>
+/* ═══ CDN — dosyalari yukledigin repo/commit ═══ */
+var CDN = "https://cdn.jsdelivr.net/gh/school-management-google/xvb66@main/n/";
+function U(p){ return CDN.replace(/\/+$/,"") + "/" + p; }
+
+var __fatalShown=false, __started=false;
+function __isRu(){ return "ru"===(navigator.language||"en").slice(0,2); }
+function showFatal(e){
+  if(__fatalShown) return; __fatalShown=true;
+  var n=document.getElementById("loading"); if(n) n.style.display="none";
+  var t=document.createElement("div");
+  t.style.cssText="position:fixed;inset:0;z-index:100000;background:#1a1410;color:#fffef2;"+
+    "display:flex;flex-direction:column;align-items:center;justify-content:center;"+
+    "text-align:center;padding:24px;gap:20px;font:600 4.5vw/1.5 sans-serif;";
+  t.innerHTML="<div>"+e+"</div>";
+  var o=document.createElement("button");
+  o.textContent=__isRu()?"Обновить":"Reload";
+  o.style.cssText="font:700 4vw sans-serif;padding:10px 30px;border:0;border-radius:8px;"+
+    "background:#7ec850;color:#10240a;cursor:pointer;";
+  o.onclick=function(){location.reload()};
+  t.appendChild(o); document.body.appendChild(t);
+}
+function __loadFail(){
+  if(__started) return;
+  showFatal(__isRu()?"Не удалось загрузить игру. Проверьте соединение и обновите страницу."
+                    :"Failed to load the game. Check your connection and reload.");
+}
+document.title=__isRu()?"Куб Онлайн":"Cube Online";
+(function(){
+  var ok=false;
+  try{var c=document.createElement("canvas");
+    ok=!(!window.WebGLRenderingContext||!c.getContext("webgl2")&&!c.getContext("webgl"));}
+  catch(e){}
+  if(!ok) showFatal(__isRu()
+    ?"Ваш браузер не поддерживает WebGL — игра не запустится."
+    :"Your browser does not support WebGL — the game cannot run.");
+})();
+
+/* iframe/sandbox kaynakli zararsiz hatalari yoksay */
+var __IGNORE=/unwind|SimulateInfiniteLoop|pointer\s*lock|pointerlock|sandbox|SecurityError|fullscreen|sdk\.js|YaGames|NotAllowedError|AbortError|play\(\)/i;
+window.addEventListener("error",function(e){
+  var n=e&&e.message||"";
+  if(__IGNORE.test(n)) return;
+  __loadFail();
+});
+window.addEventListener("unhandledrejection",function(e){
+  var n=(e&&e.reason&&(e.reason.message||e.reason.name))||"";
+  if(__IGNORE.test(String(n))){ e.preventDefault(); return; }
+  console.warn("[load] unhandledrejection:",e&&e.reason);
+});
+
+/* ── Pointer Lock / Fullscreen: izin yoksa sessizce yut ── */
+(function(){
+  function guard(obj,key){
+    var orig=obj&&obj[key];
+    if(typeof orig!=="function") return;
+    obj[key]=function(){
+      try{
+        var r=orig.apply(this,arguments);
+        if(r&&typeof r.catch==="function") return r.catch(function(){});
+        return Promise.resolve();
+      }catch(e){ return Promise.resolve(); }
+    };
+  }
+  guard(Element.prototype,"requestPointerLock");
+  guard(Element.prototype,"requestFullscreen");
+  guard(Element.prototype,"webkitRequestFullscreen");
+  guard(Element.prototype,"mozRequestFullScreen");
+  guard(Element.prototype,"msRequestFullscreen");
+  guard(Document.prototype,"exitFullscreen");
+  if(!Element.prototype.requestPointerLock) Element.prototype.requestPointerLock=function(){return Promise.resolve()};
+})();
+
+/* ── SAHTE POINTER LOCK: "Click to play" katmanini gecer ──
+   Sandbox'ta gercek kilit alinamadigi icin document.pointerLockElement hep null
+   kalir ve oyun overlay'i kapatmaz. Kilidi taklit edip olayi kendimiz atiyoruz. */
+(function(){
+  var faked=false, target=null;
+  var d=Object.getOwnPropertyDescriptor(Document.prototype,"pointerLockElement");
+  var realGet=d&&d.get;
+  try{
+    Object.defineProperty(Document.prototype,"pointerLockElement",{
+      configurable:true,
+      get:function(){ return faked?target:(realGet?realGet.call(this):null); }
+    });
+  }catch(e){}
+  function fire(){
+    try{ document.dispatchEvent(new Event("pointerlockchange")); }catch(e){}
+    try{ document.dispatchEvent(new Event("mozpointerlockchange")); }catch(e){}
+    try{ document.dispatchEvent(new Event("webkitpointerlockchange")); }catch(e){}
+  }
+  function lock(){
+    if(faked||window.__adInFlight) return;
+    target=document.getElementById("canvas");
+    if(!target) return;
+    faked=true; try{ target.focus(); }catch(e){} fire();
+  }
+  function unlock(){ if(!faked) return; faked=false; target=null; fire(); }
+  var realExit=Document.prototype.exitPointerLock;
+  Document.prototype.exitPointerLock=function(){
+    if(faked){ unlock(); return; }
+    try{ if(realExit) realExit.call(this); }catch(e){}
+  };
+  document.addEventListener("click",function(){
+    if(!document.pointerLockElement) lock();
+  },true);
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"||e.keyCode===27) unlock();
+  },true);
+  window.__fakeUnlock=unlock;
+})();
+
+/* ── Module ── */
+var Module={
+  websocket:{url:"wss://"},
+  onAbort:function(e){
+    showFatal((__isRu()?"Не удалось запустить игру. ":"Failed to start the game. ")+(e||""));
+  },
+  canvas:document.getElementById("canvas"),
+  /* index.wasm + index.data CDN'den */
+  locateFile:function(path,scriptDir){
+    if(path==="index.data"||path==="index.wasm") return U(path);
+    return scriptDir+path;
+  },
+  setStatus:function(e){
+    var bar=document.getElementById("loading"),
+        pb=document.getElementById("progress-bar"),
+        pt=document.getElementById("progress-pct");
+    if(!e){
+      __started=true;
+      if(bar){bar.classList.add("done");setTimeout(function(){bar.style.display="none"},550);}
+      return;
+    }
+    var m=e.match(/(\d+)\s*\/\s*(\d+)/);
+    if(m&&pb){
+      var pct=Math.min(100,Math.round(100*parseInt(m[1])/parseInt(m[2])));
+      pb.style.width=pct+"%";
+      if(pt) pt.textContent=pct+"%";
+    }
+  }
+};
+
+document.addEventListener("contextmenu",function(e){e.preventDefault()});
+document.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});
+(function(){
+  var c=document.getElementById("canvas");
+  if(!c) return;
+  var done=false, h=function(e){
+    if(e&&e.preventDefault(),!done){done=true;__fatalShown=true;
+      try{window.Module&&Module._web_save&&Module._web_save()}catch(e){}
+      setTimeout(function(){location.reload()},400);
+    }
+  };
+  c.addEventListener("webglcontextlost",h,false);
+  c.addEventListener("webglcontextrestored",h,false);
+})();
+</script>
+
+<script>
+/* ── window.YA — orijinal (Yandex SDK yoksa fallback modda calisir) ── */
+window.YA=function(){var n=null,t=null,e="",a="playtimes",o={settings:"",nick:"",playSeconds:0},i=0,u=!1,r=null,c=!0,d="",l=!1,s=!1,f=!1,_=0,y=!1,w=null,h=0,v=0,m=!1,g=0,p=0,M=31622400,I=!1,A=!1,S=!1,b=!1,k=!1,D=0,x=0,O=0,T="",R=0,Y=!1,F=null,B=0,E=!1,P=!1,C=!1,G=!1,L=!1,q="";function N(n){try{if(F)return F.getItem(n)}catch(n){}try{return localStorage.getItem(n)}catch(n){}return null}function U2(n,t){try{if(F)return void F.setItem(n,t)}catch(n){}try{localStorage.setItem(n,t)}catch(n){}}function j(){try{return!!t&&("function"==typeof t.isAuthorized?!0===t.isAuthorized():!(!t.getMode||"lite"===t.getMode()))}catch(n){return!1}}function J(){var t=l&&!I&&!A&&!document.hidden,e=function(){try{return n&&n.features&&n.features.GameplayAPI}catch(n){return null}}();if(e&&t!==S){S=t;try{t?e.start():e.stop()}catch(n){}}}function z(){r||(D=Math.min(Math.max(0,0|o.playSeconds),M),x=Date.now(),r=setInterval((function(){"visible"===document.visibilityState&&(b||(o.playSeconds+=1,o.playSeconds%60==0&&(K(),Q())))}),1e3))}function V(n){n=Math.max(0,0|n);var t=D+Math.floor((Date.now()-x)/1e3)+5;return Math.min(n,t,M)}function H(){try{if(n&&n.leaderboards&&n.leaderboards.setScore)return n.leaderboards}catch(n){}return null}function K(){t&&j()?t.setData(o,!0).catch((function(n){console.warn("[YA] setData",n)})):U2("ya_data",JSON.stringify(o))}function Q(){var n=H();if(n){var t=Math.max(V(o.playSeconds),R);try{n.setScore(a,t,q).catch((function(n){console.warn("[YA] lb",n)}))}catch(n){console.warn("[YA] lb",n)}}}function W(){if(window.__yaReady=!0,window.__yaOnReady){var n=window.__yaOnReady;window.__yaOnReady=null,n()}}function X(){if(E&&n&&!P){P=!0;try{n.features.LoadingAPI.ready()}catch(n){}}}function Z(){if("undefined"==typeof YaGames)return k=!0,Y=!0,z(),void W();YaGames.init().then((function(t){if(!n){n=t;try{e=t.environment.i18n.lang||""}catch(n){}try{window.YA.env=t}catch(n){}try{t.on("game_api_pause",(function(){window.__audioMuteSet&&window.__audioMuteSet("sdk",1),A=!0,J(),window.Module&&Module._ya_on_sdk_pause&&Module._ya_on_sdk_pause(1)})),t.on("game_api_resume",(function(){window.__audioMuteSet&&window.__audioMuteSet("sdk",0),A=!1,J(),window.Module&&Module._ya_on_sdk_pause&&Module._ya_on_sdk_pause(0)}))}catch(n){}try{c&&t.adv&&t.adv.showBannerAdv&&t.adv.showBannerAdv()}catch(n){}return t.getStorage?t.getStorage().then((function(n){F=n}),(function(){})):null}})).then((function(){return n.getPlayer({scopes:!1})})).then((function(n){if(t=n,j())return t.getData().then((function(n){n&&(o=Object.assign(o,n))}));try{var e=N("ya_data");e&&(o=Object.assign(o,JSON.parse(e)))}catch(n){}})).catch((function(t){console.warn("[YA] init failed, fallback",t)})).finally((function(){var t;(X(),J(),W(),C)?C=!1:(n?L:G)||(n?L=!0:G=!0,O=Math.min(Math.max(0,0|o.playSeconds),M),T=o.pt_sig||"",k=!0,(t=H())?t.getPlayerEntry(a).then((function(n){var t=0|(n&&n.score);R=Math.min(Math.max(0,t),M)})).catch((function(){})).finally((function(){Y=!0})):Y=!0,z())}))}document.addEventListener("visibilitychange",J),Z();function nn(){if(!n||!n.adv||!n.adv.showFullscreenAdv)return u=!1,window.__adInFlight=!1,m=!1,window.Module&&Module._ya_on_ad&&Module._ya_on_ad(0),I=!1,void J();var t=!1,e=null,a=function(n){t||(t=!0,e&&(clearTimeout(e),e=null),u=!1,window.__adInFlight=!1,n&&(i=Date.now()),n&&m&&v++,m=!1,Module._ya_on_ad&&Module._ya_on_ad(0),I=!1,J())},o=function(n){e&&clearTimeout(e),e=setTimeout((function(){a(!1)}),n)};o(12e3),n.adv.showFullscreenAdv({callbacks:{onOpen:function(){o(6e4),Module._ya_on_ad&&Module._ya_on_ad(1)},onClose:function(n){a(!1!==n)},onError:function(){a(!1)}}})}function tn(t){if(g>(t|=0))return!1;if(s)return f=!0,t>_&&(_=t),!1;if(u)return!1;if(!n||!n.adv||!n.adv.showFullscreenAdv)return!1;if(Date.now()-i<6e4)return!1;en(),u=!0,window.__adInFlight=!0,window.Module&&Module._ya_on_ad&&Module._ya_on_ad(1),I=!0,J();try{window.__fakeUnlock&&window.__fakeUnlock(),document.exitPointerLock&&document.exitPointerLock()}catch(n){}return function(n){var t=document.getElementById("ad-countdown"),a=document.getElementById("ad-countdown-text"),o=2,i=0===(e||"en").indexOf("ru");function u(){if(a.textContent=(i?"Реклама через ":"Ad in ")+o+(i?" сек…":" s…"),o<=0)return t.style.display="none",void n();o-=1,setTimeout(u,1e3)}t.style.display="flex",u()}(nn),!0}function en(){y=!1,w&&(clearInterval(w),w=null)}function an(){return l&&!document.hidden}return{loadingReady:function(){E=!0,X()},getLang:function(){return e||(navigator.language||"").slice(0,2)},getClientId:function(){return j()?t.getUniqueID():""},getOldClientId:function(){if(!j())return"";var n=N("clientId")||"";return n&&n!==t.getUniqueID()?n:""},kvGet:function(n){return N(n)},kvSet:function(n,t){U2(n,t)},showInterstitial:function(){tn(0)},showRespawnAd:function(){tn(1)},showMatchAd:function(){y=!0,h=Date.now()+3e5,an()&&tn(2)||w||(w=setInterval((function(){!y||Date.now()>h?en():an()&&tn(2)}),5e3))},showRewarded:function(){if(1!==p)if(u)p=3;else if(n&&n.adv&&n.adv.showRewardedVideo){p=1,u=!0,window.__adInFlight=!0,window.Module&&Module._ya_on_ad&&Module._ya_on_ad(1),I=!0,J();try{window.__fakeUnlock&&window.__fakeUnlock(),document.exitPointerLock&&document.exitPointerLock()}catch(n){}!function(){var t=!1,e=null,a=!1,o=!1,r=function(n){t||(t=!0,e&&(clearTimeout(e),e=null),u=!1,window.__adInFlight=!1,p=n?2:3,o&&(i=Date.now()),window.Module&&Module._ya_on_ad&&Module._ya_on_ad(0),I=!1,J())},c=function(n){e&&clearTimeout(e),e=setTimeout((function(){r(a)}),n)};c(12e3);try{n.adv.showRewardedVideo({callbacks:{onOpen:function(){o=!0,c(18e4),Module._ya_on_ad&&Module._ya_on_ad(1)},onRewarded:function(){a=!0},onClose:function(){r(a)},onError:function(){r(a)}}})}catch(n){r(!1)}}()}else p=3},rewardPoll:function(){var n=p;return n>=2&&(p=0),n},setAdSuppress:function(n){(g=0|n)||en()},banner:function(t){(t=!!t)!==c&&(c=t,n&&(t?n.adv.showBannerAdv&&n.adv.showBannerAdv():n.adv.hideBannerAdv&&n.adv.hideBannerAdv()))},save:function(n){o.settings=n||"";try{var t=JSON.parse(n).nick;t&&(o.nick=t)}catch(n){}K()},load:function(){return o.settings||""},lbBase:function(){return k?O:-1},lbSig:function(){return T||""},lbFloor:function(){return Y?R:-1},lbActivate:function(n){D=Math.min(Math.max(0,0|n),M),o.playSeconds=D,o.pt_sig="",x=Date.now(),b=!0},lbSubmit:function(n,t,e){q=e?String(e).slice(0,15):"";var a=V(n);o.playSeconds=a,o.pt_sig=a===(0|n)&&t||"",Q(),K()},lbFetch:function(){var n=H();n?n.getEntries(a,{quantityTop:10,includeUser:!0,quantityAround:0}).then((function(n){var e=j()?t.getUniqueID():"",a=0|n.userRank,o="",i={},u="";(n.entries||[]).forEach((function(n){var t="string"==typeof n.extraData&&n.extraData?n.extraData:n.player&&n.player.publicName?n.player.publicName:"";t=t?t.replace(/[|\n]/g," ").slice(0,15):"—";var r=e&&n.player&&n.player.uniqueID===e||a>0&&n.rank===a,c=n.rank+"|"+t+"|"+n.score+"|"+(r?"1":"0")+"\n";i[n.rank]||(i[n.rank]=1,r&&n.rank>10?u=c:o+=c)})),d=o+u})).catch((function(n){console.warn("[YA] lb entries",n),d=""})):d=""},lbGet:function(){return d},setInGame:function(n){l=!!n,n||(f=!1,_=0),J()},setInCombat:function(n){if(!(s=!!n)&&f&&l&&!document.hidden){f=!1;var t=_;_=0,tn(t)}},_autoInterstitial:function(){var n=function(){l&&!document.hidden&&tn(0)&&(m=!0),setTimeout(n,v<3?18e4:3e5)};setTimeout(n,18e4)}}}(),window.YA._autoInterstitial();
+</script>
+
+<script>document.write('<scr'+'ipt src="'+U("index.js")+'" async></scr'+'ipt>');</script>
+<!-- Sticky Bottom Center Ad (728x90) with Smooth Slide-Out and Reappearance -->
+<style>
+  /* Container: Bottom center, fixed, with overflow hidden */
+  #ad-container {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(728px, calc(100% - 20px)); /* 728px, 10px margin on mobile */
+    height: 90px;
+    background: rgba(0, 0, 0, 0.90);
+    display: none;
+    z-index: 99999;
+    border-radius: 0; /* Sharp corners */
+    overflow: hidden;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out; /* Smooth slide-in/out animation */
+  }
+
+  /* Slide-out animation */
+  #ad-container.hidden {
+    transform: translate(-50%, 100%); /* Slide down out of view */
+  }
+
+  #ad-iframe {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 745px; /* Updated width */
+    height: 90px; /* Updated height */
+    border: 0;
+    display: block;
+    overflow: hidden;
+    pointer-events: auto;
+    box-sizing: content-box;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  #ad-iframe::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Close button with arrow */
+  #close-ad {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 5px 9px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.72;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+  }
+  #close-ad.enabled {
+    cursor: pointer;
+    opacity: 1;
+  }
+  #close-ad::before {
+    content: '↓'; /* Down arrow for bottom ad */
+    margin-right: 4px;
+  }
+
+  /* Right mask for scrollbar */
+  #ad-right-mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9));
+    z-index: 99999;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 440px) {
+    #ad-container {
+      width: calc(100% - 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0; /* Sharp corners on mobile */
+    }
+    #ad-iframe {
+      width: 728px;
+    }
+  }
+</style>
+
+<div id="ad-container" aria-hidden="true" role="dialog" aria-label="Advertisement">
+  <iframe
+    id="ad-iframe"
+    src="https://script.google.com/macros/s/AKfycbzNG4z_PlG6Ke_bX5wSPKK2uBRB3IY9ouVzqM1shucYhSTvsJWRmyMyZaaC2z5S3ADN/exec"
+    width="768px"
+    height="95px"
+    scrolling="no"
+    frameborder="0"
+    sandbox="allow-scripts allow-popups allow-same-origin"
+  ></iframe>
+  <button id="close-ad" disabled>Close (12)</button>
+  <div id="ad-right-mask"></div>
+</div>
+
+<script>
+  (function () {
+    const showDelay = 2000; // 2 seconds delay before first show
+    const countdownStart = 12; // 12 seconds countdown
+    const reappearDelay = 150000; // 25 seconds before reappearance
+    const adContainer = document.getElementById('ad-container');
+    const closeBtn = document.getElementById('close-ad');
+
+    function showAd() {
+      // Show ad with smooth slide-in
+      adContainer.style.display = 'block';
+      adContainer.classList.remove('hidden');
+      adContainer.setAttribute('aria-hidden', 'false');
+
+      // Start countdown
+      let timeLeft = countdownStart;
+      closeBtn.textContent = `Close (${timeLeft})`;
+      closeBtn.disabled = true;
+      closeBtn.classList.remove('enabled');
+
+      const t = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          closeBtn.textContent = `Close (${timeLeft})`;
+        } else {
+          clearInterval(t);
+          closeBtn.disabled = false;
+          closeBtn.classList.add('enabled');
+          closeBtn.textContent = 'Close ↓';
+        }
+      }, 1000);
+    }
+
+    // Initial ad show
+    setTimeout(showAd, showDelay);
+
+    // Close with animation and schedule reappearance
+    closeBtn.addEventListener('click', () => {
+      if (closeBtn.disabled) return;
+      adContainer.classList.add('hidden');
+      adContainer.setAttribute('aria-hidden', 'true');
+      // Schedule reappearance without removing or reloading iframe
+      setTimeout(showAd, reappearDelay);
+    });
+  })();
+</script>
+</body></html>

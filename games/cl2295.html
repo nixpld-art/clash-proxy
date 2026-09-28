@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<style>
+    canvas:focus {
+        outline: none;
+    }
+
+    html, body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        height: 100%;
+    }
+    
+    #unity-container {
+        width: 100%;
+        height: 100%;
+    }
+    
+    #unity-canvas {
+        width: 100%;
+        height: 100%;
+        background: #231F20;
+    }
+    
+    #loading-cover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #231F20;
+    }
+    
+    #unity-loading-bar {
+        text-align: center;
+    }
+    
+    #unity-logo {
+        margin-bottom: 20px;
+    }
+    
+    #unity-logo img {
+        max-width: 200px;
+    }
+    
+    #unity-progress-bar-empty {
+        width: 300px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 20px auto;
+    }
+    
+    #unity-progress-bar-full {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        width: 0%;
+        transition: width 0.3s;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+</head>
+<body>
+<div id="unity-container">
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+</div>
+<div id="loading-cover">
+    <div id="unity-loading-bar">
+        <div id="unity-logo"><img src="https://cdn.jsdelivr.net/gh/papamamia/zama7nana@main/Images/logo.png" onerror="this.style.display='none'"/></div>
+        <div id="unity-progress-bar-empty" style="display: none;">
+            <div id="unity-progress-bar-full"></div>
+        </div>
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<script>
+    const buildUrl = "https://cdn.jsdelivr.net/gh/papamamia/zama7nana@main/Build";
+    const loaderUrl = buildUrl + "/Boris_15_1_4_R.loader.js";
+    
+    // Parçalı dosya yapılandırması
+    const dataPartCount = 14;  // Boris_15_1_4_R.data.br.000.part - .013.part
+    const wasmPartCount = 7;   // Boris_15_1_4_R.wasm.br.000.part - .006.part
+    
+    const config = {
+        dataUrl: buildUrl + "/Boris_15_1_4_R.data.br",  // Dinamik olarak oluşturulacak
+        frameworkUrl: buildUrl + "/Boris_15_1_4_R.framework.js",
+        codeUrl: buildUrl + "/Boris_15_1_4_R.wasm.br",  // Dinamik olarak oluşturulacak
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "LIMANSKYGAMES LTD",
+        productName: "Criminal Russia 3D. Boris",
+        productVersion: "15.1.4"
+    };
+
+    const container = document.querySelector("#unity-container");
+    const canvas = document.querySelector("#unity-canvas");
+    const loadingCover = document.querySelector("#loading-cover");
+    const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+    const progressBarFull = document.querySelector("#unity-progress-bar-full");
+    const spinner = document.querySelector('.spinner');
+
+    let ygGameInstance = null;
+    let initGame = false;
+    
+    // SDK değişkenleri
+    const NO_DATA = 'no data';
+    let ysdk = null;
+    let player = null;
+    let payments = null;
+    let cloudSaves = NO_DATA;
+    let paymentsData = NO_DATA;
+    let allGamesData = NO_DATA;
+    let environmentData = NO_DATA;
+    let playerData = NO_DATA;
+    let nowFullAdOpen = false;
+
+    // Parçalı dosya birleştirme fonksiyonu
+    async function mergePartFiles(baseUrl, partCount, progressCallback) {
+        LogStyledMessage(`Merging ${partCount} parts for: ${baseUrl}`);
+        
+        const chunks = [];
+        let totalSize = 0;
+        
+        for (let i = 0; i < partCount; i++) {
+            const partUrl = `${baseUrl}.${String(i).padStart(3, '0')}.part`;
+            
+            try {
+                LogStyledMessage(`Downloading part ${i + 1}/${partCount}: ${partUrl}`);
+                
+                const response = await fetch(partUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${partUrl}: ${response.status}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                chunks.push(arrayBuffer);
+                totalSize += arrayBuffer.byteLength;
+                
+                if (progressCallback) {
+                    progressCallback((i + 1) / partCount);
+                }
+                
+            } catch (error) {
+                console.error(`Error downloading part ${i}:`, error);
+                throw error;
+            }
+        }
+        
+        LogStyledMessage(`Merging ${chunks.length} chunks, total size: ${totalSize} bytes`);
+        
+        // Tüm parçaları birleştir
+        const mergedArray = new Uint8Array(totalSize);
+        let offset = 0;
+        
+        for (const chunk of chunks) {
+            mergedArray.set(new Uint8Array(chunk), offset);
+            offset += chunk.byteLength;
+        }
+        
+        LogStyledMessage(`Merge completed: ${mergedArray.byteLength} bytes`);
+        
+        // Blob URL oluştur
+        const blob = new Blob([mergedArray], { type: 'application/octet-stream' });
+        return URL.createObjectURL(blob);
+    }
+
+    // Unity loader'ı özelleştir
+    async function prepareUnityFiles() {
+        LogStyledMessage('Preparing Unity files from parts...');
+        
+        const dataUrl = await mergePartFiles(
+            buildUrl + "/Boris_15_1_4_R.data.br",
+            dataPartCount,
+            (progress) => {
+                const percent = Math.floor(progress * 50); // İlk %50
+                progressBarFull.style.width = `${percent}%`;
+            }
+        );
+        
+        const wasmUrl = await mergePartFiles(
+            buildUrl + "/Boris_15_1_4_R.wasm.br",
+            wasmPartCount,
+            (progress) => {
+                const percent = 50 + Math.floor(progress * 50); // Son %50
+                progressBarFull.style.width = `${percent}%`;
+            }
+        );
+        
+        // Config'i güncelle
+        config.dataUrl = dataUrl;
+        config.codeUrl = wasmUrl;
+        
+        LogStyledMessage('Unity files prepared successfully');
+    }
+
+    // Log fonksiyonu
+    function LogStyledMessage(message, style) {
+        if (style) {
+            console.log('%c' + message, style);
+        } else {
+            console.log('%c' + message, 'color: #FFDF73; background-color: #454545');
+        }
+    }
+
+    // Mock SDK için boş objeler
+    const mockYSDK = {
+        environment: {
+            i18n: { lang: 'en', tld: 'com' },
+            app: { id: 'mock-app' },
+            browser: { lang: 'en' },
+            payload: ''
+        },
+        deviceInfo: {
+            type: 'desktop',
+            isMobile: () => false,
+            isDesktop: () => true,
+            isTablet: () => false,
+            isTV: () => false
+        },
+        adv: {
+            showRewardedVideo: (options) => {
+                console.log('Mock: Rewarded ad');
+                if (options.callbacks.onOpen) options.callbacks.onOpen();
+                setTimeout(() => {
+                    if (options.callbacks.onRewarded) options.callbacks.onRewarded();
+                    if (options.callbacks.onClose) options.callbacks.onClose();
+                }, 100);
+            },
+            showFullscreenAdv: (options) => {
+                console.log('Mock: Fullscreen ad');
+                if (options.callbacks.onOpen) options.callbacks.onOpen();
+                setTimeout(() => {
+                    if (options.callbacks.onClose) options.callbacks.onClose(true);
+                }, 100);
+            }
+        },
+        getPlayer: async () => ({
+            isAuthorized: () => false,
+            getName: () => 'Player',
+            getUniqueID: () => 'mock-id',
+            getPhoto: () => '',
+            getPayingStatus: () => 'unknown',
+            setData: () => Promise.resolve(),
+            getData: () => Promise.resolve({})
+        }),
+        getPayments: async () => ({
+            getCatalog: () => Promise.resolve([]),
+            getPurchases: () => Promise.resolve([]),
+            purchase: () => Promise.resolve(),
+            consumePurchase: () => Promise.resolve()
+        }),
+        leaderboards: {
+            setScore: () => {},
+            getDescription: () => Promise.resolve({ default: false, description: { invert_sort_order: false, score_format: { options: { decimal_offset: 0 } }, type: 'numeric' } }),
+            getEntries: () => Promise.resolve({ entries: [] })
+        },
+        features: {
+            GamesAPI: {
+                getAllGames: () => Promise.resolve({ games: [], developerURL: '' })
+            }
+        },
+        auth: {
+            openAuthDialog: () => Promise.resolve()
+        },
+        on: () => {}
+    };
+
+    // Context menu engelle
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Pointer lock düzeltmesi
+    const oRequestPointerLock = Element.prototype.requestPointerLock;
+    Element.prototype.requestPointerLock = async function(...args) {
+        try {
+            (args[0] ||= {}).unadjustedMovement = true;
+            await oRequestPointerLock.apply(this, args);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    // Focus yönetimi
+    function FocusGame() {
+        canvas.focus();
+    }
+
+    window.addEventListener('pointerdown', FocusGame);
+
+    // Unity instance mesaj gönderme
+    function YG2Instance(method, arg) {
+        if (!ygGameInstance) return;
+        
+        const send = () => {
+            try {
+                if (arg !== undefined) {
+                    ygGameInstance.SendMessage('YG2Instance', method, arg);
+                } else {
+                    ygGameInstance.SendMessage('YG2Instance', method);
+                }
+            } catch (e) {
+                console.log('YG2Instance message:', method, arg);
+            }
+        };
+
+        if (!initGame) {
+            setTimeout(send, 100);
+        } else {
+            send();
+        }
+    }
+
+    // Mock fonksiyonlar
+    function InitGame() {
+        initGame = true;
+        LogStyledMessage('Game initialized');
+    }
+
+    function SaveCloud(jsonData, flush) {
+        LogStyledMessage('Mock: Save cloud');
+        try {
+            cloudSaves = jsonData;
+        } catch (e) {
+            console.error('Save cloud error:', e);
+        }
+    }
+
+    function LoadCloud() {
+        return Promise.resolve(cloudSaves);
+    }
+
+    function ConsumePurchase(id, onPurchaseSuccess) {
+        LogStyledMessage('Mock: Consume purchase ' + id);
+        if (onPurchaseSuccess) {
+            YG2Instance('OnPurchaseSuccess', id);
+        }
+    }
+
+    function ConsumePurchases(onPurchaseSuccess) {
+        LogStyledMessage('Mock: Consume purchases');
+    }
+
+    function RewardedAdvShow(id) {
+        LogStyledMessage('Mock: Rewarded ad ' + id);
+        YG2Instance('OpenRewardedAdv');
+        setTimeout(() => {
+            YG2Instance('RewardAdv', id);
+            YG2Instance('CloseRewardedAdv');
+            FocusGame();
+        }, 100);
+    }
+
+    function InterAdvShow() {
+        if (nowFullAdOpen) {
+            LogStyledMessage('Cancel InterAdvShow: The advertisement is already open');
+            return;
+        }
+        
+        LogStyledMessage('Open Interstitial Adv');
+        nowFullAdOpen = true;
+        YG2Instance('OpenInterAdv');
+        
+        setTimeout(() => {
+            LogStyledMessage('Close Interstitial Adv');
+            nowFullAdOpen = false;
+            YG2Instance('CloseInterAdv', 'true');
+            FocusGame();
+        }, 100);
+    }
+
+    function BuyPayments(id) {
+        LogStyledMessage('Mock: Purchase ' + id);
+        YG2Instance('OnPurchaseSuccess', id);
+        FocusGame();
+    }
+
+    function SetLeaderboard(name, score, extraData) {
+        LogStyledMessage('Mock: Leaderboard ' + name + ' score: ' + score);
+    }
+
+    function GetLeaderboard(nameLB, quantityTop, quantityAround, photoSize, auth) {
+        LogStyledMessage('Mock: Get leaderboard ' + nameLB);
+        const mockData = {
+            technoName: nameLB,
+            isDefault: false,
+            isInvertSortOrder: false,
+            decimalOffset: 0,
+            type: 'numeric',
+            entries: 'no data',
+            ranks: [],
+            photos: [],
+            names: [],
+            scores: [],
+            uniqueIDs: [],
+            extraDataArray: []
+        };
+        YG2Instance('LeaderboardEntries', JSON.stringify(mockData));
+    }
+
+    function OpenAuthDialog() {
+        LogStyledMessage('Mock: Auth dialog');
+    }
+
+    function InitPlayer() {
+        return Promise.resolve(playerData);
+    }
+
+    function InitPayments() {
+        return Promise.resolve(paymentsData);
+    }
+
+    function GetAllGames() {
+        return Promise.resolve(allGamesData);
+    }
+
+    function RequestingEnvironmentData() {
+        return Promise.resolve(environmentData);
+    }
+
+    // Mock SDK başlatma
+    async function InitMockSDK() {
+        LogStyledMessage('[PluginYG2 v2.007] [Build: 32] [Platform: YandexGames]');
+        LogStyledMessage('Initializing mock SDK...');
+        
+        // Environment data
+        const envData = {
+            language: 'en',
+            domain: 'com',
+            deviceType: 'desktop',
+            isMobile: false,
+            isDesktop: true,
+            isTablet: false,
+            isTV: false,
+            appID: 'mock-app',
+            browserLang: navigator.language || 'en',
+            payload: '',
+            platform: navigator.platform,
+            browser: 'browser'
+        };
+        environmentData = JSON.stringify(envData);
+        YG2Instance('SetEnvirData', environmentData);
+        LogStyledMessage('Init EnvirData ysdk');
+
+        // Player data
+        const authData = {
+            playerAuth: 'rejected',
+            playerName: 'Player',
+            playerId: 'mock-id',
+            playerPhoto: '',
+            payingStatus: 'unknown'
+        };
+        playerData = JSON.stringify(authData);
+        YG2Instance('SetAuth', playerData);
+        LogStyledMessage('Init Authorization ysdk');
+
+        // Load saves
+        cloudSaves = NO_DATA;
+        YG2Instance('SetLoadSaves', cloudSaves);
+        LogStyledMessage('Init Storage ysdk');
+
+        // Payments
+        const payments = {
+            id: [],
+            title: [],
+            description: [],
+            imageURI: [],
+            price: [],
+            priceValue: [],
+            priceCurrencyCode: [],
+            currencyImageURL: [],
+            consumed: [],
+            language: 'en'
+        };
+        paymentsData = JSON.stringify(payments);
+        YG2Instance('PaymentsEntries', paymentsData);
+        LogStyledMessage('Init Payments ysdk');
+
+        // All games
+        const games = {
+            appID: [],
+            title: [],
+            url: [],
+            coverURL: [],
+            iconURL: [],
+            developerURL: ''
+        };
+        allGamesData = JSON.stringify(games);
+        LogStyledMessage('Init OpenURL ysdk');
+
+        // SDK initialized
+        setTimeout(() => {
+            YG2Instance('InitSDKComplete');
+            LogStyledMessage('Init YandexSDK Success');
+        }, 100);
+    }
+
+    // Unity yükleme
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = async () => {
+        try {
+            // Önce parçalı dosyaları birleştir
+            spinner.style.display = "none";
+            progressBarEmpty.style.display = "";
+            
+            await prepareUnityFiles();
+            
+            // Sonra Unity instance'ı başlat
+            createUnityInstance(canvas, config, (progress) => {
+                const adjustedProgress = Math.max(progress, 0.05);
+                progressBarFull.style.width = `${100 * adjustedProgress}%`;
+            }).then((unityInstance) => {
+                ygGameInstance = unityInstance;
+                loadingCover.style.display = "none";
+                
+                // Mock SDK'yı başlat
+                InitMockSDK();
+                
+                LogStyledMessage('Game loaded successfully');
+            }).catch((message) => {
+                console.error('Game load error:', message);
+            });
+            
+        } catch (error) {
+            console.error('File preparation error:', error);
+            spinner.innerHTML = '<p style="color:white">Failed to load game files: ' + error.message + '</p>';
+        }
+    };
+    script.onerror = () => {
+        console.error('Failed to load Unity loader');
+        spinner.innerHTML = '<p style="color:white">Failed to load game files</p>';
+    };
+
+    document.body.appendChild(script);
+</script>
+
+<!-- Sticky Bottom Center Ad (728x90) with Smooth Slide-Out and Reappearance -->
+<style>
+  /* Container: Bottom center, fixed, with overflow hidden */
+  #ad-container {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(728px, calc(100% - 20px)); /* 728px, 10px margin on mobile */
+    height: 90px;
+    background: rgba(0, 0, 0, 0.90);
+    display: none;
+    z-index: 99999;
+    border-radius: 0; /* Sharp corners */
+    overflow: hidden;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
+    transition: transform 0.5s ease-in-out; /* Smooth slide-in/out animation */
+  }
+
+  /* Slide-out animation */
+  #ad-container.hidden {
+    transform: translate(-50%, 100%); /* Slide down out of view */
+  }
+
+  #ad-iframe {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 745px; /* Updated width */
+    height: 90px; /* Updated height */
+    border: 0;
+    display: block;
+    overflow: hidden;
+    pointer-events: auto;
+    box-sizing: content-box;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  #ad-iframe::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* Close button with arrow */
+  #close-ad {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 5px 9px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.72;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+  }
+  #close-ad.enabled {
+    cursor: pointer;
+    opacity: 1;
+  }
+  #close-ad::before {
+    content: '↓'; /* Down arrow for bottom ad */
+    margin-right: 4px;
+  }
+
+  /* Right mask for scrollbar */
+  #ad-right-mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9));
+    z-index: 99999;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 440px) {
+    #ad-container {
+      width: calc(100% - 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0; /* Sharp corners on mobile */
+    }
+    #ad-iframe {
+      width: 728px;
+    }
+  }
+</style>
+
+<div id="ad-container" aria-hidden="true" role="dialog" aria-label="Advertisement">
+  <iframe
+    id="ad-iframe"
+    src="https://script.google.com/macros/s/AKfycbyLqfuYNg4HqY0inO1-UyYb5pVvsb0FDxHj6mw418ypqPmoNzUgt0McBC9Q9JfLfFp39Q/exec"
+    width="768px"
+    height="95px"
+    scrolling="no"
+    frameborder="0"
+    sandbox="allow-scripts allow-popups allow-same-origin"
+  ></iframe>
+  <button id="close-ad" disabled>Close (12)</button>
+  <div id="ad-right-mask"></div>
+</div>
+
+<script>
+  (function () {
+    const showDelay = 2000; // 2 seconds delay before first show
+    const countdownStart = 12; // 12 seconds countdown
+    const reappearDelay = 150000; // 25 seconds before reappearance
+    const adContainer = document.getElementById('ad-container');
+    const closeBtn = document.getElementById('close-ad');
+
+    function showAd() {
+      // Show ad with smooth slide-in
+      adContainer.style.display = 'block';
+      adContainer.classList.remove('hidden');
+      adContainer.setAttribute('aria-hidden', 'false');
+
+      // Start countdown
+      let timeLeft = countdownStart;
+      closeBtn.textContent = `Close (${timeLeft})`;
+      closeBtn.disabled = true;
+      closeBtn.classList.remove('enabled');
+
+      const t = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          closeBtn.textContent = `Close (${timeLeft})`;
+        } else {
+          clearInterval(t);
+          closeBtn.disabled = false;
+          closeBtn.classList.add('enabled');
+          closeBtn.textContent = 'Close ↓';
+        }
+      }, 1000);
+    }
+
+    // Initial ad show
+    setTimeout(showAd, showDelay);
+
+    // Close with animation and schedule reappearance
+    closeBtn.addEventListener('click', () => {
+      if (closeBtn.disabled) return;
+      adContainer.classList.add('hidden');
+      adContainer.setAttribute('aria-hidden', 'true');
+      // Schedule reappearance without removing or reloading iframe
+      setTimeout(showAd, reappearDelay);
+    });
+  })();
+</script>
+
+</body>
+</html>

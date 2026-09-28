@@ -1,0 +1,55 @@
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  #container {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/gh/st39/sdk@main/api.js"></script>
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<script>
+window.RufflePlayer = window.RufflePlayer || {};
+window.RufflePlayer.config = {
+"autoplay": "off",
+"polyfills": true,
+"letterbox": "on",
+"backgroundColor": null,
+"scale": "showAll",
+"allowFullscreen": true,
+"forceScale": true,
+"forceAlign": true,
+"splashScreen": true,
+"wmode": "Window",
+"unmuteOverlay": "hidden",
+"quality": "high" };
+window.addEventListener("load", (event) => {
+const ruffle = window.RufflePlayer.newest();
+const player = ruffle.createPlayer();
+const container = document.getElementById("container");
+container.appendChild(player);
+player.load("https://cdn.jsdelivr.net/gh/vjspranav/FlashGames@c4afbfe9dd12f23ef93e19d7f3d298105448f349/games/Potty_Racers_2.swf");
+player.style.width = "100%";
+player.style.height = "100%";
+});
+</script>
+<div id="container">
+</div>
+
+
+<script type="text/javascript">window.SDK_OPTIONS={gameId:"r2tzpy9cgrn2u4xgzc9z0zbtvxm16mby",onEvent:function(a){switch(a.name){case"SDK_GAME_PAUSE":break;case"SDK_GAME_START":break;case"SDK_READY":break}}};(function(a,b,c){var d=a.getElementsByTagName(b)[0];a.getElementById(c)||(a=a.createElement(b),a.id=c,a.src="https://cdn.jsdelivr.net/gh/st39/sdk@main/sdkjs.js",d.parentNode.insertBefore(a,d))})(document,"script","gamemonetize-sdk");</script><script type="text/javascript">let isAdShown=false;function onClick(e){if(!isAdShown&&typeof sdk!=='undefined'&&typeof sdk.showBanner==='function'){sdk.showBanner();isAdShown=true}window.removeEventListener("click",onClick)}window.addEventListener("click",onClick);</script>",

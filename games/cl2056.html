@@ -1,0 +1,35 @@
+
+
+<title>Age of Defense 4</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MENBM6GSNY"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-MENBM6GSNY")</script>
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<script>
+window.RufflePlayer = window.RufflePlayer || {};
+window.RufflePlayer.config = {
+"autoplay": "off",
+"polyfills": true,
+"letterbox": "on",
+"backgroundColor": null,
+"scale": "showAll",
+"allowFullscreen": true,
+"forceScale": true,
+"forceAlign": true,
+"splashScreen": true,
+"wmode": "Window",
+"unmuteOverlay": "hidden",
+"quality": "high" };
+window.addEventListener("load", (event) => {
+const ruffle = window.RufflePlayer.newest();
+const player = ruffle.createPlayer();
+const container = document.getElementById("container");
+container.appendChild(player);
+player.load("https://cdn.jsdelivr.net/gh/RobiFet/api@225885eea10ff0fbbdc9d91fce2b8d40dac85563/src/cfpb/api/aod4.swf");
+player.style.width = "100%";
+player.style.height = "100%";
+});
+</script>
+<div id="container">
+</div>
+
+
+    

@@ -1,0 +1,239 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=0">
+    <title>DUCK DUCK CLICKER</title>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MENBM6GSNY"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-MENBM6GSNY")</script>
+    <script type="text/javascript">
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/css/g.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+
+    
+    <script src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/js/lib/bignumber.js"></script>
+    <script src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/js/lib/howler.js"></script>
+    
+    
+    <script src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/js/data.js" defer></script>
+    <script src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/js/index.js" defer></script>
+    <script src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/js/ddc.js" defer></script>
+
+</head>
+<body style="visibility: none;">
+    
+    
+    <div id="loader" style="visibility: visible;">
+        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/loader.svg">
+        <div id="loader-bar">
+            <div id="loader-progress"></div>
+        </div>
+    </div>
+
+    
+    <div id="game">
+        
+        <div id="main" class="hide">
+            <div id="left-side">
+                <div class="flex-col">
+                    <button id="settings-btn">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-settings.svg">
+                    </button>
+                    <button id="achievements-btn" class="flex-col" style="height: 6.5vw;">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-achievements.svg">
+                        <p class="stroke" id="achievements-count">7/10</p>
+                    </button>
+                </div>
+                <div class="flex-col">
+                    <button id="ad-button">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-watch.svg">
+                        <p class="stroke">GET X2</p>
+                    </button>
+                    <div class="flex-row">
+                        <button id="hats-btn">
+                            <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-cap.svg">
+                        </button>
+                        <button id="frames-btn">
+                            <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-frame.svg" >
+                        </button>
+                    </div>
+                    <div class="flex-row">
+                        <button id="glasses-btn">
+                            <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-glasses.svg">
+                        </button>
+                        <button id="necklaces-btn">
+                            <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/btn-necklace.svg">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="duck-zone">
+                <div id="stats">
+                    <div class="stat" id="ducket-stat">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/ducket-stats.svg"> <p class="stroke">142,532,234 DUCKETS </p>
+                    </div>
+
+                    <div class="stat" id="power-stat">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/cursor-default.svg"> <p class="stroke">532,234 DUCK POWER </p>
+                    </div>
+
+                    <div class="stat" id="auto-stat">
+                        <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/UI/cursor-pointer.svg"> <p class="stroke">124,532 AUTODUCKER</p>
+                    </div>
+                </div>
+                <div id="duck">
+                    <p class="stroke" id="pet-text">PET THE DUCK --></p>
+                    <p class="stroke pop-out" id="double-text">X2</p>
+                    <img id="duck-img" src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/duck.svg">
+                    <img id="duck-glasses" class="duck-costume">
+                    <img id="duck-hat" class="duck-costume">
+                    <img id="duck-necklace" class="duck-costume">
+                    <img id="duck-frame" class="duck-costume">
+                </div>
+
+            </div>
+            <div id="right-side">
+                <div id="upgrades" class="panel flex-col show right-side-list">
+                    <div id="shop-list" class="grow scroll flex-col"></div>
+                    <p id="multiplier-stat" class="stroke">Multiplier: X34.04</p>
+                    <button id="ascend-btn"><p class="stroke">ASCEND: X2.5</p></button>
+                </div>
+
+                <div id="hats" class="panel flex-col right-side-list">
+                    <div id="hats-list" class="grow scroll flex-col"></div>
+                    <div class="flex-row flex-center">
+                        <p class="stroke">AUTOSELECT NEW ITEM</p>
+                        <div class="grow"></div>
+                        <input type="checkbox" id="autoselect-hats-btn">
+                    </div>
+                    <button class="side-back-btn"><p class="stroke">BACK</p></button>
+                </div>
+
+                <div id="glasses" class="panel flex-col right-side-list">
+                    <div id="glasses-list" class="grow scroll flex-col"></div>
+                    <div class="flex-row flex-center">
+                        <p class="stroke">AUTOSELECT NEW ITEM</p>
+                        <div class="grow"></div>
+                        <input type="checkbox"  id="autoselect-glasses-btn">
+                    </div>
+                    <button class="side-back-btn"><p class="stroke">BACK</p></button>
+                </div>
+
+                <div id="necklaces" class="panel flex-col right-side-list">
+                    <div id="necklaces-list" class="grow scroll flex-col"></div>
+                    <div class="flex-row  flex-center">
+                        <p class="stroke">AUTOSELECT NEW ITEM</p>
+                        <div class="grow"></div>
+                        <input type="checkbox"  id="autoselect-necklaces-btn">
+                    </div>
+                    <button class="side-back-btn"><p class="stroke">BACK</p></button>
+                </div>
+
+                <div id="frames" class="panel flex-col right-side-list">
+                    <div id="frames-list" class="grow scroll flex-col"></div>
+                    <div class="flex-row flex-center">
+                        <p class="stroke">AUTOSELECT NEW ITEM</p>
+                        <div class="grow"></div>
+                        <input type="checkbox"  id="autoselect-frames-btn">
+                    </div>
+                    <button class="side-back-btn"><p class="stroke">BACK</p></button>
+                </div>
+
+                <div id="achievements" class="panel flex-col right-side-list">
+                    <div id="achievements-list" class="grow scroll flex-col"></div>
+                    <button class="side-back-btn"><p class="stroke">BACK</p></button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="secondary" class="hide">
+            <div id="settings-menu" class="panel">
+                <p class="stroke title">SETTINGS</p>
+                <div class="flex-row">
+                    <p class="stroke">VOLUME: </p>
+                    <input type="range" min="0" max="1" step="0.01" id="volume-input" class="grow">
+                </div>
+
+                <div id="fullscreen-option" class="flex-row">
+                    <p class="stroke">FULLSCREEN: </p>
+                    <div class="grow"></div>
+                    <input id="fullscreen-btn" type="checkbox">
+                </div>
+                
+                <button id="settings-background-btn">
+                    <p class="stroke">CHANGE BACKGROUND</p>
+                </button>
+
+                <button id="settings-back-btn">
+                    <p class="stroke">BACK TO GAME</p>
+                </button>
+            </div>
+            <div id="ascension-menu" class="panel">
+                <p class="stroke title">ASCENSION</p>
+                <p class="stroke">
+                    WOULD YOU LIKE TO START OVER BUT PROGRESS FASTER? YOU WILL LOSE ALL YOUR MONEY AND UPGRADES.
+                </p>
+
+                <p class="stroke">
+                    YOU WILL KEEP ALL YOUR ACHIEVEMENTS AND COSTUMES.
+                </p>
+                
+                <div class="flex-row">
+                    <button id="ascension-back-btn">
+                        <p class="stroke">MAYBE LATER</p>
+                    </button>
+
+                    <div class="grow"></div>
+
+                    <button id="ascension-confirm-btn">
+                        <p class="stroke">ASCEND NOW</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="ad-menu" class="panel">
+                <p class="stroke title">AD BREAK</p>
+                <p class="stroke">
+                    WOULD YOU LIKE TO WATCH AN AD TO GET DOUBLE PROGRESSION FOR 2 MINUTES?
+                </p>
+                
+                <div></div>
+                
+                <div class="flex-row">
+                    <button id="ad-back-btn">
+                        <p class="stroke">MAYBE LATER</p>
+                    </button>
+
+                    <div class="grow"></div>
+
+
+                    <button id="ad-confirm-btn">
+                        <p class="stroke">WATCH NOW</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="golden-rewards">
+
+        </div>
+
+        
+        <div id="notifications">
+            <button class="item-button" id="notification">
+                <img src="https://12545143-377133625220508436.preview.editmysite.com/uploads/b/150363421-793604364414563712/files/img/shop/1.svg" class="side">
+                <div class="grow flex-col">
+                    <p class="stroke">YOU HAVE UNLOCKED A COOL ITEM</p>
+                </div>
+            </button>
+        </div> 
+    </div>
+	<script src="https://cdn.jsdelivr.net/gh/st39/sdk@main/api.js"></script>
+  <script type="text/javascript">window.SDK_OPTIONS={gameId:"r2tzpy9cgrn2u4xgzc9z0zbtvxm16mby",onEvent:function(a){switch(a.name){case"SDK_GAME_PAUSE":break;case"SDK_GAME_START":break;case"SDK_READY":break}}};(function(a,b,c){var d=a.getElementsByTagName(b)[0];a.getElementById(c)||(a=a.createElement(b),a.id=c,a.src="https://cdn.jsdelivr.net/gh/st39/sdk@main/sdkjs.js",d.parentNode.insertBefore(a,d))})(document,"script","gamemonetize-sdk");</script><script type="text/javascript">let isAdShown=false;function onClick(e){if(!isAdShown&&typeof sdk!=='undefined'&&typeof sdk.showBanner==='function'){sdk.showBanner();isAdShown=true}window.removeEventListener("click",onClick)}window.addEventListener("click",onClick);</script>
+</body>
+</html>",
