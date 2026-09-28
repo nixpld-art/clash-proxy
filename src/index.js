@@ -218,7 +218,7 @@ fastify.post("/api/panel/kick-all", async (req, reply) => {
 	let kicked = 0;
 	for (const u of stats.users) {
 		const row = db.prepare("SELECT role FROM users WHERE id = ?").get(u.userId);
-		const staff = row?.role === "admin" || isPrivilegedUsername(u.username);
+		const staff = row?.role === "admin";
 		if (!staff) {
 			if (kickUser(u.userId, "Service restarting — please reconnect shortly.")) kicked++;
 		}

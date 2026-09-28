@@ -31,44 +31,32 @@ export default async function authRoutes(fastify) {
 			return reply.code(400).send({ error: "Username can only contain letters, numbers, underscores, dashes and dots." });
 		}
 
+		// Founder names are reserved when an owner key is configured — only the key holder may register them
+		if (isPrivilegedUsername(cleanUsername) && process.env.OWNER_KEY) {
+			const k = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
+			if (k !== process.env.OWNER_KEY) {
+				return reply.code(403).send({ error: "That username is reserved." });
+			}
+		}
+
 		try {
 			const existing = db.prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)").get(cleanUsername);
 			if (existing) {
-				// If a privileged user (TED/Nils) is registering, automatically claim the account and set new password!
-				if (isPrivilegedUsername(cleanUsername)) {
-					const newHash = hashPassword(password);
-					db.prepare("UPDATE users SET password_hash = ?, role = 'admin', custom_tag = COALESCE(custom_tag, 'FOUNDER & DEV') WHERE id = ?").run(newHash, existing.id);
-					const claimedUser = db.prepare("SELECT id, username, display_name, avatar_url, bio, xp, level, streak_days, role, custom_tag, coins, equipped_frame, equipped_name_theme, equipped_chat_theme, settings_json FROM users WHERE id = ?").get(existing.id);
-					const token = generateToken(claimedUser);
-					return {
-						success: true,
-						token,
-						user: {
-							...claimedUser,
-							displayName: claimedUser.display_name,
-							avatarUrl: claimedUser.avatar_url,
-							streakDays: claimedUser.streak_days,
-							coins: claimedUser.coins || 0,
-							equippedFrame: claimedUser.equipped_frame || "none",
-							equippedNameTheme: claimedUser.equipped_name_theme || "none",
-							equippedChatTheme: claimedUser.equipped_chat_theme || "none",
-							role: "admin",
-							customTag: claimedUser.custom_tag || "FOUNDER & DEV",
-							settings: JSON.parse(claimedUser.settings_json || "{}"),
-							currentLevelXp: getXpRequiredForLevel(claimedUser.level),
-							nextLevelXp: getXpForNextLevel(claimedUser.level)
-						}
-					};
-				}
+				// No account can ever be taken over by re-registering its name
 				return reply.code(409).send({ error: "Username is already taken." });
 			}
 
 			const passwordHash = hashPassword(password);
 			const dispName = (displayName && typeof displayName === "string" && displayName.trim()) || cleanUsername;
-			const isTed = isPrivilegedUsername(cleanUsername);
-			// Fresh site (users table empty): the very first account to register becomes the owner
+			// Ownership is key-based, not name-based:
+			//  - OWNER_KEY set on the server: only a registration presenting that key becomes owner
+			//    (works after every database reset — nobody can grab owner by being first or by using a name).
+			//  - No OWNER_KEY configured: the first account on an empty database becomes owner.
+			const OWNER_KEY = process.env.OWNER_KEY || "";
+			const providedKey = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
+			const keyOk = !!OWNER_KEY && providedKey === OWNER_KEY;
 			const isFirstUser = !db.prepare("SELECT id FROM users LIMIT 1").get();
-			const isOwner = isTed || isFirstUser;
+			const isOwner = OWNER_KEY ? keyOk : isFirstUser;
 			const role = isOwner ? "admin" : "user";
 			const customTag = isOwner ? "FOUNDER & DEV" : null;
 			const initialCoins = isOwner ? 999999 : 350;
@@ -141,7 +129,7 @@ export default async function authRoutes(fastify) {
 			}
 			try {
 				const acl = JSON.parse(readFileSync(fileURLToPath(new URL("../../data/access-control.json", import.meta.url)), "utf8"));
-				const staff = isPrivilegedUsername(user.username) || user.role === "admin";
+				const staff = user.role === "admin";
 				if (acl.maintenance && !staff) {
 					return reply.code(503).send({ error: acl.maintenanceMessage || "Scheduled maintenance in progress. Please try again later." });
 				}
@@ -153,25 +141,10 @@ export default async function authRoutes(fastify) {
 				}
 			} catch { /* no access-control file = open access */ }
 
-			let isValid = comparePassword(password, user.password_hash);
-			// Auto-recovery for TED: If user is @TED on this instance, allow them to log in with whatever password they supply, and update their password hash!
-			if (!isValid && isPrivilegedUsername(user.username)) {
-				const newHash = hashPassword(password);
-				db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(newHash, user.id);
-				isValid = true;
-			}
-
+			// No password backdoors: everyone (founders included) proves their real password
+			const isValid = comparePassword(password, user.password_hash);
 			if (!isValid) {
 				return reply.code(401).send({ error: "Invalid username or password." });
-			}
-
-			// Auto-promote TED/Nils to admin on login
-			if (isPrivilegedUsername(user.username) && user.role !== "admin") {
-				db.prepare("UPDATE users SET role = 'admin', custom_tag = COALESCE(custom_tag, 'FOUNDER & DEV'), coins = 999999, equipped_frame = 'frame-sovereign-gold' WHERE id = ?").run(user.id);
-				user.role = "admin";
-				user.custom_tag = user.custom_tag || "FOUNDER & DEV";
-				user.coins = 999999;
-				user.equipped_frame = user.equipped_frame && user.equipped_frame !== "none" ? user.equipped_frame : "frame-sovereign-gold";
 			}
 
 			// Update login streak
@@ -218,8 +191,8 @@ export default async function authRoutes(fastify) {
 					equippedFrame: user.equipped_frame || "none",
 					equippedNameTheme: user.equipped_name_theme || "none",
 					equippedChatTheme: user.equipped_chat_theme || "none",
-					role: user.role || (isPrivilegedUsername(user.username) ? "admin" : "user"),
-					customTag: user.custom_tag || (isPrivilegedUsername(user.username) ? "FOUNDER & DEV" : ""),
+					role: user.role || "user",
+					customTag: user.custom_tag || "",
 					settings: JSON.parse(user.settings_json || "{}"),
 					currentLevelXp: getXpRequiredForLevel(user.level),
 					nextLevelXp: getXpForNextLevel(user.level)
@@ -244,7 +217,6 @@ export default async function authRoutes(fastify) {
 				return reply.code(404).send({ error: "User not found." });
 			}
 
-			const isTed = isPrivilegedUsername(user.username);
 			const achievements = db.prepare("SELECT badge_id, unlocked_at FROM achievements WHERE user_id = ?").all(user.id);
 
 			return {
@@ -254,12 +226,12 @@ export default async function authRoutes(fastify) {
 					displayName: user.display_name,
 					avatarUrl: user.avatar_url,
 					streakDays: user.streak_days,
-					coins: user.coins || (isTed ? 999999 : 0),
-					equippedFrame: user.equipped_frame || (isTed ? "frame-sovereign-gold" : "none"),
+					coins: user.coins || 0,
+					equippedFrame: user.equipped_frame || "none",
 					equippedNameTheme: user.equipped_name_theme || "none",
 					equippedChatTheme: user.equipped_chat_theme || "none",
-					role: user.role || (isTed ? "admin" : "user"),
-					customTag: user.custom_tag || (isTed ? "FOUNDER & DEV" : ""),
+					role: user.role || "user",
+					customTag: user.custom_tag || "",
 					settings: JSON.parse(user.settings_json || "{}"),
 					currentLevelXp: getXpRequiredForLevel(user.level),
 					nextLevelXp: getXpForNextLevel(user.level),

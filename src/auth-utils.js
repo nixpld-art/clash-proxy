@@ -53,14 +53,13 @@ export function comparePassword(password, hash) {
 }
 
 export function generateToken(user) {
-	const isTed = isPrivilegedUsername(user.username);
 	return jwt.sign(
 		{
 			id: user.id,
 			username: user.username,
 			displayName: user.display_name,
-			role: user.role || (isTed ? "admin" : "user"),
-			custom_tag: user.custom_tag || (isTed ? "FOUNDER & DEV" : null)
+			role: user.role || "user",
+			custom_tag: user.custom_tag || null
 		},
 		JWT_SECRET,
 		{ expiresIn: "30d" }
@@ -85,10 +84,6 @@ export function extractAuthUser(req) {
 	}
 	if (!token) return null;
 	const decoded = verifyToken(token);
-	if (decoded && isPrivilegedUsername(decoded.username)) {
-		decoded.role = "admin";
-		if (!decoded.custom_tag) decoded.custom_tag = "FOUNDER & DEV";
-	}
 	return decoded;
 }
 
@@ -109,7 +104,7 @@ export function isOwnerMode() {
 export function isAdminUser(user) {
 	if (!user) return false;
 	if (ownerModeEnabled) return true;
-	return isPrivilegedUsername(user.username) || user.role === "admin";
+	return user.role === "admin";
 }
 
 // XP & Level calculations

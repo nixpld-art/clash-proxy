@@ -1119,7 +1119,7 @@ async function registerUser(username, password, displayName) {
 		const res = await fetch("/api/auth/register", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username: cleanUser, password: cleanPass, displayName: cleanDisplay })
+			body: JSON.stringify({ username: cleanUser, password: cleanPass, displayName: cleanDisplay, ownerKey: (document.getElementById("reg-ownerkey")?.value || "").trim() })
 		});
 		const data = await res.json();
 		if (!res.ok) {
