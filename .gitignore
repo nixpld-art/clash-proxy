@@ -15,9 +15,6 @@ clash owner pannel/backups/
 *.cpbak
 chrome-prof-*
 
-# game content lives on disk (638 MB) — source of truth is the live folder + harvester
-games/
-
 # local tooling
 .opencode/
 
