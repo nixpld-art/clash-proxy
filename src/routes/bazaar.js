@@ -128,7 +128,7 @@ export default async function bazaarRoutes(fastify, options) {
 	// GET /api/bazaar/catalog - Get items, user balance, and equipped gear
 	fastify.get("/api/bazaar/catalog", async (req, reply) => {
 		const user = db.prepare(`
-			SELECT id, username, coins, equipped_frame, equipped_name_theme, equipped_chat_theme
+			SELECT id, username, role, coins, equipped_frame, equipped_name_theme, equipped_chat_theme
 			FROM users
 			WHERE id = ?
 		`).get(req.authUser.id);

@@ -1,26 +1,30 @@
 import db from "../db.js";
-import { extractAuthUser, isAdminUser, isOwnerMode, setOwnerMode, isPrivilegedUsername, BADGES } from "../auth-utils.js";
+import { extractAuthUser, freshDbUser, isOwnerMode, setOwnerMode, isPrivilegedUsername, BADGES } from "../auth-utils.js";
 import { broadcastSystemAnnouncement } from "../presence.js";
 
 export default async function adminRoutes(fastify, options) {
-	// Middleware hook to guard all /api/admin/* endpoints
+	// Middleware hook to guard all /api/admin/* endpoints.
+	// Role is ALWAYS re-read from the database: JWT claims are stale after
+	// role changes/resets, and Owner Mode must never unlock this API.
 	fastify.addHook("preHandler", async (req, reply) => {
 		if (req.url.startsWith("/api/admin")) {
 			const auth = extractAuthUser(req);
-			if (!auth || !isAdminUser(auth)) {
+			const dbUser = auth ? freshDbUser(auth.id) : null;
+			if (!dbUser || dbUser.role !== "admin") {
 				return reply.code(403).send({ error: "Access Denied. Administrator clearance required." });
 			}
-			req.adminUser = auth;
+			req.adminUser = { ...auth, role: dbUser.role, username: dbUser.username };
 		}
 	});
 
 	// GET /api/owner-mode - Public status of the temporary owner switch
+	// (cosmetic only — see auth-utils.js; grants no access)
 	fastify.get("/api/owner-mode", async () => {
 		return { enabled: isOwnerMode() };
 	});
 
 	// POST /api/admin/owner-mode - Toggle the temporary owner switch
-	// Guarded: only admins can turn it ON; once ON, any signed-in user can toggle it
+	// Guarded by the hook above: DB-admins only, always.
 	fastify.post("/api/admin/owner-mode", async (req, reply) => {
 		const { enabled } = req.body || {};
 		if (typeof enabled !== "boolean") {
@@ -31,7 +35,7 @@ export default async function adminRoutes(fastify, options) {
 
 		if (enabled) {
 			broadcastSystemAnnouncement(
-				"👑 OWNER MODE ENABLED — every signed-in player now holds owner rank in the Admin Center.",
+				"👑 OWNER MODE ENABLED — every signed-in player now shows the Owner rank chip (cosmetic only).",
 				req.adminUser?.username || "SYSTEM"
 			);
 		}

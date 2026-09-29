@@ -9,16 +9,5 @@
 			]
 		}
 	],
-	"assignments": {
-		"24": {
-			"presetId": null,
-			"rankName": "Owner",
-			"privileges": [
-				"god-mode",
-				"panel-access"
-			],
-			"prevTag": "FOUNDER & DEV",
-			"prevRole": "admin"
-		}
-	}
+	"assignments": {}
 }

@@ -88,8 +88,10 @@ export function extractAuthUser(req) {
 }
 
 // ============================================================
-// Temporary Owner Mode — when enabled, ANY signed-in user
-// is treated as owner in the Admin Center. Resets on restart.
+// Temporary Owner Mode — cosmetic only. While enabled, every
+// signed-in user SEES "Owner" as their rank chip (/api/me/ranks).
+// It must NEVER grant access: all authz checks use the DATABASE
+// role via freshDbUser()/db role columns, never this flag.
 // ============================================================
 let ownerModeEnabled = false;
 
@@ -101,10 +103,22 @@ export function isOwnerMode() {
 	return ownerModeEnabled;
 }
 
+// Role check against a user object. The caller must have already
+// refreshed `role` from the database (see freshDbUser) — JWT role
+// claims are stale after any role change or database reset.
 export function isAdminUser(user) {
 	if (!user) return false;
-	if (ownerModeEnabled) return true;
 	return user.role === "admin";
+}
+
+// Single source of truth: always re-read the account from the DB.
+// Returns { id, username, role } or null if the account no longer exists.
+export function freshDbUser(userId) {
+	try {
+		return db.prepare("SELECT id, username, role FROM users WHERE id = ?").get(userId) || null;
+	} catch {
+		return null;
+	}
 }
 
 // XP & Level calculations

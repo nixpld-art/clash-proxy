@@ -357,10 +357,14 @@ function grantPrivilege(userId, privilege, on) {
 	const store = loadStore();
 	let a = store.assignments[String(userId)];
 	if (!a) {
-		const u = db.prepare("SELECT role, custom_tag FROM users WHERE id = ?").get(userId);
+		const u = db.prepare("SELECT role, custom_tag, username FROM users WHERE id = ?").get(userId);
 		if (!u) return null;
-		a = { presetId: null, rankName: "Game Tester", privileges: [], prevTag: u.custom_tag || null, prevRole: u.role || "user" };
+		a = { presetId: null, rankName: "Game Tester", privileges: [], username: u.username, prevTag: u.custom_tag || null, prevRole: u.role || "user" };
 		store.assignments[String(userId)] = a;
+	} else if (!a.username) {
+		// Backfill the username tag so DB resets can't hand this rank to a different account.
+		const u = db.prepare("SELECT username FROM users WHERE id = ?").get(userId);
+		if (u) a.username = u.username;
 	}
 	const set = new Set(Array.isArray(a.privileges) ? a.privileges : []);
 	if (on) set.add(privilege); else set.delete(privilege);
@@ -564,6 +568,7 @@ const server = http.createServer(async (req, res) => {
 			db.prepare("UPDATE users SET role = 'admin', custom_tag = ? WHERE id = ?").run(rankName, userId);
 			store.assignments[String(userId)] = {
 				presetId, rankName, privileges,
+				username: user.username,
 				prevTag: prev ? prev.prevTag : user.custom_tag || null,
 				prevRole: prev ? prev.prevRole : user.role || "user"
 			};

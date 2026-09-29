@@ -106,7 +106,7 @@ import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
-import { isPrivilegedUsername, extractAuthUser, isAdminUser, verifyToken } from "./auth-utils.js";
+import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken } from "./auth-utils.js";
 import { hasPrivilege, userRank } from "./ranks.js";
 
 // ============================================================
@@ -504,7 +504,9 @@ function panelProxy(req, reply) {
 		return;
 	}
 	const user = { ...decoded, role: dbRow.role, username: dbRow.username };
-	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : isAdminUser(user));
+	// Panel entry = DATABASE role (testing panel = explicit privilege grant).
+	// Never the JWT claim, never Owner Mode.
+	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : dbRow.role === "admin");
 	if (!allowed) {
 		panelDeny(reply, `You're signed in as <b>${String(dbRow.username).replace(/[<>&"]/g, "")}</b>, but this area is Owner-only.`, true);
 		return;
@@ -524,8 +526,17 @@ function panelProxy(req, reply) {
 	let target = req.url.slice("/panel".length);
 	if (!target.startsWith("/")) target = "/" + target;
 	reply.hijack();
+	// Fastify pre-parses JSON request bodies before the handler runs, so the
+	// raw stream is already consumed — re-serialize the parsed body instead of
+	// piping an empty stream (which made every panel POST hang forever).
+	const fwdHeaders = { ...req.headers, host: "127.0.0.1:8081" };
+	let payload;
+	if (req.method !== "GET" && req.method !== "HEAD" && req.body !== undefined) {
+		payload = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+		fwdHeaders["content-length"] = String(Buffer.byteLength(payload));
+	}
 	const preq = httpRequest(
-		{ host: "127.0.0.1", port: 8081, path: target, method: req.method, headers: { ...req.headers, host: "127.0.0.1:8081" } },
+		{ host: "127.0.0.1", port: 8081, path: target, method: req.method, headers: fwdHeaders },
 		(pres) => {
 			const ct = String(pres.headers["content-type"] || "");
 			const outHeaders = { ...pres.headers };
@@ -556,21 +567,31 @@ function panelProxy(req, reply) {
 			pres.pipe(reply.raw);
 		}
 	);
-	preq.on("error", () => {
+	preq.on("error", (e) => {
+		console.log("PANELPROXY_ERROR:", e && (e.stack || e.message || String(e)));
 		try {
 			if (!reply.raw.headersSent) reply.raw.writeHead(502, { "content-type": "text/plain" });
 			reply.raw.end("Owner Panel backend unreachable");
 		} catch {}
 	});
-	if (req.method === "GET" || req.method === "HEAD") preq.end();
+	if (payload !== undefined) preq.end(payload);
+	else if (req.method === "GET" || req.method === "HEAD") preq.end();
 	else req.pipe(preq);
 }
 
 fastify.get("/api/me/ranks", async (req, reply) => {
-	const user = extractAuthUser(req);
-	if (!user) return reply.code(401).send({ error: "unauthorized" });
+	const tokenUser = extractAuthUser(req);
+	if (!tokenUser) return reply.code(401).send({ error: "unauthorized" });
+	// Role from the DATABASE so the rank chip always matches the panel.
+	const dbUser = freshDbUser(tokenUser.id);
+	if (!dbUser) return reply.code(401).send({ error: "Account no longer exists on this server." });
+	const user = { ...tokenUser, role: dbUser.role, username: dbUser.username };
 	const r = userRank(user);
-	return { rankName: r.rankName || (isAdminUser(user) ? "Owner" : null), privileges: r.privileges, admin: isAdminUser(user) };
+	const isAdmin = isAdminUser(user);
+	// Owner Mode is cosmetic-only: it makes everyone's chip say "Owner"
+	// and never grants panel/API access (those check DB role directly).
+	const showOwner = isAdmin || isOwnerMode();
+	return { rankName: r.rankName || (showOwner ? "Owner" : null), privileges: r.privileges, admin: showOwner };
 });
 
 fastify.all("/panel", panelProxy);
@@ -580,22 +601,39 @@ fastify.all("/panel/*", panelProxy);
 // Owner Panel backend — auto-start the panel process
 // (127.0.0.1:8081) when nothing is listening yet, so /panel
 // works everywhere the site runs (local + Render).
+// If the panel ever crashes it is respawned automatically —
+// otherwise /panel stayed dead ("Owner Panel backend
+// unreachable") until a full site restart.
 // ============================================================
-(async () => {
+let panelChild = null;
+let panelRespawnTimer = null;
+function spawnPanelBackend() {
+	try {
+		const child = spawn(process.execPath, [fileURLToPath(new URL("../clash owner pannel/server.js", import.meta.url))], {
+			cwd: fileURLToPath(new URL("../", import.meta.url)),
+			stdio: "ignore",
+			detached: false,
+		});
+		panelChild = child;
+		child.on("error", () => { panelChild = null; });
+		child.on("exit", () => {
+			panelChild = null;
+			if (!panelRespawnTimer) {
+				panelRespawnTimer = setTimeout(() => { panelRespawnTimer = null; ensurePanelBackend(); }, 3000);
+			}
+		});
+	} catch {}
+}
+async function ensurePanelBackend() {
+	if (panelChild) return;
 	try {
 		await fetch("http://127.0.0.1:8081/api/system/health", { signal: AbortSignal.timeout(900) });
-	} catch {
-		try {
-			const child = spawn(process.execPath, [fileURLToPath(new URL("../clash owner pannel/server.js", import.meta.url))], {
-				cwd: fileURLToPath(new URL("../", import.meta.url)),
-				stdio: "ignore",
-				detached: false,
-			});
-			child.on("error", () => {});
-			process.on("exit", () => { try { child.kill(); } catch {} });
-		} catch {}
-	}
-})();
+		return; // a panel is already listening (e.g. started manually)
+	} catch {}
+	spawnPanelBackend();
+}
+process.on("exit", () => { try { if (panelChild) panelChild.kill(); } catch {} });
+ensurePanelBackend();
 
 // ============================================================
 // Start Server

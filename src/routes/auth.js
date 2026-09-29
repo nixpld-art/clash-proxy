@@ -14,6 +14,12 @@ import {
 	isPrivilegedUsername
 } from "../auth-utils.js";
 
+// Owner key: env override, else baked default so the key ALWAYS
+// works (Render has no OWNER_KEY env var — previously the key was
+// silently ignored and the first account after each database reset
+// became owner). Only a registration presenting this key becomes owner.
+const OWNER_KEY = process.env.OWNER_KEY || "e7985d07e75c4c2fa715eb65";
+
 export default async function authRoutes(fastify) {
 	// Register
 	fastify.post("/api/auth/register", async (req, reply) => {
@@ -31,10 +37,10 @@ export default async function authRoutes(fastify) {
 			return reply.code(400).send({ error: "Username can only contain letters, numbers, underscores, dashes and dots." });
 		}
 
-		// Founder names are reserved when an owner key is configured — only the key holder may register them
-		if (isPrivilegedUsername(cleanUsername) && process.env.OWNER_KEY) {
+		// Founder names are reserved — only the Owner Key holder may register them
+		if (isPrivilegedUsername(cleanUsername)) {
 			const k = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
-			if (k !== process.env.OWNER_KEY) {
+			if (k !== OWNER_KEY) {
 				return reply.code(403).send({ error: "That username is reserved." });
 			}
 		}
@@ -48,15 +54,11 @@ export default async function authRoutes(fastify) {
 
 			const passwordHash = hashPassword(password);
 			const dispName = (displayName && typeof displayName === "string" && displayName.trim()) || cleanUsername;
-			// Ownership is key-based, not name-based:
-			//  - OWNER_KEY set on the server: only a registration presenting that key becomes owner
-			//    (works after every database reset — nobody can grab owner by being first or by using a name).
-			//  - No OWNER_KEY configured: the first account on an empty database becomes owner.
-			const OWNER_KEY = process.env.OWNER_KEY || "";
+			// Ownership is key-based ONLY — never name-based, never first-user.
+			// Works after every database reset; nobody can grab owner by being
+			// first or by registering a founder name without the key.
 			const providedKey = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
-			const keyOk = !!OWNER_KEY && providedKey === OWNER_KEY;
-			const isFirstUser = !db.prepare("SELECT id FROM users LIMIT 1").get();
-			const isOwner = OWNER_KEY ? keyOk : isFirstUser;
+			const isOwner = providedKey !== "" && providedKey === OWNER_KEY;
 			const role = isOwner ? "admin" : "user";
 			const customTag = isOwner ? "FOUNDER & DEV" : null;
 			const initialCoins = isOwner ? 999999 : 350;
