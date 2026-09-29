@@ -195,16 +195,8 @@ try {
 	if (!userCols.includes("last_ip")) {
 		db.exec("ALTER TABLE users ADD COLUMN last_ip TEXT DEFAULT NULL");
 	}
-
-	// Auto-promote @TED & @nils to Admin & Founder with infinite coins and Sovereign Frame
-	db.prepare(`
-		UPDATE users 
-		SET role = 'admin', 
-		    custom_tag = COALESCE(custom_tag, 'FOUNDER & DEV'),
-		    coins = 999999,
-		    equipped_frame = CASE WHEN equipped_frame = 'none' OR equipped_frame IS NULL THEN 'frame-sovereign-gold' ELSE equipped_frame END
-		WHERE LOWER(username) IN ('ted', 'nils')
-	`).run();
+	// NOTE: the old boot-time auto-promotion of ted/nils was removed —
+	// owner is granted ONLY by registering with the owner key (auth.js).
 } catch (e) {
 	console.warn("[DB] Users migration notice:", e.message);
 }

@@ -21,3 +21,5 @@ chrome-prof-*
 # old test scratch
 scratch/
 scratch-test.mjs
+
+data/.owner-key

@@ -1,6 +1,7 @@
 import db from "../db.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { randomBytes } from "node:crypto";
 import {
 	hashPassword,
 	comparePassword,
@@ -14,11 +15,38 @@ import {
 	isPrivilegedUsername
 } from "../auth-utils.js";
 
-// Owner key: env override, else baked default so the key ALWAYS
-// works (Render has no OWNER_KEY env var — previously the key was
-// silently ignored and the first account after each database reset
-// became owner). Only a registration presenting this key becomes owner.
-const OWNER_KEY = process.env.OWNER_KEY || "e7985d07e75c4c2fa715eb65";
+// Owner key — ONLY way to become owner. Never baked into the source
+// (the repo is public). Resolution:
+//   1. OWNER_KEY env var (optional override)
+//   2. data/.owner-key file (gitignored, persists per install)
+//   3. otherwise a random key is generated, saved to data/.owner-key,
+//      and printed to the server console/logs on first boot.
+// If no key can be stored at all, owner registration stays disabled
+// (nobody can become owner) — never a silent fallback.
+const OWNER_KEY = (() => {
+	const envKey = typeof process.env.OWNER_KEY === "string" ? process.env.OWNER_KEY.trim() : "";
+	if (envKey) return envKey;
+	try {
+		const file = new URL("../../data/.owner-key", import.meta.url);
+		if (existsSync(file)) {
+			const saved = readFileSync(file, "utf8").trim();
+			if (saved) return saved;
+		}
+		const generated = randomBytes(24).toString("hex");
+		writeFileSync(file, generated, { mode: 0o600 });
+		console.warn("");
+		console.warn("[AUTH] ============================================================");
+		console.warn("[AUTH]  NEW OWNER KEY GENERATED (saved to data/.owner-key):");
+		console.warn("[AUTH]    " + generated);
+		console.warn("[AUTH]  Register the owner account with this key to claim it.");
+		console.warn("[AUTH] ============================================================");
+		console.warn("");
+		return generated;
+	} catch {
+		console.warn("[AUTH] OWNER KEY UNAVAILABLE (no env, no data/.owner-key) — owner registration is disabled.");
+		return "";
+	}
+})();
 
 export default async function authRoutes(fastify) {
 	// Register
@@ -40,7 +68,7 @@ export default async function authRoutes(fastify) {
 		// Founder names are reserved — only the Owner Key holder may register them
 		if (isPrivilegedUsername(cleanUsername)) {
 			const k = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
-			if (k !== OWNER_KEY) {
+			if (!OWNER_KEY || k !== OWNER_KEY) {
 				return reply.code(403).send({ error: "That username is reserved." });
 			}
 		}
@@ -55,10 +83,8 @@ export default async function authRoutes(fastify) {
 			const passwordHash = hashPassword(password);
 			const dispName = (displayName && typeof displayName === "string" && displayName.trim()) || cleanUsername;
 			// Ownership is key-based ONLY — never name-based, never first-user.
-			// Works after every database reset; nobody can grab owner by being
-			// first or by registering a founder name without the key.
 			const providedKey = typeof req.body?.ownerKey === "string" ? req.body.ownerKey.trim() : "";
-			const isOwner = providedKey !== "" && providedKey === OWNER_KEY;
+			const isOwner = !!OWNER_KEY && providedKey === OWNER_KEY;
 			const role = isOwner ? "admin" : "user";
 			const customTag = isOwner ? "FOUNDER & DEV" : null;
 			const initialCoins = isOwner ? 999999 : 350;
