@@ -451,9 +451,10 @@ const initSWPromise = (async function initSW() {
 											}
 										}
 										return pump();
-									}).catch(() => {
-										if (!decided) decide("stream-error");
-										controller.close();
+									}).catch((e) => {
+										const msg = e ? (e.message || e.name || String(e)) : "?";
+										if (!decided) decide("stream-error:" + msg.slice(0, 80));
+										try { controller.close(); } catch (_) {}
 									});
 									pump();
 								}

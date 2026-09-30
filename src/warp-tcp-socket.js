@@ -80,6 +80,8 @@ export class WarpTCPSocket {
 		this.socket = null;
 		this.paused = false;
 		this.connected = false;
+		this.bytesIn = 0;
+		this.bytesOut = 0;
 		this.data_queue = new AsyncQueue(this.recv_buffer_size);
 		this.handshake_acc = Buffer.alloc(0);
 	}
@@ -102,10 +104,12 @@ export class WarpTCPSocket {
 				resolve();
 			});
 			this.socket.on("data", (data) => {
+				this.bytesIn += data.length;
 				this.data_queue.put(data);
 			});
-			this.socket.on("close", (error) => {
-				if (error && !this.connected) {
+			this.socket.on("close", (hadError) => {
+				console.log(`[SOCK-CLOSE] ${this.hostname}:${this.port} via=direct in=${this.bytesIn} hadError=${hadError} local=${!!this.localClosed}`);
+				if (hadError && !this.connected) {
 					this.data_queue.close();
 					reject();
 				} else {
@@ -113,8 +117,11 @@ export class WarpTCPSocket {
 				}
 				this.socket = null;
 			});
-			this.socket.on("error", () => {});
+			this.socket.on("error", (e) => {
+				console.log(`[SOCK-ERR] ${this.hostname}:${this.port} via=direct err=${e && e.message} in=${this.bytesIn}`);
+			});
 			this.socket.on("end", () => {
+				console.log(`[SOCK-FIN] ${this.hostname}:${this.port} via=direct in=${this.bytesIn}`);
 				if (!this.socket) return;
 				this.socket.destroy();
 				this.socket = null;
@@ -147,6 +154,7 @@ export class WarpTCPSocket {
 			const timer = setTimeout(() => fail(new Error("warp socks handshake timeout")), HANDSHAKE_TIMEOUT);
 
 			sock.on("data", (data) => {
+				this.bytesIn += data.length;
 				this.data_queue.put(data);
 			});
 			sock.on("connect", async () => {
@@ -167,13 +175,19 @@ export class WarpTCPSocket {
 					fail(new Error("warp socks closed during handshake"));
 					return;
 				}
+				console.log(`[SOCK-CLOSE] ${this.hostname}:${this.port} via=warp in=${this.bytesIn} local=${!!this.localClosed}`);
 				this.data_queue.close();
 				this.socket = null;
 			});
 			sock.on("error", (e) => {
-				if (!done) fail(e);
+				if (!done) {
+					fail(e);
+					return;
+				}
+				console.log(`[SOCK-ERR] ${this.hostname}:${this.port} via=warp err=${e && e.message} in=${this.bytesIn}`);
 			});
 			sock.on("end", () => {
+				console.log(`[SOCK-FIN] ${this.hostname}:${this.port} via=warp in=${this.bytesIn} local=${!!this.localClosed}`);
 				if (this.socket) {
 					this.socket.destroy();
 					this.socket = null;
@@ -239,6 +253,7 @@ export class WarpTCPSocket {
 	}
 
 	async send(data) {
+		this.bytesOut += (data && data.length) || 0;
 		await new Promise((resolve) => {
 			if (!this.socket) {
 				resolve();
@@ -249,6 +264,7 @@ export class WarpTCPSocket {
 	}
 
 	async close() {
+		this.localClosed = true;
 		if (!this.socket) return;
 		this.socket.end();
 		this.socket = null;
