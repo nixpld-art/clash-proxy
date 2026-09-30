@@ -12,6 +12,7 @@ import fastifyStatic from "@fastify/static";
 
 import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
+import { WarpTCPSocket } from "./warp-tcp-socket.js";
 
 const require_ = createRequire(import.meta.url);
 
@@ -122,7 +123,7 @@ const fastify = Fastify({
 			})
 			.on("upgrade", (req, socket, head) => {
 				if (req.url.endsWith("/wisp/") || req.url.includes("/wisp")) {
-					wisp.routeRequest(req, socket, head);
+					wisp.routeRequest(req, socket, head, { TCPSocket: WarpTCPSocket });
 				} else if (req.url.startsWith("/ws/presence") || req.url.includes("/ws")) {
 					presenceWss.handleUpgrade(req, socket, head, (ws) => {
 						presenceWss.emit("connection", ws, req);
