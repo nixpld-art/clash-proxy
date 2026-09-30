@@ -356,7 +356,13 @@ const initSWPromise = (async function initSW() {
 						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
 					}
 				} catch (e) {}
-					return libcurlClient.request(remote, method, body, hdrs, signal);
+					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
+					const rawPairs = [];
+					for (const [k, vals] of Object.entries(resp.headers || {})) {
+						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
+						else rawPairs.push([k, vals]);
+					}
+					return { body: resp.body, status: resp.status, statusText: resp.statusText, headers: rawPairs };
 				},
 				connect: (...args) => libcurlClient.connect(...args),
 			};
