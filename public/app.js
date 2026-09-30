@@ -622,7 +622,10 @@ function closeTab(tabId) {
 	if (idx === -1) return;
 
 	const tab = tabs[idx];
-	if (tab.iframe) tab.iframe.remove();
+	if (tab.iframe) {
+		silenceFrame(tab.iframe);
+		tab.iframe.remove();
+	}
 	tabs.splice(idx, 1);
 
 	if (typeof ClashShield !== "undefined") {
@@ -672,11 +675,58 @@ function renderTabs() {
 	});
 }
 
+const silencedMedia = new WeakMap();
+let mediaGuardStarted = false;
+
+function silenceFrame(f) {
+	try {
+		const doc = f && f.contentDocument;
+		if (!doc) return;
+		doc.querySelectorAll("video,audio").forEach((m) => {
+			if (!silencedMedia.has(m)) silencedMedia.set(m, m.muted);
+			try { m.muted = true; } catch (e) {}
+			try { m.pause(); } catch (e) {}
+		});
+	} catch (e) {}
+}
+
+function unsilenceFrame(f) {
+	try {
+		const doc = f && f.contentDocument;
+		if (!doc) return;
+		doc.querySelectorAll("video,audio").forEach((m) => {
+			if (silencedMedia.has(m)) {
+				try { m.muted = silencedMedia.get(m); } catch (e) {}
+				silencedMedia.delete(m);
+			}
+		});
+	} catch (e) {}
+}
+
+function startMediaGuard() {
+	if (mediaGuardStarted) return;
+	mediaGuardStarted = true;
+	setInterval(() => {
+		try {
+			if (!framesContainer || !framesContainer.querySelectorAll) return;
+			const containerHidden = framesContainer.classList.contains("hidden");
+			const active = containerHidden ? null : framesContainer.querySelector("iframe.active");
+			framesContainer.querySelectorAll("iframe").forEach((f) => {
+				if (f === active) return;
+				silenceFrame(f);
+			});
+		} catch (e) {}
+	}, 1000);
+}
+
 function showActiveFrame() {
 	const iframes = framesContainer.querySelectorAll("iframe");
 	iframes.forEach((f) => {
-		f.classList.toggle("active", f.dataset.tabId === activeTabId);
+		const isActive = f.dataset.tabId === activeTabId;
+		f.classList.toggle("active", isActive);
+		if (isActive) unsilenceFrame(f);
 	});
+	startMediaGuard();
 
 	const activeTab = tabs.find(t => t.id === activeTabId);
 	if (gameControlsBar) {
@@ -698,7 +748,11 @@ function showNewTabPage() {
 	mainContent.classList.add("new-tab-mode");
 
 	const iframes = framesContainer.querySelectorAll("iframe");
-	iframes.forEach((f) => f.classList.remove("active"));
+	iframes.forEach((f) => {
+		f.classList.remove("active");
+		silenceFrame(f);
+	});
+	startMediaGuard();
 
 	if (gameControlsBar) gameControlsBar.classList.add("hidden");
 
@@ -716,6 +770,7 @@ function showLandingPage() {
 	activeTabId = null;
 	newTabPending = null;
 	tabs = [];
+	framesContainer.querySelectorAll("iframe").forEach(silenceFrame);
 	renderTabs();
 	setTimeout(() => proxyInput.focus(), 50);
 }
