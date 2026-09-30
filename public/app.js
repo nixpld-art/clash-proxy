@@ -410,16 +410,29 @@ const initSWPromise = (async function initSW() {
 							let scanBuf = "";
 							let decided = false;
 							let scanned = 0;
+							const post = (type, extra) => {
+								const base = {
+									type,
+									url: String(remote).slice(0, 110),
+									homePos: scanBuf.indexOf("ytInitialData"),
+									histPos: scanBuf.indexOf("Your YouTube History is off"),
+									beforePos: scanBuf.indexOf("Before you continue to YouTube"),
+									rejPos: scanBuf.indexOf("Reject all"),
+									scanned
+								};
+								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...base, ...extra }) }).catch(() => {});
+							};
 							const decide = (tag) => {
 								if (decided) return;
 								decided = true;
-								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_page_kind", url: String(remote).slice(0, 110), kind: tag, at: scanned }) }).catch(() => {});
+								post("yt_page_kind", { kind: tag });
 							};
 							resp.body = new ReadableStream({
 								start(controller) {
 									const pump = () => reader.read().then((r) => {
 										if (r.done) {
 											if (!decided) decide("unknown-end");
+											post("yt_page_final", { kind: decided ? "decided" : "none" });
 											controller.close();
 											return;
 										}
@@ -428,9 +441,13 @@ const initSWPromise = (async function initSW() {
 											if (!decided) {
 												scanned += r.value.length;
 												scanBuf += dec.decode(r.value, { stream: true });
-												if (scanBuf.length > 1500000) scanBuf = scanBuf.slice(-1000000);
+												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
 												if (/ytInitialData/.test(scanBuf)) decide("home");
 												else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
+											} else {
+												scanned += r.value.length;
+												scanBuf += dec.decode(r.value, { stream: true });
+												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
 											}
 										}
 										return pump();
