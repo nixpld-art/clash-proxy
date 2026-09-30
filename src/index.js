@@ -474,7 +474,7 @@ fastify.get("/scram/service/*", (req, reply) => {
 
 // Remote logging endpoint
 fastify.post("/api/log", async (req, reply) => {
-	console.log("[CLIENT LOG]", req.body);
+	console.log("[CLIENT LOG]", JSON.stringify(req.body));
 	return { success: true };
 });
 
