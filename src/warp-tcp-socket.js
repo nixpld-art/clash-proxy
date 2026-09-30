@@ -1,5 +1,5 @@
 import { Socket } from "node:net";
-import { lookup } from "node:dns";
+import { lookup } from "node:dns/promises";
 
 const SOCKS_HOST = "127.0.0.1";
 const SOCKS_PORT = 40000;
