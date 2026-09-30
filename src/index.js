@@ -242,6 +242,23 @@ let logBytes = 0;
 try { logBytes = statSync(serverLogPath).size; } catch {}
 let logChecks = 0;
 
+// Force HTTPS — service workers (the proxy) require a secure context.
+// Skipped when nginx already terminated TLS (x-forwarded-proto: https),
+// for localhost, and for bare IPs (no cert exists for those).
+fastify.addHook("onRequest", async (req, reply) => {
+	try {
+		const host = String(req.headers.host || "");
+		const hostName = host.replace(/:\d+$/, "");
+		if (!hostName) return;
+		const isLocal = hostName === "localhost" || hostName === "127.0.0.1" || hostName === "::1" || hostName === "[::1]";
+		const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostName);
+		if (isLocal || isIP) return;
+		if (req.headers["x-forwarded-proto"] === "https") return;
+		if (req.headers.upgrade) return;
+		return reply.redirect("https://" + host + req.url);
+	} catch {}
+});
+
 fastify.addHook("onResponse", async (req, reply) => {
 	try {
 		const u = req.url;
@@ -411,16 +428,42 @@ fastify.get("/scram/service/*", (req, reply) => {
 		<html>
 		<head>
 			<title>Connecting — Clash Proxy</title>
-			<style>body{background:#0a0a0f;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}</style>
+			<style>body{background:#0a0a0f;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+			#msg{text-align:center;max-width:520px;padding:0 24px;line-height:1.7}a{color:#a29bfe}</style>
 			<script>
-				if ('serviceWorker' in navigator) {
-					navigator.serviceWorker.ready.then(() => setTimeout(() => location.reload(), 300));
-				}
-				setTimeout(() => location.reload(), 1200);
+				(function () {
+					var msg = document.getElementById("msg");
+					function show(html) { msg.innerHTML = html; }
+					if (!("serviceWorker" in navigator)) {
+						show("This browser can't run the proxy.<br><br><a href='/'>Back to Clash Proxy</a>");
+						return;
+					}
+					if (location.protocol !== "https:" &&
+					    location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+						if (!/^\\d{1,3}(\\.\\d{1,3}){3}$/.test(location.hostname)) {
+							location.replace("https://" + location.host + location.pathname + location.search);
+							return;
+						}
+						show("The proxy needs a secure (https) connection.<br><br><a href='https://clash-proxy-9045.bot.nu/'>Open Clash Proxy via https</a>");
+						return;
+					}
+					var tries = 0;
+					var timer = setInterval(function () {
+						tries++;
+						navigator.serviceWorker.ready.then(function () {
+							clearInterval(timer);
+							setTimeout(function () { location.reload(); }, 250);
+						}).catch(function () {});
+						if (tries > 30) {
+							clearInterval(timer);
+							show("Still connecting to the proxy...<br><br><a href='javascript:location.reload()'>Retry</a> &nbsp;&nbsp; <a href='/'>Back to home</a>");
+						}
+					}, 300);
+				})();
 			</script>
 		</head>
 		<body>
-			<div style="text-align:center">
+			<div id="msg">
 				<h2 style="font-weight:600;margin-bottom:8px">Connecting to Proxy...</h2>
 				<p style="opacity:0.5;font-size:0.9rem">Please wait while the Service Worker initializes.</p>
 			</div>
