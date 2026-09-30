@@ -308,11 +308,17 @@ const initSWPromise = (async function initSW() {
 			const libcurlMod = await import(transportPath);
 			const LibcurlClass = libcurlMod.default;
 			const libcurlClient = new LibcurlClass({ wisp: wispUrl });
-			await libcurlClient.init();
+			const ensureTransport = async () => {
+				for (let i = 0; i < 40 && !libcurlClient.ready; i++) {
+					try { await libcurlClient.init(); } catch (e) { await new Promise((r) => setTimeout(r, 400)); }
+				}
+			};
+			await ensureTransport();
 			transportAdapter = {
 				ready: true,
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
+					if (!libcurlClient.ready) await ensureTransport();
 					// 🛡️ Clash Shield Check
 					if (typeof ClashShield !== "undefined") {
 						const activeTab = tabs.find((t) => t.id === activeTabId);
