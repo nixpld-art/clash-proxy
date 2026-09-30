@@ -403,6 +403,27 @@ const initSWPromise = (async function initSW() {
 							}
 						}
 					} catch (e) {}
+					try {
+						if (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(String(remote)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function") {
+							const reader = resp.body.getReader();
+							const first = await reader.read();
+							const head = new TextDecoder().decode(first.value || new Uint8Array()).slice(0, 5000);
+							const isConsent = /Reject all|Before you continue|Your YouTube History is off/.test(head);
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_resp_sniff", url: String(remote).slice(0, 100), consent: isConsent, home: head.includes("ytInitialData"), snippet: head.replace(/\s+/g, " ").slice(0, 130) }) }).catch(() => {});
+							resp.body = new ReadableStream({
+								start(controller) {
+									if (first.value) controller.enqueue(first.value);
+									if (first.done) { controller.close(); return; }
+									const pump = () => reader.read().then((r) => {
+										if (r.done) { controller.close(); return; }
+										controller.enqueue(r.value);
+										return pump();
+									}).catch(() => controller.close());
+									pump();
+								}
+							});
+						}
+					} catch (e) {}
 					const rawPairs = [];
 					for (const [k, vals] of Object.entries(resp.headers || {})) {
 						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
