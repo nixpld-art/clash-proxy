@@ -3803,7 +3803,7 @@ function injectConsentDismisser(iframe) {
 			}
 			for (const tag of consentTags) {
 				const el = d.querySelector(tag);
-				if (el && el.parentNode) el.parentNode.removeChild(el);
+				if (el) el.style.setProperty("display", "none", "important");
 			}
 			const dialogs = d.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
 			for (const dlg of dialogs) {
@@ -3816,12 +3816,12 @@ function injectConsentDismisser(iframe) {
 						if (pname.startsWith("ytd-consent") || pname === "tp-yt-paper-dialog" || pname === "ytd-popup-container") node = node.parentNode;
 						else break;
 					}
-					if (node.parentNode) node.parentNode.removeChild(node);
+					node.style.setProperty("display", "none", "important");
 				}
 			}
 			const rich = d.querySelectorAll("ytd-rich-section-renderer");
 			for (const r of rich) {
-				if ((r.textContent || "").includes("Your YouTube History is off") && r.parentNode) r.parentNode.removeChild(r);
+				if ((r.textContent || "").includes("Your YouTube History is off")) r.style.setProperty("display", "none", "important");
 			}
 		} catch (e) {}
 	};
