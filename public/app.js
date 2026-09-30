@@ -357,6 +357,26 @@ const initSWPromise = (async function initSW() {
 					}
 				} catch (e) {}
 					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
+					try {
+						const ru = String(remote);
+						if (/consent|set_consent|\/watch/.test(ru)) {
+							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 100), cookie: ck ? String(ck[1]).slice(0, 200) : "(none)" }) }).catch(() => {});
+						}
+						if (/youtube|consent/.test(ru)) {
+							const sc = [];
+							let loc = "";
+							for (const [k, vals] of Object.entries(resp.headers || {})) {
+								if (String(k).toLowerCase() === "set-cookie") {
+									for (const v of (Array.isArray(vals) ? vals : [vals])) sc.push(String(v).slice(0, 130));
+								}
+								if (String(k).toLowerCase() === "location") loc = String(Array.isArray(vals) ? vals[0] : vals).slice(0, 120);
+							}
+							if (sc.length || (resp.status >= 300 && resp.status < 400)) {
+								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_resp", url: ru.slice(0, 100), status: resp.status, loc, sc }) }).catch(() => {});
+							}
+						}
+					} catch (e) {}
 					const rawPairs = [];
 					for (const [k, vals] of Object.entries(resp.headers || {})) {
 						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
