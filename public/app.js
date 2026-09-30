@@ -359,9 +359,9 @@ const initSWPromise = (async function initSW() {
 					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
 					try {
 						const ru = String(remote);
-						if (/consent|set_consent|\/watch/.test(ru)) {
+						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor/.test(ru)) {
 							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 100), cookie: ck ? String(ck[1]).slice(0, 200) : "(none)" }) }).catch(() => {});
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 110), cookie: ck ? String(ck[1]).slice(0, 260) : "(none)" }) }).catch(() => {});
 						}
 						if (/youtube|consent/.test(ru)) {
 							const sc = [];
