@@ -406,19 +406,38 @@ const initSWPromise = (async function initSW() {
 					try {
 						if (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(String(remote)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function") {
 							const reader = resp.body.getReader();
-							const first = await reader.read();
-							const head = new TextDecoder().decode(first.value || new Uint8Array()).slice(0, 5000);
-							const isConsent = /Reject all|Before you continue|Your YouTube History is off/.test(head);
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_resp_sniff", url: String(remote).slice(0, 100), consent: isConsent, home: head.includes("ytInitialData"), snippet: head.replace(/\s+/g, " ").slice(0, 130) }) }).catch(() => {});
+							const dec = new TextDecoder();
+							let scanBuf = "";
+							let decided = false;
+							let scanned = 0;
+							const decide = (tag) => {
+								if (decided) return;
+								decided = true;
+								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_page_kind", url: String(remote).slice(0, 110), kind: tag, at: scanned }) }).catch(() => {});
+							};
 							resp.body = new ReadableStream({
 								start(controller) {
-									if (first.value) controller.enqueue(first.value);
-									if (first.done) { controller.close(); return; }
 									const pump = () => reader.read().then((r) => {
-										if (r.done) { controller.close(); return; }
-										controller.enqueue(r.value);
+										if (r.done) {
+											if (!decided) decide("unknown-end");
+											controller.close();
+											return;
+										}
+										if (r.value) {
+											controller.enqueue(r.value);
+											if (!decided) {
+												scanned += r.value.length;
+												scanBuf += dec.decode(r.value, { stream: true });
+												if (scanBuf.length > 1500000) scanBuf = scanBuf.slice(-1000000);
+												if (/ytInitialData/.test(scanBuf)) decide("home");
+												else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
+											}
+										}
 										return pump();
-									}).catch(() => controller.close());
+									}).catch(() => {
+										if (!decided) decide("stream-error");
+										controller.close();
+									});
 									pump();
 								}
 							});
