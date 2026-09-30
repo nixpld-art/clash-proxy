@@ -360,8 +360,9 @@ const initSWPromise = (async function initSW() {
 					const rh = new URL(String(remote));
 					const SFX = [".youtube.com", ".googlevideo.com", ".ytimg.com", ".ggpht.com", ".googleapis.com", ".gstatic.com", ".google.com", ".google.co.uk", ".googleusercontent.com", ".googleadservices.com", ".googlesyndication.com", ".google-analytics.com", ".gvt1.com", ".doubleclick.net"];
 					const hn = rh.hostname.toLowerCase();
-					if (SFX.some((s) => hn === s.slice(1) || hn.endsWith(s))) {
-						const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
+					const matched = SFX.some((s) => hn === s.slice(1) || hn.endsWith(s));
+					const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
+					if (matched) {
 						const ci = hdrs.findIndex((h) => String(h[0]).toLowerCase() === "cookie");
 						if (ci >= 0) {
 							const parts = String(hdrs[ci][1]).split(";").map((s) => s.trim()).filter((s) => s && !/^SOCS=/i.test(s));
@@ -371,14 +372,20 @@ const initSWPromise = (async function initSW() {
 							hdrs.push(["cookie", CANON_SOCS]);
 						}
 					}
-				} catch (e) {}
+					if (hn === "www.youtube.com" || hn === "youtube.com" || hn === "consent.youtube.com") {
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force", host: hn, matched, n: hdrs.length, ct: method }) }).catch(() => {});
+					}
+				} catch (e) {
+					fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force_err", err: String(e).slice(0, 150) }) }).catch(() => {});
+				}
 					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
 					try {
 						const ru = String(remote);
 						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor|youtube\.com\/t/.test(ru)) {
 							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 90) : "-"; };
 							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), cookie: ck ? String(ck[1]).slice(0, 200) : "(none)", ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
+							const ckv = ck ? String(ck[1]) : "";
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
 						}
 						if (/youtube|consent/.test(ru)) {
 							const sc = [];
