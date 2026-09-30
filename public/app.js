@@ -3815,6 +3815,10 @@ function injectConsentDismisser(iframe) {
 				const el = d.querySelector(tag);
 				if (el) el.style.setProperty("display", "none", "important");
 			}
+			if (d.querySelector("ytd-consent-bump-v2-lightbox")) {
+				const bds = d.querySelectorAll("tp-yt-iron-overlay-backdrop");
+				for (const bd of bds) bd.style.setProperty("display", "none", "important");
+			}
 			const dialogs = d.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
 			for (const dlg of dialogs) {
 				const txt = dlg.textContent || "";
