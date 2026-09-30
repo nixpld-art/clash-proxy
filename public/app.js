@@ -329,9 +329,25 @@ const initSWPromise = (async function initSW() {
 						}
 					}
 
+				let hdrs = headers;
+				if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) hdrs = Array.from(hdrs.entries());
+				if (Array.isArray(hdrs) && method === "GET" && /^https:\/\/www\.youtube\.com\/(watch|results|shorts|feed|@|@)/.test(String(remote))) {
+					const destEntry = hdrs.find((h) => String(h[0]).toLowerCase() === "sec-fetch-dest");
+					if (!destEntry || String(destEntry[1]) !== "document") {
+						const keep = new Set(["cookie", "user-agent", "sec-ch-ua", "sec-ch-ua-mobile", "sec-ch-ua-platform", "sec-ch-ua-arch", "sec-ch-ua-bitness", "sec-ch-ua-full-version", "sec-ch-ua-full-version-list", "sec-ch-ua-model", "sec-ch-ua-platform-version", "sec-ch-ua-wow64", "sec-ch-ua-form-factors", "referer", "viewport-width", "dpr", "device-memory"]);
+						hdrs = hdrs.filter((h) => keep.has(String(h[0]).toLowerCase()));
+						hdrs.push(["accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"]);
+						hdrs.push(["accept-language", "en-GB,en;q=0.9"]);
+						hdrs.push(["sec-fetch-dest", "document"]);
+						hdrs.push(["sec-fetch-mode", "navigate"]);
+						hdrs.push(["sec-fetch-site", "none"]);
+						hdrs.push(["sec-fetch-user", "?1"]);
+						hdrs.push(["upgrade-insecure-requests", "1"]);
+					}
+				}
 				const init = {
 					method: method,
-					headers: headers,
+					headers: hdrs,
 					body: body,
 					signal: signal
 				};
@@ -339,10 +355,9 @@ const initSWPromise = (async function initSW() {
 					init.duplex = "half";
 				}
 				try {
-					if (/youtube\.com\/(watch|youtubei|results)/.test(String(remote))) {
-						let hv = headers;
-						if (headers && typeof headers.entries === "function") hv = Array.from(headers.entries());
-						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_upstream", remote: String(remote).slice(0, 90), method: method, headers: hv }) }).catch(() => {});
+					if (/youtube\.com\/watch/.test(String(remote))) {
+						const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 40) : "-"; };
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
 					}
 				} catch (e) {}
 					const resp = await bClient.fetch(remote, init);
