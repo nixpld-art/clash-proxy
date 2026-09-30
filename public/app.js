@@ -359,9 +359,10 @@ const initSWPromise = (async function initSW() {
 					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
 					try {
 						const ru = String(remote);
-						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor/.test(ru)) {
+						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor|youtube\.com\/t/.test(ru)) {
+							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 90) : "-"; };
 							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 110), cookie: ck ? String(ck[1]).slice(0, 260) : "(none)" }) }).catch(() => {});
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), cookie: ck ? String(ck[1]).slice(0, 200) : "(none)", ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
 						}
 						if (/youtube|consent/.test(ru)) {
 							const sc = [];
