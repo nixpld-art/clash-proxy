@@ -98,6 +98,7 @@ export class WarpTCPSocket {
 		const ip = typeof r === "string" ? r : r.address;
 		await new Promise((resolve, reject) => {
 			this.socket = new Socket();
+			this.socket.setKeepAlive(true, 15000);
 			this.socket.setNoDelay(true);
 			this.socket.on("connect", () => {
 				this.connected = true;
@@ -138,6 +139,7 @@ export class WarpTCPSocket {
 			const sock = new Socket();
 			this.socket = sock;
 			sock.setNoDelay(true);
+			sock.setKeepAlive(true, 15000);
 			let done = false;
 
 			const fail = (err) => {

@@ -429,33 +429,43 @@ const initSWPromise = (async function initSW() {
 							};
 							resp.body = new ReadableStream({
 								start(controller) {
-									const pump = () => reader.read().then((r) => {
-										if (r.done) {
-											if (!decided) decide("unknown-end");
-											post("yt_page_final", { kind: decided ? "decided" : "none" });
-											controller.close();
-											return;
+									let ended = false;
+									const finish = (tag) => {
+										if (ended) return;
+										ended = true;
+										if (tag && !decided) decide(tag);
+										post("yt_page_final", { kind: decided ? "decided" : "none" });
+										try { controller.close(); } catch (_) {
+											try { controller.error(new Error("closed")); } catch (_) {}
 										}
-										if (r.value) {
-											controller.enqueue(r.value);
-											if (!decided) {
-												scanned += r.value.length;
-												scanBuf += dec.decode(r.value, { stream: true });
-												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
-												if (/ytInitialData/.test(scanBuf)) decide("home");
-												else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
-											} else {
-												scanned += r.value.length;
-												scanBuf += dec.decode(r.value, { stream: true });
-												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
+									};
+									const pump = () => {
+										if (ended) return;
+										const timer = setTimeout(() => finish("idle-timeout"), 25000);
+										reader.read().then((r) => {
+											clearTimeout(timer);
+											if (ended) return;
+											if (r.done) {
+												finish("unknown-end");
+												return;
 											}
-										}
-										return pump();
-									}).catch((e) => {
-										const msg = e ? (e.message || e.name || String(e)) : "?";
-										if (!decided) decide("stream-error:" + msg.slice(0, 80));
-										try { controller.close(); } catch (_) {}
-									});
+											if (r.value) {
+												controller.enqueue(r.value);
+												scanned += r.value.length;
+												scanBuf += dec.decode(r.value, { stream: true });
+												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
+												if (!decided) {
+													if (/ytInitialData/.test(scanBuf)) decide("home");
+													else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
+												}
+											}
+											pump();
+										}).catch((e) => {
+											clearTimeout(timer);
+											const msg = e ? (e.message || e.name || String(e)) : "?";
+											finish("stream-error:" + msg.slice(0, 80));
+										});
+									};
 									pump();
 								}
 							});
