@@ -303,14 +303,13 @@ const initSWPromise = (async function initSW() {
 		const transportPath = (typeof _CONFIG !== "undefined" && _CONFIG.transportPath) ? _CONFIG.transportPath : "/libcurl/index.mjs";
 		const wispUrl = (typeof _CONFIG !== "undefined" && _CONFIG.wispUrl) ? _CONFIG.wispUrl : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`;
 
-		if (typeof BareMux !== "undefined" && BareMux.BareMuxConnection) {
-			connection = new BareMux.BareMuxConnection(workerPath);
-			await connection.setTransport(transportPath, [{ websocket: wispUrl }]);
-		}
-
-		if (typeof BareMux !== "undefined" && BareMux.BareClient) {
-			const bClient = new BareMux.BareClient(workerPath);
-			const transportAdapter = {
+		let transportAdapter = null;
+		try {
+			const libcurlMod = await import(transportPath);
+			const LibcurlClass = libcurlMod.default;
+			const libcurlClient = new LibcurlClass({ wisp: wispUrl });
+			await libcurlClient.init();
+			transportAdapter = {
 				ready: true,
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
@@ -345,43 +344,22 @@ const initSWPromise = (async function initSW() {
 						hdrs.push(["upgrade-insecure-requests", "1"]);
 					}
 				}
-				const init = {
-					method: method,
-					headers: hdrs,
-					body: body,
-					signal: signal
-				};
-				if (body != null) {
-					init.duplex = "half";
-				}
 				try {
 					if (/youtube\.com\/watch/.test(String(remote))) {
 						const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 40) : "-"; };
 						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
 					}
 				} catch (e) {}
-					const resp = await bClient.fetch(remote, init);
-					let iterHeaders = [];
-					if (resp.rawHeaders) {
-						for (const [k, v] of Object.entries(resp.rawHeaders)) {
-							if (Array.isArray(v)) {
-								for (const val of v) iterHeaders.push([k, val]);
-							} else {
-								iterHeaders.push([k, v]);
-							}
-						}
-					} else if (resp.headers) {
-						iterHeaders = Array.from(resp.headers.entries());
-					}
-					return {
-						body: resp.body,
-						status: resp.status,
-						statusText: resp.statusText,
-						headers: iterHeaders
-					};
-				}
+					return libcurlClient.request(remote, method, body, hdrs, signal);
+				},
+				connect: (...args) => libcurlClient.connect(...args),
 			};
+		} catch (e) {
+			console.error("[Clash Proxy] libcurl transport init failed:", e);
+			fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "transport_error", message: e.message }) }).catch(() => {});
+		}
 
+		if (transportAdapter) {
 			const controllerGlobal = window.$scramjetController || (typeof $scramjetController !== "undefined" ? $scramjetController : null);
 			const ControllerClass = controllerGlobal ? (controllerGlobal.Controller || controllerGlobal.ScramjetController) : null;
 			if (ControllerClass) {
