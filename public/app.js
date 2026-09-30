@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Clash Proxy v3.0 â€” Main Application Logic
+ * Clash Proxy v3.0 — Main Application Logic
  *
  * Manages Scramjet V2 proxy engine, Arcade Games library,
  * user authentication, profiles, friend networks, real-time presence,
@@ -314,7 +314,7 @@ const initSWPromise = (async function initSW() {
 				ready: true,
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
-					// ðŸ›¡ï¸ Clash Shield Check
+					// 🛡️ Clash Shield Check
 					if (typeof ClashShield !== "undefined") {
 						const activeTab = tabs.find((t) => t.id === activeTabId);
 						const currentHost = activeTab && activeTab.url ? activeTab.url : "";
@@ -385,12 +385,12 @@ const initSWPromise = (async function initSW() {
 			}
 		}
 
-		setStatus("ready", "Ready â€” Enter a URL or search query");
+		setStatus("ready", "Ready — Enter a URL or search query");
 		return true;
 	} catch (err) {
 		console.error("[Clash Proxy] Initialization error:", err);
 		fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "initSW_error", message: err.message, stack: err.stack }) }).catch(()=>{});
-		setStatus("ready", "Ready â€” Enter a URL or search query");
+		setStatus("ready", "Ready — Enter a URL or search query");
 		return false;
 	}
 })();
@@ -631,7 +631,7 @@ function renderTabs() {
 
 		tabEl.innerHTML = `
 			<div class="tab-favicon">
-				${tab.loading ? `<div class="tab-spinner"></div>` : `<span class="tab-icon">${tab.isGame ? "ðŸ•¹ï¸" : "ðŸŒ"}</span>`}
+				${tab.loading ? `<div class="tab-spinner"></div>` : `<span class="tab-icon">${tab.isGame ? "🕹️" : "🌐"}</span>`}
 			</div>
 			<span class="tab-title">${escapeHtml(tab.title || "New Tab")}</span>
 			<button class="tab-close" aria-label="Close tab" title="Close">&times;</button>
@@ -706,7 +706,7 @@ function openAboutBlank(urlToOpen) {
 	try {
 		const win = window.open("about:blank", "_blank");
 		if (!win || win.closed) {
-			showToast({ icon: "âš ï¸", title: "Pop-up Blocked", message: "Please allow pop-ups for this site to open in about:blank." });
+			showToast({ icon: "⚠️", title: "Pop-up Blocked", message: "Please allow pop-ups for this site to open in about:blank." });
 			return;
 		}
 
@@ -1007,7 +1007,7 @@ function renderUserHeader() {
 		navOwnerPanel.style.display = (isTed || currentUser.role === "admin") ? "" : "none";
 	}
 
-	// Rank chip â†’ opens YOUR panel (Owner â†’ control panel, Game Tester â†’ testing panel)
+	// Rank chip → opens YOUR panel (Owner → control panel, Game Tester → testing panel)
 	const rankChip = userHeaderWidget.querySelector(".user-pill-badge");
 	if (rankChip) {
 		rankChip.style.cursor = "pointer";
@@ -1092,13 +1092,13 @@ async function loginUser(username, password) {
 		loadBookmarks();
 		loadUnreadCounts();
 		if (typeof loadCustomScripts === "function") loadCustomScripts();
-		showToast({ icon: "ðŸ‘‹", title: "Welcome back!", message: `Logged in as ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
+		showToast({ icon: "👋", title: "Welcome back!", message: `Logged in as ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
 	} catch (err) {
 		if (loginErrorMsg) {
 			loginErrorMsg.textContent = err.message;
 			loginErrorMsg.classList.remove("hidden");
 		}
-		showToast({ icon: "âš ï¸", title: "Sign In Error", message: err.message });
+		showToast({ icon: "⚠️", title: "Sign In Error", message: err.message });
 	}
 }
 
@@ -1135,13 +1135,13 @@ async function registerUser(username, password, displayName) {
 		loadBookmarks();
 		loadUnreadCounts();
 		if (typeof loadCustomScripts === "function") loadCustomScripts();
-		showToast({ icon: "ðŸŽ‰", title: "Welcome to Clash Proxy!", message: `Account ready for ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
+		showToast({ icon: "🎉", title: "Welcome to Clash Proxy!", message: `Account ready for ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
 	} catch (err) {
 		if (registerErrorMsg) {
 			registerErrorMsg.textContent = err.message;
 			registerErrorMsg.classList.remove("hidden");
 		}
-		showToast({ icon: "âš ï¸", title: "Account Error", message: err.message });
+		showToast({ icon: "⚠️", title: "Account Error", message: err.message });
 	}
 }
 
@@ -1158,7 +1158,7 @@ function logout() {
 	renderGuestHeader();
 	renderProfilePage();
 	loadBookmarks();
-	showToast({ icon: "ðŸšª", title: "Logged out", message: "You are now in guest browsing mode." });
+	showToast({ icon: "🚪", title: "Logged out", message: "You are now in guest browsing mode." });
 }
 
 // ============================================================
@@ -1221,7 +1221,7 @@ function handlePresenceMessage(data) {
 		updateChatPagePresenceUI();
 	} else if (data.type === "friend_request") {
 		showToast({
-			icon: "ðŸ‘‹",
+			icon: "👋",
 			title: "New Friend Request",
 			message: `@${data.from.username} sent you a friend request!`,
 			actionText: "View",
@@ -1233,7 +1233,7 @@ function handlePresenceMessage(data) {
 		loadFriends();
 	} else if (data.type === "friend_accepted") {
 		showToast({
-			icon: "ðŸ¤",
+			icon: "🤝",
 			title: "Friend Request Accepted",
 			message: `@${data.user.username} is now your friend!`,
 			type: "xp-gain"
@@ -1241,7 +1241,7 @@ function handlePresenceMessage(data) {
 		loadFriends();
 	} else if (data.type === "game_invite") {
 		showToast({
-			icon: "ðŸŽ®",
+			icon: "🎮",
 			title: "Game Invitation!",
 			message: `${data.from.displayName} invited you to play ${data.gameTitle}!`,
 			actionText: "Play Now",
@@ -1263,7 +1263,7 @@ function handlePresenceMessage(data) {
 			unreadChatCounts[msg.sender_id] = (unreadChatCounts[msg.sender_id] || 0) + 1;
 			renderFriendsLists();
 			showToast({
-				icon: "ðŸ’¬",
+				icon: "💬",
 				title: `Message from ${msg.sender?.displayName || msg.sender?.username || 'Friend'}`,
 				message: msg.content.length > 45 ? msg.content.slice(0, 45) + "..." : msg.content,
 				actionText: "Reply",
@@ -1286,7 +1286,7 @@ function handlePresenceMessage(data) {
 	} else if (data.type === "chat_read_receipt") {
 		if (activeChatPageFriend && activeChatPageFriend.id === data.readBy) {
 			document.querySelectorAll("#chat-page-messages .chat-read-receipt").forEach((el) => {
-				el.textContent = "âœ“âœ“";
+				el.textContent = "✓✓";
 				el.style.color = "#00f0ff";
 			});
 		}
@@ -1316,8 +1316,8 @@ function handlePresenceMessage(data) {
 		renderLoungeRoomsGrid(data.rooms);
 	} else if (data.type === "system_announcement") {
 		showToast({
-			icon: "ðŸ‘‘",
-			title: `SERVER BROADCAST â€” @${data.sender || 'TED'}`,
+			icon: "👑",
+			title: `SERVER BROADCAST — @${data.sender || 'TED'}`,
 			message: data.message,
 			type: "system-announcement-banner",
 			duration: 10000
@@ -1333,11 +1333,11 @@ function broadcastActivity(status, activity) {
 
 function sendGameInvite(targetUserId, gameUrl, gameTitle) {
 	if (!presenceWs || presenceWs.readyState !== WebSocket.OPEN) {
-		showToast({ icon: "âš ï¸", title: "Offline", message: "Must be connected to invite friends." });
+		showToast({ icon: "⚠️", title: "Offline", message: "Must be connected to invite friends." });
 		return;
 	}
 	presenceWs.send(JSON.stringify({ type: "invite", targetUserId, gameUrl, gameTitle }));
-	showToast({ icon: "ðŸš€", title: "Invite Sent", message: `Game invite sent to friend!` });
+	showToast({ icon: "🚀", title: "Invite Sent", message: `Game invite sent to friend!` });
 }
 
 // ============================================================
@@ -1366,14 +1366,14 @@ async function awardXp(type, details) {
 
 			if (data.leveledUp) {
 				showToast({
-					icon: "ðŸ‘‘",
+					icon: "👑",
 					title: "LEVEL UP!",
 					message: `Congratulations! You reached Level ${data.level}!`,
 					type: "level-up"
 				});
 			} else if (data.earned) {
 				showToast({
-					icon: "âœ¨",
+					icon: "✨",
 					title: `+${data.earned} XP`,
 					message: data.reason,
 					type: "xp-gain",
@@ -1399,11 +1399,11 @@ setInterval(() => {
 // ============================================================
 
 function getRankTitle(level) {
-	if (level >= 10) return "Proxy Master ðŸ‘‘";
-	if (level >= 7) return "Shadow Runner âš¡";
-	if (level >= 5) return "Cyber Vanguard ðŸ›¡ï¸";
-	if (level >= 3) return "Arcade Scout ðŸ•¹ï¸";
-	return "Novice Navigator ðŸŒ";
+	if (level >= 10) return "Proxy Master 👑";
+	if (level >= 7) return "Shadow Runner ⚡";
+	if (level >= 5) return "Cyber Vanguard 🛡️";
+	if (level >= 3) return "Arcade Scout 🕹️";
+	return "Novice Navigator 🌐";
 }
 
 async function renderProfilePage() {
@@ -1461,7 +1461,7 @@ async function renderProfilePage() {
 	if (isTed) {
 		profileLevelBadge.className = "level-badge admin-root-badge";
 		profileLevelBadge.textContent = "DEV";
-		profileRankTitle.innerHTML = currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : "ðŸ‘‘ FOUNDER";
+		profileRankTitle.innerHTML = currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : "👑 FOUNDER";
 	} else {
 		profileDisplayName.classList.remove("ted-vip-name");
 		profileLevelBadge.className = "level-badge";
@@ -1595,7 +1595,7 @@ function renderFriendsLists() {
 				card.innerHTML = `
 					<div class="friend-info">
 						<span class="friend-display-name">${escapeHtml(req.display_name || req.username)}</span>
-						<span class="friend-activity">@${escapeHtml(req.username)} â€¢ Lv. ${req.level || 1}</span>
+						<span class="friend-activity">@${escapeHtml(req.username)} • Lv. ${req.level || 1}</span>
 					</div>
 					<div class="friend-actions">
 						<button class="friend-btn btn-success" data-action="accept" data-id="${req.friendship_id}">Accept</button>
@@ -1658,8 +1658,8 @@ function renderFriendsLists() {
 						<div class="friend-activity ${isPlaying ? 'active-game' : ''}">${escapeHtml(f.presence.activity || 'Online')}</div>
 					</div>
 					<div class="friend-actions">
-						<button class="friend-btn btn-primary invite-btn" title="Invite to active game">ðŸŽ® Invite</button>
-						<button class="friend-chat-btn chat-btn" title="Direct Message">ðŸ’¬ Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
+						<button class="friend-btn btn-primary invite-btn" title="Invite to active game">🎮 Invite</button>
+						<button class="friend-chat-btn chat-btn" title="Direct Message">💬 Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
 						<button class="friend-btn btn-danger remove-btn" title="Remove Friend">&times;</button>
 					</div>
 				`;
@@ -1668,7 +1668,7 @@ function renderFriendsLists() {
 					if (activeTab && activeTab.isGame) {
 						sendGameInvite(f.id, activeTab.url, activeTab.title);
 					} else {
-						showToast({ icon: "â„¹ï¸", title: "Game Invite", message: "Launch an arcade game first to invite friends!" });
+						showToast({ icon: "ℹ️", title: "Game Invite", message: "Launch an arcade game first to invite friends!" });
 					}
 				});
 				card.querySelector(".chat-btn").addEventListener("click", () => {
@@ -1706,7 +1706,7 @@ function renderFriendsLists() {
 					<div class="friend-activity">Offline</div>
 				</div>
 				<div class="friend-actions">
-					<button class="friend-chat-btn chat-btn" title="Direct Message">ðŸ’¬ Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
+					<button class="friend-chat-btn chat-btn" title="Direct Message">💬 Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
 					<button class="friend-btn btn-danger remove-btn" title="Remove Friend">&times;</button>
 				</div>
 			`;
@@ -1745,10 +1745,10 @@ if (addFriendForm) {
 			if (!res.ok) throw new Error(data.error || "Failed to send request");
 
 			friendUsernameInput.value = "";
-			showToast({ icon: "ðŸ“¨", title: "Friend Request Sent", message: data.message });
+			showToast({ icon: "📨", title: "Friend Request Sent", message: data.message });
 			loadFriends();
 		} catch (err) {
-			showToast({ icon: "âš ï¸", title: "Error", message: err.message });
+			showToast({ icon: "⚠️", title: "Error", message: err.message });
 		}
 	});
 }
@@ -1765,10 +1765,10 @@ async function respondFriendRequest(friendshipId, action) {
 		});
 		const data = await res.json();
 		if (!res.ok) throw new Error(data.error || "Error responding");
-		showToast({ icon: "âœ¨", title: "Friend Network", message: data.message });
+		showToast({ icon: "✨", title: "Friend Network", message: data.message });
 		loadFriends();
 	} catch (err) {
-		showToast({ icon: "âš ï¸", title: "Error", message: err.message });
+		showToast({ icon: "⚠️", title: "Error", message: err.message });
 	}
 }
 
@@ -1779,7 +1779,7 @@ async function removeFriend(friendshipId) {
 			headers: { Authorization: `Bearer ${authToken}` }
 		});
 		if (res.ok) {
-			showToast({ icon: "ðŸ—‘ï¸", title: "Removed", message: "Friend removed." });
+			showToast({ icon: "🗑️", title: "Removed", message: "Friend removed." });
 			loadFriends();
 		}
 	} catch (err) {}
@@ -1801,9 +1801,9 @@ async function loadLeaderboard() {
 				row.className = "leaderboard-row";
 
 				let rankDisplay = `#${u.rank}`;
-				if (u.rank === 1) rankDisplay = "ðŸ¥‡";
-				else if (u.rank === 2) rankDisplay = "ðŸ¥ˆ";
-				else if (u.rank === 3) rankDisplay = "ðŸ¥‰";
+				if (u.rank === 1) rankDisplay = "🥇";
+				else if (u.rank === 2) rankDisplay = "🥈";
+				else if (u.rank === 3) rankDisplay = "🥉";
 
 				const isTed = isUserTed(u.username);
 				row.innerHTML = `
@@ -1875,7 +1875,7 @@ if (settingGhostMode) {
 			}
 			broadcastActivity(isGhost ? "offline" : "online", isGhost ? null : "Browsing");
 			showToast({
-				icon: isGhost ? "ðŸ‘»" : "ðŸ‘ï¸",
+				icon: isGhost ? "👻" : "👁️",
 				title: isGhost ? "Ghost Mode Active" : "Ghost Mode Disabled",
 				message: isGhost ? "Your presence and XP logging are completely paused." : "Activity and XP tracking resumed."
 			});
@@ -1980,7 +1980,7 @@ if (popoverToggleAdBlock) {
 	popoverToggleAdBlock.addEventListener("change", () => {
 		ClashShield.setAdBlockEnabled(popoverToggleAdBlock.checked);
 		showToast({
-			icon: popoverToggleAdBlock.checked ? "ðŸ›¡ï¸" : "â¸ï¸",
+			icon: popoverToggleAdBlock.checked ? "🛡️" : "⏸️",
 			title: "Ad & Tracker Shield",
 			message: popoverToggleAdBlock.checked ? "Ad & Tracker blocking enabled." : "Ad blocking paused."
 		});
@@ -1991,7 +1991,7 @@ if (popoverTogglePopups) {
 	popoverTogglePopups.addEventListener("change", () => {
 		ClashShield.setPopupBlockEnabled(popoverTogglePopups.checked);
 		showToast({
-			icon: popoverTogglePopups.checked ? "ðŸš«" : "âš ï¸",
+			icon: popoverTogglePopups.checked ? "🚫" : "⚠️",
 			title: "Popup Blocker",
 			message: popoverTogglePopups.checked ? "Aggressive popups blocked." : "Popup blocker paused."
 		});
@@ -2002,7 +2002,7 @@ if (popoverToggleDarkMode) {
 	popoverToggleDarkMode.addEventListener("change", () => {
 		ClashShield.setForceDarkMode(popoverToggleDarkMode.checked);
 		showToast({
-			icon: popoverToggleDarkMode.checked ? "ðŸŒ™" : "â˜€ï¸",
+			icon: popoverToggleDarkMode.checked ? "🌙" : "☀️",
 			title: "Force Dark Mode",
 			message: popoverToggleDarkMode.checked ? "Smart dark mode enabled on web tabs." : "Smart dark mode disabled."
 		});
@@ -2021,7 +2021,7 @@ if (shieldWhitelistBtn) {
 					ClashShield.applyToFrame(activeTab.iframe, activeTab.url);
 				}
 				showToast({
-					icon: nowWhitelisted ? "â¸ï¸" : "ðŸ›¡ï¸",
+					icon: nowWhitelisted ? "⏸️" : "🛡️",
 					title: "Clash Shield",
 					message: nowWhitelisted ? `Shield paused for ${host}` : `Shield active for ${host}`
 				});
@@ -2053,7 +2053,7 @@ if (settingShieldClearStats) {
 	settingShieldClearStats.addEventListener("click", () => {
 		ClashShield.clearStats();
 		showToast({
-			icon: "ðŸ§¹",
+			icon: "🧹",
 			title: "Shield Stats Reset",
 			message: "Adblock counters have been cleared."
 		});
@@ -2114,7 +2114,7 @@ function initPerfSettings() {
 			perfSettings[key] = el.checked;
 			savePerfSettings();
 			applyPerfSettings();
-			showToast({ icon: "ðŸ–¥ï¸", title: "Optimizer Updated", message: el.checked ? msg : "Setting disabled." });
+			showToast({ icon: "🖥️", title: "Optimizer Updated", message: el.checked ? msg : "Setting disabled." });
 		});
 	});
 
@@ -2124,7 +2124,7 @@ function initPerfSettings() {
 			savePerfSettings();
 			applyPerfSettings();
 			showToast({
-				icon: "ðŸ–¥ï¸",
+				icon: "🖥️",
 				title: "Resolution Updated",
 				message: `Games now render at ${Math.round((parseFloat(perfSettings.resolution) || 1) * 100)}% resolution.`
 			});
@@ -2135,7 +2135,7 @@ function initPerfSettings() {
 	// - Only strip the resolution upscale when the frame itself is fullscreened
 	//   (whole-page fullscreen keeps the scaled frame so the game still fills the screen).
 	// - Tell the frame it's fullscreened so the in-game bootstrap drops devicePixelRatio
-	//   by the resolution factor â€” the only lever that works while the UA forces the
+	//   by the resolution factor — the only lever that works while the UA forces the
 	//   fullscreen element to viewport size.
 	document.addEventListener("fullscreenchange", () => {
 		const fsEl = document.fullscreenElement;
@@ -2156,14 +2156,14 @@ initPerfSettings();
 // ============================================================
 
 const GUEST_DEFAULT_BOOKMARKS = [
-	{ id: "g1", title: "Google", url: "https://www.google.com", icon: "ðŸŒ", is_game: 0 },
-	{ id: "g2", title: "YouTube", url: "https://www.youtube.com", icon: "â–¶ï¸", is_game: 0 },
-	{ id: "g3", title: "Discord", url: "https://discord.com", icon: "ðŸ’¬", is_game: 0 },
-	{ id: "g4", title: "Wikipedia", url: "https://www.wikipedia.org", icon: "ðŸ“š", is_game: 0 },
-	{ id: "g5", title: "Drive Mad", url: "/games/cldrivemady.html", icon: "ðŸš—", is_game: 1 },
-	{ id: "g6", title: "Retro Bowl", url: "/games/clretrobowl.html", icon: "ðŸˆ", is_game: 1 },
-	{ id: "g7", title: "1v1.LOL", url: "/games/cl1v1lol.html", icon: "ðŸŽ¯", is_game: 1 },
-	{ id: "g8", title: "Slope", url: "/games/clslope.html", icon: "âš¡", is_game: 1 }
+	{ id: "g1", title: "Google", url: "https://www.google.com", icon: "🌐", is_game: 0 },
+	{ id: "g2", title: "YouTube", url: "https://www.youtube.com", icon: "▶️", is_game: 0 },
+	{ id: "g3", title: "Discord", url: "https://discord.com", icon: "💬", is_game: 0 },
+	{ id: "g4", title: "Wikipedia", url: "https://www.wikipedia.org", icon: "📚", is_game: 0 },
+	{ id: "g5", title: "Drive Mad", url: "/games/cldrivemady.html", icon: "🚗", is_game: 1 },
+	{ id: "g6", title: "Retro Bowl", url: "/games/clretrobowl.html", icon: "🏈", is_game: 1 },
+	{ id: "g7", title: "1v1.LOL", url: "/games/cl1v1lol.html", icon: "🎯", is_game: 1 },
+	{ id: "g8", title: "Slope", url: "/games/clslope.html", icon: "⚡", is_game: 1 }
 ];
 
 let userBookmarks = [];
@@ -2223,7 +2223,7 @@ function renderSpeedDial() {
 		tile.className = "speed-dial-tile";
 		tile.title = `${bm.title}\n${bm.url}`;
 		tile.innerHTML = `
-			<div class="speed-dial-icon">${escapeHtml(bm.icon || (bm.is_game ? "ðŸŽ®" : "ðŸŒ"))}</div>
+			<div class="speed-dial-icon">${escapeHtml(bm.icon || (bm.is_game ? "🎮" : "🌐"))}</div>
 			<span class="speed-dial-title">${escapeHtml(bm.title)}</span>
 			<button class="speed-dial-delete-btn" title="Remove bookmark">&times;</button>
 		`;
@@ -2250,7 +2250,7 @@ function renderSpeedDial() {
 async function addBookmark(title, url, icon, isGame = false) {
 	const cleanTitle = (title || url).slice(0, 50);
 	const cleanUrl = url.trim();
-	const cleanIcon = icon || (isGame ? "ðŸŽ®" : "ðŸŒ");
+	const cleanIcon = icon || (isGame ? "🎮" : "🌐");
 
 	if (authToken) {
 		try {
@@ -2272,7 +2272,7 @@ async function addBookmark(title, url, icon, isGame = false) {
 				userBookmarks.push(data.bookmark);
 				renderSpeedDial();
 				updateBookmarkStarForActiveTab();
-				showToast({ icon: "â­", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
+				showToast({ icon: "⭐", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
 				return true;
 			}
 		} catch (e) {
@@ -2292,7 +2292,7 @@ async function addBookmark(title, url, icon, isGame = false) {
 	saveGuestBookmarks();
 	renderSpeedDial();
 	updateBookmarkStarForActiveTab();
-	showToast({ icon: "â­", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
+	showToast({ icon: "⭐", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
 	return true;
 }
 
@@ -2312,7 +2312,7 @@ async function deleteBookmark(bookmarkId, bookmarkUrl) {
 	if (!authToken) saveGuestBookmarks();
 	renderSpeedDial();
 	updateBookmarkStarForActiveTab();
-	showToast({ icon: "ðŸ—‘ï¸", title: "Bookmark Removed", message: "Shortcut removed from Speed Dial." });
+	showToast({ icon: "🗑️", title: "Bookmark Removed", message: "Shortcut removed from Speed Dial." });
 }
 
 function updateBookmarkStarForActiveTab() {
@@ -2333,7 +2333,7 @@ if (navBookmarkBtn) {
 		e.stopPropagation();
 		const activeTab = tabs.find((t) => t.id === activeTabId);
 		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "â„¹ï¸", title: "Bookmark", message: "Open a website or game first to bookmark it!" });
+			showToast({ icon: "ℹ️", title: "Bookmark", message: "Open a website or game first to bookmark it!" });
 			return;
 		}
 
@@ -2341,7 +2341,7 @@ if (navBookmarkBtn) {
 		if (existing) {
 			deleteBookmark(existing.id, existing.url);
 		} else {
-			addBookmark(activeTab.title || extractDomain(activeTab.url), activeTab.url, activeTab.isGame ? "ðŸŽ®" : "ðŸŒ", activeTab.isGame);
+			addBookmark(activeTab.title || extractDomain(activeTab.url), activeTab.url, activeTab.isGame ? "🎮" : "🌐", activeTab.isGame);
 		}
 	});
 }
@@ -2448,7 +2448,7 @@ async function openChatDrawer(friend) {
 			const data = await res.json();
 			chatMessagesContainer.innerHTML = "";
 			if (!data.messages || data.messages.length === 0) {
-				chatMessagesContainer.innerHTML = `<div class="chat-empty-state">No messages yet. Say hello! ðŸ‘‹</div>`;
+				chatMessagesContainer.innerHTML = `<div class="chat-empty-state">No messages yet. Say hello! 👋</div>`;
 			} else {
 				data.messages.forEach((msg) => {
 					appendChatMessage(msg, msg.sender_id === (currentUser ? currentUser.id : null));
@@ -2497,14 +2497,14 @@ function appendChatMessage(msg, isMine) {
 	if (msg.type === "game_share" && meta) {
 		extraHtml = `
 			<div class="chat-share-card">
-				<span class="chat-share-title">ðŸŽ® ${escapeHtml(meta.title || "Arcade Game")}</span>
+				<span class="chat-share-title">🎮 ${escapeHtml(meta.title || "Arcade Game")}</span>
 				<button class="chat-share-btn-action play-shared-game-btn" data-url="${escapeHtml(meta.url)}">Play Game</button>
 			</div>
 		`;
 	} else if (msg.type === "url_share" && meta) {
 		extraHtml = `
 			<div class="chat-share-card">
-				<span class="chat-share-title">ðŸŒ ${escapeHtml(meta.title || meta.url)}</span>
+				<span class="chat-share-title">🌐 ${escapeHtml(meta.title || meta.url)}</span>
 				<button class="chat-share-btn-action open-shared-tab-btn" data-url="${escapeHtml(meta.url)}">Open Tab</button>
 			</div>
 		`;
@@ -2553,7 +2553,7 @@ if (chatInputForm && chatMessageInput) {
 				messageType: "text"
 			}));
 		} else {
-			showToast({ icon: "âš ï¸", title: "Offline", message: "Connecting to chat network..." });
+			showToast({ icon: "⚠️", title: "Offline", message: "Connecting to chat network..." });
 		}
 
 		chatMessageInput.value = "";
@@ -2589,7 +2589,7 @@ if (chatShareTabBtn) {
 		if (!activeChatFriend) return;
 		const activeTab = tabs.find((t) => t.id === activeTabId);
 		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "â„¹ï¸", title: "Share Tab", message: "Open a website tab to share it!" });
+			showToast({ icon: "ℹ️", title: "Share Tab", message: "Open a website tab to share it!" });
 			return;
 		}
 
@@ -2618,7 +2618,7 @@ if (chatMinimizeBtn) {
 }
 
 // ============================================================
-// ðŸ’¬ Dedicated Chat Page Messenger Controller
+// 💬 Dedicated Chat Page Messenger Controller
 // ============================================================
 
 let chatConversationsData = [];
@@ -2653,7 +2653,7 @@ async function loadChatConversations() {
 	if (!authToken) {
 		chatConversationsList.innerHTML = `
 			<div class="chat-sidebar-loading" style="padding: 30px 16px;">
-				<div style="font-size: 2rem; margin-bottom: 10px;">ðŸ”’</div>
+				<div style="font-size: 2rem; margin-bottom: 10px;">🔒</div>
 				<p style="margin-bottom: 14px; color: #a0aec0;">Sign in to access your messages and chat with friends.</p>
 				<button type="button" class="btn btn-primary btn-sm chat-login-btn">Sign In</button>
 			</div>
@@ -2664,7 +2664,7 @@ async function loadChatConversations() {
 		if (chatEmptySelection) {
 			chatEmptySelection.classList.remove("hidden");
 			chatEmptySelection.innerHTML = `
-				<div class="chat-empty-icon-wrap"><span class="chat-empty-icon">ðŸ’¬</span></div>
+				<div class="chat-empty-icon-wrap"><span class="chat-empty-icon">💬</span></div>
 				<h3 class="chat-empty-title">Clash Messenger</h3>
 				<p class="chat-empty-desc">Sign in to start direct messaging your friends, sharing games, and sending web pages.</p>
 			`;
@@ -2694,7 +2694,7 @@ function renderConversationsListUI() {
 	if (chatConversationsData.length === 0) {
 		chatConversationsList.innerHTML = `
 			<div class="chat-sidebar-loading" style="padding: 30px 16px;">
-				<div style="font-size: 1.8rem; margin-bottom: 8px;">ðŸ‘¥</div>
+				<div style="font-size: 1.8rem; margin-bottom: 8px;">👥</div>
 				<p style="margin-bottom: 12px; color: #a0aec0;">No friends found yet.</p>
 				<button type="button" class="btn btn-secondary btn-sm chat-go-friends-btn">Find Friends</button>
 			</div>
@@ -2736,9 +2736,9 @@ function renderConversationsListUI() {
 		if (conv.lastMessage) {
 			timeStr = formatConvTime(conv.lastMessage.createdAt);
 			if (conv.lastMessage.type === "game_share") {
-				snippet = "ðŸŽ® Shared an arcade game";
+				snippet = "🎮 Shared an arcade game";
 			} else if (conv.lastMessage.type === "url_share") {
-				snippet = "ðŸŒ Shared a link";
+				snippet = "🌐 Shared a link";
 			} else {
 				snippet = conv.lastMessage.content;
 			}
@@ -2893,7 +2893,7 @@ async function selectChatPageConversation(friend) {
 			if (!data.messages || data.messages.length === 0) {
 				chatPageMessages.innerHTML = `
 					<div class="chat-sidebar-loading" style="padding: 40px 16px;">
-						<div style="font-size: 2.2rem; margin-bottom: 8px;">ðŸ‘‹</div>
+						<div style="font-size: 2.2rem; margin-bottom: 8px;">👋</div>
 						<div style="color: #fff; font-weight: 700; margin-bottom: 4px;">Start of your conversation</div>
 						<div style="color: #a0aec0; font-size: 0.85rem;">Say hello to @${escapeHtml(friend.username)} or share an arcade game!</div>
 					</div>
@@ -2941,21 +2941,21 @@ function renderChatPageMessageItem(msg, isMine, friend) {
 	if (msg.type === "game_share" && meta) {
 		extraHtml = `
 			<div class="chat-rich-card">
-				<div class="chat-rich-card-title">ðŸŽ® ${escapeHtml(meta.title || "Arcade Game")}</div>
-				<button type="button" class="chat-rich-card-btn play-shared-game-btn" data-url="${escapeHtml(meta.url)}">â–¶ Play Game</button>
+				<div class="chat-rich-card-title">🎮 ${escapeHtml(meta.title || "Arcade Game")}</div>
+				<button type="button" class="chat-rich-card-btn play-shared-game-btn" data-url="${escapeHtml(meta.url)}">▶ Play Game</button>
 			</div>
 		`;
 	} else if (msg.type === "url_share" && meta) {
 		extraHtml = `
 			<div class="chat-rich-card">
-				<div class="chat-rich-card-title">ðŸŒ ${escapeHtml(meta.title || meta.url)}</div>
-				<button type="button" class="chat-rich-card-btn open-shared-tab-btn" data-url="${escapeHtml(meta.url)}">ðŸŒ Open Tab</button>
+				<div class="chat-rich-card-title">🌐 ${escapeHtml(meta.title || meta.url)}</div>
+				<button type="button" class="chat-rich-card-btn open-shared-tab-btn" data-url="${escapeHtml(meta.url)}">🌐 Open Tab</button>
 			</div>
 		`;
 	}
 
 	const timeStr = formatChatTime(msg.created_at || msg.createdAt);
-	const readReceipt = isMine ? `<span class="chat-read-receipt" style="color: ${msg.is_read ? '#00f0ff' : 'rgba(255,255,255,0.4)'}">${msg.is_read ? 'âœ“âœ“' : 'âœ“'}</span>` : "";
+	const readReceipt = isMine ? `<span class="chat-read-receipt" style="color: ${msg.is_read ? '#00f0ff' : 'rgba(255,255,255,0.4)'}">${msg.is_read ? '✓✓' : '✓'}</span>` : "";
 
 	const avatarClass = friend?.avatarUrl || "avatar-1";
 
@@ -3056,7 +3056,7 @@ if (chatPageForm && chatPageInput) {
 				isTyping: false
 			}));
 		} else {
-			showToast({ icon: "âš ï¸", title: "Offline", message: "Connecting to chat network..." });
+			showToast({ icon: "⚠️", title: "Offline", message: "Connecting to chat network..." });
 		}
 
 		chatPageInput.value = "";
@@ -3103,7 +3103,7 @@ document.querySelectorAll(".quick-emoji-btn").forEach((btn) => {
 if (chatPageShareGameBtn) {
 	chatPageShareGameBtn.addEventListener("click", () => {
 		if (!activeChatPageFriend) {
-			showToast({ icon: "â„¹ï¸", title: "Select Friend", message: "Select a conversation first to share games!" });
+			showToast({ icon: "ℹ️", title: "Select Friend", message: "Select a conversation first to share games!" });
 			return;
 		}
 		const activeTab = tabs.find((t) => t.id === activeTabId);
@@ -3118,7 +3118,7 @@ if (chatPageShareGameBtn) {
 			presenceWs.send(JSON.stringify({
 				type: "chat_send",
 				receiverId: activeChatPageFriend.id,
-				content: `Check out this arcade game: ${gameTitle}! ðŸŽ®`,
+				content: `Check out this arcade game: ${gameTitle}! 🎮`,
 				messageType: "game_share",
 				meta: { title: gameTitle, url: gameUrl }
 			}));
@@ -3129,12 +3129,12 @@ if (chatPageShareGameBtn) {
 if (chatPageShareTabBtn) {
 	chatPageShareTabBtn.addEventListener("click", () => {
 		if (!activeChatPageFriend) {
-			showToast({ icon: "â„¹ï¸", title: "Select Friend", message: "Select a conversation first to share pages!" });
+			showToast({ icon: "ℹ️", title: "Select Friend", message: "Select a conversation first to share pages!" });
 			return;
 		}
 		const activeTab = tabs.find((t) => t.id === activeTabId);
 		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "â„¹ï¸", title: "Share Page", message: "Open a website tab first to share it!" });
+			showToast({ icon: "ℹ️", title: "Share Page", message: "Open a website tab first to share it!" });
 			return;
 		}
 
@@ -3142,7 +3142,7 @@ if (chatPageShareTabBtn) {
 			presenceWs.send(JSON.stringify({
 				type: "chat_send",
 				receiverId: activeChatPageFriend.id,
-				content: `Check out this web page: ${activeTab.title || extractDomain(activeTab.url)} ðŸŒ`,
+				content: `Check out this web page: ${activeTab.title || extractDomain(activeTab.url)} 🌐`,
 				messageType: "url_share",
 				meta: { title: activeTab.title || extractDomain(activeTab.url), url: activeTab.url }
 			}));
@@ -3163,7 +3163,7 @@ if (chatHeaderInviteBtn) {
 		}
 		sendGameInvite(activeChatPageFriend.id, gameUrl, gameTitle);
 		showToast({
-			icon: "ðŸŽ®",
+			icon: "🎮",
 			title: "Invite Sent!",
 			message: `Invited @${activeChatPageFriend.username} to play ${gameTitle}`
 		});
@@ -3174,16 +3174,16 @@ if (chatHeaderProfileBtn) {
 	chatHeaderProfileBtn.addEventListener("click", () => {
 		if (!activeChatPageFriend) return;
 		showToast({
-			icon: "ðŸ‘¤",
+			icon: "👤",
 			title: `${activeChatPageFriend.displayName || activeChatPageFriend.username}`,
-			message: `@${activeChatPageFriend.username} â€¢ Role: ${activeChatPageFriend.role || 'Member'}`
+			message: `@${activeChatPageFriend.username} • Role: ${activeChatPageFriend.role || 'Member'}`
 		});
 	});
 }
 
 // ============================================================
 // ============================================================
-// ðŸŽ® Clash Lounge Controller (Multiplayer Party Rooms)
+// 🎮 Clash Lounge Controller (Multiplayer Party Rooms)
 // ============================================================
 
 let currentLoungeRoom = null;
@@ -3231,11 +3231,11 @@ function renderLoungeRoomsGrid(rooms) {
 				<span class="lounge-card-code">${escapeHtml(r.code)}</span>
 			</div>
 			<div class="lounge-card-game">
-				<span>ðŸŽ®</span> <span>${escapeHtml(r.featuredGame || 'Free Play')}</span>
+				<span>🎮</span> <span>${escapeHtml(r.featuredGame || 'Free Play')}</span>
 			</div>
 			<div class="lounge-card-bottom">
 				<div class="lounge-card-members">
-					<span>ðŸ‘¥</span> <span>${r.memberCount} / ${r.maxMembers} Players</span>
+					<span>👥</span> <span>${r.memberCount} / ${r.maxMembers} Players</span>
 				</div>
 				<button class="btn btn-primary btn-sm lounge-card-join-btn" data-code="${r.code}">Join Party</button>
 			</div>
@@ -3251,11 +3251,11 @@ function renderLoungeRoomsGrid(rooms) {
 
 function joinPartyRoom(code) {
 	if (!code || !code.trim()) {
-		showToast({ icon: "âš ï¸", title: "Missing Code", message: "Please enter a valid room code." });
+		showToast({ icon: "⚠️", title: "Missing Code", message: "Please enter a valid room code." });
 		return;
 	}
 	if (!authToken) {
-		showToast({ icon: "ðŸ”’", title: "Sign In Required", message: "Please sign in to join a Clash Lounge party." });
+		showToast({ icon: "🔒", title: "Sign In Required", message: "Please sign in to join a Clash Lounge party." });
 		openAuthModal("login");
 		return;
 	}
@@ -3263,7 +3263,7 @@ function joinPartyRoom(code) {
 	if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
 		presenceWs.send(JSON.stringify({ type: "lounge_join", code: code.trim().toUpperCase() }));
 	} else {
-		showToast({ icon: "âš ï¸", title: "Connecting", message: "Connecting to game server. Please try again in a moment." });
+		showToast({ icon: "⚠️", title: "Connecting", message: "Connecting to game server. Please try again in a moment." });
 		connectPresenceSocket();
 	}
 }
@@ -3278,16 +3278,16 @@ function handleLoungeRoomUpdate(room) {
 
 	if (loungeRoomTitle) loungeRoomTitle.textContent = room.name;
 	if (loungeRoomCodeBadge) {
-		loungeRoomCodeBadge.textContent = `${room.code} ðŸ“‹`;
+		loungeRoomCodeBadge.textContent = `${room.code} 📋`;
 		loungeRoomCodeBadge.onclick = () => {
 			navigator.clipboard.writeText(room.code).then(() => {
-				showToast({ icon: "ðŸ“‹", title: "Code Copied!", message: `Room code ${room.code} copied to clipboard.` });
+				showToast({ icon: "📋", title: "Code Copied!", message: `Room code ${room.code} copied to clipboard.` });
 			}).catch(()=>{});
 		};
 	}
 
 	if (loungeFeaturedGamePill) {
-		loungeFeaturedGamePill.textContent = `ðŸŽ® Featured: ${room.featuredGame || 'Free Play'}`;
+		loungeFeaturedGamePill.textContent = `🎮 Featured: ${room.featuredGame || 'Free Play'}`;
 	}
 
 	if (loungeMembersCount) {
@@ -3305,7 +3305,7 @@ function handleLoungeRoomUpdate(room) {
 
 			let joinBtnHtml = "";
 			if (!isMe && m.activity && m.activity.startsWith("Playing ") && room.featuredGameUrl) {
-				joinBtnHtml = `<button class="lounge-member-join-btn" data-url="${room.featuredGameUrl}">â–¶ Play Along</button>`;
+				joinBtnHtml = `<button class="lounge-member-join-btn" data-url="${room.featuredGameUrl}">▶ Play Along</button>`;
 			}
 
 			item.innerHTML = `
@@ -3314,10 +3314,10 @@ function handleLoungeRoomUpdate(room) {
 					<div>
 						<div class="lounge-member-name">
 							<span>${escapeHtml(m.displayName || m.username)}</span>
-							${isHost ? '<span class="lounge-host-crown" title="Party Host">ðŸ‘‘</span>' : ''}
+							${isHost ? '<span class="lounge-host-crown" title="Party Host">👑</span>' : ''}
 							${isMe ? '<span style="font-size: 0.7rem; color: var(--text-muted); font-weight: normal;">(You)</span>' : ''}
 						</div>
-						<div class="lounge-member-activity">â— ${escapeHtml(m.activity || 'In Lounge')}</div>
+						<div class="lounge-member-activity">● ${escapeHtml(m.activity || 'In Lounge')}</div>
 					</div>
 				</div>
 				${joinBtnHtml}
@@ -3337,17 +3337,17 @@ function handleLoungeRoomUpdate(room) {
 
 function handleLoungeUserJoined(data) {
 	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`ðŸ‘‹ ${data.user?.displayName || data.user?.username || 'A player'} joined the party!`);
+	appendLoungeChatSystem(`👋 ${data.user?.displayName || data.user?.username || 'A player'} joined the party!`);
 }
 
 function handleLoungeUserLeft(data) {
 	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`ðŸšª ${data.user?.displayName || 'A player'} left the party.`);
+	appendLoungeChatSystem(`🚪 ${data.user?.displayName || 'A player'} left the party.`);
 }
 
 function handleLoungeGameChanged(data) {
 	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`ðŸŽ® Party game updated to: ${data.featuredGame}`);
+	appendLoungeChatSystem(`🎮 Party game updated to: ${data.featuredGame}`);
 }
 
 function appendLoungeChatMessage(msg) {
@@ -3389,7 +3389,7 @@ function resetLoungeToLobby() {
 if (loungeOpenCreateBtn) {
 	loungeOpenCreateBtn.addEventListener("click", () => {
 		if (!authToken) {
-			showToast({ icon: "ðŸ”’", title: "Sign In Required", message: "Please sign in to create a party room." });
+			showToast({ icon: "🔒", title: "Sign In Required", message: "Please sign in to create a party room." });
 			openAuthModal("login");
 			return;
 		}
@@ -3426,7 +3426,7 @@ if (loungeCreateForm) {
 				maxMembers
 			}));
 		} else {
-			showToast({ icon: "âš ï¸", title: "Connection Error", message: "Connecting to server..." });
+			showToast({ icon: "⚠️", title: "Connection Error", message: "Connecting to server..." });
 			connectPresenceSocket();
 		}
 	});
@@ -3447,7 +3447,7 @@ if (loungeJoinCodeBtn && loungeJoinCodeInput) {
 if (loungeRefreshRoomsBtn) {
 	loungeRefreshRoomsBtn.addEventListener("click", () => {
 		loadLoungeRooms();
-		showToast({ icon: "ðŸ”„", title: "Refreshed", message: "Party rooms list updated." });
+		showToast({ icon: "🔄", title: "Refreshed", message: "Party rooms list updated." });
 	});
 }
 
@@ -3486,7 +3486,7 @@ if (loungeChatForm && loungeChatInput) {
 }
 
 // ============================================================
-// âš¡ Game Controls Modal Controller (Streamlined)
+// ⚡ Game Controls Modal Controller (Streamlined)
 // ============================================================
 
 let currentGameKey = "clash_general";
@@ -3607,7 +3607,7 @@ speedButtons.forEach(btn => {
 		const activeTab = tabs.find(t => t.id === activeTabId);
 		if (activeTab && activeTab.iframe && activeTab.iframe.contentWindow) {
 			injectGameSpeedHook(activeTab.iframe.contentWindow, currentGameSpeed);
-			showToast({ icon: "âš¡", title: "Speed Changed", message: `Game engine running at ${currentGameSpeed}x speed!` });
+			showToast({ icon: "⚡", title: "Speed Changed", message: `Game engine running at ${currentGameSpeed}x speed!` });
 		}
 	});
 });
@@ -3646,13 +3646,13 @@ if (tweakToggleAutoclick) {
 					const el = doc.elementFromPoint(mouseX, mouseY);
 					if (el) el.click();
 				}, 50);
-				showToast({ icon: "ðŸ¤–", title: "Auto-Clicker Active", message: "Auto-clicking enabled (50ms interval)!" });
+				showToast({ icon: "🤖", title: "Auto-Clicker Active", message: "Auto-clicking enabled (50ms interval)!" });
 			} else {
 				if (autoClickerInterval) {
 					activeTab.iframe.contentWindow.clearInterval(autoClickerInterval);
 					autoClickerInterval = null;
 				}
-				showToast({ icon: "ðŸ›‘", title: "Auto-Clicker Stopped", message: "Auto-clicking disabled." });
+				showToast({ icon: "🛑", title: "Auto-Clicker Stopped", message: "Auto-clicking disabled." });
 			}
 		} catch (e) {}
 	});
@@ -3660,7 +3660,7 @@ if (tweakToggleAutoclick) {
 
 // Cloak Presets
 const CLOAK_CONFIGS = {
-	default: { title: "Clash Proxy â€” Unrestricted Web & Arcade", icon: "/logo.png" },
+	default: { title: "Clash Proxy — Unrestricted Web & Arcade", icon: "/logo.png" },
 	google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
 	drive: { title: "Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
 	classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
@@ -3679,7 +3679,7 @@ function applyCloak(cloakKey) {
 }
 
 // ============================================================
-// ðŸ‘» About:Blank Cloaking Controller
+// 👻 About:Blank Cloaking Controller
 // ============================================================
 
 function launchAboutBlankCloak(customDecoy) {
@@ -3695,7 +3695,7 @@ function launchAboutBlankCloak(customDecoy) {
 	const win = window.open("about:blank", "_blank");
 	if (!win) {
 		showToast({
-			icon: "âš ï¸",
+			icon: "⚠️",
 			title: "Popup Blocked",
 			message: "Please allow popups so Clash Proxy can launch in an about:blank window.",
 			type: "error"
@@ -3746,7 +3746,7 @@ function initAboutBlankCloakSettings() {
 		settingAboutBlankAuto.addEventListener("change", (e) => {
 			localStorage.setItem("clash_aboutblank_auto", e.target.checked ? "true" : "false");
 			showToast({
-				icon: "âš¡",
+				icon: "⚡",
 				title: "Auto-Cloak",
 				message: e.target.checked ? "Auto About:Blank enabled for future sessions." : "Auto About:Blank disabled."
 			});
@@ -3933,9 +3933,9 @@ if (editProfileForm) {
 			closeProfileModal();
 			renderUserHeader();
 			renderProfilePage();
-			showToast({ icon: "ðŸ’¾", title: "Saved", message: "Profile updated successfully!" });
+			showToast({ icon: "💾", title: "Saved", message: "Profile updated successfully!" });
 		} catch (err) {
-			showToast({ icon: "âš ï¸", title: "Error", message: err.message });
+			showToast({ icon: "⚠️", title: "Error", message: err.message });
 		}
 	});
 }
@@ -3944,7 +3944,7 @@ if (editProfileForm) {
 // Toast Notification Engine
 // ============================================================
 
-function showToast({ icon = "ðŸ””", title = "Notification", message = "", type = "", actionText = "", onAction = null, duration = 4500 }) {
+function showToast({ icon = "🔔", title = "Notification", message = "", type = "", actionText = "", onAction = null, duration = 4500 }) {
 	if (!toastContainer) return;
 
 	const toast = document.createElement("div");
