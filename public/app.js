@@ -387,7 +387,7 @@ const initSWPromise = (async function initSW() {
 							const ckv = ck ? String(ck[1]) : "";
 							let hd = "";
 							try { hd = JSON.stringify((hdrs || []).map((h) => [String(h[0]).toLowerCase(), String(h[1]).slice(0, 80)])).slice(0, 1400); } catch (e) {}
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type"), hd }) }).catch(() => {});
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ckfull: ckv, ua: g("user-agent"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
 						}
 						if (/youtube|consent/.test(ru)) {
 							const sc = [];
