@@ -385,7 +385,9 @@ const initSWPromise = (async function initSW() {
 							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 90) : "-"; };
 							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
 							const ckv = ck ? String(ck[1]) : "";
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
+							let hd = "";
+							try { hd = JSON.stringify((hdrs || []).map((h) => [String(h[0]).toLowerCase(), String(h[1]).slice(0, 80)])).slice(0, 1400); } catch (e) {}
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ua: g("user-agent"), scu: g("sec-ch-ua"), ref: g("referer"), org: g("origin"), ct: g("content-type"), hd }) }).catch(() => {});
 						}
 						if (/youtube|consent/.test(ru)) {
 							const sc = [];
