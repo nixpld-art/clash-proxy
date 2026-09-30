@@ -356,6 +356,22 @@ const initSWPromise = (async function initSW() {
 						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
 					}
 				} catch (e) {}
+				try {
+					const rh = new URL(String(remote));
+					const SFX = [".youtube.com", ".googlevideo.com", ".ytimg.com", ".ggpht.com", ".googleapis.com", ".gstatic.com", ".google.com", ".google.co.uk", ".googleusercontent.com", ".googleadservices.com", ".googlesyndication.com", ".google-analytics.com", ".gvt1.com", ".doubleclick.net"];
+					const hn = rh.hostname.toLowerCase();
+					if (SFX.some((s) => hn === s.slice(1) || hn.endsWith(s))) {
+						const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
+						const ci = hdrs.findIndex((h) => String(h[0]).toLowerCase() === "cookie");
+						if (ci >= 0) {
+							const parts = String(hdrs[ci][1]).split(";").map((s) => s.trim()).filter((s) => s && !/^SOCS=/i.test(s));
+							parts.push(CANON_SOCS);
+							hdrs[ci] = [hdrs[ci][0], parts.join("; ")];
+						} else {
+							hdrs.push(["cookie", CANON_SOCS]);
+						}
+					}
+				} catch (e) {}
 					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
 					try {
 						const ru = String(remote);
