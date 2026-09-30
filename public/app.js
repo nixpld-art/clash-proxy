@@ -613,6 +613,12 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 			if (typeof injectGameSpeedHook === "function") {
 				injectGameSpeedHook(iframe.contentWindow, typeof currentGameSpeed !== "undefined" ? currentGameSpeed : 1.0);
 			}
+			if (typeof injectConsentDismisser === "function") {
+				injectConsentDismisser(iframe.contentWindow);
+				setTimeout(() => {
+					try { injectConsentDismisser(iframe.contentWindow); } catch (e) {}
+				}, 1500);
+			}
 			if (typeof injectActiveUserscripts === "function") {
 				injectActiveUserscripts(iframe, tab.url, tab.title);
 				// Second-pass injection for Emscripten / WebAssembly loaders
@@ -3765,6 +3771,62 @@ function injectGameSpeedHook(iframeWin, speed = 1.0) {
 	} catch (e) {
 		console.warn("[Clash Speed Hook] Hook error:", e);
 	}
+}
+
+function injectConsentDismisser(iframeWin) {
+	if (!iframeWin || iframeWin.__clashConsentWatch) return;
+	try {
+		iframeWin.__clashConsentWatch = true;
+		const consentTags = ["ytd-consent-bump-v2-lightbox", "ytd-consent-bump-v2-renderer", "ytd-consent-bump-v2-renderer-alignment", "ytd-cookie-dialog-renderer", "ytd-consent-bump-v2"];
+		const dismissOnce = () => {
+			try {
+				const doc = iframeWin.document;
+				if (!doc || !doc.documentElement) return;
+				const host = (iframeWin.location && iframeWin.location.hostname) || "";
+				if (host.includes("consent.youtube.com") || host.includes("consent.google.com")) {
+					if (!doc.getElementById("clash-consent-clicked")) {
+						const btns = doc.querySelectorAll("button, input[type=submit], [role=button]");
+						for (const b of btns) {
+							const label = ((b.textContent || b.value || "") + "").trim();
+							if (label === "Accept all" || label === "I agree") {
+								const marker = doc.createElement("meta");
+								marker.id = "clash-consent-clicked";
+								(doc.head || doc.documentElement).appendChild(marker);
+								b.click();
+								break;
+							}
+						}
+					}
+					return;
+				}
+				for (const tag of consentTags) {
+					const el = doc.querySelector(tag);
+					if (el && el.parentNode) el.parentNode.removeChild(el);
+				}
+				const dialogs = doc.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
+				for (const dlg of dialogs) {
+					const txt = dlg.textContent || "";
+					if (txt.includes("Before you continue to YouTube") || (txt.includes("Before you continue") && txt.includes("Reject all") && txt.includes("Accept all"))) {
+						let node = dlg;
+						let guard = 0;
+						while (node.parentNode && guard++ < 8) {
+							const pname = ((node.parentNode.tagName || "") + "").toLowerCase();
+							if (pname.startsWith("ytd-consent") || pname === "tp-yt-paper-dialog" || pname === "ytd-popup-container") node = node.parentNode;
+							else break;
+						}
+						if (node.parentNode) node.parentNode.removeChild(node);
+					}
+				}
+				const rich = doc.querySelectorAll("ytd-rich-section-renderer");
+				for (const r of rich) {
+					if ((r.textContent || "").includes("Your YouTube History is off") && r.parentNode) r.parentNode.removeChild(r);
+				}
+			} catch (e) {}
+		};
+		iframeWin.setInterval(dismissOnce, 400);
+		dismissOnce();
+		iframeWin.addEventListener("load", dismissOnce);
+	} catch (e) {}
 }
 
 // Speed Button Clicks
