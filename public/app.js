@@ -329,15 +329,22 @@ const initSWPromise = (async function initSW() {
 						}
 					}
 
-					const init = {
-						method: method,
-						headers: headers,
-						body: body,
-						signal: signal
-					};
-					if (body != null) {
-						init.duplex = "half";
+				const init = {
+					method: method,
+					headers: headers,
+					body: body,
+					signal: signal
+				};
+				if (body != null) {
+					init.duplex = "half";
+				}
+				try {
+					if (/youtube\.com\/(watch|youtubei|results)/.test(String(remote))) {
+						let hv = headers;
+						if (headers && typeof headers.entries === "function") hv = Array.from(headers.entries());
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_upstream", remote: String(remote).slice(0, 90), method: method, headers: hv }) }).catch(() => {});
 					}
+				} catch (e) {}
 					const resp = await bClient.fetch(remote, init);
 					let iterHeaders = [];
 					if (resp.rawHeaders) {
