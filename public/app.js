@@ -286,6 +286,41 @@ function isUserTed(username) {
 let sjController = null;
 let connection = null;
 
+function stripYTConsent(html) {
+	let out = html;
+	let cut = 0;
+	try {
+		const idx = out.indexOf('"interstitial"');
+		if (idx >= 0) {
+			const brace = out.indexOf("{", idx);
+			if (brace > 0 && brace - idx < 30) {
+				let depth = 0, i = brace, inStr = false, esc = false, end = -1;
+				for (; i < out.length; i++) {
+					const c = out[i];
+					if (inStr) {
+						if (esc) esc = false;
+						else if (c === "\\") esc = true;
+						else if (c === '"') inStr = false;
+						continue;
+					}
+					if (c === '"') { inStr = true; continue; }
+					if (c === "{") depth++;
+					else if (c === "}") { depth--; if (depth === 0) { end = i; break; } }
+				}
+				if (end > 0 && out.slice(brace, brace + 80).includes("consentBumpV2Renderer")) {
+					let from = idx, to = end + 1;
+					if (out[to] === ",") to++;
+					else if (idx > 0 && out[idx - 1] === ",") from = idx - 1;
+					out = out.slice(0, from) + out.slice(to);
+					cut++;
+				}
+			}
+		}
+		out = out.replace(/"consentBumpV2Renderer",\s*/g, "").replace(/,\s*"consentBumpV2Renderer"/g, "").replace(/\[\s*"consentBumpV2Renderer"\s*\]/g, "[]");
+	} catch (e) {}
+	return { html: out, cut };
+}
+
 const initSWPromise = (async function initSW() {
 	try {
 		const registration = typeof registerSW === "function" ? await registerSW() : null;
@@ -403,22 +438,32 @@ const initSWPromise = (async function initSW() {
 							}
 						}
 					} catch (e) {}
+					let sanitizedCut = 0;
 					try {
-						if (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(String(remote)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function") {
+						const scanRu = String(remote);
+						let ctHdr = "";
+						for (const [k, vals] of Object.entries(resp.headers || {})) {
+							if (String(k).toLowerCase() === "content-type") { ctHdr = String(Array.isArray(vals) ? vals[0] : vals); break; }
+						}
+						const isYtDoc = (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(scanRu)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function" && /text\/html/.test(ctHdr);
+						if (isYtDoc) {
 							const reader = resp.body.getReader();
 							const dec = new TextDecoder();
+							const MAX = 4000000;
+							const chunks = [];
+							let total = 0;
 							let scanBuf = "";
 							let decided = false;
-							let scanned = 0;
+							let stopReason = "";
 							const post = (type, extra) => {
 								const base = {
 									type,
-									url: String(remote).slice(0, 110),
+									url: scanRu.slice(0, 110),
 									homePos: scanBuf.indexOf("ytInitialData"),
 									histPos: scanBuf.indexOf("Your YouTube History is off"),
 									beforePos: scanBuf.indexOf("Before you continue to YouTube"),
 									rejPos: scanBuf.indexOf("Reject all"),
-									scanned
+									scanned: total
 								};
 								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...base, ...extra }) }).catch(() => {});
 							};
@@ -427,52 +472,62 @@ const initSWPromise = (async function initSW() {
 								decided = true;
 								post("yt_page_kind", { kind: tag });
 							};
+							while (!stopReason) {
+								let timer = null;
+								const timeout = new Promise((res) => { timer = setTimeout(() => res("t"), 25000); });
+								const r = await Promise.race([reader.read(), timeout]);
+								clearTimeout(timer);
+								if (r === "t") { stopReason = "idle-timeout"; break; }
+								if (r.done) { stopReason = "end"; break; }
+								if (r.value) {
+									chunks.push(r.value);
+									total += r.value.length;
+									scanBuf += dec.decode(r.value, { stream: true });
+									if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
+									if (!decided) {
+										if (/ytInitialData/.test(scanBuf)) decide("home");
+										else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
+									}
+									if (total > MAX) { stopReason = "overcap"; break; }
+								}
+							}
+							try { scanBuf += dec.decode(); } catch (e) {}
+							post("yt_page_final", { kind: decided ? "decided" : "none", stop: stopReason, total });
+							let emit = chunks;
+							let more = stopReason === "overcap";
+							if (stopReason !== "idle-timeout" && stopReason !== "overcap" && scanBuf.includes("consentBumpV2Renderer")) {
+								const s = stripYTConsent(scanBuf);
+								post("yt_strip", { cut: s.cut, len: s.html.length, before: scanBuf.length });
+								if (s.cut > 0) {
+									sanitizedCut = s.cut;
+									emit = [new TextEncoder().encode(s.html)];
+									more = false;
+									try { reader.cancel(); } catch (e) {}
+								}
+							}
 							resp.body = new ReadableStream({
 								start(controller) {
-									let ended = false;
-									const finish = (tag) => {
-										if (ended) return;
-										ended = true;
-										if (tag && !decided) decide(tag);
-										post("yt_page_final", { kind: decided ? "decided" : "none" });
-										try { controller.close(); } catch (_) {
-											try { controller.error(new Error("closed")); } catch (_) {}
-										}
-									};
-									const pump = () => {
-										if (ended) return;
-										const timer = setTimeout(() => finish("idle-timeout"), 25000);
-										reader.read().then((r) => {
-											clearTimeout(timer);
-											if (ended) return;
-											if (r.done) {
-												finish("unknown-end");
-												return;
-											}
-											if (r.value) {
-												controller.enqueue(r.value);
-												scanned += r.value.length;
-												scanBuf += dec.decode(r.value, { stream: true });
-												if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
-												if (!decided) {
-													if (/ytInitialData/.test(scanBuf)) decide("home");
-													else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
-												}
-											}
-											pump();
-										}).catch((e) => {
-											clearTimeout(timer);
-											const msg = e ? (e.message || e.name || String(e)) : "?";
-											finish("stream-error:" + msg.slice(0, 80));
-										});
-									};
-									pump();
+									try { for (const c of emit) controller.enqueue(c); } catch (e) {}
+									if (more) {
+										const pump = () => {
+											reader.read().then((rr) => {
+												if (rr.done) { try { controller.close(); } catch (e) {} return; }
+												try { controller.enqueue(rr.value); pump(); } catch (e) {}
+											}).catch(() => { try { controller.close(); } catch (e) {} });
+										};
+										pump();
+									} else {
+										try { controller.close(); } catch (e) {}
+									}
 								}
 							});
 						}
-					} catch (e) {}
+					} catch (e) {
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_strip_err", err: String(e).slice(0, 150) }) }).catch(() => {});
+					}
 					const rawPairs = [];
 					for (const [k, vals] of Object.entries(resp.headers || {})) {
+						if (sanitizedCut > 0 && String(k).toLowerCase() === "content-length") continue;
 						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
 						else rawPairs.push([k, vals]);
 					}
