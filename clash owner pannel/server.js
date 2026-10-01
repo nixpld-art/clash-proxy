@@ -1803,6 +1803,8 @@ const JARVIS_HELP =
 	"  give @user game testing        — grant Game Tester access (rank chip → testing panel)\n" +
 	"  revoke @user game testing      — take it away\n" +
 	"  game reports                   — open reports filed by Game Tester-rank staff\n" +
+	"  give @user the crown           — make them an OWNER (gold crown + full owner access)\n" +
+	"  remove crown @user             — take the crown away again\n" +
 	"  fix <game>                     — diagnose & repair (backs up first)\n" +
 	"  replace <game> [url]           — swap the file (backup kept)\n" +
 	"  remove <game>\n\n" +
@@ -1897,6 +1899,32 @@ async function jarvisCommand(text) {
 		const a = grantPrivilege(user.id, "game-testing", false);
 		if (!a) return { reply: "Could not update that player's rank." };
 		return { reply: `Removed the Game Tester privilege from @${user.username}.` };
+	}
+
+	/* ----- ranks: the crown (owner role) ----- */
+	m = t.match(/^\s*(?:jarvis[,\s]+)?(?:please\s+|can\s+you\s+|could\s+you\s+)?(?:give|grant)\s+(?:the\s+)?(?:gold\s+)?(?:crown|owner|founder)(?:\s+(?:status|role|rank))?\s+(?:to\s+)?["']?@?([a-z0-9_.-]{2,32})["']?\s*$/i);
+	if (!m) m = t.match(/^\s*(?:jarvis[,\s]+)?(?:please\s+|can\s+you\s+|could\s+you\s+)?(?:give|grant|make)\s+["']?@?([a-z0-9_.-]{2,32})["']?\s+(?:the\s+|an?\s+)?(?:gold\s+)?(?:crown|owner|founder)\b.*$/i);
+	if (!m) m = t.match(/^\s*(?:jarvis[,\s]+)?crown\s+["']?@?([a-z0-9_.-]{2,32})["']?\s*$/i);
+	if (m) {
+		const name = m.length > 2 && m[2] ? m[1] : m[m.length - 1];
+		const user = findUser(name);
+		if (!user) return { reply: `No player named "${name}" exists.` };
+		try {
+			db.prepare("UPDATE users SET role = 'admin', custom_tag = COALESCE(NULLIF(TRIM(COALESCE(custom_tag, '')), ''), 'Owner') WHERE id = ?").run(user.id);
+		} catch (e) { return { reply: "Database error while granting the crown: " + e.message }; }
+		audit("jarvis.crown", `Crown granted to @${user.username}`);
+		return { reply: `Crown granted to @${user.username} — they're an owner now: gold crown on their avatar everywhere (like you and ted), full owner access, and the "Owner" tag.` };
+	}
+	m = t.match(/^\s*(?:jarvis[,\s]+)?(?:please\s+|can\s+you\s+|could\s+you\s+)?(?:remove|take(?:\s+away)?|revoke|strip)\s+(?:the\s+)?(?:gold\s+)?crown(?:\s+from)?\s+["']?@?([a-z0-9_.-]{2,32})["']?\s*$/i);
+	if (!m) m = t.match(/^\s*(?:jarvis[,\s]+)?(?:uncrown|demote)\s+["']?@?([a-z0-9_.-]{2,32})["']?\s*$/i);
+	if (m) {
+		const user = findUser(m[1]);
+		if (!user) return { reply: `No player named "${m[1]}" exists.` };
+		try {
+			db.prepare("UPDATE users SET role = 'user', custom_tag = NULL WHERE id = ?").run(user.id);
+		} catch (e) { return { reply: "Database error while removing the crown: " + e.message }; }
+		audit("jarvis.crown", `Crown removed from @${user.username}`);
+		return { reply: `Removed the crown from @${user.username} — back to a regular account (no owner access, tag cleared).` };
 	}
 
 	/* ----- games: add with explicit URL (pulls the code) ----- */
@@ -2074,7 +2102,7 @@ function jarvisLocalFallback(text) {
 function jarvisSystemPrompt() {
 	return [
 		"You are Jarvis AI, the OWNER-ONLY assistant built into the Clash Proxy Owner Panel. You have FULL control over the Clash Proxy website and panel — this is intentional and owner-sanctioned.",
-		"You can moderate players (ban, unban, timeout, kick), manage the game library (pull new games from the internet with `add game <name>` or `add game \"Title\" <url>` — Jarvis downloads the actual code and assets onto the server — plus remove, fix, replace; `embed game …` skips the download), broadcast announcements, toggle maintenance, and read live stats. When a message matches a supported command, the panel executes it before you see it.",
+		"You can moderate players (ban, unban, timeout, kick), manage ranks (grant or remove the owner crown with `give @user the crown` / `remove crown @user` — grants full owner access and the gold crown everywhere), manage the game library (pull new games from the internet with `add game <name>` or `add game \"Title\" <url>` — Jarvis downloads the actual code and assets onto the server — plus remove, fix, replace; `embed game …` skips the download), broadcast announcements, toggle maintenance, and read live stats. When a message matches a supported command, the panel executes it before you see it.",
 		"For everything else, answer naturally, concisely and helpfully; you may mention command syntax when useful. Never claim an action was performed unless it actually was. Tone: direct, slightly witty, professional.",
 		"The public site assistant 'Clash AI' has NO powers — you are the one with control.\n\nLIVE CONTEXT:\n" + jarvisLiveContext()
 	].join("\n\n");

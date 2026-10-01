@@ -279,6 +279,12 @@ function isUserTed(username) {
 	return u === "ted" || u === "nils";
 }
 
+// The gold crown shows for the founders AND any owner-level account
+// (role admin — granted from the Owner Panel or Jarvis's `give @user the crown`).
+function hasCrown(user) {
+	return !!user && (isUserTed(user.username) || user.role === "admin");
+}
+
 // ============================================================
 // Scramjet V2 Setup
 // ============================================================
@@ -1232,7 +1238,7 @@ function renderUserHeader() {
 			<div class="avatar-frame-container ${frameClass}">
 				<div class="ted-avatar-wrap">
 					<div class="user-pill-avatar ${escapeHtml(currentUser.avatar_url || currentUser.avatarUrl || 'avatar-1')}"></div>
-					${isTed ? TILTED_CROWN_SVG : ''}
+					${hasCrown(currentUser) ? TILTED_CROWN_SVG : ''}
 				</div>
 			</div>
 			<div class="user-pill-info">
@@ -1692,7 +1698,7 @@ async function renderProfilePage() {
 	if (avatarWrapper) {
 		avatarWrapper.className = `profile-avatar-wrapper avatar-frame-container ${frameClass}`;
 		const existingCrown = avatarWrapper.querySelector(".ted-tilted-crown");
-		if (isTed) {
+		if (hasCrown(currentUser)) {
 			if (!existingCrown) avatarWrapper.insertAdjacentHTML("beforeend", TILTED_CROWN_SVG);
 		} else if (existingCrown) {
 			existingCrown.remove();
@@ -1887,7 +1893,7 @@ function renderFriendsLists() {
 				card.innerHTML = `
 					<div class="friend-avatar-wrap">
 						<div class="friend-avatar ${escapeHtml(f.avatar_url || 'avatar-1')}"></div>
-						${isTed ? TILTED_CROWN_SVG : ''}
+						${hasCrown(f) ? TILTED_CROWN_SVG : ''}
 						<span class="presence-dot ${isPlaying ? 'playing' : 'online'}"></span>
 					</div>
 					<div class="friend-info">
@@ -1935,7 +1941,7 @@ function renderFriendsLists() {
 			card.innerHTML = `
 				<div class="friend-avatar-wrap">
 					<div class="friend-avatar ${escapeHtml(f.avatar_url || 'avatar-1')}"></div>
-					${isTed ? TILTED_CROWN_SVG : ''}
+					${hasCrown(f) ? TILTED_CROWN_SVG : ''}
 					<span class="presence-dot offline"></span>
 				</div>
 				<div class="friend-info">
@@ -2054,7 +2060,7 @@ async function loadLeaderboard() {
 					<div class="col-user">
 						<div class="ted-avatar-wrap">
 							<div class="leaderboard-user-avatar ${escapeHtml(u.avatar_url || 'avatar-1')}"></div>
-							${isTed ? TILTED_CROWN_SVG : ''}
+							${hasCrown(u) ? TILTED_CROWN_SVG : ''}
 						</div>
 						<div>
 							<div class="leaderboard-user-name ${isTed ? 'ted-vip-name' : ''}">
@@ -2662,7 +2668,7 @@ async function openChatDrawer(friend) {
 	const isTed = isUserTed(friend.username);
 	if (chatFriendAvatar) {
 		chatFriendAvatar.className = `chat-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${friend.avatar_url || 'avatar-1'}`;
-		chatFriendAvatar.innerHTML = isTed ? TILTED_CROWN_SVG : "";
+		chatFriendAvatar.innerHTML = hasCrown(friend) ? TILTED_CROWN_SVG : "";
 	}
 	if (chatFriendName) {
 		chatFriendName.textContent = friend.display_name || friend.username;
@@ -2990,7 +2996,7 @@ function renderConversationsListUI() {
 		item.innerHTML = `
 			<div class="chat-conv-avatar-wrap">
 				<div class="chat-conv-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${conv.friend.avatarUrl || 'avatar-1'}">
-					${isTed ? TILTED_CROWN_SVG : ''}
+					${hasCrown(conv.friend) ? TILTED_CROWN_SVG : ''}
 				</div>
 				<span class="chat-status-dot ${isOnline ? 'online' : 'offline'}"></span>
 			</div>
@@ -3100,7 +3106,7 @@ async function selectChatPageConversation(friend) {
 	const isTed = isUserTed(friend.username);
 	if (chatActiveAvatar) {
 		chatActiveAvatar.className = `chat-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${friend.avatarUrl || 'avatar-1'}`;
-		chatActiveAvatar.innerHTML = isTed ? TILTED_CROWN_SVG : "";
+		chatActiveAvatar.innerHTML = hasCrown(friend) ? TILTED_CROWN_SVG : "";
 	}
 	if (chatActiveName) {
 		chatActiveName.textContent = friend.displayName || friend.username;

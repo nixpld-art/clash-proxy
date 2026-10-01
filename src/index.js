@@ -117,6 +117,33 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
+				// Old Render deployment → bounce everyone to the real home.
+				// (Render's disk is ephemeral: accounts "saved" there vanished on
+				// every deploy. One home = clash-proxy-9045.bot.nu, which persists.)
+				const hostHdr = String(req.headers.host || "").toLowerCase();
+				if (hostHdr.endsWith(".onrender.com")) {
+					const url = req.url || "/";
+					if (url === "/" || url === "/index.html" || url === "/favicon.ico") {
+						// Render health-checks "/" — must stay 200.
+						res.statusCode = 200;
+						res.setHeader("Content-Type", "text/html; charset=utf-8");
+						res.end(
+							"<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">" +
+							"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
+							"<title>Clash Proxy has moved</title></head>" +
+							"<body style=\"margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0f;color:#fff;font-family:system-ui,sans-serif;text-align:center\">" +
+							"<div><h1 style=\"color:#00ff88\">Clash Proxy has moved</h1>" +
+							"<p style=\"opacity:.75\">Accounts and games only save on the new home.</p>" +
+							"<p><a style=\"color:#a29bfe;font-size:20px\" href=\"https://clash-proxy-9045.bot.nu\">clash-proxy-9045.bot.nu</a></p>" +
+							"<script>location.replace(\"https://clash-proxy-9045.bot.nu\");</script></div></body></html>"
+						);
+					} else {
+						res.statusCode = 302;
+						res.setHeader("Location", "https://clash-proxy-9045.bot.nu" + url);
+						res.end();
+					}
+					return;
+				}
 				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 				res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
 				handler(req, res);

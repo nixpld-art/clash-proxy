@@ -13,7 +13,7 @@ export default async function friendsRoutes(fastify) {
 			SELECT 
 				f.id as friendship_id,
 				f.created_at as friendship_date,
-				u.id, u.username, u.display_name, u.avatar_url, u.level, u.xp
+				u.id, u.username, u.display_name, u.avatar_url, u.level, u.xp, u.role, u.custom_tag
 			FROM friendships f
 			JOIN users u ON (
 				CASE 
@@ -30,7 +30,7 @@ export default async function friendsRoutes(fastify) {
 			SELECT 
 				f.id as friendship_id,
 				f.created_at,
-				u.id as user_id, u.username, u.display_name, u.avatar_url, u.level
+				u.id as user_id, u.username, u.display_name, u.avatar_url, u.level, u.role, u.custom_tag
 			FROM friendships f
 			JOIN users u ON f.user_id = u.id
 			WHERE f.friend_id = ? AND f.status = 'pending'
@@ -42,7 +42,7 @@ export default async function friendsRoutes(fastify) {
 			SELECT 
 				f.id as friendship_id,
 				f.created_at,
-				u.id as friend_id, u.username, u.display_name, u.avatar_url, u.level
+				u.id as friend_id, u.username, u.display_name, u.avatar_url, u.level, u.role, u.custom_tag
 			FROM friendships f
 			JOIN users u ON f.friend_id = u.id
 			WHERE f.user_id = ? AND f.status = 'pending'
