@@ -3789,6 +3789,13 @@ function injectConsentDismisser(iframe) {
 	if (!iframe || iframe.dataset.consentWatch === "1") return;
 	iframe.dataset.consentWatch = "1";
 	const consentTags = ["ytd-consent-bump-v2-lightbox", "ytd-consent-bump-v2-renderer", "ytd-consent-bump-v2-renderer-alignment", "ytd-cookie-dialog-renderer", "ytd-consent-bump-v2"];
+	const findAccept = (root) => {
+		const btns = root.querySelectorAll("button, [role=button], tp-yt-paper-button");
+		for (const b of btns) {
+			if (/^accept all$/i.test(((b.textContent || "") + "").trim())) return b;
+		}
+		return null;
+	};
 	const tick = () => {
 		try {
 			const d = iframe.contentDocument;
@@ -3811,26 +3818,38 @@ function injectConsentDismisser(iframe) {
 				}
 				return;
 			}
+			let consentNode = null;
 			for (const tag of consentTags) {
 				const el = d.querySelector(tag);
-				if (el) el.style.setProperty("display", "none", "important");
+				if (el) { consentNode = el; break; }
 			}
-			if (d.querySelector("ytd-consent-bump-v2-lightbox")) {
-				const bds = d.querySelectorAll("tp-yt-iron-overlay-backdrop");
-				for (const bd of bds) bd.style.setProperty("display", "none", "important");
-			}
-			const dialogs = d.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
-			for (const dlg of dialogs) {
-				const txt = dlg.textContent || "";
-				if (txt.includes("Before you continue to YouTube") || (txt.includes("Before you continue") && txt.includes("Reject all") && txt.includes("Accept all"))) {
-					let node = dlg;
-					let guard = 0;
-					while (node.parentNode && guard++ < 8) {
-						const pname = ((node.parentNode.tagName || "") + "").toLowerCase();
-						if (pname.startsWith("ytd-consent") || pname === "tp-yt-paper-dialog" || pname === "ytd-popup-container") node = node.parentNode;
-						else break;
+			if (!consentNode) {
+				const dialogs = d.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
+				for (const dlg of dialogs) {
+					const txt = dlg.textContent || "";
+					if (txt.includes("Before you continue to YouTube") || (txt.includes("Before you continue") && txt.includes("Reject all") && txt.includes("Accept all"))) {
+						consentNode = dlg;
+						break;
 					}
-					node.style.setProperty("display", "none", "important");
+				}
+			}
+			if (consentNode) {
+				consentNode.__clashTicks = (consentNode.__clashTicks || 0) + 1;
+				if (!consentNode.__clashDone) {
+					const acc = findAccept(consentNode);
+					if (acc) {
+						consentNode.__clashDone = true;
+						const n = parseInt(iframe.dataset.consClicks || "0", 10);
+						if (n < 5) {
+							iframe.dataset.consClicks = String(n + 1);
+							acc.click();
+						}
+						return;
+					}
+				} else if (consentNode.__clashTicks > 15) {
+					consentNode.style.setProperty("display", "none", "important");
+					const bds = d.querySelectorAll("tp-yt-iron-overlay-backdrop");
+					for (const bd of bds) bd.style.setProperty("display", "none", "important");
 				}
 			}
 			const rich = d.querySelectorAll("ytd-rich-section-renderer");
