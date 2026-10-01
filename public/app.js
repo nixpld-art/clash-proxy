@@ -419,7 +419,19 @@ const initSWPromise = (async function initSW() {
 				} catch (e) {
 					fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force_err", err: String(e).slice(0, 150) }) }).catch(() => {});
 				}
-					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
+					// libcurl transport drops all custom headers when given [[k,v],...]:
+					// HeadersDict() iterates `for key in obj` and turns array indices into
+					// header names. Convert to a plain object so Cookie / Content-Encoding /
+					// X-YouTube-* actually reach the server.
+					let hdrsOut = hdrs;
+					if (Array.isArray(hdrsOut)) {
+						const ho = {};
+						for (const h of hdrsOut) {
+							if (h && h.length >= 2 && h[0] != null) ho[String(h[0])] = String(h[1]);
+						}
+						hdrsOut = ho;
+					}
+					const resp = await libcurlClient.request(remote, method, body, hdrsOut, signal);
 					try {
 						const ru = String(remote);
 						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor|youtube\.com\/t/.test(ru)) {
