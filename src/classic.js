@@ -10,7 +10,7 @@
 // No Service Worker is involved anywhere, so networks that
 // block SW registration still work.
 // ============================================================
-import { Readable } from "node:stream";
+import { Readable, PassThrough } from "node:stream";
 import { randomBytes } from "node:crypto";
 import { appendFileSync } from "node:fs";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
@@ -680,7 +680,7 @@ export default async function classicRoutes(fastify) {
 		let isPlayerSpoof = false;
 		if (req.method !== "GET" && req.method !== "HEAD") {
 			body = await readBody(req.body);
-			dbg(`BODY ${req.method} ${target.pathname.slice(0, 40)} len=${body ? body.length : 0} cl=${req.headers["content-length"] || "-"} ct=${String(req.headers["content-type"] || "-").slice(0, 40)}`);
+			dbg(`BODY ${req.method} ${target.pathname.slice(0, 40)} len=${body ? body.length : 0} cl=${req.headers["content-length"] || "-"} enc=${req.headers["content-encoding"] || "-"} ct=${String(req.headers["content-type"] || "-").slice(0, 40)}`);
 			if (body && body.length > 150 && target.pathname.includes("/api/stats/qoe")) {
 				const qb = body.toString("latin1");
 				let errPart = "";
@@ -834,6 +834,20 @@ export default async function classicRoutes(fastify) {
 			scanGvUrls(bodyTxt, target);
 			delete outHeaders["content-length"];
 			return reply.code(upstream.status).headers(outHeaders).type(ct || "text/plain").send(bodyTxt);
+		}
+
+		// --- ump config peek (diagnostics) ---
+		if (req.method === "POST" && /yt-ump/i.test(ct)) {
+			const pt = new PassThrough();
+			let peeked = false;
+			Readable.fromWeb(upstream.body).on("data", (c) => {
+				if (!peeked) {
+					peeked = true;
+					dbg(`UMPHEX st=${upstream.status} cl=${outHeaders["content-length"] || "-"} te=${outHeaders["transfer-encoding"] || "-"} len=${c.length} head=${c.slice(0, 96).toString("hex")}`);
+				}
+				pt.write(c);
+			}).on("end", () => pt.end()).on("error", (e) => pt.destroy(e));
+			return reply.code(upstream.status).headers(outHeaders).send(pt);
 		}
 
 		// --- everything else: stream through (Range/206 intact) ---
