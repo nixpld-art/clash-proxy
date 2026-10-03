@@ -459,19 +459,34 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 
 function scanGvUrls(text, target) {
 	try {
-		const ms = text.match(/https:\/\/[a-z0-9-]+\.googlevideo\.com\/videoplayback\?[^"\\\s<>]{0,3000}/g);
-		if (!ms) return;
+		const variants = [text];
+		if (/%3[DA]/i.test(text)) {
+			try { variants.push(decodeURIComponent(text)); } catch {}
+		}
+		const seen = new Set();
+		let total = 0;
 		const hosts = new Set();
 		let bogus = "";
-		for (const u of ms) {
-			const hm = u.match(/https:\/\/([a-z0-9-]+)\.googlevideo\.com/);
-			if (hm) hosts.add(hm[1]);
-			if (!bogus) {
-				const em = u.match(/expire=(\d+)/);
-				if (em && parseInt(em[1], 10) > 2000000000) bogus = u.slice(0, 180);
+		let ctx = "";
+		for (const t of variants) {
+			const ms = t.match(/https:\/\/[a-z0-9-]+\.googlevideo\.com\/videoplayback\?[^"\\\s<>]{0,3000}/g) || [];
+			for (const u of ms) {
+				if (seen.has(u)) continue;
+				seen.add(u);
+				total++;
+				const hm = u.match(/https:\/\/([a-z0-9-]+)\.googlevideo\.com/);
+				if (hm) hosts.add(hm[1]);
+				if (!bogus) {
+					const em = u.match(/expire=(\d+)/);
+					if (em && parseInt(em[1], 10) > 2000000000) {
+						bogus = u.slice(0, 180);
+						const at = t.indexOf(u);
+						ctx = t.slice(Math.max(0, at - 140), at).replace(/\s+/g, " ").slice(-140);
+					}
+				}
 			}
 		}
-		dbg(`GVURL path=${target.pathname} n=${ms.length} hosts=${[...hosts].join(",")}${bogus ? " BOGUS=" + bogus : ""}`);
+		if (total) dbg(`GVURL path=${target.pathname} n=${total} hosts=${[...hosts].join(",")}${bogus ? " BOGUS=" + bogus : ""}${ctx ? " CTX=" + ctx : ""}`);
 	} catch {}
 }
 
