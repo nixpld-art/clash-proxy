@@ -681,6 +681,9 @@ export default async function classicRoutes(fastify) {
 		if (req.method !== "GET" && req.method !== "HEAD") {
 			body = await readBody(req.body);
 			dbg(`BODY ${req.method} ${target.pathname.slice(0, 40)} len=${body ? body.length : 0} cl=${req.headers["content-length"] || "-"} ct=${String(req.headers["content-type"] || "-").slice(0, 40)}`);
+			if (body && body.length > 4000 && target.pathname.includes("/api/stats/qoe")) {
+				dbg(`QOEB ${body.slice(0, 700).toString("latin1").replace(/[\x00-\x1f]/g, " ")}`);
+			}
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player")) {
 				let keys = "?", parseOk = false, before = "?";
 				try { const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, "")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
@@ -790,6 +793,7 @@ export default async function classicRoutes(fastify) {
 		const charsetOk = !charset || charset === "utf-8" || charset === "utf8";
 		if (/text\/html/i.test(ct) && charsetOk) {
 			const text = await upstream.text();
+			if (!text.length) dbg(`EMPTYHTML path=${target.pathname.slice(0, 60)} status=${upstream.status} cl=${upstream.headers.get("content-length") || "-"} dest=${req.headers["sec-fetch-dest"] || "-"} mode=${req.headers["sec-fetch-mode"] || "-"} acc=${String(req.headers["accept"] || "-").slice(0, 60)} ua=${String(req.headers["user-agent"] || "-").slice(0, 40)}`);
 			scanGvUrls(text, target);
 			delete outHeaders["content-length"];
 			const dbgFlags = String(req.headers["x-clash-dbg"] || "").toLowerCase();
