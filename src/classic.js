@@ -426,6 +426,35 @@ async function androidPlayer(videoId, jarId) {
 	finally { clearTimeout(timer); }
 }
 
+// YouTube's SABR/UMP pipeline rejects our sessions server-side with
+// `sabr.malformed_config` (client-built config refused 3x -> player
+// aborts with "Playback ID" error). Plain Range-GET streaming on the
+// same ANDROID urls works fine (206 video/mp4), so delete the SABR
+// hints from the spliced response and the player uses that path.
+function stripSabr(sd) {
+	if (!sd) return false;
+	let hit = false;
+	for (const k of Object.keys(sd)) {
+		if (/sabr|serverab|servertransfer/i.test(k)) { delete sd[k]; hit = true; }
+	}
+	for (const arr of [sd.formats, sd.adaptiveFormats]) {
+		if (!arr) continue;
+		for (const f of arr) {
+			if (!f || typeof f.url !== "string" || !/[?&]sabr=/.test(f.url)) continue;
+			let u = f.url;
+			let guard = 0;
+			while (/[?&]sabr=\d+/.test(u) && guard++ < 4) {
+				u = u.replace(/[?&]sabr=\d+/, "\u0000");
+				if (u.includes("\u0000&")) u = u.replace("\u0000&", "?");
+				else u = u.replace("\u0000", "");
+			}
+			f.url = u;
+			hit = true;
+		}
+	}
+	return hit;
+}
+
 // YouTube pages embed a WEB player response whose formats are all
 // signatureCipher'd (we don't run scramjet's JS rewriter). Splice in
 // the ANDROID streamingData (direct URLs) so the native <video> plays.
@@ -439,18 +468,24 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 		const sd = obj && obj.streamingData;
 		const fmts = sd ? [...(sd.formats || []), ...(sd.adaptiveFormats || [])] : [];
 		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
-		if (fmts.length && fmts.some((f) => f.url)) { dbg(`SPLICE direct st=${st} fmts=${fmts.length}`); return html; }
+		if (fmts.length && fmts.some((f) => f.url)) {
+			if (!stripSabr(sd)) { dbg(`SPLICE direct st=${st} fmts=${fmts.length}`); return html; }
+			dbg(`SPLICE nosabr st=${st} fmts=${fmts.length}`);
+			const json0 = JSON.stringify(obj).replace(/</g, "\\u003c");
+			return html.slice(0, loc.start) + json0 + html.slice(loc.end);
+		}
 		const vid = (obj.videoDetails && obj.videoDetails.videoId) || ytVideoIdFromUrl(target);
 		if (!vid) { dbg(`SPLICE novid st=${st} fmts=${fmts.length}`); return html; }
 		const t0 = Date.now();
 		const alt = await androidPlayer(vid, jarId);
 		if (!alt || !alt.streamingData) { dbg(`SPLICE alt_null vid=${vid} st=${st} ms=${Date.now() - t0}`); return html; }
 		obj.streamingData = alt.streamingData;
+		const stripped = stripSabr(obj.streamingData);
 		if (obj.playabilityStatus && obj.playabilityStatus.status !== "OK" &&
 			alt.playabilityStatus && alt.playabilityStatus.status === "OK") {
 			obj.playabilityStatus = alt.playabilityStatus;
 		}
-		dbg(`SPLICE ok vid=${vid} st=${st}->${obj.playabilityStatus.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} ms=${Date.now() - t0}`);
+		dbg(`SPLICE ok vid=${vid} st=${st}->${obj.playabilityStatus.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} sabr=${stripped ? "stripped" : "none"} ms=${Date.now() - t0}`);
 		// escape '<' so a description containing "</script>" can't end the tag
 		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
 		return html.slice(0, loc.start) + json + html.slice(loc.end);
