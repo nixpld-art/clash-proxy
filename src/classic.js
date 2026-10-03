@@ -12,12 +12,12 @@
 // ============================================================
 import { Readable, PassThrough } from "node:stream";
 import { randomBytes } from "node:crypto";
-import { appendFileSync } from "node:fs";
+import { appendFileSync, readFileSync } from "node:fs";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
 
 // transient diagnostics (googlevideo 403s, upstream failures) — file
 // because the local dev server's stdout goes nowhere
-function dbg(line) {
+export function dbg(line) {
 	try { appendFileSync("data/classic-debug.log", new Date().toISOString() + " " + line + "\n"); } catch {}
 }
 
@@ -460,6 +460,10 @@ function stripSabr(sd) {
 // the ANDROID streamingData (direct URLs) so the native <video> plays.
 async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 	try {
+		// ANDROID splice is opt-in legacy (CLASSIC_SPLICE=1); the modern
+		// web player plays the WEB response's own serverAbrStreamingUrl
+		// fine as long as we forward requests with the browser's headers.
+		if (process.env.CLASSIC_SPLICE !== "1") return html;
 		if (!/(^|\.)youtube\.com$/i.test(target.hostname)) return html;
 		const loc = findYtPlayerResp(html);
 		if (!loc) { if (ytVideoIdFromUrl(target)) dbg(`SPLICE noloc len=${html.length}`); return html; }
@@ -625,7 +629,13 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 		const lk = k.toLowerCase();
 		if (REQ_STRIP.has(lk)) continue;
 		if (v == null) continue;
-		if (lk === "origin") { out.origin = target.origin; continue; }
+		if (lk === "origin") {
+			// googlevideo SABR POSTs must carry the *page* origin
+			// (https://www.youtube.com); rewriting it to the googlevideo
+			// origin makes the server treat the session as foreign.
+			if (target.hostname.endsWith(".googlevideo.com")) { out.origin = Array.isArray(v) ? v.join(", ") : String(v); continue; }
+			out.origin = target.origin; continue;
+		}
 		if (lk === "referer" || lk === "referrer") {
 			const unw = unwrapProxy(String(v), req.headers.host);
 			out.referer = unw || target.origin + "/";
@@ -650,8 +660,8 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 		ck = ck ? ck + "; " + CANON_SOCS : CANON_SOCS;
 	}
 	if (ck) out.cookie = ck;
-	if (host.endsWith(".googlevideo.com")) {
-		// stream URLs were generated with the ANDROID UA
+	if (host.endsWith(".googlevideo.com") && process.env.CLASSIC_SPLICE === "1") {
+		// splice mode: stream URLs were generated with the ANDROID UA
 		out["user-agent"] = ANDROID_UA;
 		delete out["sec-ch-ua"];
 		delete out["sec-ch-ua-mobile"];
@@ -721,12 +731,12 @@ export default async function classicRoutes(fastify) {
 				let errPart = "";
 				const em2 = qb.match(/(?:^|[&?])(?:error|err|ec|errcode|mediaErr|playbackErr)[^&]{0,200}/gi);
 				if (em2) errPart = " ERRS=" + em2.slice(0, 6).join(" | ");
-				dbg(`QOEB len=${body.length}${errPart} ${body.length > 4000 ? qb.slice(0, 600).replace(/[\x00-\x1f]/g, " ") : ""}`);
+				dbg(`QOEB len=${body.length}${errPart} ${qb.slice(0, body.length > 4000 ? 600 : 700).replace(/[\x00-\x1f]/g, " ")}`);
 			}
 			if (body && body.length && target.pathname.includes("/videoplayback") && req.method === "POST") {
 				dbg(`UMPREQ len=${body.length} head=${body.slice(0, 96).toString("hex")}`);
 			}
-			if (body && body.length && target.pathname.includes("/youtubei/v1/player")) {
+			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE === "1") {
 				let keys = "?", parseOk = false, before = "?";
 				try { const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, "")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
 				const spoofed = spoofPlayerBody(body);
@@ -744,10 +754,16 @@ export default async function classicRoutes(fastify) {
 		// --- fetch target (one retry: stale keep-alive sockets give
 		// "Premature close" / ECONNRESET on the first attempt) ---
 		let upstream;
+		if (process.env.CLASSIC_GOLDEN && req.method === "GET" && /youtube\.com\/watch\?/.test(target.href)) {
+			try {
+				upstream = new Response(readFileSync(process.env.CLASSIC_GOLDEN, "utf8"), { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
+				dbg("GOLDEN served for " + target.href.slice(-40));
+			} catch (e) { dbg("GOLDEN err " + e.message); }
+		}
 		const ac = new AbortController();
 		const timer = setTimeout(() => ac.abort(), 60000);
 		const upBody = (req.method !== "GET" && req.method !== "HEAD") ? (body || undefined) : undefined;
-		for (let attempt = 0; ; attempt++) {
+		for (let attempt = 0; !upstream; attempt++) {
 			try {
 				upstream = await fetch(target, {
 					method: req.method,

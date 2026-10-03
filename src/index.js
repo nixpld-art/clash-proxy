@@ -105,7 +105,7 @@ import chatRoutes from "./routes/chat.js";
 import adminRoutes from "./routes/admin.js";
 import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
-import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys } from "./classic.js";
+import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys, dbg } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
 import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken } from "./auth-utils.js";
@@ -298,8 +298,13 @@ fastify.addHook("onResponse", async (req, reply) => {
 		const u = req.url;
 		if (u.startsWith("/scram") || u.startsWith("/baremux") || u.startsWith("/epoxy") ||
 			u.startsWith("/libcurl") || u.startsWith("/games/") || u.startsWith("/controller/") ||
-			u.startsWith("/wisp") || u.startsWith("/ws") || u.startsWith("/api/panel/") ||
-			u.startsWith("/classic")) return;
+			u.startsWith("/wisp") || u.startsWith("/ws") || u.startsWith("/api/panel/")) return;
+		if (u.startsWith("/classic")) {
+			if (reply.statusCode < 400 || /videoplayback|youtubei|qoe/.test(u)) {
+				dbg(`REQ ${req.method} ${u.slice(8, 150)} -> ${reply.statusCode} ${Math.round(reply.elapsedTime || 0)}ms`);
+			}
+			return;
+		}
 		if (/\.(js|css|png|jpe?g|svg|ico|wasm|woff2?|map|webp)(\?|$)/i.test(u)) return;
 		const ip = "anon-" + createHash("sha256").update(String(req.ip || "-")).digest("hex").slice(0, 8);
 		const line = `${new Date().toISOString()} ${req.method} ${u} ${reply.statusCode} ${Math.round(reply.elapsedTime || 0)}ms ${ip}\n`;
