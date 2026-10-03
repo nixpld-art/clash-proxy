@@ -847,6 +847,8 @@ export default async function classicRoutes(fastify) {
 			}
 			if (body && body.length && target.pathname.includes("/videoplayback") && req.method === "POST") {
 				dbg(`UMPREQ len=${body.length} head=${body.slice(0, 96).toString("hex")}`);
+				dbg(`UMPURL ${target.href}`);
+				dbg(`UMPHDR origin=${req.headers.origin || "-"} referer=${(req.headers.referer || "-").slice(0, 80)} cookie=${(req.headers.cookie || "-").slice(0, 120)}`);
 				if (body.length <= 8192) dbg(`UMPREQFULL len=${body.length} hex=${body.toString("hex")}`);
 			}
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE === "1") {
