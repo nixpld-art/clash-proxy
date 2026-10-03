@@ -512,6 +512,79 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 	} catch (e) { dbg(`SPLICE throw ${String(e.message).slice(0, 80)}`); return html; }
 }
 
+// YouTube walls innertube /player POSTs from datacenter IPs
+// (LOGIN_REQUIRED "not a bot" / UNPLAYABLE) while the watch-page HTML
+// still ships a playable embedded ytInitialPlayerResponse. When a POST
+// comes back walled, fetch the page server-side and answer the POST
+// with its embedded response instead (same WEB shape the player uses
+// on first load).
+const ssrPlayerCache = new Map(); // videoId -> { t, data, neg }
+async function ssrPlayer(videoId, ua) {
+	const hit = ssrPlayerCache.get(videoId);
+	if (hit && Date.now() - hit.t < (hit.neg ? 45000 : 600000)) return hit.data;
+	const remember = (data, neg) => {
+		if (ssrPlayerCache.size < 80) ssrPlayerCache.set(videoId, { t: Date.now(), data, neg });
+		return data;
+	};
+	for (let attempt = 0; attempt < 2; attempt++) {
+		try {
+			const r = await fetch("https://www.youtube.com/watch?v=" + videoId, {
+				headers: {
+					"user-agent": ua || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+					"accept-language": "en-GB,en;q=0.9",
+					cookie: CANON_SOCS,
+				},
+				redirect: "manual",
+				signal: AbortSignal.timeout(20000),
+			});
+			const html = await r.text();
+			const loc = findYtPlayerResp(html);
+			if (loc) {
+				const emb = JSON.parse(html.slice(loc.start, loc.end));
+				const st = emb && emb.playabilityStatus && emb.playabilityStatus.status;
+				if (st === "OK" && emb.streamingData) return remember(emb, false);
+				dbg(`SSRFAIL vid=${videoId} st=${st} http=${r.status}`);
+				return remember(null, true);
+			}
+			dbg(`SSRNOLOC vid=${videoId} http=${r.status} len=${html.length}`);
+		} catch (e) { dbg(`SSRERR vid=${videoId} ${e.message}`); }
+		await new Promise((r) => setTimeout(r, 500));
+	}
+	return remember(null, true);
+}
+
+async function ytPlayerFallback(reqBody, txt, target, ua) {
+	try {
+		if (!isYtHost(target.hostname)) return txt;
+		let obj;
+		try { obj = JSON.parse(txt); } catch { return txt; }
+		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
+		if (st === "OK") return txt;
+		let vid = null;
+		try {
+			const jb = JSON.parse(reqBody.toString("utf8").replace(/^﻿/, ""));
+			vid = jb && jb.videoId;
+		} catch {}
+		if (!vid || !/^[\w-]{11}$/.test(vid)) { dbg(`YTFALL novid st=${st}`); return txt; }
+		const t0 = Date.now();
+		const emb = await ssrPlayer(vid, ua);
+		if (!emb) { dbg(`YTFALL miss vid=${vid} st=${st}`); return txt; }
+		dbg(`YTFALL ok vid=${vid} st=${st}->OK fmts=${((emb.streamingData && emb.streamingData.adaptiveFormats) || []).length} ms=${Date.now() - t0}`);
+		return JSON.stringify(emb);
+	} catch (e) { dbg(`YTFALL throw ${e.message}`); return txt; }
+}
+
+// true/false = embedded playability, null = no embedded response found
+async function ytPagePlayable(html) {
+	try {
+		const loc = findYtPlayerResp(html);
+		if (!loc) return null;
+		const obj = JSON.parse(html.slice(loc.start, loc.end));
+		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
+		return st === "OK" && !!(obj.streamingData);
+	} catch { return null; }
+}
+
 function scanGvUrls(text, target) {
 	try {
 		const variants = [text];
@@ -870,8 +943,22 @@ export default async function classicRoutes(fastify) {
 		const charset = charsetM ? charsetM[1].toLowerCase() : "";
 		const charsetOk = !charset || charset === "utf-8" || charset === "utf8";
 		if (/text\/html/i.test(ct) && charsetOk) {
-			const text = await upstream.text();
+			let text = await upstream.text();
 			if (!text.length) dbg(`EMPTYHTML path=${target.pathname.slice(0, 60)} status=${upstream.status} cl=${upstream.headers.get("content-length") || "-"} dest=${req.headers["sec-fetch-dest"] || "-"} mode=${req.headers["sec-fetch-mode"] || "-"} acc=${String(req.headers["accept"] || "-").slice(0, 60)} ua=${String(req.headers["user-agent"] || "-").slice(0, 40)}`);
+			// datacenter IPs get an intermittent bot-wall HTML ("Sign in to
+			// confirm you're not a bot") — one fresh GET often comes back clean
+			if (req.method === "GET" && isYtHost(target.hostname) && /\/(watch|shorts|embed|live)\//.test(target.pathname) &&
+				(await ytPagePlayable(text)) === false) {
+				dbg(`BOTWALL retry path=${target.pathname.slice(0, 60)}`);
+				try {
+					const r2 = await fetch(target, { method: "GET", headers: upHeaders, redirect: "manual", signal: AbortSignal.timeout(30000) });
+					const t2 = await r2.text();
+					if ((await ytPagePlayable(t2)) !== false) {
+						text = t2;
+						dbg(`BOTWALL recovered http=${r2.status}`);
+					} else dbg(`BOTWALL still walled http=${r2.status}`);
+				} catch (e) { dbg(`BOTWALL retry err ${e.message}`); }
+			}
 			scanGvUrls(text, target);
 			delete outHeaders["content-length"];
 			const dbgFlags = String(req.headers["x-clash-dbg"] || "").toLowerCase();
@@ -904,7 +991,10 @@ export default async function classicRoutes(fastify) {
 		// --- JSON/text bodies: scan for foreign googlevideo urls (diagnostics) ---
 		const ctL = (ct || "").toLowerCase();
 		if (ctL.includes("json") || (ctL.startsWith("text/") && !/javascript|css/.test(ctL))) {
-			const bodyTxt = await upstream.text();
+			let bodyTxt = await upstream.text();
+			if (req.method === "POST" && target.pathname.includes("/youtubei/v1/player") && body) {
+				bodyTxt = await ytPlayerFallback(body, bodyTxt, target, req.headers["user-agent"]);
+			}
 			scanGvUrls(bodyTxt, target);
 			delete outHeaders["content-length"];
 			return reply.code(upstream.status).headers(outHeaders).type(ct || "text/plain").send(bodyTxt);
