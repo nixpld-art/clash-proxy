@@ -13,6 +13,29 @@
 	if (window.__CLASSIC_ACTIVE__) return;
 	window.__CLASSIC_ACTIVE__ = true;
 
+	// ---- Theme mismatch reload killer ----------------------------
+	// YouTube's router does: documentElement.hasAttribute("dark") !==
+	// (prefers-color-scheme dark) -> append ?themeRefresh=1 and force
+	// a FULL reload on every navigation (each scroll = reload = slow).
+	// The proxied page never gets the dark attr (no YouTube cookies in
+	// the browser), so on OS-dark systems this fired constantly.
+	// Keep the attr synced with the OS preference instead.
+	try {
+		var mqT = window.matchMedia("(prefers-color-scheme: dark)");
+		var syncT = function () {
+			var d = mqT.matches, el = document.documentElement;
+			if (el && el.hasAttribute("dark") !== d) el.toggleAttribute("dark", d);
+		};
+		if (document.documentElement) {
+			syncT();
+			if (typeof MutationObserver !== "undefined") {
+				new MutationObserver(syncT).observe(document.documentElement, { attributes: true, attributeFilter: ["dark"] });
+			}
+			if (mqT.addEventListener) mqT.addEventListener("change", syncT);
+			else if (mqT.addListener) mqT.addListener(syncT);
+		}
+	} catch (e) {}
+
 	// ---- Chromium 154 View Transitions crash workaround -----------
 	// The proxied document trips a renderer STATUS_BREAKPOINT
 	// (std::map::at "key not found" in cc::draw_property_utils)

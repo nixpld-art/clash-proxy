@@ -22,7 +22,7 @@ function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=5";
+const CLIENT_JS = "/classic-client.js?v=6";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -687,6 +687,9 @@ export default async function classicRoutes(fastify) {
 				const em2 = qb.match(/(?:^|[&?])(?:error|err|ec|errcode|mediaErr|playbackErr)[^&]{0,200}/gi);
 				if (em2) errPart = " ERRS=" + em2.slice(0, 6).join(" | ");
 				dbg(`QOEB len=${body.length}${errPart} ${body.length > 4000 ? qb.slice(0, 600).replace(/[\x00-\x1f]/g, " ") : ""}`);
+			}
+			if (body && body.length && target.pathname.includes("/videoplayback") && req.method === "POST") {
+				dbg(`UMPREQ len=${body.length} head=${body.slice(0, 96).toString("hex")}`);
 			}
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player")) {
 				let keys = "?", parseOk = false, before = "?";
