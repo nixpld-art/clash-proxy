@@ -525,6 +525,13 @@ fastify.setNotFoundHandler((req, reply) => {
 			const fixed2 = resolveStrippedRedirect(req.url, req.headers.referer, req.headers.host, k);
 			if (fixed2) return reply.redirect(fixed2, 302);
 		}
+		// Bare YouTube site path (no/foreign referer) — e.g. Shorts feed
+		// scroll navigates to /shorts/<id> on our origin. Route it back
+		// through the classic proxy instead of 404ing.
+		const u = String(req.url || "");
+		if (/^\/(?:shorts|watch|results|feed|playlist|channel|c|user|trending|gaming|premium|podcasts)(\/|\?|$)|^\/@[\w.-]+(\/|\?|$)|^\/v\/[\w-]{6,}/.test(u)) {
+			return reply.redirect("/classic/https://www.youtube.com" + u, 302);
+		}
 	} catch {}
 	return reply.code(404).type("text/html").send(`
 		<!DOCTYPE html>
