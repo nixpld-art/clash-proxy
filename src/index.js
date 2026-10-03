@@ -529,7 +529,7 @@ fastify.setNotFoundHandler((req, reply) => {
 		// scroll navigates to /shorts/<id> on our origin. Route it back
 		// through the classic proxy instead of 404ing.
 		const u = String(req.url || "");
-		if (/^\/(?:shorts|watch|results|feed|playlist|channel|c|user|trending|gaming|premium|podcasts)(\/|\?|$)|^\/@[\w.-]+(\/|\?|$)|^\/v\/[\w-]{6,}/.test(u)) {
+		if (/^\/(?:shorts|watch|results|feed|playlist|channel|c|user|search|s|embed|live|trending|gaming|premium|podcasts)(\/|\?|$)|^\/@[\w.-]+(\/|\?|$)|^\/v\/[\w-]{6,}/.test(u)) {
 			return reply.redirect("/classic/https://www.youtube.com" + u, 302);
 		}
 	} catch {}
