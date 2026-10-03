@@ -847,6 +847,7 @@ export default async function classicRoutes(fastify) {
 			}
 			if (body && body.length && target.pathname.includes("/videoplayback") && req.method === "POST") {
 				dbg(`UMPREQ len=${body.length} head=${body.slice(0, 96).toString("hex")}`);
+				if (body.length <= 8192) dbg(`UMPREQFULL len=${body.length} hex=${body.toString("hex")}`);
 			}
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE === "1") {
 				let keys = "?", parseOk = false, before = "?";
@@ -1024,14 +1025,16 @@ export default async function classicRoutes(fastify) {
 			const pt = new PassThrough();
 			let peeked = false;
 			let total = 0;
+			let all = Buffer.alloc(0);
 			Readable.fromWeb(upstream.body).on("data", (c) => {
 				total += c.length;
+				if (all.length < 8192) all = Buffer.concat([all, c]);
 				if (!peeked) {
 					peeked = true;
 					dbg(`UMPHEX st=${upstream.status} cl=${outHeaders["content-length"] || "-"} te=${outHeaders["transfer-encoding"] || "-"} len=${c.length} head=${c.slice(0, 96).toString("hex")}`);
 				}
 				pt.write(c);
-			}).on("end", () => { dbg(`UMPTOT len=${total}`); pt.end(); }).on("error", (e) => pt.destroy(e));
+			}).on("end", () => { if (total <= 8192) dbg(`UMPFULL len=${total} hex=${all.toString("hex")}`); else dbg(`UMPTOT len=${total}`); pt.end(); }).on("error", (e) => pt.destroy(e));
 			return reply.code(upstream.status).headers(outHeaders).send(pt);
 		}
 
