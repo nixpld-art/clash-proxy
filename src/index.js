@@ -105,7 +105,7 @@ import chatRoutes from "./routes/chat.js";
 import adminRoutes from "./routes/admin.js";
 import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
-import classicRoutes, { classicUpgrade, resolveClassicRedirect } from "./classic.js";
+import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
 import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken } from "./auth-utils.js";
@@ -521,6 +521,10 @@ fastify.setNotFoundHandler((req, reply) => {
 	try {
 		const fixed = resolveClassicRedirect(req.url, req.headers.referer, req.headers.host);
 		if (fixed) return reply.redirect(fixed, 302);
+		for (const k of classicClientKeys(req)) {
+			const fixed2 = resolveStrippedRedirect(req.url, req.headers.referer, req.headers.host, k);
+			if (fixed2) return reply.redirect(fixed2, 302);
+		}
 	} catch {}
 	return reply.code(404).type("text/html").send(`
 		<!DOCTYPE html>

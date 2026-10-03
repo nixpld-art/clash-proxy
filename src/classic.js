@@ -203,6 +203,67 @@ export function resolveClassicRedirect(reqPath, refererHeader, hostHdr) {
 	} catch { return null; }
 }
 
+// --- stripped-referer safety net -------------------------------
+// A sandboxed about:blank iframe created by the page can run
+// history.replaceState('/watch?...') which (Chromium quirk) rewrites
+// the MAIN document's URL to an origin-relative path. Afterwards
+// relative navigations/subresources hit our origin with a Referer
+// that no longer carries the /classic/ prefix. We remember which
+// classic documents each client loaded (keyed by jar cookie / IP)
+// and reconstruct the target from an exact path+query match.
+const recentDocs = new Map(); // key -> [{ p, href, ts }]
+const RECENT_DOCS_MAX = 10;
+const RECENT_DOCS_AGE = 30 * 60 * 1000;
+
+export function classicClientKeys(req) {
+	const keys = [];
+	try {
+		for (const part of String(req.headers.cookie || "").split(";")) {
+			const s = part.trim();
+			if (s.startsWith(JAR_COOKIE + "=")) {
+				const v = s.slice(JAR_COOKIE.length + 1).trim();
+				if (/^[A-Za-z0-9_-]{8,64}$/.test(v)) keys.push("j:" + v);
+			}
+		}
+	} catch {}
+	keys.push("ip:" + String(req.ip || req.socket?.remoteAddress || "?"));
+	return keys;
+}
+
+export function rememberClassicDoc(key, target) {
+	if (!key || !target) return;
+	let arr = recentDocs.get(key);
+	if (!arr) { arr = []; recentDocs.set(key, arr); }
+	const p = target.pathname + target.search;
+	const now = Date.now();
+	for (const d of arr) {
+		if (d.p === p) { d.ts = now; d.href = target.href; return; }
+	}
+	arr.unshift({ p, href: target.href, ts: now });
+	if (arr.length > RECENT_DOCS_MAX) arr.pop();
+}
+
+export function resolveStrippedRedirect(reqPath, refererHeader, hostHdr, key) {
+	try {
+		if (!refererHeader || !reqPath || !key) return null;
+		const ref = new URL(String(refererHeader), "http://localhost");
+		if (hostHdr && ref.host !== hostHdr) return null;
+		if (ref.pathname.startsWith(PREFIX)) return null; // classic referer: other net handles it
+		const arr = recentDocs.get(key);
+		if (!arr) return null;
+		const p = ref.pathname + ref.search;
+		const now = Date.now();
+		for (const d of arr) {
+			if (d.p === p && now - d.ts < RECENT_DOCS_AGE) {
+				const abs = new URL(reqPath, d.href);
+				if (abs.protocol !== "http:" && abs.protocol !== "https:") return null;
+				return PREFIX + abs.href;
+			}
+		}
+	} catch {}
+	return null;
+}
+
 // ------------------------------------------------------------
 // HTML / CSS rewriting
 // ------------------------------------------------------------
@@ -568,6 +629,15 @@ export default async function classicRoutes(fastify) {
 		let jarId = jarIdFrom(req);
 		let newJar = false;
 		if (!jarId) { jarId = randomBytes(12).toString("hex"); newJar = true; }
+
+		// remember page navigations (for the stripped-referer safety net)
+		try {
+			const dest = String(req.headers["sec-fetch-dest"] || "");
+			const mode = String(req.headers["sec-fetch-mode"] || "");
+			if (req.method === "GET" && (dest === "document" || mode === "navigate")) {
+				for (const k of classicClientKeys(req)) rememberClassicDoc(k, target);
+			}
+		} catch {}
 
 		// --- request body (buffered so the player spoof can rewrite it) ---
 		let body = null;
