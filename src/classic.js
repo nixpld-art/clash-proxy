@@ -455,6 +455,22 @@ function stripSabr(sd) {
 	return hit;
 }
 
+// Test helper (CLASSIC_STRIP_SABR=1): delete serverAbrStreamingUrl and
+// sabr=1 params so the player falls back to plain Range-GET streaming.
+function stripSabrFromHtml(html, target) {
+	try {
+		if (!/(^|\.)youtube\.com$/i.test(target.hostname)) return html;
+		const loc = findYtPlayerResp(html);
+		if (!loc) return html;
+		let obj;
+		try { obj = JSON.parse(html.slice(loc.start, loc.end)); } catch { return html; }
+		if (!stripSabr(obj && obj.streamingData)) return html;
+		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
+		dbg(`STRIP applied vid=${(obj.videoDetails && obj.videoDetails.videoId) || "?"}`);
+		return html.slice(0, loc.start) + json + html.slice(loc.end);
+	} catch (e) { dbg("STRIP err " + e.message); return html; }
+}
+
 // YouTube pages embed a WEB player response whose formats are all
 // signatureCipher'd (we don't run scramjet's JS rewriter). Splice in
 // the ANDROID streamingData (direct URLs) so the native <video> plays.
@@ -549,6 +565,10 @@ async function renderHtml(text, target, jarId, dbgFlags) {
 			try { const a = new URL(raw, target.href); if (a.protocol === "http:" || a.protocol === "https:") base = a.href; } catch {}
 		}
 		text = text.replace(baseTag[0], "");
+	}
+
+	if (process.env.CLASSIC_STRIP_SABR === "1") {
+		text = stripSabrFromHtml(text, target);
 	}
 
 	if (!dbgFlags.includes("nosplice")) {
@@ -894,13 +914,15 @@ export default async function classicRoutes(fastify) {
 		if (req.method === "POST" && /yt-ump/i.test(ct)) {
 			const pt = new PassThrough();
 			let peeked = false;
+			let total = 0;
 			Readable.fromWeb(upstream.body).on("data", (c) => {
+				total += c.length;
 				if (!peeked) {
 					peeked = true;
 					dbg(`UMPHEX st=${upstream.status} cl=${outHeaders["content-length"] || "-"} te=${outHeaders["transfer-encoding"] || "-"} len=${c.length} head=${c.slice(0, 96).toString("hex")}`);
 				}
 				pt.write(c);
-			}).on("end", () => pt.end()).on("error", (e) => pt.destroy(e));
+			}).on("end", () => { dbg(`UMPTOT len=${total}`); pt.end(); }).on("error", (e) => pt.destroy(e));
 			return reply.code(upstream.status).headers(outHeaders).send(pt);
 		}
 
