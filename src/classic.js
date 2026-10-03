@@ -13,6 +13,7 @@
 import { Readable, PassThrough } from "node:stream";
 import { randomBytes } from "node:crypto";
 import { appendFileSync, readFileSync } from "node:fs";
+import { gunzipSync, brotliDecompressSync } from "node:zlib";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
 
 // transient diagnostics (googlevideo 403s, upstream failures) — file
@@ -560,12 +561,23 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		try { obj = JSON.parse(txt); } catch { return txt; }
 		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
 		if (st === "OK") return txt;
-		let vid = null;
-		try {
-			const jb = JSON.parse(reqBody.toString("utf8").replace(/^﻿/, ""));
-			vid = jb && jb.videoId;
-		} catch {}
-		if (!vid || !/^[\w-]{11}$/.test(vid)) { dbg(`YTFALL novid st=${st}`); return txt; }
+		// videoId: prefer the walled response's own videoDetails, else the
+		// request body (browser POSTs are content-encoding: gzip).
+		let vid = (obj.videoDetails && obj.videoDetails.videoId) || null;
+		if (!vid && reqBody) {
+			const tryParse = (buf) => {
+				try {
+					const v = JSON.parse(buf.toString("utf8").replace(/^﻿/, "")).videoId;
+					return v && /^[\w-]{11}$/.test(v) ? v : null;
+				} catch { return null; }
+			};
+			vid = tryParse(reqBody);
+			if (!vid) {
+				try { vid = tryParse(gunzipSync(reqBody)); } catch {}
+				if (!vid) { try { vid = tryParse(brotliDecompressSync(reqBody)); } catch {} }
+			}
+		}
+		if (!vid || !/^[\w-]{11}$/.test(vid)) { dbg(`YTFALL novid st=${st} enc=${reqBody ? reqBody.slice(0, 2).toString("hex") : "-"} rvid=${(obj.videoDetails && obj.videoDetails.videoId) || "-"}`); return txt; }
 		const t0 = Date.now();
 		const emb = await ssrPlayer(vid, ua);
 		if (!emb) { dbg(`YTFALL miss vid=${vid} st=${st}`); return txt; }
