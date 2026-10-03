@@ -327,9 +327,63 @@ function stripYTConsent(html) {
 	return { html: out, cut };
 }
 
+// ============================================================
+// Proxy engine mode — Auto (SW with Classic fallback), forced
+// Service Worker, or forced Classic (no Service Worker at all).
+// ============================================================
+const PROXY_MODE_KEY = "clash_proxy_mode";
+let classicMode = false;
+
+function getProxyMode() {
+	try {
+		const v = localStorage.getItem(PROXY_MODE_KEY);
+		return v === "sw" || v === "classic" ? v : "auto";
+	} catch (e) { return "auto"; }
+}
+
+function enableClassicMode(reason) {
+	const first = !classicMode;
+	classicMode = true;
+	console.log("[Clash Proxy] Classic mode active:", reason);
+	if (first) {
+		fetch("/api/log", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ type: "classic_mode", reason: String(reason || "").slice(0, 120) })
+		}).catch(() => {});
+		try { setStatus("ready", "Classic mode active — no Service Worker needed"); } catch (e) {}
+	}
+}
+
+// Settings dropdown (Proxy Engine card in index.html)
+const settingProxyMode = document.getElementById("setting-proxy-mode");
+if (settingProxyMode) {
+	try { settingProxyMode.value = getProxyMode(); } catch (e) {}
+	settingProxyMode.addEventListener("change", () => {
+		try { localStorage.setItem(PROXY_MODE_KEY, settingProxyMode.value); } catch (e) {}
+		location.reload();
+	});
+}
+
 const initSWPromise = (async function initSW() {
 	try {
-		const registration = typeof registerSW === "function" ? await registerSW() : null;
+		if (getProxyMode() === "classic") {
+			enableClassicMode("forced by settings");
+			return false;
+		}
+
+		// Register with a timeout: on networks that block Service
+		// Workers, register()/ready can hang forever instead of throwing.
+		let registration = null;
+		try {
+			registration = await Promise.race([
+				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW unavailable")),
+				new Promise((_, rej) => setTimeout(() => rej(new Error("service-worker-timeout")), 6000)),
+			]);
+		} catch (swErr) {
+			enableClassicMode(swErr && swErr.message ? swErr.message : swErr);
+			return false;
+		}
 
 		if (navigator.serviceWorker && !navigator.serviceWorker.controller) {
 			await new Promise((res) => {
@@ -584,12 +638,21 @@ const initSWPromise = (async function initSW() {
 			}
 		}
 
+		// If the SW/scramjet stack didn't fully come up (blocked
+		// registration, missing controller, transport failure), fall
+		// back to the Service-Worker-free Classic engine instead of
+		// hanging on "Connecting to Proxy...".
+		if (!sjController) {
+			enableClassicMode("service worker or controller unavailable");
+			return false;
+		}
+
 		setStatus("ready", "Ready — Enter a URL or search query");
 		return true;
 	} catch (err) {
 		console.error("[Clash Proxy] Initialization error:", err);
 		fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "initSW_error", message: err.message, stack: err.stack }) }).catch(()=>{});
-		setStatus("ready", "Ready — Enter a URL or search query");
+		enableClassicMode(err && err.message ? err.message : err);
 		return false;
 	}
 })();
@@ -729,7 +792,7 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 			await initSWPromise;
 
 			let routed = false;
-			if (sjController) {
+			if (!classicMode && sjController) {
 				try {
 					const frame = sjController.createFrame(iframe);
 					frame.go(targetUrl);
@@ -748,7 +811,10 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 			}
 
 			if (!routed) {
-				iframe.src = "/scram/service/" + encodeURIComponent(targetUrl);
+				// Classic mode (or scramjet failed): server-side proxy, no SW
+				iframe.src = classicMode
+					? "/classic/" + targetUrl
+					: "/scram/service/" + encodeURIComponent(targetUrl);
 			}
 
 			tab.loading = false;

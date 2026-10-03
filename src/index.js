@@ -105,6 +105,7 @@ import chatRoutes from "./routes/chat.js";
 import adminRoutes from "./routes/admin.js";
 import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
+import classicRoutes, { classicUpgrade, resolveClassicRedirect } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
 import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken } from "./auth-utils.js";
@@ -149,7 +150,10 @@ const fastify = Fastify({
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				if (req.url.endsWith("/wisp/") || req.url.includes("/wisp")) {
+				if (req.url.startsWith("/classic-ws")) {
+					// Classic mode (no Service Worker) WebSocket pipe
+					classicUpgrade(req, socket, head);
+				} else if (req.url.endsWith("/wisp/") || req.url.includes("/wisp")) {
 					wisp.routeRequest(req, socket, head, { TCPSocket: WarpTCPSocket });
 				} else if (req.url.startsWith("/ws/presence") || req.url.includes("/ws")) {
 					presenceWss.handleUpgrade(req, socket, head, (ws) => {
@@ -172,6 +176,8 @@ fastify.register(chatRoutes);
 fastify.register(adminRoutes);
 fastify.register(loungeRoutes);
 fastify.register(aiRoutes);
+// Classic mode — Service-Worker-free proxy engine (/classic/<url>)
+fastify.register(classicRoutes);
 
 // API endpoint for games list
 fastify.get("/api/games", async (request, reply) => {
@@ -292,7 +298,8 @@ fastify.addHook("onResponse", async (req, reply) => {
 		const u = req.url;
 		if (u.startsWith("/scram") || u.startsWith("/baremux") || u.startsWith("/epoxy") ||
 			u.startsWith("/libcurl") || u.startsWith("/games/") || u.startsWith("/controller/") ||
-			u.startsWith("/wisp") || u.startsWith("/ws") || u.startsWith("/api/panel/")) return;
+			u.startsWith("/wisp") || u.startsWith("/ws") || u.startsWith("/api/panel/") ||
+			u.startsWith("/classic")) return;
 		if (/\.(js|css|png|jpe?g|svg|ico|wasm|woff2?|map|webp)(\?|$)/i.test(u)) return;
 		const ip = "anon-" + createHash("sha256").update(String(req.ip || "-")).digest("hex").slice(0, 8);
 		const line = `${new Date().toISOString()} ${req.method} ${u} ${reply.statusCode} ${Math.round(reply.elapsedTime || 0)}ms ${ip}\n`;
@@ -508,6 +515,13 @@ fastify.post("/api/log", async (req, reply) => {
 
 // 404 handler
 fastify.setNotFoundHandler((req, reply) => {
+	// Classic mode safety net: a proxied page requested a path our
+	// rewriter missed — resolve it against the target URL in the
+	// Referer and bounce it back through /classic/.
+	try {
+		const fixed = resolveClassicRedirect(req.url, req.headers.referer, req.headers.host);
+		if (fixed) return reply.redirect(fixed, 302);
+	} catch {}
 	return reply.code(404).type("text/html").send(`
 		<!DOCTYPE html>
 		<html><head><title>404 — Clash Proxy</title>

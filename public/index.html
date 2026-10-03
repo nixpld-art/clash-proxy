@@ -39,7 +39,7 @@
 	<script src="search.js?v=30" defer></script>
 	<script src="shield.js?v=30" defer></script>
 	<script src="particles.js?v=31" defer></script>
-	<script src="app.js?v=58" defer></script>
+	<script src="app.js?v=59" defer></script>
 	<script src="clash-ai.js?v=1" defer></script>
 </head>
 
@@ -733,6 +733,28 @@
 							<option value="0.85">85%</option>
 							<option value="0.7">70%</option>
 							<option value="0.5">50% (Max FPS)</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- Proxy Engine -->
+				<div class="settings-card">
+					<div class="settings-card-header-flex">
+						<div>
+							<h3 class="card-heading">⚙️ Proxy Engine</h3>
+							<p class="card-subheading">How Clash Proxy routes sites. <b>Auto</b> uses the Service Worker when available and silently falls back to <b>Classic</b> when your network blocks it — no setup needed.</p>
+						</div>
+					</div>
+
+					<div class="settings-item" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; margin-top: 12px;">
+						<div class="settings-item-text">
+							<div class="settings-item-title">Engine</div>
+							<div class="settings-item-desc">Classic mode needs no Service Worker, so it works on school networks that block them. Applies after a quick reload.</div>
+						</div>
+						<select id="setting-proxy-mode" class="form-input" style="width: 210px; flex: none;">
+							<option value="auto">Auto (recommended)</option>
+							<option value="sw">Service Worker</option>
+							<option value="classic">Classic (no SW)</option>
 						</select>
 					</div>
 				</div>
