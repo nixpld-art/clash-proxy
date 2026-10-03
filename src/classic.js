@@ -457,6 +457,24 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 	} catch (e) { dbg(`SPLICE throw ${String(e.message).slice(0, 80)}`); return html; }
 }
 
+function scanGvUrls(text, target) {
+	try {
+		const ms = text.match(/https:\/\/[a-z0-9-]+\.googlevideo\.com\/videoplayback\?[^"\\\s<>]{0,3000}/g);
+		if (!ms) return;
+		const hosts = new Set();
+		let bogus = "";
+		for (const u of ms) {
+			const hm = u.match(/https:\/\/([a-z0-9-]+)\.googlevideo\.com/);
+			if (hm) hosts.add(hm[1]);
+			if (!bogus) {
+				const em = u.match(/expire=(\d+)/);
+				if (em && parseInt(em[1], 10) > 2000000000) bogus = u.slice(0, 180);
+			}
+		}
+		dbg(`GVURL path=${target.pathname} n=${ms.length} hosts=${[...hosts].join(",")}${bogus ? " BOGUS=" + bogus : ""}`);
+	} catch {}
+}
+
 function injectShim(html, base, cookieHeader, dbgFlags) {
 	if (dbgFlags && dbgFlags.includes("noshim")) return html;
 	const cfg = JSON.stringify({ base, prefix: PREFIX, cookie: cookieHeader || "" }).replace(/</g, "\\u003c");
@@ -757,6 +775,7 @@ export default async function classicRoutes(fastify) {
 		const charsetOk = !charset || charset === "utf-8" || charset === "utf8";
 		if (/text\/html/i.test(ct) && charsetOk) {
 			const text = await upstream.text();
+			scanGvUrls(text, target);
 			delete outHeaders["content-length"];
 			const dbgFlags = String(req.headers["x-clash-dbg"] || "").toLowerCase();
 			const html = await renderHtml(text, target, jarId, dbgFlags);
@@ -783,6 +802,15 @@ export default async function classicRoutes(fastify) {
 			}
 			const withShim = workerBootstrap(target.href) + "\n" + src;
 			return reply.code(upstream.status).headers(outHeaders).type("application/javascript; charset=utf-8").send(withShim);
+		}
+
+		// --- JSON/text bodies: scan for foreign googlevideo urls (diagnostics) ---
+		const ctL = (ct || "").toLowerCase();
+		if (ctL.includes("json") || (ctL.startsWith("text/") && !/javascript|css/.test(ctL))) {
+			const bodyTxt = await upstream.text();
+			scanGvUrls(bodyTxt, target);
+			delete outHeaders["content-length"];
+			return reply.code(upstream.status).headers(outHeaders).type(ct || "text/plain").send(bodyTxt);
 		}
 
 		// --- everything else: stream through (Range/206 intact) ---
