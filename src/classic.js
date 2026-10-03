@@ -429,29 +429,32 @@ async function androidPlayer(videoId, jarId) {
 // YouTube pages embed a WEB player response whose formats are all
 // signatureCipher'd (we don't run scramjet's JS rewriter). Splice in
 // the ANDROID streamingData (direct URLs) so the native <video> plays.
-async function spliceYtStreaming(html, target, jarId) {
+async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 	try {
 		if (!/(^|\.)youtube\.com$/i.test(target.hostname)) return html;
 		const loc = findYtPlayerResp(html);
-		if (!loc) return html;
+		if (!loc) { if (ytVideoIdFromUrl(target)) dbg(`SPLICE noloc len=${html.length}`); return html; }
 		let obj;
-		try { obj = JSON.parse(html.slice(loc.start, loc.end)); } catch { return html; }
+		try { obj = JSON.parse(html.slice(loc.start, loc.end)); } catch (e) { dbg(`SPLICE parsefail ${String(e.message).slice(0, 60)}`); return html; }
 		const sd = obj && obj.streamingData;
 		const fmts = sd ? [...(sd.formats || []), ...(sd.adaptiveFormats || [])] : [];
-		if (fmts.length && fmts.some((f) => f.url)) return html; // already direct
+		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
+		if (fmts.length && fmts.some((f) => f.url)) { dbg(`SPLICE direct st=${st} fmts=${fmts.length}`); return html; }
 		const vid = (obj.videoDetails && obj.videoDetails.videoId) || ytVideoIdFromUrl(target);
-		if (!vid) return html;
+		if (!vid) { dbg(`SPLICE novid st=${st} fmts=${fmts.length}`); return html; }
+		const t0 = Date.now();
 		const alt = await androidPlayer(vid, jarId);
-		if (!alt || !alt.streamingData) return html;
+		if (!alt || !alt.streamingData) { dbg(`SPLICE alt_null vid=${vid} st=${st} ms=${Date.now() - t0}`); return html; }
 		obj.streamingData = alt.streamingData;
 		if (obj.playabilityStatus && obj.playabilityStatus.status !== "OK" &&
 			alt.playabilityStatus && alt.playabilityStatus.status === "OK") {
 			obj.playabilityStatus = alt.playabilityStatus;
 		}
+		dbg(`SPLICE ok vid=${vid} st=${st}->${obj.playabilityStatus.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} ms=${Date.now() - t0}`);
 		// escape '<' so a description containing "</script>" can't end the tag
 		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
 		return html.slice(0, loc.start) + json + html.slice(loc.end);
-	} catch { return html; }
+	} catch (e) { dbg(`SPLICE throw ${String(e.message).slice(0, 80)}`); return html; }
 }
 
 function injectShim(html, base, cookieHeader, dbgFlags) {
@@ -478,7 +481,7 @@ async function renderHtml(text, target, jarId, dbgFlags) {
 
 	if (!dbgFlags.includes("nosplice")) {
 		// YouTube: swap ciphered embedded streams for direct ANDROID ones
-		text = await spliceYtStreaming(text, target, jarId);
+		text = await spliceYtStreaming(text, target, jarId, dbgFlags);
 	}
 
 	if (dbgFlags.includes("norewrite")) return injectShim(text, base, cookieHeaderFor(jarId, target), dbgFlags);
