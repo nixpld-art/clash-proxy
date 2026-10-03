@@ -523,33 +523,40 @@ const ssrPlayerCache = new Map(); // videoId -> { t, data, neg }
 async function ssrPlayer(videoId, ua) {
 	const hit = ssrPlayerCache.get(videoId);
 	if (hit && Date.now() - hit.t < (hit.neg ? 45000 : 600000)) return hit.data;
+	const t0 = Date.now();
 	const remember = (data, neg) => {
 		if (ssrPlayerCache.size < 80) ssrPlayerCache.set(videoId, { t: Date.now(), data, neg });
 		return data;
 	};
+	// shorts are walled on /watch but served on /shorts (and vice versa
+	// can happen) — try both shapes per attempt
+	const urls = ["https://www.youtube.com/watch?v=" + videoId, "https://www.youtube.com/shorts/" + videoId];
 	for (let attempt = 0; attempt < 2; attempt++) {
-		try {
-			const r = await fetch("https://www.youtube.com/watch?v=" + videoId, {
-				headers: {
-					"user-agent": ua || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-					"accept-language": "en-GB,en;q=0.9",
-					cookie: CANON_SOCS,
-				},
-				redirect: "manual",
-				signal: AbortSignal.timeout(20000),
-			});
-			const html = await r.text();
-			const loc = findYtPlayerResp(html);
-			if (loc) {
-				const emb = JSON.parse(html.slice(loc.start, loc.end));
-				const st = emb && emb.playabilityStatus && emb.playabilityStatus.status;
-				if (st === "OK" && emb.streamingData) return remember(emb, false);
-				dbg(`SSRFAIL vid=${videoId} st=${st} http=${r.status}`);
-				return remember(null, true);
-			}
-			dbg(`SSRNOLOC vid=${videoId} http=${r.status} len=${html.length}`);
-		} catch (e) { dbg(`SSRERR vid=${videoId} ${e.message}`); }
-		await new Promise((r) => setTimeout(r, 500));
+		for (const url of urls) {
+			try {
+				const r = await fetch(url, {
+					headers: {
+						"user-agent": ua || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+						"accept-language": "en-GB,en;q=0.9",
+						cookie: CANON_SOCS,
+					},
+					redirect: "manual",
+					signal: AbortSignal.timeout(20000),
+				});
+				const html = await r.text();
+				const loc = findYtPlayerResp(html);
+				if (loc) {
+					const emb = JSON.parse(html.slice(loc.start, loc.end));
+					const st = emb && emb.playabilityStatus && emb.playabilityStatus.status;
+					if (st === "OK" && emb.streamingData) {
+						dbg(`SSROK vid=${videoId} via=${url.slice(24)} ms=${Date.now() - t0}`);
+						return remember(emb, false);
+					}
+					dbg(`SSRFAIL vid=${videoId} via=${url.slice(24)} st=${st} http=${r.status}`);
+				} else dbg(`SSRNOLOC vid=${videoId} via=${url.slice(24)} http=${r.status} len=${html.length}`);
+			} catch (e) { dbg(`SSRERR vid=${videoId} ${e.message}`); }
+			await new Promise((r) => setTimeout(r, 300));
+		}
 	}
 	return remember(null, true);
 }
