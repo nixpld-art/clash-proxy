@@ -647,9 +647,13 @@ export default async function classicRoutes(fastify) {
 			dbg(`BODY ${req.method} ${target.pathname.slice(0, 40)} len=${body ? body.length : 0} cl=${req.headers["content-length"] || "-"} ct=${String(req.headers["content-type"] || "-").slice(0, 40)}`);
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player")) {
 				let keys = "?", parseOk = false, before = "?";
-				try { const j0 = JSON.parse(body.toString("utf8")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
+				try { const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, "")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
 				const spoofed = spoofPlayerBody(body);
 				dbg(`PLAYER_IN len=${body.length} parse=${parseOk} keys=[${keys}] before=${before} spoofed=${!!spoofed}`);
+				if (!parseOk) {
+					const peek = body.slice(0, 200).toString("latin1").replace(/[\x00-\x1f]/g, " ");
+					dbg(`PLAYER_PEEK enc=${req.headers["content-encoding"] || "-"} ct=${req.headers["content-type"] || "-"} head=${peek}`);
+				}
 				if (spoofed) { body = spoofed; isPlayerSpoof = true; }
 			}
 		}
