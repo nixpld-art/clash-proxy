@@ -79,6 +79,23 @@
 	}
 	if (!targetBase) targetBase = unwrap(location.href) || location.href;
 
+	// ---- clean address at boot ------------------------------------
+	// SPAs read location.pathname before anything else and route an
+	// unfamiliar "/classic/https://..." to their own 404 (TikTok did
+	// exactly that). Rewrite the document URL to the target's
+	// same-origin path immediately — our server reconstructs the
+	// target from the recent-docs map / referer on full reloads.
+	try {
+		var bootT = unwrap(location.href);
+		if (bootT) {
+			try {
+				var bootU = new NativeURL(bootT);
+				history.replaceState(history.state, document.title,
+					bootU.pathname + bootU.search + bootU.hash);
+			} catch (e2) {}
+		}
+	} catch (e) {}
+
 	function shouldRewrite(s) {
 		if (!s) return false;
 		if (/^(data|blob|javascript|mailto|tel|sms|about|chrome|chrome-extension|devtools|file):/i.test(s)) return false;
@@ -284,16 +301,24 @@
 	patchWorker("SharedWorker");
 
 	// ---- history (keeps targetBase in sync for relative URLs) ----
+	// History entries store the target's same-origin path (never the
+	// /classic/ form) so site routers always see native-looking
+	// paths; pathTargets maps each entry back to its full target URL.
 	try {
+		var pathTargets = {};
 		var nativePush = history.pushState;
 		var nativeReplace = history.replaceState;
 		function track(url) {
 			if (url == null) return null;
-			var abs;
-			try { abs = new NativeURL(String(url), targetBase); } catch (e) { return null; }
+			var s = String(url);
+			var abs = null;
+			var uw = unwrap(s);
+			try { if (uw) abs = new NativeURL(uw); else abs = new NativeURL(s, targetBase); } catch (e) { return null; }
 			if (abs.protocol !== "http:" && abs.protocol !== "https:") return null;
 			targetBase = abs.href;
-			return ORIGIN + PREFIX + abs.href;
+			var rel = abs.pathname + abs.search + abs.hash;
+			pathTargets[rel] = abs.href;
+			return rel;
 		}
 		history.pushState = function (state, title, url) {
 			var u = track(url);
@@ -305,7 +330,9 @@
 		};
 		window.addEventListener("popstate", function () {
 			var t = unwrap(location.href);
-			if (t) targetBase = t;
+			if (t) { targetBase = t; return; }
+			var m = pathTargets[location.pathname + location.search];
+			if (m) targetBase = m;
 		});
 	} catch (e) {}
 
