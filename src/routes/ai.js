@@ -79,7 +79,7 @@ export async function validateOpenRouterKey(key) {
 	} catch (e) { return { valid: false, detail: "probe failed: " + e.message }; }
 }
 
-async function callOpenRouter(messages, openrouterKey) {
+async function callOpenRouter(messages, openrouterKey, maxTokens = 700, temperature = 0.7) {
 	const models = [...FREE_MODELS];
 	if (lastWorkingModel && models.includes(lastWorkingModel)) {
 		models.splice(models.indexOf(lastWorkingModel), 1);
@@ -97,7 +97,7 @@ async function callOpenRouter(messages, openrouterKey) {
 			const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 				method: "POST",
 				headers,
-				body: JSON.stringify({ model: models[i], messages, max_tokens: 700, temperature: 0.7 }),
+				body: JSON.stringify({ model: models[i], messages, max_tokens: maxTokens, temperature }),
 				signal: ac.signal,
 			});
 			if (res.ok) {
@@ -119,8 +119,8 @@ async function callOpenRouter(messages, openrouterKey) {
 // never abort too early (an aborted request keeps holding the queue
 // slot), wait out 429 "queue full" states, retry patiently, then fall
 // back to the legacy GET path.
-async function askPollinations(messages) {
-	const payload = JSON.stringify({ model: "openai", messages, max_tokens: 400, temperature: 0.7 });
+async function askPollinations(messages, maxTokens = 400, temperature = 0.7, legacy = true) {
+	const payload = JSON.stringify({ model: "openai", messages, max_tokens: maxTokens, temperature });
 	for (let attempt = 0; attempt < 3; attempt++) {
 		if (Date.now() > aiDeadline) return null;
 		if (attempt) await delay(5000); // let any previous generation finish
@@ -146,6 +146,7 @@ async function askPollinations(messages) {
 	}
 	// Final fallback: legacy GET path (different code path, often alive
 	// when POST generation is struggling).
+	if (!legacy) return null;
 	try {
 		if (Date.now() > aiDeadline) return null;
 		const sys = messages.find((m) => m.role === "system")?.content || "";
@@ -242,18 +243,27 @@ async function askKobold(messages) {
 // as opts.openrouterKey). Returns a reply string, or null on total failure.
 export async function askAIReply(messages, opts = {}) {
 	aiDeadline = Date.now() + (opts.timeoutMs || 75000);
-	const steps = [
-		() => callOpenRouter(messages, opts.openrouterKey || ""),
-		() => askPollinations(messages),
-		() => askGemini(messages),
-		() => askHuggingFace(messages),
-		() => askKobold(messages),
-	];
+	const agent = !!opts.agent;
+	const maxTokens = opts.maxTokens || (agent ? 3000 : 0);
+	const steps = agent
+		// Agent mode: only backends that honour the full multi-turn history.
+		? [
+			() => callOpenRouter(messages, opts.openrouterKey || "", maxTokens, 0.3),
+			() => askPollinations(messages, maxTokens, 0.3, false),
+			() => askGemini(messages),
+		]
+		: [
+			() => callOpenRouter(messages, opts.openrouterKey || ""),
+			() => askPollinations(messages),
+			() => askGemini(messages),
+			() => askHuggingFace(messages),
+			() => askKobold(messages),
+		];
 	for (const step of steps) {
 		if (Date.now() > aiDeadline) break;
 		try {
 			const text = await step();
-			if (text) return String(text).slice(0, 6000);
+			if (text) return String(text).slice(0, agent ? 30000 : 6000);
 		} catch { /* try next backend */ }
 	}
 	return null;

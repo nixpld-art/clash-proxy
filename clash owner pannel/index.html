@@ -99,6 +99,54 @@
 	.toggle-row input { accent-color: var(--gold); }
 	.sect-title { font-size: 15px; font-weight: 800; margin: 4px 0 12px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 
+	
+	/* Modern Theme Enhancements */
+	:root {
+		--bg: #090a10; --panel: #11121d; --panel2: #171827; --border: #23253b;
+		--gold: #f59e0b; --gold-dim: rgba(245, 158, 11, 0.12); --purple: #8b5cf6;
+		--text: #f1f2f8; --muted: #83859f; --ok: #10b981; --danger: #ef4444; --blue: #3b82f6;
+		--font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	}
+	body { font-family: var(--font); letter-spacing: -0.01em; }
+	.topbar { background: rgba(17, 18, 29, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+	.tabs { background: rgba(17, 18, 29, 0.7); backdrop-filter: blur(10px); }
+	.tab { transition: all 0.2s ease; border-radius: 8px 8px 0 0; }
+	.tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+	.tab.active { color: var(--gold); background: var(--panel); border-color: var(--border); box-shadow: 0 -2px 10px rgba(0,0,0,0.2); }
+	.card { box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: border-color 0.2s; }
+	.card:hover { border-color: color-mix(in srgb, var(--border) 80%, var(--purple)); }
+
+	/* Player Toolkit styles */
+	.tk-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(139, 92, 246, 0.3); }
+	.tk-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-top: 8px; }
+	.tk-badge { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+	.tk-badge:hover { border-color: var(--gold); }
+	.tk-badge.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+	.tk-badge .b-icon { font-size: 16px; }
+
+	/* Jarvis AI Agent Styles */
+	.jv-layout { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+	@media (max-width: 900px) { .jv-layout { grid-template-columns: 1fr; } }
+	.jv-main { display: flex; flex-direction: column; height: 680px; }
+	.jv-log { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; }
+	.jv-msg { max-width: 88%; padding: 10px 14px; border-radius: 12px; line-height: 1.55; word-break: break-word; white-space: pre-wrap; position: relative; }
+	.jv-ai { background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); align-self: flex-start; color: var(--text); }
+	.jv-user { background: var(--gold-dim); border: 1px solid rgba(245, 158, 11, 0.3); align-self: flex-end; color: #fff; }
+	.jv-trace { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+	.jv-step { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 11.5px; font-family: monospace; }
+	.jv-step.ok { border-left: 3px solid var(--ok); }
+	.jv-step.fail { border-left: 3px solid var(--danger); }
+	.jv-step summary { cursor: pointer; color: var(--muted); font-weight: 600; outline: none; }
+	.jv-step pre { margin-top: 6px; white-space: pre-wrap; color: var(--text); max-height: 140px; overflow-y: auto; font-size: 11px; }
+	.jv-card-pending { background: rgba(245, 158, 11, 0.08); border: 1px dashed var(--gold); border-radius: 10px; padding: 12px; margin-top: 8px; }
+	.jv-card-pending .title { font-weight: 700; color: var(--gold); font-size: 12.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+	.jv-card-pending .detail { font-size: 12px; color: var(--text); margin-bottom: 10px; font-family: monospace; background: rgba(0,0,0,0.25); padding: 6px 8px; border-radius: 6px; }
+	.jv-compose { margin-top: 10px; display: flex; gap: 8px; align-items: flex-end; }
+	.jv-compose textarea { resize: none; min-height: 44px; max-height: 120px; padding: 10px 12px; }
+	.jv-caps { list-style: none; padding: 0; margin: 0 0 12px 0; font-size: 12px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+	.jv-caps b { color: var(--text); }
+	.jv-caps code { background: rgba(255,255,255,0.06); padding: 2px 4px; border-radius: 4px; font-size: 11px; }
+
 	/* Jarvis AI tab */
 	.jv-log { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; height: 360px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
 	.jv-msg { max-width: 92%; padding: 8px 11px; border-radius: 10px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; }
@@ -123,6 +171,7 @@
 <div class="tabs" id="tabs-bar">
 	<button class="tab active" data-tab="ranks">🏅 Ranks &amp; People</button>
 	<button class="tab" data-tab="games">🎮 Game Ops</button>
+	<button class="tab" data-tab="toolkit">🧰 Player Toolkit</button>
 	<button class="tab" data-tab="moderation">🛡️ Moderation <span class="cnt" id="cnt-reports" style="display:none"></span></button>
 	<button class="tab" data-tab="system">⚙️ System</button>
 	<button class="tab" data-tab="comms">💬 Comms</button>
@@ -177,7 +226,7 @@
 
 <!-- ============ TAB: GAME OPS ============ -->
 <div class="tab-pane" id="tab-games">
-	<div class="sect-title">🎮 Game Operations <span class="pill badge-live">live data</span> <span class="pill badge-sim">simulated match infra</span></div>
+	<div class="sect-title">🎮 Game Operations</div>
 
 	<div class="card">
 		<h2>⚡ XP Event Activator <span class="pill badge-live" id="xpev-status">checking…</span></h2>
@@ -191,84 +240,113 @@
 			<button class="btn danger" id="xpev-stop" style="display:none">■ Stop Event</button>
 			<span class="muted" id="xpev-countdown"></span>
 		</div>
-		<div class="note">Network-wide: the live XP engine multiplies all XP gains while the event runs (verified working via addXp hook).</div>
 	</div>
 
 	<div class="grid c2">
 		<div class="card">
-			<h2>📡 Live Game Sessions <span class="pill badge-live">live</span></h2>
-			<p class="sec-hint">Who is playing what, right now.</p>
-			<div class="muted" style="margin-bottom:8px">Players active in games during the last 60 minutes (from activity telemetry).</div>
-			<div id="games-activity" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
-			<button class="btn small" id="games-activity-refresh" style="margin-top:10px">↻ Refresh</button>
+			<h2>🧪 Staged Games <span class="pill" id="staged-count">0</span><button class="btn small" id="staged-refresh">↻</button></h2>
+			<p class="sec-hint">Games Jarvis downloaded that are waiting for approval. Approve to publish, reject to discard.</p>
+			<div id="staged-list" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
 		</div>
-
 		<div class="card">
-			<h2>🖥️ Server Spawning <span class="pill badge-sim">simulated</span></h2>
-			<p class="sec-hint">Spin up simulated game servers (demo controls — not wired to real hosts yet).</p>
-			<div class="row">
-				<div class="grow"><label class="muted">Game / category</label><input type="text" id="spawn-game" placeholder="e.g. Platformer" /></div>
-				<div class="grow"><label class="muted">Region</label>
-					<select id="spawn-region"><option>auto</option><option>na</option><option>eu</option><option>asia</option></select></div>
-				<label class="muted" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="spawn-with-match" checked /> with match</label>
-				<button class="btn gold" id="spawn-btn">⚡ Spin Up Instance</button>
-			</div>
-			<div id="instance-list" class="grid" style="gap:8px;margin-top:10px"><div class="empty">No instances.</div></div>
+			<h2>📡 Live Game Sessions <span class="pill badge-live">live</span><button class="btn small" id="games-activity-refresh">↻</button></h2>
+			<p class="sec-hint">Players active in games during the last 60 minutes.</p>
+			<div id="games-activity" class="grid" style="gap:8px"><div class="empty">Loading…</div></div>
 		</div>
 	</div>
 
 	<div class="card">
-		<h2>🕹️ Live Match Spectator &amp; Controls <span class="pill badge-sim">simulated</span></h2>
-		<p class="sec-hint">Watch and manage live matches (simulated preview controls).</p>
-		<div class="muted">The proxy hosts single-player HTML5 games + Lounge parties — there is no multiplayer match engine, so this console drives a simulated match grid with the full spectator toolset.</div>
-		<div class="row" style="margin-top:10px">
-			<div class="grow"><label class="muted">Match</label><select id="spec-match"><option value="">— no matches —</option></select></div>
-			<button class="btn gold" id="spec-join">👁 Connect Spectator</button>
-			<button class="btn" id="spec-queue">▶ Queue: Start Now</button>
-			<button class="btn danger" id="spec-force-draw">⚖ Force End: Draw</button>
-			<button class="btn danger" id="spec-force-reset">↺ Force End: Reset</button>
+		<h2>➕ Add a Game</h2>
+		<p class="sec-hint">Download a game's code onto your server, or embed it live through the proxy. Leave the URL empty and Jarvis will search the internet for the title.</p>
+		<div class="row">
+			<input type="text" id="gm-title" class="grow" placeholder="Game title" />
+			<input type="url" id="gm-url" class="grow" placeholder="https://… (optional)" />
+			<button class="btn gold" id="gm-add">⬇ Download</button>
+			<button class="btn" id="gm-embed">🔗 Embed only</button>
 		</div>
-		<div class="toggle-row">
-			<label><input type="checkbox" id="ov-boxes" checked /> Collision boxes</label>
-			<label><input type="checkbox" id="ov-items" checked /> Item locations</label>
-			<label><input type="checkbox" id="ov-stats" checked /> Game statistics</label>
-			<label><input type="checkbox" id="ov-ghost" checked /> Admin avatar (ghost)</label>
-		</div>
-		<canvas id="spec-canvas" width="900" height="300"></canvas>
-		<div class="grid c3" style="margin-top:10px">
-			<div class="card" style="padding:11px"><h2 style="font-size:11px">⏱ Performance</h2>
-			<p class="sec-hint">Quick CPU / memory snapshot of the server.</p>
-				<div class="muted">Tick-rate: <b id="perf-tick" style="color:var(--gold)">—</b></div>
-				<div class="muted">Latency: <b id="perf-ping" style="color:var(--gold)">—</b></div>
-				<div class="muted">Packet loss: <b id="perf-loss" style="color:var(--gold)">—</b></div>
-			</div>
-			<div class="card" style="padding:11px"><h2 style="font-size:11px">📍 Player Teleport</h2>
-			<p class="sec-hint">Jump any player to a location (simulated).</p>
-				<div class="row"><input type="text" id="tp-player" class="grow" placeholder="player name" style="width:110px" />
-				<input type="number" id="tp-x" placeholder="x" style="width:70px" /><input type="number" id="tp-y" placeholder="y" style="width:70px" />
-				<button class="btn small gold" id="tp-btn">Teleport</button></div>
-			</div>
-			<div class="card" style="padding:11px"><h2 style="font-size:11px">📋 Match State</h2>
-			<p class="sec-hint">See or reset the current match state (simulated).</p>
-				<div class="muted" id="match-state">—</div>
-			</div>
+		<div class="muted" id="gm-status" style="margin-top:8px"></div>
+	</div>
+
+	<div class="card">
+		<h2>📚 Game Library <span class="pill" id="lib-count">…</span><button class="btn small" id="lib-scan">↻ Rescan</button></h2>
+		<div class="form-row"><input type="search" id="lib-q" placeholder="Filter games…" /></div>
+		<div style="overflow-x:auto;max-height:420px;overflow-y:auto"><table>
+			<thead><tr><th>Title</th><th>File</th><th></th></tr></thead>
+			<tbody id="lib-tbody"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+		</table></div>
+	</div>
+</div>
+
+<!-- ============ TAB: PLAYER TOOLKIT ============ -->
+<div class="tab-pane" id="tab-toolkit">
+	<div class="sect-title">🧰 Player Toolkit <span class="chip purple">every rank power in one place</span></div>
+	<div class="card">
+		<h2>🔎 Find a player</h2>
+		<p class="sec-hint">Badges, coins, cosmetics, passwords, roles, God Mode, userscripts and game saves — everything the other ranks can do, from here.</p>
+		<div class="row">
+			<input type="text" id="tk-q" class="grow" placeholder="username…" list="tk-users" autocomplete="off" />
+			<datalist id="tk-users"></datalist>
+			<button class="btn gold" id="tk-go">Load player</button>
 		</div>
 	</div>
 
-	<div class="grid c2">
-		<div class="card">
-			<h2>🗺️ Map Rotation <span class="pill badge-sim">config</span></h2>
-			<p class="sec-hint">Pick which maps cycle in order on servers.</p>
-			<div class="muted" style="margin-bottom:8px">One category per line, maps separated by commas.</div>
-			<textarea id="map-rotation" rows="5" placeholder="Platformer: Classic Run, Sky Dash&#10;Arcade: Neon Grid"></textarea>
-			<button class="btn gold" id="map-save" style="margin-top:9px">💾 Save Rotation</button>
+	<div id="tk-body" style="display:none">
+		<div class="card tk-head" id="tk-head"></div>
+
+		<div class="grid c2">
+			<div class="card">
+				<h2>🏆 Badges / Achievements
+					<button class="btn small ok" id="tk-badge-all">Grant all</button>
+					<button class="btn small danger" id="tk-badge-none">Revoke all</button></h2>
+				<p class="sec-hint">Click a badge to toggle it on this player.</p>
+				<div id="tk-badges" class="tk-badges"></div>
+			</div>
+
+			<div class="card">
+				<h2>💰 Economy &amp; Cosmetics</h2>
+				<div class="form-row"><label>Coins</label>
+					<div class="row">
+						<input type="number" id="tk-coins" class="grow" placeholder="amount" />
+						<button class="btn small ok" id="tk-coins-add">+ Add</button>
+						<button class="btn small" id="tk-coins-sub">− Remove</button>
+						<button class="btn small gold" id="tk-coins-set">Set to</button>
+					</div></div>
+				<div class="form-row"><label>Bazaar cosmetic</label>
+					<div class="row">
+						<select id="tk-cos" class="grow"></select>
+						<button class="btn small ok" id="tk-cos-give">Give</button>
+						<button class="btn small danger" id="tk-cos-take">Take</button>
+						<button class="btn small gold" id="tk-cos-all">Give all</button>
+					</div></div>
+				<div class="muted" id="tk-cos-owned"></div>
+			</div>
+
+			<div class="card">
+				<h2>🔐 Account</h2>
+				<div class="form-row"><label>Reset password</label>
+					<div class="row">
+						<input type="text" id="tk-pw" class="grow" placeholder="new password (6+ chars)" autocomplete="off" />
+						<button class="btn small gold" id="tk-pw-go">Reset</button>
+					</div></div>
+				<div class="form-row"><label>System role</label>
+					<div class="row">
+						<select id="tk-role" class="grow"><option value="user">user</option><option value="admin">admin (owner access)</option></select>
+						<button class="btn small gold" id="tk-role-go">Apply</button>
+					</div></div>
+				<div class="form-row"><label>God Mode</label>
+					<div class="row"><button class="btn danger" id="tk-god">⚡ Apply God Mode</button>
+					<span class="muted">Level 99, all badges, admin, founder tag.</span></div></div>
+			</div>
+
+			<div class="card">
+				<h2>📜 Userscripts <span class="pill" id="tk-scripts-count">0</span></h2>
+				<div id="tk-scripts" class="grid" style="gap:8px"></div>
+			</div>
 		</div>
+
 		<div class="card">
-			<h2>🎫 Dynamic Slot Allocation <span class="pill badge-sim">config</span></h2>
-			<p class="sec-hint">How many player slots each server gets.</p>
-			<div class="muted" style="margin-bottom:8px">One lobby per line: <code>name = max players</code>.</div>
-			<textarea id="slot-caps" rows="5" placeholder="Lobby A = 16"></textarea>
-			<button class="btn gold" id="slots-save" style="margin-top:9px">💾 Save Slot Caps</button>
+			<h2>💾 Game Saves <span class="pill" id="tk-saves-count">0</span></h2>
+			<div id="tk-saves" class="grid" style="gap:8px"></div>
 		</div>
 	</div>
 </div>
@@ -575,47 +653,49 @@
 
 <!-- ============ TAB: JARVIS AI ============ -->
 <div class="tab-pane" id="tab-jarvis">
-	<div class="sect-title">🤖 Jarvis AI <span class="pill badge-live">full control · panel + site</span> <span class="pill chip purple">owner only</span></div>
+	<div class="sect-title">🤖 Jarvis <span class="pill badge-live">agent</span> <span class="chip purple">owner only</span></div>
 
-	<div class="grid c2">
-		<div class="card" style="display:flex;flex-direction:column">
-			<h2>💬 Chat with Jarvis</h2>
-			<p class="sec-hint">Your AI assistant with real powers: add games, ban players, broadcast. Type "help" for commands.</p>
+	<div class="jv-layout">
+		<div class="card jv-main">
+			<h2>💬 Chat <button class="btn small" id="jv-new">↺ New chat</button></h2>
 			<div class="jv-log" id="jv-log"></div>
-			<div class="row" style="margin-top:8px">
-				<input type="text" id="jv-input" class="grow" autocomplete="off" placeholder="jarvis ban 'user123' 1h · add 5 games · game reports · or just chat…" />
+			<div class="row jv-compose">
+				<textarea id="jv-input" class="grow" rows="1" autocomplete="off" placeholder="Ask Jarvis to investigate, fix code, moderate, add games…  (Enter to send, Shift+Enter for a new line)"></textarea>
 				<button class="btn gold" id="jv-send">Send</button>
 			</div>
 			<div class="jv-chips" id="jv-chips">
 				<button class="btn small" data-cmd="help">help</button>
 				<button class="btn small" data-cmd="status">status</button>
 				<button class="btn small" data-cmd="online">online</button>
-				<button class="btn small" data-cmd="add 5 games">add 5 games</button>
 				<button class="btn small" data-cmd="game reports">game reports</button>
-				<button class="btn small" data-cmd="broadcast ">broadcast…</button>
-				<button class="btn small" data-cmd="maintenance on">maint. on</button>
-				<button class="btn small" data-cmd="maintenance off">maint. off</button>
+				<button class="btn small" data-cmd="add a new game">add a game</button>
+				<button class="btn small" data-cmd="Look through src/classic.js and explain how YouTube is handled">explain classic YouTube</button>
 			</div>
 		</div>
 
-		<div>
+		<div class="jv-side">
 			<div class="card">
 				<h2>⚙️ AI Backend <span class="pill badge-live" id="jv-backend">…</span></h2>
-				<p class="sec-hint">Which AI model is answering Jarvis right now.</p>
 				<div class="muted" id="jv-backends" style="margin-bottom:8px">loading…</div>
 				<div class="form-row"><label>OpenRouter API key (free models only — $0)</label>
 					<div class="row">
 						<input type="password" id="jv-key" class="grow" placeholder="paste key to update" autocomplete="off" />
-						<button class="btn" id="jv-key-save">💾 Save Key</button>
+						<button class="btn" id="jv-key-save">Save</button>
 					</div>
 				</div>
 				<div class="muted" id="jv-key-state">…</div>
 			</div>
 			<div class="card">
-				<h2>📡 Live Snapshot <span class="pill badge-live">live</span></h2>
-				<p class="sec-hint">Instant status: players online, games, reports.</p>
+				<h2>🧠 What Jarvis can do</h2>
+				<ul class="jv-caps">
+					<li><b>Read &amp; search</b> your project code</li>
+					<li><b>Edit files</b> (backed up, needs your OK)</li>
+					<li><b>Run checks</b> (<code>node --check</code>, <code>git diff</code>)</li>
+					<li><b>Search the web</b> and read pages</li>
+					<li><b>Moderate</b>, manage games, ranks, badges, coins, passwords</li>
+					<li>Anything risky shows an <b>Approve / Deny</b> card first</li>
+				</ul>
 				<div class="muted" id="jv-snapshot">…</div>
-				<div class="note" style="margin-top:10px">⚠️ <b>Clash AI</b> (the ✦ button on the main site) is a <b>chat-only assistant with no powers</b>. <b>Jarvis</b> (this tab) is the one that can ban players, edit the game library, broadcast and toggle maintenance — and it lives only here in the owner panel.</div>
 			</div>
 		</div>
 	</div>
@@ -695,7 +775,7 @@ function syncTabBadges() {
 }
 
 /* ---------- Tabs ---------- */
-	const loaders = { games: loadGamesTab, moderation: loadModerationTab, system: loadSystemTab, comms: loadCommsTab, analytics: loadAnalyticsTab, jarvis: loadJarvisTab };
+	const loaders = { games: loadGamesTab, toolkit: loadToolkitTab, moderation: loadModerationTab, system: loadSystemTab, comms: loadCommsTab, analytics: loadAnalyticsTab, jarvis: loadJarvisTab };
 let healthTimer = null, logTimer = null;
 document.querySelectorAll(".tab").forEach((tb) => tb.addEventListener("click", () => showTab(tb.dataset.tab)));
 function showTab(name) {
@@ -828,13 +908,12 @@ $("assign-save-btn").addEventListener("click", async () => {
 	} catch (e) { $("assign-error").textContent = e.message; }
 });
 
-/* ============================================================
-   TAB 2: GAME OPS
-   ============================================================ */
-let spec = { matchId: null, raf: null, players: [], items: [], admin: { x: 450, y: 150 } };
 
+/* ============================================================
+   TAB 2: GAME OPS (Cleaned up: Staged Queue + Library + Add + XP)
+   ============================================================ */
 async function loadGamesTab() {
-	loadXpEvent(); loadGameActivity(); loadGameOps();
+	loadXpEvent(); loadGameActivity(); loadStagedQueue(); loadGameLib();
 }
 async function loadXpEvent() {
 	try {
@@ -881,128 +960,208 @@ async function loadGameActivity() {
 }
 $("games-activity-refresh").addEventListener("click", loadGameActivity);
 
-async function loadGameOps() {
+async function loadStagedQueue() {
 	try {
-		const r = await api("api/games/ops");
-		window._ops = r;
-		$("map-rotation").value = Object.entries(r.mapRotation || {}).map(([k, v]) => `${k}: ${(v || []).join(", ")}`).join("\n");
-		$("slot-caps").value = Object.entries(r.slotCaps || {}).map(([k, v]) => `${k} = ${v}`).join("\n");
-		renderInstances(r.sim);
-		renderMatchSelect(r.sim);
+		const r = await api("api/testing/queue");
+		const box = $("staged-list");
+		const pending = r.pending || [];
+		$("staged-count").textContent = pending.length;
+		if (!pending.length) { box.innerHTML = '<div class="empty">No games waiting in the staging queue.</div>'; return; }
+		box.innerHTML = pending.map((g) => `<div class="preset-card"><div class="info">
+			<div class="name">${esc(g.title)}</div><div class="sub">${esc(g.filename)} · from ${esc(g.sourceUrl || "unknown")}</div></div>
+			<button class="btn small ok" data-gpass="${esc(g.id)}">Publish</button>
+			<button class="btn small danger" data-gfail="${esc(g.id)}">Reject</button></div>`).join("");
+		box.querySelectorAll("[data-gpass]").forEach((b) => b.addEventListener("click", async () => {
+			try { await api("api/testing/pass", { id: b.dataset.gpass, by: "owner" }); toast("Game published to library!"); loadStagedQueue(); loadGameLib(); } catch (e) { toast(e.message, true); }
+		}));
+		box.querySelectorAll("[data-gfail]").forEach((b) => b.addEventListener("click", async () => {
+			const reason = prompt("Rejection reason:", "Failed testing") || "";
+			try { await api("api/testing/fail", { id: b.dataset.gfail, reason }); toast("Game rejected."); loadStagedQueue(); } catch (e) { toast(e.message, true); }
+		}));
+	} catch (e) { $("staged-list").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+$("staged-refresh").addEventListener("click", loadStagedQueue);
+
+let allGamesCache = [];
+async function loadGameLib() {
+	try {
+		const r = await api("api/panel/games");
+		allGamesCache = r.games || [];
+		$("lib-count").textContent = allGamesCache.length + " games";
+		renderGameLib();
 	} catch (e) { toast(e.message, true); }
 }
-function renderInstances(sim) {
-	const box = $("instance-list");
-	const inst = sim?.instances || [];
-	if (!inst.length) { box.innerHTML = '<div class="empty">No instances running.</div>'; return; }
-	box.innerHTML = inst.map((i) => `<div class="inst-card"><div class="info">
-		<div class="name" style="font-weight:800;font-size:13px">${esc(i.id)} · ${esc(i.game)}</div>
-		<div class="sub">region ${esc(i.region)} · ${esc(i.status)} · ${i.players} players</div></div>
-		<span class="chip green">running</span>
-		<button class="btn small danger" data-kill="${esc(i.id)}">Kill</button></div>`).join("");
-	box.querySelectorAll("[data-kill]").forEach((b) => b.addEventListener("click", async () => {
-		try { await api("api/games/sim", { action: "kill", id: b.dataset.kill }); toast("Instance killed."); loadGameOps(); } catch (e) { toast(e.message, true); }
+function renderGameLib() {
+	const q = ($("lib-q").value || "").toLowerCase().trim();
+	const hits = allGamesCache.filter((g) => !q || (g.title || "").toLowerCase().includes(q) || (g.filename || "").toLowerCase().includes(q));
+	const tb = $("lib-tbody");
+	if (!hits.length) { tb.innerHTML = '<tr><td colspan="3" class="empty">No matching games found.</td></tr>'; return; }
+	tb.innerHTML = hits.slice(0, 100).map((g) => `<tr>
+		<td><b>${esc(g.title)}</b></td>
+		<td class="muted"><code>${esc(g.filename)}</code></td>
+		<td style="text-align:right"><a class="btn small" href="http://localhost:8080/games/${encodeURIComponent(g.filename)}" target="_blank">Play</a></td>
+	</tr>`).join("");
+}
+$("lib-q").addEventListener("input", renderGameLib);
+$("lib-scan").addEventListener("click", async () => {
+	try { await api("api/panel/games/reload", {}); toast("Library cache reloaded."); loadGameLib(); } catch (e) { toast(e.message, true); }
+});
+
+$("gm-add").addEventListener("click", async () => {
+	const title = $("gm-title").value.trim(), url = $("gm-url").value.trim();
+	if (!title && !url) return toast("Enter a title or URL.", true);
+	$("gm-status").textContent = "Downloading & inspecting assets… please wait…";
+	try {
+		const r = await api("api/panel/games/add", { title, url, mode: "download" });
+		$("gm-status").textContent = r.message || "Done!";
+		toast("Game processed.");
+		$("gm-title").value = ""; $("gm-url").value = "";
+		loadStagedQueue(); loadGameLib();
+	} catch (e) { $("gm-status").textContent = "Error: " + e.message; toast(e.message, true); }
+});
+$("gm-embed").addEventListener("click", async () => {
+	const title = $("gm-title").value.trim(), url = $("gm-url").value.trim();
+	if (!title || !url) return toast("Both title and URL are required to embed.", true);
+	$("gm-status").textContent = "Creating embed…";
+	try {
+		const r = await api("api/panel/games/add", { title, url, mode: "embed" });
+		$("gm-status").textContent = r.message || "Added!";
+		toast(r.message || "Game embedded.");
+		$("gm-title").value = ""; $("gm-url").value = "";
+		loadGameLib();
+	} catch (e) { $("gm-status").textContent = "Error: " + e.message; toast(e.message, true); }
+});
+
+/* ============================================================
+   TAB: PLAYER TOOLKIT (All privileges in one unified place)
+   ============================================================ */
+let tkCatalog = { badges: [], cosmetics: [] };
+let tkCurrentUser = null;
+
+async function loadToolkitTab() {
+	try {
+		tkCatalog = await api("api/tools/catalog");
+		const sel = $("tk-cos");
+		sel.innerHTML = '<option value="">-- Select cosmetic --</option>' +
+			tkCatalog.cosmetics.map((c) => `<option value="${esc(c.id)}">${c.icon} ${esc(c.name)} (${c.type})</option>`).join("");
+		$("tk-users").innerHTML = state.users.map((u) => `<option value="${esc(u.username)}">`).join("");
+	} catch {}
+}
+$("tk-go").addEventListener("click", async () => {
+	const q = $("tk-q").value.trim();
+	if (!q) return toast("Enter a player username.", true);
+	try {
+		const r = await api("api/tools/inspect?q=" + encodeURIComponent(q));
+		tkCurrentUser = r;
+		renderToolkitUser();
+	} catch (e) { toast(e.message, true); }
+});
+
+function renderToolkitUser() {
+	if (!tkCurrentUser) return;
+	const { user: u, badges, cosmetics, scripts, saves } = tkCurrentUser;
+	$("tk-body").style.display = "";
+	$("tk-head").innerHTML = `
+		<div class="avatar">${(u.username || "?").slice(0, 1).toUpperCase()}</div>
+		<div>
+			<div style="font-size:16px;font-weight:800">@${esc(u.username)} <span class="chip gold">${esc(u.role)}</span> ${u.custom_tag ? `<span class="chip purple">${esc(u.custom_tag)}</span>` : ''}</div>
+			<div class="muted" style="font-size:12px;margin-top:2px">Level ${u.level} · ${u.xp} XP · ${u.coins} coins · ${u.streak_days}d streak</div>
+		</div>
+	`;
+
+	// Badges
+	const bSet = new Set(badges || []);
+	$("tk-badges").innerHTML = tkCatalog.badges.map((b) => `
+		<div class="tk-badge ${bSet.has(b.id) ? 'active' : ''}" data-bid="${b.id}" title="${esc(b.description)}">
+			<span class="b-icon">${b.icon}</span> <span>${esc(b.name)}</span>
+		</div>
+	`).join("");
+	$("tk-badges").querySelectorAll("[data-bid]").forEach((el) => el.addEventListener("click", async () => {
+		const bid = el.dataset.bid;
+		const mode = bSet.has(bid) ? "revoke" : "grant";
+		try {
+			await api("api/tools/action", { action: "badge", username: u.username, badgeId: bid, mode });
+			if (mode === "grant") bSet.add(bid); else bSet.delete(bid);
+			el.classList.toggle("active", mode === "grant");
+			toast(`${mode === 'grant' ? 'Granted' : 'Revoked'} badge ${bid}`);
+		} catch (e) { toast(e.message, true); }
+	}));
+
+	$("tk-coins").value = u.coins;
+	$("tk-role").value = u.role || "user";
+	$("tk-cos-owned").textContent = "Owned cosmetics: " + (cosmetics.length ? cosmetics.join(", ") : "none");
+
+	// Scripts
+	$("tk-scripts-count").textContent = scripts.length;
+	$("tk-scripts").innerHTML = scripts.length
+		? scripts.map((s) => `<div class="inst-card"><div class="info"><div class="name">${esc(s.name)}</div><div class="sub">pattern: ${esc(s.match_pattern)} · ${s.size} bytes</div></div>
+			<button class="btn small ${s.is_enabled ? '' : 'ok'}" data-scrtog="${s.id}">${s.is_enabled ? 'Disable' : 'Enable'}</button>
+			<button class="btn small danger" data-scrdel="${s.id}">Delete</button></div>`).join("")
+		: '<div class="empty">No userscripts installed.</div>';
+	$("tk-scripts").querySelectorAll("[data-scrtog]").forEach((b) => b.addEventListener("click", async () => {
+		const s = scripts.find((x) => x.id === +b.dataset.scrtog);
+		try { await api("api/tools/action", { action: "script", id: s.id, mode: s.is_enabled ? "disable" : "enable" }); toast("Updated script."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+	}));
+	$("tk-scripts").querySelectorAll("[data-scrdel]").forEach((b) => b.addEventListener("click", async () => {
+		try { await api("api/tools/action", { action: "script", id: +b.dataset.scrdel, mode: "delete" }); toast("Deleted script."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+	}));
+
+	// Saves
+	$("tk-saves-count").textContent = saves.length;
+	$("tk-saves").innerHTML = saves.length
+		? saves.map((sv) => `<div class="inst-card"><div class="info"><div class="name">${esc(sv.save_name || sv.game_key)}</div><div class="sub">slot ${sv.slot_index} · ${sv.size} bytes · ${esc(sv.updated_at || "")}</div></div>
+			<button class="btn small danger" data-svdel="${sv.id}">Delete</button></div>`).join("")
+		: '<div class="empty">No game saves stored.</div>';
+	$("tk-saves").querySelectorAll("[data-svdel]").forEach((b) => b.addEventListener("click", async () => {
+		try { await api("api/tools/action", { action: "save", id: +b.dataset.svdel }); toast("Deleted save."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
 	}));
 }
-function renderMatchSelect(sim) {
-	const sel = $("spec-match");
-	const matches = (sim?.matches || []).filter((m) => m.state === "live" || m.state === "queued");
-	sel.innerHTML = matches.length
-		? matches.map((m) => `<option value="${esc(m.id)}">${esc(m.id)} · ${esc(m.game)} · ${esc(m.state)}</option>`).join("")
-		: '<option value="">— no matches —</option>';
-}
-$("spawn-btn").addEventListener("click", async () => {
-	const game = $("spawn-game").value.trim() || "Arcade";
-	try {
-		await api("api/games/sim", { action: "spawn", game, region: $("spawn-region").value, match: $("spawn-with-match").checked });
-		toast(`Instance spawned for "${game}".`); $("spawn-game").value = ""; loadGameOps();
-	} catch (e) { toast(e.message, true); }
+
+$("tk-badge-all").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { await api("api/tools/action", { action: "badge", username: tkCurrentUser.user.username, badgeId: "all", mode: "grant" }); toast("All badges granted!"); $("tk-go").click(); } catch (e) { toast(e.message, true); }
 });
-$("map-save").addEventListener("click", async () => {
-	const rotation = {};
-	$("map-rotation").value.split("\n").forEach((line) => {
-		const [k, v] = line.split(":");
-		if (k && v) rotation[k.trim()] = v.split(",").map((s) => s.trim()).filter(Boolean);
-	});
-	try { await api("api/games/ops", { mapRotation: rotation }); toast("Map rotation saved."); } catch (e) { toast(e.message, true); }
+$("tk-badge-none").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { await api("api/tools/action", { action: "badge", username: tkCurrentUser.user.username, badgeId: "all", mode: "revoke" }); toast("All badges revoked!"); $("tk-go").click(); } catch (e) { toast(e.message, true); }
 });
-$("slots-save").addEventListener("click", async () => {
-	const caps = {};
-	$("slot-caps").value.split("\n").forEach((line) => {
-		const [k, v] = line.split("=");
-		if (k && v) caps[k.trim()] = parseInt(v, 10);
-	});
-	try { await api("api/games/ops", { slotCaps: caps }); toast("Slot caps saved."); } catch (e) { toast(e.message, true); }
+$("tk-coins-add").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { const r = await api("api/tools/action", { action: "coins", username: tkCurrentUser.user.username, amount: +$("tk-coins").value, mode: "add" }); toast(r.message); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-coins-sub").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { const r = await api("api/tools/action", { action: "coins", username: tkCurrentUser.user.username, amount: -Math.abs(+$("tk-coins").value), mode: "add" }); toast(r.message); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-coins-set").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { const r = await api("api/tools/action", { action: "coins", username: tkCurrentUser.user.username, amount: +$("tk-coins").value, mode: "set" }); toast(r.message); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-cos-give").addEventListener("click", async () => {
+	if (!tkCurrentUser || !$("tk-cos").value) return toast("Select a cosmetic.", true);
+	try { await api("api/tools/action", { action: "cosmetic", username: tkCurrentUser.user.username, itemId: $("tk-cos").value, mode: "grant" }); toast("Cosmetic granted."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-cos-take").addEventListener("click", async () => {
+	if (!tkCurrentUser || !$("tk-cos").value) return toast("Select a cosmetic.", true);
+	try { await api("api/tools/action", { action: "cosmetic", username: tkCurrentUser.user.username, itemId: $("tk-cos").value, mode: "revoke" }); toast("Cosmetic removed."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-cos-all").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { await api("api/tools/action", { action: "cosmetic", username: tkCurrentUser.user.username, itemId: "all", mode: "grant" }); toast("All cosmetics granted!"); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-pw-go").addEventListener("click", async () => {
+	if (!tkCurrentUser || !$("tk-pw").value.trim()) return toast("Enter a new password.", true);
+	try { await api("api/tools/action", { action: "password", username: tkCurrentUser.user.username, password: $("tk-pw").value.trim() }); toast("Password reset!"); $("tk-pw").value = ""; } catch (e) { toast(e.message, true); }
+});
+$("tk-role-go").addEventListener("click", async () => {
+	if (!tkCurrentUser) return;
+	try { await api("api/tools/action", { action: "role", username: tkCurrentUser.user.username, role: $("tk-role").value }); toast("Role updated."); $("tk-go").click(); } catch (e) { toast(e.message, true); }
+});
+$("tk-god").addEventListener("click", async () => {
+	if (!tkCurrentUser || !confirm(`Apply God Mode to @${tkCurrentUser.user.username}?`)) return;
+	try { await api("api/tools/action", { action: "godmode", username: tkCurrentUser.user.username }); toast("⚡ God Mode activated!"); $("tk-go").click(); } catch (e) { toast(e.message, true); }
 });
 
-async function simAction(action, extra = {}) {
-	const matchId = $("spec-match").value;
-	if (action !== "spawn" && action !== "tick" && !matchId) return toast("Select a match first.", true);
-	try { const r = await api("api/games/sim", { action, matchId, ...extra }); window._ops.sim = r.sim; renderMatchSelect(r.sim); return r.sim; } catch (e) { toast(e.message, true); }
-}
-$("spec-queue").addEventListener("click", async () => { await simAction("queue-start"); toast("Queue override: match started immediately."); });
-$("spec-force-draw").addEventListener("click", async () => { await simAction("force-end", { result: "draw" }); toast("Match force-ended as a draw."); stopSpec(); });
-$("spec-force-reset").addEventListener("click", async () => { await simAction("force-end", { result: "reset" }); toast("Match force-ended and reset."); stopSpec(); });
-
-function currentMatch() { return (window._ops?.sim?.matches || []).find((m) => m.id === $("spec-match").value); }
-function startSpec() {
-	stopSpec();
-	const m = currentMatch();
-	if (!m) return toast("No match selected.", true);
-	spec.matchId = m.id;
-	spec.players = Array.from({ length: 6 }, (_, i) => ({ name: "P" + (i + 1), x: 80 + Math.random() * 740, y: 40 + Math.random() * 220, vx: (Math.random() - 0.5) * 3.4, vy: (Math.random() - 0.5) * 3.4, hp: 60 + Math.round(Math.random() * 40) }));
-	spec.items = Array.from({ length: 8 }, () => ({ x: 60 + Math.random() * 780, y: 30 + Math.random() * 240, kind: Math.random() > 0.5 ? "star" : "gem" }));
-	const canvas = $("spec-canvas"), ctx = canvas.getContext("2d");
-	const ghost = $("ov-ghost").checked, boxes = $("ov-boxes").checked, items = $("ov-items").checked, stats = $("ov-stats").checked;
-	function frame() {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.strokeStyle = "rgba(168,85,247,.15)";
-		for (let x = 0; x < canvas.width; x += 45) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
-		for (let y = 0; y < canvas.height; y += 45) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
-		if (items) for (const it of spec.items) {
-			ctx.fillStyle = it.kind === "star" ? "#ffd700" : "#22d3ee";
-			ctx.beginPath(); ctx.arc(it.x, it.y, 5, 0, 7); ctx.fill();
-			if (boxes) { ctx.strokeStyle = "rgba(255,215,0,.6)"; ctx.strokeRect(it.x - 8, it.y - 8, 16, 16); }
-		}
-		for (const p of spec.players) {
-			p.x = Math.max(10, Math.min(canvas.width - 20, p.x + p.vx));
-			p.y = Math.max(10, Math.min(canvas.height - 20, p.y + p.vy));
-			if (p.x <= 10 || p.x >= canvas.width - 20) p.vx *= -1;
-			if (p.y <= 10 || p.y >= canvas.height - 20) p.vy *= -1;
-			ctx.fillStyle = "#a855f7"; ctx.fillRect(p.x, p.y, 16, 16);
-			if (boxes) { ctx.strokeStyle = "#ff4757"; ctx.strokeRect(p.x - 3, p.y - 3, 22, 22); }
-			ctx.fillStyle = "#eaeaf4"; ctx.font = "10px sans-serif"; ctx.fillText(p.name, p.x - 2, p.y - 7);
-			if (stats) { ctx.fillStyle = "#2ed573"; ctx.fillRect(p.x - 3, p.y + 20, (p.hp / 100) * 22, 3); }
-		}
-		if (ghost) {
-			ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 2;
-			ctx.strokeRect(spec.admin.x - 9, spec.admin.y - 9, 18, 18);
-			ctx.fillStyle = "#ffd700"; ctx.font = "10px sans-serif"; ctx.fillText("👑 OWNER", spec.admin.x - 22, spec.admin.y - 14);
-			ctx.lineWidth = 1;
-		}
-		spec.raf = requestAnimationFrame(frame);
-	}
-	frame();
-	const perfTick = () => {
-		if (!spec.matchId) return;
-		simAction("tick");
-		const mm = currentMatch();
-		if (mm) {
-			$("perf-tick").textContent = mm.tick + " tps"; $("perf-ping").textContent = mm.ping + " ms"; $("perf-loss").textContent = mm.loss + "%";
-			$("match-state").textContent = `${mm.id} · ${mm.state} · ${mm.game} · ${mm.players.length} players`;
-		}
-	};
-	clearInterval(spec.perfIv); spec.perfIv = setInterval(perfTick, 2000); perfTick();
-	toast("Spectator connected (overlay live).");
-}
-function stopSpec() { if (spec.raf) cancelAnimationFrame(spec.raf); spec.raf = null; clearInterval(spec.perfIv); spec.matchId = null; }
-$("spec-join").addEventListener("click", startSpec);
-$("tp-btn").addEventListener("click", () => {
-	if (!spec.matchId) return toast("Connect a spectator first.", true);
-	const x = parseInt($("tp-x").value, 10) || 0, y = parseInt($("tp-y").value, 10) || 0;
-	spec.admin.x = Math.max(10, Math.min(890, x)); spec.admin.y = Math.max(10, Math.min(290, y));
-	toast(`Admin avatar teleported to (${spec.admin.x}, ${spec.admin.y}) for "${$("tp-player").value || "match"}".`);
-});
 
 /* ============================================================
    TAB 3: MODERATION
@@ -1505,18 +1664,31 @@ document.querySelectorAll("[data-theme-set]").forEach((b) => b.addEventListener(
 	try { await api("api/analytics/theme", { theme: b.dataset.themeSet }); toast(`Theme: ${b.dataset.themeSet}`); } catch (e) { toast(e.message, true); }
 }));
 
+
 /* ============================================================
-   TAB 7: JARVIS AI (full-control owner assistant)
+   TAB 7: JARVIS AI (Agent runtime + Approvals + Trace)
    ============================================================ */
 let jvHistory = [], jvInited = false, jvBusy = false;
+const jvSid = "sid-" + Date.now().toString(36);
 
 async function loadJarvisTab() {
 	if (!jvInited) {
 		jvInited = true;
-		jvPush("ai", "Jarvis online — I have FULL control of Clash Proxy: moderation, game library, broadcasts, maintenance, live stats. Type `help` for commands, or just talk to me.\n(Clash AI on the main site is the chat-only one with no powers.)");
+		jvPush("ai", "Jarvis online. I work like a coding/ops assistant: I investigate with tools, read code, search the web, manage games and moderate players.\n\nDestructive actions will show an Approve / Deny prompt before executing.");
 		$("jv-send").addEventListener("click", jvSend);
-		$("jv-input").addEventListener("keydown", (e) => { if (e.key === "Enter") jvSend(); });
-		document.querySelectorAll("#jv-chips .btn").forEach((b) => b.addEventListener("click", () => { $("jv-input").value = b.dataset.cmd; jvSend(); }));
+		$("jv-input").addEventListener("keydown", (e) => {
+			if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); jvSend(); }
+		});
+		$("jv-new").addEventListener("click", async () => {
+			jvHistory = [];
+			$("jv-log").innerHTML = "";
+			await api("api/jarvis/reset", { sid: jvSid });
+			jvPush("ai", "Conversation reset. What should we tackle?");
+		});
+		document.querySelectorAll("#jv-chips .btn").forEach((b) => b.addEventListener("click", () => {
+			$("jv-input").value = b.dataset.cmd;
+			jvSend();
+		}));
 		$("jv-key-save").addEventListener("click", async () => {
 			const key = $("jv-key").value.trim();
 			if (!key) return toast("Paste an OpenRouter key first.", true);
@@ -1531,6 +1703,7 @@ async function loadJarvisTab() {
 	}
 	jvLoadInfo();
 }
+
 async function jvLoadInfo() {
 	try {
 		const info = await api("api/jarvis/info");
@@ -1539,23 +1712,95 @@ async function jvLoadInfo() {
 		$("jv-key-state").textContent = info.keySet
 			? (info.keyValid
 				? `Active key: ${info.keyPreview} — verified working (free models, $0).`
-				: `Active key: ${info.keyPreview} — ⚠ rejected by OpenRouter. Smart chat is offline until you paste a fresh free key (commands still work.)`)
-			: "No key yet — using anonymous free models (heavier rate limits).";
+				: `Active key: ${info.keyPreview} — ⚠ rejected by OpenRouter.`)
+			: "No key yet — using anonymous free models.";
 		$("jv-snapshot").textContent =
-			`${info.knownGames} catalog games · ${info.testerAccounts} Game Tester account(s) · ` +
-			`${info.testerReports} open tester report(s) · ${info.openReports} open report(s) total`;
+			`${info.knownGames} catalog games · ${info.testerAccounts} tester(s) · ${info.openReports} report(s)`;
 	} catch (e) { $("jv-backend").textContent = "offline"; }
 }
-function jvPush(who, text, src) {
+
+function jvPush(who, text, src, trace, pending) {
 	const log = $("jv-log");
 	const el = document.createElement("div");
 	el.className = "jv-msg " + (who === "user" ? "jv-user" : "jv-ai");
-	el.textContent = text;
-	if (src) { const s = document.createElement("span"); s.className = "jv-src"; s.textContent = src; el.appendChild(s); }
+
+	// Main response text
+	const textSpan = document.createElement("span");
+	textSpan.textContent = text;
+	el.appendChild(textSpan);
+
+	// Tool trace steps (accordion)
+	if (trace && trace.length) {
+		const traceBox = document.createElement("div");
+		traceBox.className = "jv-trace";
+		trace.forEach((step) => {
+			const d = document.createElement("details");
+			d.className = "jv-step " + (step.ok ? "ok" : "fail");
+			d.innerHTML = `<summary>${step.ok ? '✔' : '✖'} ${esc(step.summary)}</summary><pre>${esc(step.out)}</pre>`;
+			traceBox.appendChild(d);
+		});
+		el.appendChild(traceBox);
+	}
+
+	// Action awaiting confirmation
+	if (pending) {
+		const pCard = document.createElement("div");
+		pCard.className = "jv-card-pending";
+		pCard.innerHTML = `
+			<div class="title">⚠️ Confirmation Required</div>
+			<div class="detail">${esc(pending.summary)}</div>
+			<div class="row">
+				<button class="btn small ok" id="p-app-${pending.id}">✔ Approve &amp; Run</button>
+				<button class="btn small danger" id="p-den-${pending.id}">✖ Deny</button>
+			</div>
+		`;
+		pCard.querySelector(`#p-app-${pending.id}`).addEventListener("click", () => jvConfirm(pending.id, true, el, pCard));
+		pCard.querySelector(`#p-den-${pending.id}`).addEventListener("click", () => jvConfirm(pending.id, false, el, pCard));
+		el.appendChild(pCard);
+	}
+
+	if (src) {
+		const s = document.createElement("span");
+		s.className = "jv-src";
+		s.textContent = src;
+		el.appendChild(s);
+	}
+
 	log.appendChild(el);
 	log.scrollTop = log.scrollHeight;
 	return el;
 }
+
+async function jvConfirm(id, approve, msgEl, pCard) {
+	pCard.innerHTML = `<div class="muted">Processing ${approve ? 'approval' : 'denial'}…</div>`;
+	try {
+		const r = await api("api/jarvis/approve", { sid: jvSid, id, approve });
+		pCard.remove();
+		if (r.reply) {
+			const note = document.createElement("div");
+			note.style.marginTop = "8px";
+			note.textContent = r.reply;
+			msgEl.appendChild(note);
+		}
+		if (r.trace && r.trace.length) {
+			const traceBox = document.createElement("div");
+			traceBox.className = "jv-trace";
+			r.trace.forEach((step) => {
+				const d = document.createElement("details");
+				d.className = "jv-step " + (step.ok ? "ok" : "fail");
+				d.innerHTML = `<summary>${step.ok ? '✔' : '✖'} ${esc(step.summary)}</summary><pre>${esc(step.out)}</pre>`;
+				traceBox.appendChild(d);
+			});
+			msgEl.appendChild(traceBox);
+		}
+		if (r.pending) {
+			jvPush("ai", "", "agent", null, r.pending);
+		}
+	} catch (e) {
+		toast(e.message, true);
+	}
+}
+
 async function jvSend() {
 	const input = $("jv-input");
 	const text = input.value.trim();
@@ -1564,26 +1809,21 @@ async function jvSend() {
 	jvPush("user", text);
 	jvHistory.push({ role: "user", content: text });
 	jvBusy = true;
-	const pend = jvPush("ai", "thinking…");
+	const pend = jvPush("ai", "Investigating & thinking…");
 	try {
-		const r = await api("api/jarvis/chat", { messages: jvHistory.slice(-12) });
-		pend.textContent = r.reply;
-		if (r.source && r.source !== "command") {
-			const s = document.createElement("span");
-			s.className = "jv-src";
-			s.textContent = r.source === "llm" ? "ai" : "local fallback";
-			pend.appendChild(s);
-		}
-		jvHistory.push({ role: "assistant", content: r.reply });
+		const r = await api("api/jarvis/chat", { sid: jvSid, messages: jvHistory.slice(-12) });
+		pend.remove(); // Replace temporary thinking message with real structured output
+		jvPush("ai", r.reply || "", r.source || "agent", r.trace, r.pending);
+		if (r.reply) jvHistory.push({ role: "assistant", content: r.reply });
 	} catch (e) {
 		pend.classList.add("jv-err");
 		pend.textContent = "⚠ " + e.message;
 	} finally {
 		jvBusy = false;
-		const log = $("jv-log");
-		log.scrollTop = log.scrollHeight;
+		$("jv-log").scrollTop = $("jv-log").scrollHeight;
 	}
 }
+
 
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeAssignModal(); $("report-overlay").classList.remove("open"); } });
 

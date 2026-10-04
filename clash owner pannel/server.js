@@ -10,6 +10,8 @@ import Database from "better-sqlite3";
 import db from "../src/db.js";
 import { BADGES } from "../src/auth-utils.js";
 import { askAIReply, validateOpenRouterKey } from "../src/routes/ai.js";
+import { BAZAAR_CATALOG } from "../src/routes/bazaar.js";
+import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
@@ -406,6 +408,10 @@ const server = http.createServer(async (req, res) => {
 	const q = Object.fromEntries(new URL(req.url, "http://x").searchParams);
 
 	try {
+		// Guard: only accept requests addressed to localhost, and require a JSON
+		// content-type on writes (forces a CORS preflight for cross-site pages).
+		if (!/^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(String(req.headers.host || ""))) return json(res, 403, { error: "Forbidden host" });
+		if (req.method === "POST" && !/^application\/json/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "JSON only" });
 		if (req.method === "GET" && (pathname === "/" || pathname === "/index.html")) {
 			const html = fs.readFileSync(INDEX_PATH);
 			res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Content-Length": html.length });
@@ -968,6 +974,34 @@ const server = http.createServer(async (req, res) => {
 			return json(res, 200, { ok: true });
 		}
 
+		// ---------- GAMES: LIBRARY & ADD ----------
+		if (req.method === "GET" && pathname === "/api/panel/games") {
+			const list = await cachedMainGames();
+			return json(res, 200, { games: list });
+		}
+		if (req.method === "POST" && pathname === "/api/panel/games/add") {
+			const body = await readBody(req);
+			const title = String(body.title || "").trim();
+			const url = String(body.url || "").trim();
+			const mode = body.mode || (url ? "download" : "search");
+
+			if (mode === "embed") {
+				if (!title || !url) return json(res, 400, { error: "Title and URL required for embed." });
+				const r = await jarvisAddCustomGame(title, url);
+				if (!r) return json(res, 400, { error: "Failed to create embed game." });
+				return json(res, 200, { ok: true, message: r.existed ? `"${r.title}" already exists.` : `Embedded "${r.title}".`, game: r });
+			}
+
+			if (url) {
+				const r = await jarvisAddGameSmart(title, url);
+				return json(res, 200, { ok: true, message: jarvisAddReply(r), result: r });
+			} else if (title) {
+				const r = await jarvisAddFromInternet(title);
+				return json(res, 200, { ok: true, message: jarvisAddReply(r), result: r });
+			}
+			return json(res, 400, { error: "Provide a title or URL." });
+		}
+
 		// ---------- GAMES: LIVE ACTIVITY + OPS CONFIG + SIM ----------
 		if (req.method === "GET" && pathname === "/api/games/activity") {
 			const rows = db.prepare(`
@@ -1140,26 +1174,66 @@ const server = http.createServer(async (req, res) => {
 		}
 		if (req.method === "POST" && pathname === "/api/jarvis/chat") {
 			const body = await readBody(req);
-			const history = (Array.isArray(body.messages) ? body.messages : [])
+			const messagesInput = Array.isArray(body.messages) ? body.messages : (body.message ? [{ role: "user", content: body.message }] : []);
+			const history = messagesInput
 				.map((m) => ({ role: m?.role === "assistant" ? "assistant" : "user", content: String(m?.content || "").slice(0, 4000).trim() }))
 				.filter((m) => m.content)
 				.slice(-12);
 			const last = history.filter((m) => m.role === "user").pop()?.content;
 			if (!last) return json(res, 400, { error: "message required" });
+			const sid = String(body.sid || "default").slice(0, 40);
 			sweepExpired();
 
-			// 1) Deterministic command engine (real actions, works keyless)
-			const cmd = await jarvisCommand(last);
+			// 1) Deterministic command engine (instant, works keyless). Long
+			// free-form sentences skip it so the agent can handle them properly.
+			const cmd = last.split(/\s+/).length <= 25 ? await jarvisCommand(last) : null;
 			if (cmd) return json(res, 200, { reply: cmd.reply, source: "command" });
 
-			// 2) Free-model LLM chat with live context
-			await cachedMainGames(); // warm context so answers reflect the real library
+			// 2) Tool-using agent on free models
+			const out = await jarvisAgentChat(sid, last);
+			if (out.reply !== null || out.pending || out.trace.length) {
+				return json(res, 200, { reply: out.reply || "", source: "agent", trace: out.trace, pending: out.pending || null });
+			}
+
+			// 3) Plain free-model chat
 			const llm = await askAIReply([{ role: "system", content: jarvisSystemPrompt() }, ...history.slice(-8)],
 				{ openrouterKey: loadJarvisKey() });
 			if (llm) return json(res, 200, { reply: llm, source: "llm" });
 
-			// 3) Local conversational fallback
+			// 4) Local conversational fallback
 			return json(res, 200, { reply: jarvisLocalFallback(last), source: "local" });
+		}
+		if (req.method === "POST" && pathname === "/api/jarvis/approve") {
+			const body = await readBody(req);
+			const out = await jarvisAgentApprove(String(body.sid || "default").slice(0, 40), String(body.id || ""), !!body.approve);
+			return json(res, 200, { reply: out.reply || "", source: "agent", trace: out.trace, pending: out.pending || null });
+		}
+		if (req.method === "POST" && pathname === "/api/jarvis/reset") {
+			const body = await readBody(req);
+			AGENT_SESSIONS.delete(String(body.sid || "default").slice(0, 40));
+			return json(res, 200, { ok: true });
+		}
+
+		// ---------- PLAYERS TOOLKIT (badges, economy, accounts, scripts, saves) ----------
+		if (req.method === "GET" && pathname === "/api/tools/catalog") {
+			return json(res, 200, {
+				badges: BADGES.map((b) => ({ id: b.id, name: b.name, description: b.description, icon: b.icon })),
+				cosmetics: BAZAAR_CATALOG.map((i) => ({ id: i.id, type: i.type, name: i.name, icon: i.icon, cost: i.cost }))
+			});
+		}
+		if (req.method === "GET" && pathname === "/api/tools/inspect") {
+			try { return json(res, 200, siteInspect(q.q)); }
+			catch (e) { return json(res, 404, { error: e.message }); }
+		}
+		if (req.method === "POST" && pathname === "/api/tools/action") {
+			const body = await readBody(req);
+			try { return json(res, 200, siteAdmin(String(body.action || ""), body)); }
+			catch (e) { return json(res, 400, { error: e.message }); }
+		}
+		if (req.method === "GET" && pathname === "/api/tools/scripts") {
+			const like = "%" + String(q.q || "").replace(/[%_]/g, "") + "%";
+			const rows = db.prepare("SELECT s.id, s.name, s.match_pattern, s.is_enabled, length(s.script_code) AS size, u.username FROM userscripts s JOIN users u ON u.id = s.user_id WHERE s.name LIKE ? OR u.username LIKE ? ORDER BY s.id DESC LIMIT 100").all(like, like);
+			return json(res, 200, { scripts: rows });
 		}
 
 		json(res, 404, { error: "Not found" });
@@ -2106,6 +2180,398 @@ function jarvisSystemPrompt() {
 		"For everything else, answer naturally, concisely and helpfully; you may mention command syntax when useful. Never claim an action was performed unless it actually was. Tone: direct, slightly witty, professional.",
 		"The public site assistant 'Clash AI' has NO powers — you are the one with control.\n\nLIVE CONTEXT:\n" + jarvisLiveContext()
 	].join("\n\n");
+}
+
+// ============================================================
+// SITE ADMIN HELPERS — shared by the Players Toolkit tab and Jarvis
+// (covers every rank privilege: badges, economy/cosmetics, passwords,
+// roles, god mode, userscripts, saves)
+// ============================================================
+function toolUser(name) {
+	const u = findUser(String(name || "").replace(/^@/, ""));
+	if (!u) throw new Error(`No player named "${name}".`);
+	return u;
+}
+function siteInspect(name) {
+	const u = toolUser(name);
+	const badges = db.prepare("SELECT badge_id FROM achievements WHERE user_id = ?").all(u.id).map((r) => r.badge_id);
+	const cosmetics = db.prepare("SELECT item_id FROM user_cosmetics WHERE user_id = ?").all(u.id).map((r) => r.item_id);
+	const scripts = db.prepare("SELECT id, name, match_pattern, is_enabled, length(script_code) AS size FROM userscripts WHERE user_id = ? ORDER BY id DESC").all(u.id);
+	const saves = db.prepare("SELECT id, game_key, save_name, slot_index, length(save_data) AS size, updated_at FROM game_saves WHERE user_id = ? ORDER BY updated_at DESC").all(u.id);
+	const full = db.prepare("SELECT id, username, display_name, role, custom_tag, level, xp, coins, streak_days, banned, muted FROM users WHERE id = ?").get(u.id);
+	return { user: full, badges, cosmetics, scripts, saves };
+}
+function siteAdmin(action, a = {}) {
+	switch (action) {
+		case "badge": {
+			const u = toolUser(a.username);
+			const ids = a.badgeId === "all" ? BADGES.map((b) => b.id) : [a.badgeId];
+			if (!ids.every((id) => BADGES.some((b) => b.id === id))) throw new Error("Unknown badge id.");
+			const revoke = a.mode === "revoke";
+			for (const id of ids) {
+				if (revoke) db.prepare("DELETE FROM achievements WHERE user_id = ? AND badge_id = ?").run(u.id, id);
+				else db.prepare("INSERT OR IGNORE INTO achievements (user_id, badge_id) VALUES (?, ?)").run(u.id, id);
+			}
+			audit("tools.badge", `${revoke ? "revoked" : "granted"} ${a.badgeId} @${u.username}`);
+			return { ok: true, message: `${revoke ? "Revoked" : "Granted"} ${a.badgeId === "all" ? "ALL badges" : a.badgeId} ${revoke ? "from" : "to"} @${u.username}.` };
+		}
+		case "password": {
+			const u = toolUser(a.username);
+			const pw = String(a.password || "");
+			if (pw.length < 6 || pw.length > 100) throw new Error("Password must be 6-100 characters.");
+			db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(bcrypt.hashSync(pw, 10), u.id);
+			audit("tools.password", `reset @${u.username}`);
+			return { ok: true, message: `Password reset for @${u.username}.` };
+		}
+		case "role": {
+			const u = toolUser(a.username);
+			const role = a.role === "admin" ? "admin" : "user";
+			db.prepare("UPDATE users SET role = ? WHERE id = ?").run(role, u.id);
+			audit("tools.role", `@${u.username} → ${role}`);
+			return { ok: true, message: `@${u.username} is now role "${role}".` };
+		}
+		case "coins": {
+			const u = toolUser(a.username);
+			const n = Math.trunc(Number(a.amount));
+			if (!Number.isFinite(n)) throw new Error("amount must be a number.");
+			if (a.mode === "set") db.prepare("UPDATE users SET coins = ? WHERE id = ?").run(Math.max(0, n), u.id);
+			else db.prepare("UPDATE users SET coins = MAX(0, coins + ?) WHERE id = ?").run(n, u.id);
+			const coins = db.prepare("SELECT coins FROM users WHERE id = ?").get(u.id).coins;
+			audit("tools.coins", `@${u.username} ${a.mode === "set" ? "=" : "+"}${n} → ${coins}`);
+			return { ok: true, message: `@${u.username} now has ${coins} coins.`, coins };
+		}
+		case "cosmetic": {
+			const u = toolUser(a.username);
+			const ids = a.itemId === "all" ? BAZAAR_CATALOG : BAZAAR_CATALOG.filter((i) => i.id === a.itemId);
+			if (!ids.length) throw new Error("Unknown cosmetic id.");
+			const revoke = a.mode === "revoke";
+			for (const it of ids) {
+				if (revoke) db.prepare("DELETE FROM user_cosmetics WHERE user_id = ? AND item_id = ?").run(u.id, it.id);
+				else db.prepare("INSERT OR IGNORE INTO user_cosmetics (user_id, item_id, item_type) VALUES (?, ?, ?)").run(u.id, it.id, it.type);
+			}
+			audit("tools.cosmetic", `${revoke ? "revoked" : "granted"} ${a.itemId} @${u.username}`);
+			return { ok: true, message: `${revoke ? "Removed" : "Granted"} ${ids.length} cosmetic(s) ${revoke ? "from" : "to"} @${u.username}.` };
+		}
+		case "godmode": {
+			const u = toolUser(a.username);
+			db.prepare("UPDATE users SET level = 99, xp = 1000000, streak_days = 999, games_played_override = 5000, sites_visited_override = 10000, custom_tag = '👑 FOUNDER & ARCHITECT', role = 'admin' WHERE id = ?").run(u.id);
+			for (const b of BADGES) db.prepare("INSERT OR IGNORE INTO achievements (user_id, badge_id) VALUES (?, ?)").run(u.id, b.id);
+			audit("tools.godmode", `@${u.username}`);
+			return { ok: true, message: `God Mode applied to @${u.username} (L99, all badges, admin).` };
+		}
+		case "script": {
+			const id = parseInt(a.id, 10);
+			const s = db.prepare("SELECT id, name FROM userscripts WHERE id = ?").get(id);
+			if (!s) throw new Error("Script not found.");
+			if (a.mode === "delete") db.prepare("DELETE FROM userscripts WHERE id = ?").run(id);
+			else db.prepare("UPDATE userscripts SET is_enabled = ? WHERE id = ?").run(a.mode === "enable" ? 1 : 0, id);
+			audit("tools.script", `${a.mode} #${id} (${s.name})`);
+			return { ok: true, message: `Script "${s.name}" ${{ delete: "deleted", enable: "enabled", disable: "disabled" }[a.mode] || "updated"}.` };
+		}
+		case "save": {
+			const id = parseInt(a.id, 10);
+			const r = db.prepare("DELETE FROM game_saves WHERE id = ?").run(id);
+			if (!r.changes) throw new Error("Save not found.");
+			audit("tools.save", `deleted save #${id}`);
+			return { ok: true, message: `Deleted save #${id}.` };
+		}
+		default: throw new Error("Unknown site action: " + action);
+	}
+}
+
+// ============================================================
+// JARVIS AGENT — tool-using loop on free models.
+// The model replies with ONE JSON object per turn:
+//   {"tool":"name","args":{...}}  or  {"final":"answer"}
+// Read-only tools run immediately; anything that changes state is
+// parked as a pending action until the owner clicks Approve.
+// ============================================================
+const AGENT_ROOT = ROOT;
+const AGENT_BLOCK = /(^|\/)(node_modules|\.git)(\/|$)|(^|\/)data\/clash\.db|panel\.db|jarvis-key\.txt|panel-config\.json|ranks-data\.json|(^|\/)\.env/i;
+const AGENT_SKIP_DIRS = new Set(["node_modules", ".git", "games", "data", "logo", "backups", "public"]);
+const AGENT_BACKUP_DIR = path.join(BACKUP_DIR, "agent-backups");
+const AGENT_MAX_STEPS = 8;
+const AGENT_SESSIONS = new Map(); // sid -> { messages, pending, touched }
+
+function agentPath(rel) {
+	const cleaned = String(rel || ".").replace(/^[\\/]+/, "");
+	const p = path.resolve(AGENT_ROOT, cleaned);
+	if (p !== AGENT_ROOT && !p.startsWith(AGENT_ROOT + path.sep)) throw new Error("path is outside the project");
+	const relNorm = path.relative(AGENT_ROOT, p).split(path.sep).join("/");
+	if (AGENT_BLOCK.test(relNorm)) throw new Error("path is protected: " + relNorm);
+	return p;
+}
+function clip(s, n) { s = String(s ?? ""); return s.length > n ? s.slice(0, n) + `\n…[truncated ${s.length - n} chars]` : s; }
+function agentBackup(full) {
+	try {
+		if (!fs.existsSync(full)) return null;
+		fs.mkdirSync(AGENT_BACKUP_DIR, { recursive: true });
+		const dst = path.join(AGENT_BACKUP_DIR, path.basename(full) + "." + Date.now() + ".bak");
+		fs.copyFileSync(full, dst);
+		return dst;
+	} catch { return null; }
+}
+function walkFiles(dir, out, depth = 0) {
+	if (depth > 6 || out.length > 3000) return;
+	let ents = [];
+	try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+	for (const e of ents) {
+		if (e.isDirectory()) { if (!AGENT_SKIP_DIRS.has(e.name)) walkFiles(path.join(dir, e.name), out, depth + 1); }
+		else if (/\.(js|mjs|ts|json|html|css|md|txt|yaml|yml)$/i.test(e.name)) out.push(path.join(dir, e.name));
+	}
+}
+const SAFE_PANEL_CMD = /^\s*(?:jarvis[,\s]+)?(?:status|stats|server status|online|who'?s online|list online|who is|player|lookup|info|check|scan|refresh|rescan|reload|help|(?:game\s+)?(?:tester\s+)?reports?)\b/i;
+
+const AGENT_TOOLS = {
+	read_file: {
+		desc: 'Read a project file with line numbers. args: {"path":"src/index.js","start":1,"end":200}',
+		async run(a) {
+			const full = agentPath(a.path);
+			const st = fs.statSync(full);
+			if (st.isDirectory()) throw new Error("that is a directory — use list_dir");
+			if (st.size > 2_000_000) throw new Error("file too large");
+			const lines = fs.readFileSync(full, "utf8").split(/\r?\n/);
+			const start = Math.max(1, parseInt(a.start, 10) || 1);
+			const end = Math.min(lines.length, parseInt(a.end, 10) || start + 199, start + 399);
+			return `${a.path} (${lines.length} lines) showing ${start}-${end}\n` +
+				lines.slice(start - 1, end).map((l, i) => `${start + i}: ${l}`).join("\n");
+		}
+	},
+	list_dir: {
+		desc: 'List a folder. args: {"path":"src"}',
+		async run(a) {
+			const full = agentPath(a.path || ".");
+			return fs.readdirSync(full, { withFileTypes: true })
+				.filter((e) => !AGENT_BLOCK.test(e.name))
+				.map((e) => (e.isDirectory() ? e.name + "/" : e.name + " (" + fs.statSync(path.join(full, e.name)).size + "b)")).join("\n") || "(empty)";
+		}
+	},
+	search_code: {
+		desc: 'Search text across project source files (case-insensitive). args: {"query":"askAIReply","path":"src"}',
+		async run(a) {
+			const q = String(a.query || "").toLowerCase();
+			if (q.length < 2) throw new Error("query too short");
+			const files = [];
+			walkFiles(agentPath(a.path || "."), files);
+			const hits = [];
+			for (const f of files) {
+				let txt = "";
+				try { if (fs.statSync(f).size > 600_000) continue; txt = fs.readFileSync(f, "utf8"); } catch { continue; }
+				const rel = path.relative(AGENT_ROOT, f).split(path.sep).join("/");
+				if (AGENT_BLOCK.test(rel)) continue;
+				txt.split(/\r?\n/).forEach((l, i) => { if (hits.length < 40 && l.toLowerCase().includes(q)) hits.push(`${rel}:${i + 1}: ${l.trim().slice(0, 160)}`); });
+				if (hits.length >= 40) break;
+			}
+			return hits.join("\n") || "no matches";
+		}
+	},
+	web_search: {
+		desc: 'Search the web, returns URLs. args: {"query":"scramjet youtube fix"}',
+		async run(a) { const r = await jarvisWebSearch(String(a.query || ""), 8); return r.join("\n") || "no results"; }
+	},
+	fetch_url: {
+		desc: 'Fetch a web page as plain text. args: {"url":"https://..."}',
+		async run(a) {
+			if (!/^https?:\/\//i.test(String(a.url || ""))) throw new Error("http(s) URL required");
+			const res = await fetch(a.url, { headers: { "User-Agent": "Mozilla/5.0 (JarvisAgent)" }, signal: AbortSignal.timeout(15000) });
+			const raw = await res.text();
+			const text = /html/i.test(res.headers.get("content-type") || "")
+				? raw.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ")
+				: raw;
+			return `HTTP ${res.status}\n` + clip(text.trim(), 6000);
+		}
+	},
+	list_games: {
+		desc: 'List library games (optionally filtered). args: {"query":"slope"}',
+		async run(a) {
+			const g = await cachedMainGames(); const q = String(a.query || "").toLowerCase();
+			const list = g.filter((x) => !q || x.title.toLowerCase().includes(q) || x.filename.toLowerCase().includes(q));
+			return `${list.length} match(es) of ${g.length}\n` + list.slice(0, 40).map((x) => `${x.title} (${x.filename})`).join("\n");
+		}
+	},
+	inspect_player: {
+		desc: 'Full player info: stats, badges, cosmetics, scripts, saves. args: {"username":"ted"}',
+		async run(a) { return JSON.stringify(siteInspect(a.username)); }
+	},
+	panel_command: {
+		desc: 'Run a panel command (same as typing it): ban/unban/timeout/kick @user [dur] [reason], add game <name>, add game "T" <url>, remove/fix/replace <game>, broadcast <msg>, maintenance on|off, give/remove crown @user, give @user game testing, status, online, reports. Read-only ones (status, online, reports, scan) run instantly. args: {"text":"ban @bob 1h spamming"}',
+		danger: true,
+		safeIf: (a) => SAFE_PANEL_CMD.test(String(a.text || "")),
+		async run(a) {
+			const r = await jarvisCommand(String(a.text || ""));
+			return r ? r.reply : "That text is not a panel command. (Nothing was executed.)";
+		}
+	},
+	player_admin: {
+		desc: 'Change a player. args: {"action":"badge|password|role|coins|cosmetic|godmode","username":"bob", ...}. badge: {badgeId|"all",mode:"grant|revoke"}; password: {password}; role: {role:"admin|user"}; coins: {amount,mode:"add|set"}; cosmetic: {itemId|"all",mode}; godmode: {}',
+		danger: true,
+		async run(a) { const { action, ...rest } = a; return siteAdmin(String(action), rest).message; }
+	},
+	write_file: {
+		desc: 'Create or overwrite a project file (old version is backed up). args: {"path":"src/x.js","content":"..."}',
+		danger: true,
+		async run(a) {
+			const full = agentPath(a.path);
+			if (typeof a.content !== "string") throw new Error("content must be a string");
+			if (/\.(exe|dll|bat|cmd|ps1|sh)$/i.test(full)) throw new Error("refusing to write executable file types");
+			const bak = agentBackup(full);
+			fs.mkdirSync(path.dirname(full), { recursive: true });
+			fs.writeFileSync(full, a.content);
+			audit("agent.write", a.path);
+			return `Wrote ${a.path} (${a.content.length} chars).` + (bak ? " Backup saved." : " (new file)");
+		}
+	},
+	edit_file: {
+		desc: 'Replace text in a file (backup kept). "find" must match exactly once unless all=true. args: {"path":"src/x.js","find":"old","replace":"new","all":false}',
+		danger: true,
+		async run(a) {
+			const full = agentPath(a.path);
+			const src = fs.readFileSync(full, "utf8");
+			const find = String(a.find ?? "");
+			if (!find) throw new Error("find is empty");
+			const count = src.split(find).length - 1;
+			if (count === 0) throw new Error("find text not found — read the file again and copy it exactly");
+			if (count > 1 && !a.all) throw new Error(`find text matches ${count} places — make it more specific or set all=true`);
+			const bak = agentBackup(full);
+			fs.writeFileSync(full, src.split(find).join(String(a.replace ?? "")));
+			audit("agent.edit", `${a.path} (${count}x)`);
+			return `Edited ${a.path} (${count} replacement${count > 1 ? "s" : ""}).` + (bak ? " Backup saved." : "");
+		}
+	},
+	run_command: {
+		desc: 'Run a whitelisted command: "node --check <file>", "git status", "git diff [file]", "git log -n 5". args: {"command":"node --check src/index.js"}',
+		danger: true,
+		safeIf: (a) => /^\s*node\s+--check\s+[\w./\\ -]+$|^\s*git\s+(status|log|diff)\b/.test(String(a.command || "")),
+		async run(a) {
+			const parts = String(a.command || "").trim().split(/\s+/);
+			let file, args;
+			if (parts[0] === "node" && parts[1] === "--check" && parts.length === 3) { file = "node"; args = ["--check", agentPath(parts[2])]; }
+			else if (parts[0] === "git" && ["status", "log", "diff"].includes(parts[1]) && parts.slice(2).every((p) => /^(--[a-z-]+|-n|-\d+|[\w./-]+)$/.test(p) && !p.includes(".."))) { file = "git"; args = parts.slice(1); }
+			else throw new Error("command not allowed. Allowed: node --check <file>, git status|log|diff");
+			return await new Promise((resolve) => {
+				execFile(file, args, { cwd: AGENT_ROOT, timeout: 20000, maxBuffer: 1_000_000 }, (err, stdout, stderr) => {
+					resolve(clip((stdout || "") + (stderr || "") + (err && !stdout && !stderr ? String(err.message) : ""), 5000) || "(no output, exit ok)");
+				});
+			});
+		}
+	}
+};
+
+function summarizeCall(tool, a) {
+	const t = AGENT_TOOLS[tool];
+	if (tool === "write_file") return `Write ${a.path} (${String(a.content || "").length} chars)`;
+	if (tool === "edit_file") return `Edit ${a.path}: replace ${JSON.stringify(clip(a.find, 120))} → ${JSON.stringify(clip(a.replace, 120))}`;
+	if (tool === "run_command") return `Run: ${a.command}`;
+	if (tool === "panel_command") return `Panel command: ${a.text}`;
+	if (tool === "player_admin") return `Player admin: ${a.action} @${a.username}` + (a.action === "password" ? "" : " " + JSON.stringify({ ...a, action: undefined, username: undefined, password: undefined }));
+	return tool + " " + JSON.stringify(a);
+}
+
+function agentSystemPrompt() {
+	const toolDocs = Object.entries(AGENT_TOOLS).map(([n, t]) => `- ${n}: ${t.desc}${t.danger ? " [needs owner approval unless trivially read-only]" : ""}`).join("\n");
+	return [
+		"You are Jarvis, the owner-only AI agent inside the Clash Proxy Owner Panel. You work like a coding/ops assistant: you investigate with tools, then act. You are running on a small free model, so be careful: verify before you claim, never invent file contents or results.",
+		"HOW TO REPLY — every single reply must be EXACTLY ONE JSON object and nothing else (no markdown fences, no prose outside JSON):\n  {\"tool\":\"<name>\",\"args\":{...},\"say\":\"<optional short note for the owner>\"}   to use a tool\n  {\"final\":\"<your answer to the owner, markdown allowed>\"}   when you are done\nAfter a tool call you will receive a message starting with TOOL_RESULT. Use it, then call another tool or finish.",
+		"TOOLS:\n" + toolDocs,
+		"PROJECT MAP (relative to the Clash Proxy folder): src/index.js (main fastify server), src/classic.js (classic proxy mode, YouTube handling), src/routes/*.js (api routes: ai, auth, admin, bazaar, chat, friends, saves, scripts…), src/db.js (sqlite schema), clash owner pannel/server.js + index.html (this panel), public/ (site frontend), games/ + games-data.js (game library).",
+		"RULES:\n1. Read a file (read_file/search_code) before editing it. Copy `find` text EXACTLY from the file. Make small, targeted edits.\n2. After editing a .js file, run `node --check <file>`. If it fails, fix it.\n3. Do one thing per turn. Don't repeat a failing call; change approach or explain the problem in `final`.\n4. Destructive tools wait for the owner's approval; if the owner denies, accept it and propose an alternative.\n5. Never claim an action succeeded unless a TOOL_RESULT said so. Keep `final` concise.\n6. Secrets (keys, databases, configs) are blocked; don't try to read them.",
+		"LIVE CONTEXT:\n" + jarvisLiveContext()
+	].join("\n\n");
+}
+
+function parseAgentJson(text) {
+	let s = String(text || "").trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+	const start = s.indexOf("{");
+	if (start < 0) return null;
+	let depth = 0, inStr = false, esc = false;
+	for (let i = start; i < s.length; i++) {
+		const c = s[i];
+		if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+		if (c === '"') inStr = true;
+		else if (c === "{") depth++;
+		else if (c === "}" && --depth === 0) {
+			try { return JSON.parse(s.slice(start, i + 1)); } catch { return null; }
+		}
+	}
+	return null;
+}
+
+function agentSession(sid) {
+	const now = Date.now();
+	for (const [k, v] of AGENT_SESSIONS) if (now - v.touched > 3600_000) AGENT_SESSIONS.delete(k);
+	let s = AGENT_SESSIONS.get(sid);
+	if (!s) { s = { messages: [], pending: null, touched: now }; AGENT_SESSIONS.set(sid, s); }
+	s.touched = now;
+	if (s.messages.length > 40) s.messages = s.messages.slice(-30);
+	return s;
+}
+
+async function execTool(name, args) {
+	try { return { ok: true, out: clip(await AGENT_TOOLS[name].run(args || {}), 8000) }; }
+	catch (e) { return { ok: false, out: "ERROR: " + (e.message || e) }; }
+}
+
+// Drives the loop until the model says "final", needs approval, or runs out of steps.
+async function agentRun(s, trace) {
+	let badJson = 0;
+	for (let step = 0; step < AGENT_MAX_STEPS; step++) {
+		const raw = await askAIReply([{ role: "system", content: agentSystemPrompt() }, ...s.messages],
+			{ openrouterKey: loadJarvisKey(), agent: true, timeoutMs: 90000 });
+		if (!raw) {
+			return { reply: trace.length ? "I lost contact with the AI backend mid-task. What I did so far is in the steps above — ask me to continue in a minute." : null, trace };
+		}
+		const obj = parseAgentJson(raw);
+		if (!obj || (obj.final === undefined && !obj.tool)) {
+			if (++badJson > 2) return { reply: clip(raw, 3000), trace };
+			s.messages.push({ role: "assistant", content: clip(raw, 2000) });
+			s.messages.push({ role: "user", content: 'SYSTEM: your reply was not a single valid JSON object. Reply again with ONLY {"tool":...,"args":{...}} or {"final":"..."}.' });
+			continue;
+		}
+		if (obj.final !== undefined) {
+			s.messages.push({ role: "assistant", content: JSON.stringify({ final: String(obj.final) }) });
+			return { reply: String(obj.final), trace };
+		}
+		const name = String(obj.tool), args = obj.args && typeof obj.args === "object" ? obj.args : {};
+		s.messages.push({ role: "assistant", content: JSON.stringify({ tool: name, args }) });
+		const tool = AGENT_TOOLS[name];
+		if (!tool) {
+			s.messages.push({ role: "user", content: `TOOL_RESULT ${name}:\nERROR: unknown tool. Available: ${Object.keys(AGENT_TOOLS).join(", ")}` });
+			continue;
+		}
+		if (tool.danger && !(tool.safeIf && tool.safeIf(args))) {
+			const id = randomBytes(6).toString("hex");
+			s.pending = { id, tool: name, args };
+			return { reply: obj.say ? String(obj.say) : "", trace, pending: { id, tool: name, summary: summarizeCall(name, args), args: name === "write_file" ? { path: args.path, preview: clip(args.content, 1500) } : args } };
+		}
+		const r = await execTool(name, args);
+		trace.push({ tool: name, summary: summarizeCall(name, args), ok: r.ok, out: clip(r.out, 600) });
+		s.messages.push({ role: "user", content: `TOOL_RESULT ${name}:\n${r.out}` });
+	}
+	return { reply: "I used all my steps on this. Tell me to keep going, or narrow the task.", trace };
+}
+
+async function jarvisAgentChat(sid, text) {
+	const s = agentSession(sid);
+	if (s.pending) { s.messages.push({ role: "assistant", content: JSON.stringify({ tool: s.pending.tool, args: s.pending.args }) }); s.messages.push({ role: "user", content: "TOOL_RESULT: the owner ignored the approval prompt and sent a new message instead; the action was NOT run." }); s.pending = null; }
+	s.messages.push({ role: "user", content: text });
+	await cachedMainGames();
+	return agentRun(s, []);
+}
+async function jarvisAgentApprove(sid, id, approve) {
+	const s = AGENT_SESSIONS.get(sid);
+	if (!s || !s.pending || s.pending.id !== id) throw new Error("That action is no longer pending.");
+	const p = s.pending; s.pending = null;
+	const trace = [];
+	if (approve) {
+		const r = await execTool(p.tool, p.args);
+		trace.push({ tool: p.tool, summary: summarizeCall(p.tool, p.args) + "  ✔ approved", ok: r.ok, out: clip(r.out, 600) });
+		s.messages.push({ role: "user", content: `TOOL_RESULT ${p.tool}:\n${r.out}` });
+	} else {
+		trace.push({ tool: p.tool, summary: summarizeCall(p.tool, p.args) + "  ✖ denied", ok: false, out: "Owner denied this action." });
+		s.messages.push({ role: "user", content: `TOOL_RESULT ${p.tool}:\nThe owner DENIED this action. Do not retry it. Offer an alternative or finish.` });
+	}
+	audit("agent." + (approve ? "approve" : "deny"), p.tool);
+	return agentRun(s, trace);
 }
 
 server.listen(PORT, HOST, () => {

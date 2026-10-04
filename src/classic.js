@@ -13,7 +13,11 @@
 import { Readable, PassThrough } from "node:stream";
 import { randomBytes } from "node:crypto";
 import { appendFileSync, readFileSync } from "node:fs";
-import { gunzipSync, brotliDecompressSync } from "node:zlib";
+import { gunzipSync, brotliDecompressSync, createGunzip, createInflate, createBrotliDecompress } from "node:zlib";
+import { request as httpRequest, Agent as HttpAgent } from "node:http";
+import { request as httpsRequest, Agent as HttpsAgent } from "node:https";
+import { connect as netConnect } from "node:net";
+import { connect as tlsConnect } from "node:tls";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
 
 // transient diagnostics (googlevideo 403s, upstream failures) — file
@@ -51,6 +55,199 @@ const YT_SUFFIXES = [
 function isYtHost(h) {
 	h = String(h || "").toLowerCase();
 	return YT_SUFFIXES.some((s) => h === s.slice(1) || h.endsWith(s));
+}
+
+// ------------------------------------------------------------
+// Cloudflare WARP SOCKS5 Tunneling for YouTube/Google domains
+// ------------------------------------------------------------
+const SOCKS_HOST = process.env.WARP_SOCKS_HOST || "127.0.0.1";
+const SOCKS_PORT = Number(process.env.WARP_SOCKS_PORT || 40000);
+
+function createWarpSocksConnection(options, callback) {
+	const sock = netConnect(SOCKS_PORT, SOCKS_HOST);
+	let buffer = Buffer.alloc(0);
+	let state = "greeting";
+	const host = options.host;
+	const port = Number(options.port) || (options.protocol === "https:" ? 443 : 80);
+	const hostBuf = Buffer.from(host, "utf8");
+
+	const onError = (err) => {
+		sock.destroy();
+		callback(err);
+	};
+
+	sock.on("error", onError);
+	sock.setTimeout(15000, () => {
+		sock.destroy();
+		callback(new Error("WARP SOCKS5 handshake timeout"));
+	});
+
+	sock.on("connect", () => {
+		sock.write(Buffer.from([0x05, 0x01, 0x00]));
+	});
+
+	const onData = (chunk) => {
+		buffer = Buffer.concat([buffer, chunk]);
+		tryHandshake();
+	};
+
+	sock.on("data", onData);
+
+	function tryHandshake() {
+		if (state === "greeting") {
+			if (buffer.length < 2) return;
+			const greet = buffer.subarray(0, 2);
+			buffer = buffer.subarray(2);
+			if (greet[0] !== 0x05 || greet[1] !== 0x00) {
+				return onError(new Error("SOCKS5 auth rejected: " + greet[1]));
+			}
+			state = "connecting";
+			const req = Buffer.alloc(7 + hostBuf.length);
+			req[0] = 0x05; req[1] = 0x01; req[2] = 0x00; req[3] = 0x03;
+			req[4] = hostBuf.length;
+			hostBuf.copy(req, 5);
+			req.writeUInt16BE(port & 0xffff, 5 + hostBuf.length);
+			sock.write(req);
+		}
+
+		if (state === "connecting") {
+			if (buffer.length < 4) return;
+			const rep = buffer[1];
+			const atyp = buffer[3];
+			let needed = 4;
+			if (atyp === 0x01) needed += 6;
+			else if (atyp === 0x03) {
+				if (buffer.length < 5) return;
+				needed += 1 + buffer[4] + 2;
+			} else if (atyp === 0x04) needed += 18;
+			else return onError(new Error("SOCKS5 bad atyp " + atyp));
+
+			if (buffer.length < needed) return;
+			if (rep !== 0x00) return onError(new Error("SOCKS5 connect failed: " + rep));
+
+			state = "done";
+			sock.removeListener("data", onData);
+			sock.removeListener("error", onError);
+			sock.setTimeout(0);
+
+			const leftover = buffer.subarray(needed);
+			if (leftover.length > 0) sock.unshift(leftover);
+
+			const isHttps = options.protocol === "https:" || port === 443;
+			if (isHttps) {
+				const tlsSocket = tlsConnect({
+					socket: sock,
+					servername: options.servername || host,
+				}, () => callback(null, tlsSocket));
+				tlsSocket.on("error", (err) => callback(err));
+			} else {
+				callback(null, sock);
+			}
+		}
+	}
+}
+
+const warpAgentHttps = new HttpsAgent({ keepAlive: true, maxSockets: 64, timeout: 60000 });
+warpAgentHttps.createConnection = createWarpSocksConnection;
+
+const warpAgentHttp = new HttpAgent({ keepAlive: true, maxSockets: 64, timeout: 60000 });
+warpAgentHttp.createConnection = createWarpSocksConnection;
+
+function fetchViaWarp(target, init = {}) {
+	return new Promise((resolve, reject) => {
+		const isHttps = target.protocol === "https:";
+		const reqFn = isHttps ? httpsRequest : httpRequest;
+		const agent = isHttps ? warpAgentHttps : warpAgentHttp;
+
+		const headers = {};
+		if (init.headers) {
+			if (init.headers instanceof Headers) {
+				for (const [k, v] of init.headers.entries()) headers[k] = v;
+			} else if (Array.isArray(init.headers)) {
+				for (const [k, v] of init.headers) headers[k] = v;
+			} else {
+				Object.assign(headers, init.headers);
+			}
+		}
+
+		const method = String(init.method || "GET").toUpperCase();
+		const options = {
+			protocol: target.protocol,
+			hostname: target.hostname,
+			port: target.port || (isHttps ? 443 : 80),
+			path: target.pathname + target.search,
+			method,
+			headers,
+			agent,
+			rejectUnauthorized: false,
+		};
+
+		const req = reqFn(options, (res) => {
+			const hasNoBody = res.statusCode === 204 || res.statusCode === 205 || res.statusCode === 304 || method === "HEAD";
+			let bodyStream = null;
+			if (!hasNoBody) {
+				const enc = String(res.headers["content-encoding"] || "").toLowerCase();
+				if (enc === "gzip" || enc === "deflate") {
+					const dec = enc === "gzip" ? createGunzip() : createInflate();
+					bodyStream = Readable.toWeb(res.pipe(dec));
+				} else if (enc === "br") {
+					bodyStream = Readable.toWeb(res.pipe(createBrotliDecompress()));
+				} else {
+					bodyStream = Readable.toWeb(res);
+				}
+			}
+			const outHeaders = new Headers();
+			if (res.rawHeaders) {
+				for (let i = 0; i < res.rawHeaders.length; i += 2) {
+					outHeaders.append(res.rawHeaders[i], res.rawHeaders[i + 1]);
+				}
+			}
+			const resp = new Response(bodyStream, {
+				status: res.statusCode,
+				statusText: res.statusMessage,
+				headers: outHeaders,
+			});
+			resolve(resp);
+		});
+
+		req.on("error", reject);
+
+		if (init.signal) {
+			if (init.signal.aborted) {
+				req.destroy(new Error("Request aborted"));
+				return reject(new Error("Request aborted"));
+			}
+			init.signal.addEventListener("abort", () => {
+				req.destroy(new Error("Request aborted"));
+				reject(new Error("Request aborted"));
+			}, { once: true });
+		}
+
+		if (init.body != null) {
+			if (Buffer.isBuffer(init.body) || typeof init.body === "string") {
+				req.end(init.body);
+			} else if (init.body && typeof init.body.pipe === "function") {
+				init.body.pipe(req);
+			} else {
+				req.end(init.body);
+			}
+		} else {
+			req.end();
+		}
+	});
+}
+
+async function smartFetch(targetInput, init = {}) {
+	const target = targetInput instanceof URL ? targetInput : new URL(String(targetInput));
+	if (!isYtHost(target.hostname)) {
+		return fetch(target, init);
+	}
+	try {
+		return await fetchViaWarp(target, init);
+	} catch (err) {
+		dbg(`WARP_FALLBACK host=${target.hostname} err=${err && err.message}`);
+		return fetch(target, init);
+	}
 }
 
 // Response headers we never forward (CSP would block our injected
@@ -400,7 +597,7 @@ async function androidPlayer(videoId, jarId) {
 	const ac = new AbortController();
 	const timer = setTimeout(() => ac.abort(), 25000);
 	try {
-		const r = await fetch("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", {
+		const r = await smartFetch("https://www.youtube.com/youtubei/v1/player?prettyPrint=false", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -534,7 +731,7 @@ async function ssrPlayer(videoId, ua) {
 	for (let attempt = 0; attempt < 2; attempt++) {
 		for (const url of urls) {
 			try {
-				const r = await fetch(url, {
+				const r = await smartFetch(url, {
 					headers: {
 						"user-agent": ua || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
 						"accept-language": "en-GB,en;q=0.9",
@@ -880,7 +1077,7 @@ export default async function classicRoutes(fastify) {
 		const upBody = (req.method !== "GET" && req.method !== "HEAD") ? (body || undefined) : undefined;
 		for (let attempt = 0; !upstream; attempt++) {
 			try {
-				upstream = await fetch(target, {
+				upstream = await smartFetch(target, {
 					method: req.method,
 					headers: upHeaders,
 					body: upBody,
@@ -973,7 +1170,7 @@ export default async function classicRoutes(fastify) {
 				(await ytPagePlayable(text)) === false) {
 				dbg(`BOTWALL retry path=${target.pathname.slice(0, 60)}`);
 				try {
-					const r2 = await fetch(target, { method: "GET", headers: upHeaders, redirect: "manual", signal: AbortSignal.timeout(30000) });
+					const r2 = await smartFetch(target, { method: "GET", headers: upHeaders, redirect: "manual", signal: AbortSignal.timeout(30000) });
 					const t2 = await r2.text();
 					if ((await ytPagePlayable(t2)) !== false) {
 						text = t2;
@@ -1073,6 +1270,9 @@ export function classicUpgrade(req, socket, head) {
 		const wss = new WebSocketServer({ noServer: true, perMessageDeflate: false });
 		wss.handleUpgrade(req, socket, head, (client) => {
 			const outOpts = { headers, perMessageDeflate: false };
+			if (isYtHost(t.hostname)) {
+				outOpts.agent = warpAgentHttps;
+			}
 			let out;
 			try {
 				out = subproto.length ? new WsClient(t.href, subproto, outOpts) : new WsClient(t.href, outOpts);

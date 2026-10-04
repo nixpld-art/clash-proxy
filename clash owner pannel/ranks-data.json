@@ -7,7 +7,52 @@
 				"game-library",
 				"social-moderation"
 			]
+		},
+		{
+			"id": "pmuqwhzosgdcj",
+			"name": "Owner",
+			"privileges": [
+				"all-access"
+			]
+		},
+		{
+			"id": "pmuqwjg0tk8ni",
+			"name": "Aura",
+			"privileges": [
+				"social-moderation"
+			]
 		}
 	],
-	"assignments": {}
+	"assignments": {
+		"1": {
+			"presetId": null,
+			"rankName": "Owner",
+			"privileges": [
+				"all-access"
+			],
+			"username": "Nils",
+			"prevTag": "FOUNDER & DEV",
+			"prevRole": "admin"
+		},
+		"2": {
+			"presetId": "pmup80ai0j3gf",
+			"rankName": "Owner",
+			"privileges": [
+				"all-access"
+			],
+			"username": "ozzy",
+			"prevTag": "FOUNDER & DEV",
+			"prevRole": "admin"
+		},
+		"4": {
+			"presetId": "pmup80ai0j3gf",
+			"rankName": "Owner",
+			"privileges": [
+				"all-access"
+			],
+			"username": "ted",
+			"prevTag": "FOUNDER & DEV",
+			"prevRole": "admin"
+		}
+	}
 }
