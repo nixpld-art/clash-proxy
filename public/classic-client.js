@@ -444,6 +444,53 @@
 		}
 	} catch (e) {}
 
+	// ---- YouTube SABR Disabler & Error Neutralizer -------------
+	// Desktop YouTube player crashes with `fmt.missing` ("Something went wrong")
+	// when `useServerDrivenAbr` is true but direct Range-GET / MSE formats are provided.
+	// Neutralize useServerDrivenAbr so the player smoothly selects direct formats.
+	try {
+		var stripServerAbrClient = function (node) {
+			if (!node || typeof node !== "object") return;
+			if (Array.isArray(node)) {
+				for (var i = 0; i < node.length; i++) stripServerAbrClient(node[i]);
+				return;
+			}
+			if (node.mediaCommonConfig && typeof node.mediaCommonConfig === "object") {
+				node.mediaCommonConfig.useServerDrivenAbr = false;
+			}
+			if (node.useServerDrivenAbr !== undefined) {
+				node.useServerDrivenAbr = false;
+			}
+			for (var k in node) {
+				if (Object.prototype.hasOwnProperty.call(node, k) && typeof node[k] === "object" && node[k] !== null) {
+					stripServerAbrClient(node[k]);
+				}
+			}
+		};
+
+		var _cClientYtResp = window.ytInitialPlayerResponse;
+		if (_cClientYtResp) stripServerAbrClient(_cClientYtResp);
+		Object.defineProperty(window, "ytInitialPlayerResponse", {
+			configurable: true,
+			enumerable: true,
+			get: function () { return _cClientYtResp; },
+			set: function (v) {
+				stripServerAbrClient(v);
+				_cClientYtResp = v;
+			}
+		});
+
+		if (window.Response && Response.prototype.json) {
+			var origRespJson = Response.prototype.json;
+			Response.prototype.json = function () {
+				return origRespJson.apply(this, arguments).then(function (data) {
+					stripServerAbrClient(data);
+					return data;
+				});
+			};
+		}
+	} catch (e) {}
+
 	// ---- Autoplay Enforcer -------------------------------------
 	// Ensures videos and shorts play automatically upon loading
 	(function () {
@@ -491,10 +538,13 @@
 					v.__initAutoplay = true;
 					v.addEventListener("play", function () { this.__hasAutoPlayed = true; });
 					v.addEventListener("pause", function () {
-						// Only mark user-paused if it previously played
 						if (this.__hasAutoPlayed && !this.seeking) this.__userPaused = true;
 					});
 					v.addEventListener("emptied", function () {
+						this.__userPaused = false;
+						this.__hasAutoPlayed = false;
+					});
+					v.addEventListener("loadstart", function () {
 						this.__userPaused = false;
 						this.__hasAutoPlayed = false;
 					});
@@ -512,6 +562,14 @@
 				}
 			}
 		};
+
+		window.addEventListener("yt-navigate-finish", function () {
+			var vids = document.querySelectorAll("video");
+			for (var i = 0; i < vids.length; i++) {
+				vids[i].__userPaused = false;
+			}
+			setTimeout(checkVideos, 200);
+		});
 
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", function () {

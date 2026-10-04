@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=8";
+const CLIENT_JS = "/classic-client.js?v=9";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -701,6 +701,28 @@ function stripSabr(sd) {
 	return hit;
 }
 
+// Ensure useServerDrivenAbr is false recursively across player configs so
+// desktop YouTube player cleanly falls back to direct MSE / Range-GET formats
+// without aborting with `fmt.missing` (missabrurl: 1).
+function stripServerAbrRecursively(node) {
+	if (!node || typeof node !== "object") return;
+	if (Array.isArray(node)) {
+		for (let i = 0; i < node.length; i++) stripServerAbrRecursively(node[i]);
+		return;
+	}
+	if (node.mediaCommonConfig && typeof node.mediaCommonConfig === "object") {
+		node.mediaCommonConfig.useServerDrivenAbr = false;
+	}
+	if (node.useServerDrivenAbr !== undefined) {
+		node.useServerDrivenAbr = false;
+	}
+	for (const k of Object.keys(node)) {
+		if (typeof node[k] === "object" && node[k] !== null) {
+			stripServerAbrRecursively(node[k]);
+		}
+	}
+}
+
 // Test helper (CLASSIC_STRIP_SABR=1): delete serverAbrStreamingUrl and
 // sabr=1 params so the player falls back to plain Range-GET streaming.
 function stripSabrFromHtml(html, target) {
@@ -711,6 +733,7 @@ function stripSabrFromHtml(html, target) {
 		let obj;
 		try { obj = JSON.parse(html.slice(loc.start, loc.end)); } catch { return html; }
 		if (!stripSabr(obj && obj.streamingData)) return html;
+		stripServerAbrRecursively(obj);
 		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
 		dbg(`STRIP applied vid=${(obj.videoDetails && obj.videoDetails.videoId) || "?"}`);
 		return html.slice(0, loc.start) + json + html.slice(loc.end);
@@ -732,6 +755,7 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 				const alt = await androidPlayer(vid, jarId);
 				if (alt && alt.streamingData) {
 					stripSabr(alt.streamingData);
+					stripServerAbrRecursively(alt);
 					const script = `<script>var ytInitialPlayerResponse = ${JSON.stringify(alt).replace(/</g, "\\u003c")};</script>`;
 					dbg(`SPLICE injected_new vid=${vid}`);
 					if (/<head[^>]*>/i.test(html)) return html.replace(/<head([^>]*)>/i, (m, a) => `<head${a}>${script}`);
@@ -752,6 +776,7 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 		const alt = await androidPlayer(videoId, jarId);
 		if (!alt || !alt.streamingData) {
 			stripSabr(sd);
+			stripServerAbrRecursively(obj);
 			dbg(`SPLICE alt_null vid=${videoId} st=${st} ms=${Date.now() - t0}`);
 			return html;
 		}
@@ -763,6 +788,7 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 		if (!obj.videoDetails && alt.videoDetails) obj.videoDetails = alt.videoDetails;
 		if (!obj.playerConfig && alt.playerConfig) obj.playerConfig = alt.playerConfig;
 		if (!obj.playbackTracking && alt.playbackTracking) obj.playbackTracking = alt.playbackTracking;
+		stripServerAbrRecursively(obj);
 		dbg(`SPLICE ok vid=${videoId} st=${st}->${obj.playabilityStatus?.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} sabr=${stripped ? "stripped" : "none"} ms=${Date.now() - t0}`);
 		// escape '<' so a description containing "</script>" can't end the tag
 		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
@@ -848,12 +874,14 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		const alt = await androidPlayer(vid);
 		if (alt && alt.streamingData) {
 			stripSabr(alt.streamingData);
+			stripServerAbrRecursively(alt);
 			dbg(`YTFALL android_ok vid=${vid} st=${st}->${alt.playabilityStatus?.status} ms=${Date.now() - t0}`);
 			return JSON.stringify(alt);
 		}
 		const emb = await ssrPlayer(vid, ua);
 		if (!emb) { dbg(`YTFALL miss vid=${vid} st=${st}`); return txt; }
 		stripSabr(emb.streamingData);
+		stripServerAbrRecursively(emb);
 		dbg(`YTFALL ok vid=${vid} st=${st}->OK fmts=${((emb.streamingData && emb.streamingData.adaptiveFormats) || []).length} ms=${Date.now() - t0}`);
 		return JSON.stringify(emb);
 	} catch (e) { dbg(`YTFALL throw ${e.message}`); return txt; }
@@ -879,11 +907,15 @@ async function spliceReelJson(json, jarId) {
 				const alt = await androidPlayer(vid, jarId);
 				if (alt && alt.streamingData) {
 					stripSabr(alt.streamingData);
+					stripServerAbrRecursively(alt);
 					pr.streamingData = alt.streamingData;
 					if (alt.playabilityStatus) pr.playabilityStatus = alt.playabilityStatus;
+					if (alt.playerConfig) pr.playerConfig = alt.playerConfig;
+					stripServerAbrRecursively(pr);
 					dbg(`REEL_SPLICE ok vid=${vid} fmts=${(pr.streamingData.formats || []).length}`);
 				} else if (pr.streamingData) {
 					stripSabr(pr.streamingData);
+					stripServerAbrRecursively(pr);
 				}
 			});
 		}
@@ -897,6 +929,7 @@ async function spliceReelJson(json, jarId) {
 	if (tasks.length) {
 		await Promise.all(tasks.map((t) => t()));
 	}
+	stripServerAbrRecursively(json);
 	return json;
 }
 
@@ -1359,8 +1392,9 @@ export default async function classicRoutes(fastify) {
 				}
 				try {
 					const pJson = JSON.parse(bodyTxt);
-					if (pJson && pJson.streamingData) {
-						stripSabr(pJson.streamingData);
+					if (pJson) {
+						if (pJson.streamingData) stripSabr(pJson.streamingData);
+						stripServerAbrRecursively(pJson);
 						bodyTxt = JSON.stringify(pJson);
 					}
 				} catch {}
@@ -1369,6 +1403,7 @@ export default async function classicRoutes(fastify) {
 				try {
 					const rJson = JSON.parse(bodyTxt);
 					const spliced = await spliceReelJson(rJson, jarId);
+					stripServerAbrRecursively(spliced);
 					bodyTxt = JSON.stringify(spliced);
 				} catch {}
 			}
