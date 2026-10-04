@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=14";
+const CLIENT_JS = "/classic-client.js?v=15";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -1030,7 +1030,9 @@ async function renderHtml(text, target, jarId, dbgFlags) {
 		if (raw) {
 			try { const a = new URL(raw, target.href); if (a.protocol === "http:" || a.protocol === "https:") base = a.href; } catch {}
 		}
-		text = text.replace(baseTag[0], "");
+		// Preserve <base href="..."> with the target base URL so client scripts
+		// (e.g. Google Accounts boq-identity) can inspect document.getElementsByTagName("BASE")
+		text = text.replace(baseTag[0], `<base href="${base}">`);
 	}
 
 	if (process.env.CLASSIC_STRIP_SABR !== "0") {
@@ -1201,6 +1203,19 @@ export default async function classicRoutes(fastify) {
 		const targetStr = rawUrl.slice(PREFIX.length);
 		let target;
 		try { target = new URL(targetStr); } catch { return reply.code(400).type("text/plain").send("Invalid proxy URL"); }
+		// Unwrap nested proxy loops (e.g. /classic/https://clash-proxy.../classic/https://...)
+		while (target.host === req.headers.host && target.pathname.startsWith(PREFIX)) {
+			try { target = new URL(target.pathname.slice(PREFIX.length) + target.search + target.hash); } catch { break; }
+		}
+		if (target.host === req.headers.host) {
+			const refTarget = unwrapProxy(req.headers.referer, req.headers.host);
+			if (refTarget) {
+				try {
+					const rU = new URL(refTarget);
+					target = new URL(target.pathname + target.search + target.hash, rU.origin);
+				} catch {}
+			}
+		}
 		if (target.protocol !== "http:" && target.protocol !== "https:") return reply.code(400).type("text/plain").send("Unsupported protocol");
 
 		let jarId = jarIdFrom(req);

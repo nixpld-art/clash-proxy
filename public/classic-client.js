@@ -121,7 +121,10 @@
 			// root-relative path that was resolved against the proxied
 			// document (new Request('/x'), fetch(location.origin+'/x')…)
 			// belongs to the target site — remap it.
-			try { return ORIGIN + PREFIX + new NativeURL(p + abs.search + abs.hash, targetBase).href; }
+			try {
+				var tbU = new NativeURL(targetBase);
+				return ORIGIN + PREFIX + new NativeURL(p + abs.search + abs.hash, tbU.origin).href;
+			}
 			catch (e) { return abs.href; }
 		}
 		return ORIGIN + PREFIX + abs.href;
@@ -137,7 +140,10 @@
 			return abs.pathname.slice(PREFIX.length) + abs.search + abs.hash;
 		}
 		// resolved into our origin from a root-relative string → re-resolve vs target
-		try { return new NativeURL(abs.pathname + abs.search + abs.hash, targetBase).href; } catch (e) { return null; }
+		try {
+			var tbU = new NativeURL(targetBase);
+			return new NativeURL(abs.pathname + abs.search + abs.hash, tbU.origin).href;
+		} catch (e) { return null; }
 	}
 
 	// ---- URL constructor: sites see native-looking target URLs ----
@@ -149,8 +155,16 @@
 				if (fb) b = fb;
 			}
 			var u;
-			if (b === undefined || b === null) u = new NativeURL(url);
-			else u = new NativeURL(url, b);
+			try {
+				if (b === undefined || b === null) u = new NativeURL(url);
+				else u = new NativeURL(url, b);
+			} catch (err) {
+				if (b === undefined || b === null) {
+					try { u = new NativeURL(url, targetBase); } catch (e) { throw err; }
+				} else {
+					throw err;
+				}
+			}
 			var back = fromProxy(u.href);
 			if (back) { try { return new NativeURL(back); } catch (e) {} }
 			return u;
@@ -313,7 +327,17 @@
 			var s = String(url);
 			var abs = null;
 			var uw = unwrap(s);
-			try { if (uw) abs = new NativeURL(uw); else abs = new NativeURL(s, targetBase); } catch (e) { return null; }
+			try {
+				if (uw) {
+					abs = new NativeURL(uw);
+				} else {
+					abs = new NativeURL(s, targetBase);
+					if (abs.origin === ORIGIN) {
+						var tbU = new NativeURL(targetBase);
+						abs = new NativeURL(abs.pathname + abs.search + abs.hash, tbU.origin);
+					}
+				}
+			} catch (e) { return null; }
 			if (abs.protocol !== "http:" && abs.protocol !== "https:") return null;
 			targetBase = abs.href;
 			var rel = abs.pathname + abs.search + abs.hash;
