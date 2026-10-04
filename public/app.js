@@ -791,8 +791,9 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 		} else {
 			await initSWPromise;
 
+			const isYouTube = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\b/i.test(targetUrl);
 			let routed = false;
-			if (!classicMode && sjController) {
+			if (!classicMode && !isYouTube && sjController) {
 				try {
 					const frame = sjController.createFrame(iframe);
 					frame.go(targetUrl);
@@ -811,8 +812,8 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 			}
 
 			if (!routed) {
-				// Classic mode (or scramjet failed): server-side proxy, no SW
-				iframe.src = classicMode
+				// Classic mode (or YouTube or scramjet failed): server-side proxy, no SW
+				iframe.src = (classicMode || isYouTube)
 					? "/classic/" + targetUrl
 					: "/scram/service/" + encodeURIComponent(targetUrl);
 			}

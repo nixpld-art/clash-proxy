@@ -518,13 +518,33 @@
 				};
 			}
 		}
+		if (window.JSON && JSON.parse) {
+			var origJsonParse = JSON.parse;
+			JSON.parse = function () {
+				var res = origJsonParse.apply(this, arguments);
+				if (res && typeof res === "object" && (res.streamingData || res.videoDetails || res.playerConfig)) {
+					stripServerAbrClient(res);
+				}
+				return res;
+			};
+		}
 	} catch (e) {}
 
 	// ---- Autoplay Enforcer -------------------------------------
-	// Ensures videos and shorts play automatically upon loading
+	// Ensures videos and shorts play automatically upon loading and navigation
 	(function () {
+		var userExplicitlyPaused = false;
+		var lastKnownUrl = location.href;
+
+		function isInputActive() {
+			var active = document.activeElement;
+			if (!active) return false;
+			var tag = (active.tagName || "").toLowerCase();
+			return tag === "input" || tag === "textarea" || active.isContentEditable;
+		}
+
 		function triggerPlay(video) {
-			if (!video || !video.paused || video.ended || video.__userPaused) return;
+			if (!video || !video.paused || video.ended || userExplicitlyPaused) return;
 			video.autoplay = true;
 			try {
 				var p = video.play();
@@ -560,30 +580,38 @@
 		}
 
 		var checkVideos = function () {
+			// URL change detector (SPA navigations)
+			if (location.href !== lastKnownUrl) {
+				lastKnownUrl = location.href;
+				userExplicitlyPaused = false;
+			}
+
+			// Video element direct check
 			var vids = document.querySelectorAll("video");
 			for (var i = 0; i < vids.length; i++) {
 				var v = vids[i];
 				if (!v.__initAutoplay) {
 					v.__initAutoplay = true;
 					v.addEventListener("play", function () { this.__hasAutoPlayed = true; });
-					v.addEventListener("pause", function () {
-						if (this.__hasAutoPlayed && !this.seeking) this.__userPaused = true;
-					});
 					v.addEventListener("emptied", function () {
-						this.__userPaused = false;
+						userExplicitlyPaused = false;
 						this.__hasAutoPlayed = false;
 					});
 					v.addEventListener("loadstart", function () {
-						this.__userPaused = false;
+						userExplicitlyPaused = false;
 						this.__hasAutoPlayed = false;
 					});
+					v.addEventListener("ended", function () {
+						userExplicitlyPaused = false;
+					});
 				}
-				if (v.paused && !v.ended && !v.__userPaused) {
+				if (v.paused && !v.ended && !userExplicitlyPaused) {
 					if (v.readyState >= 1 || v.currentSrc || v.src) {
 						triggerPlay(v);
 					}
 				}
 			}
+
 			// Synchronize YouTube Shorts feed
 			try {
 				var urlStr = location.pathname + location.search + location.href;
@@ -594,29 +622,41 @@
 					if (sp && typeof sp.loadVideoById === "function") {
 						var curVid = sp.getVideoData && sp.getVideoData() && sp.getVideoData().video_id;
 						var st = typeof sp.getPlayerState === "function" ? sp.getPlayerState() : null;
-						if (curVid !== svid || st === -1) {
-							if (sp.__lastLoadedVid !== svid || st === -1) {
+						var now = Date.now();
+						if (curVid !== svid) {
+							if (sp.__lastLoadedVid !== svid || (now - (sp.__lastLoadTime || 0) > 4000)) {
 								sp.__lastLoadedVid = svid;
+								sp.__lastLoadTime = now;
 								sp.loadVideoById(svid);
+							}
+						} else if (!userExplicitlyPaused && (st === -1 || st === 5 || st === 2)) {
+							if (typeof sp.playVideo === "function") {
+								try { sp.playVideo(); } catch (e) {}
 							}
 						}
 					}
 				}
 			} catch (e) {}
 
-			// Trigger YouTube large play button or cued player
-			var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
-			if (mp && typeof mp.getPlayerState === "function") {
-				var mState = mp.getPlayerState();
-				if ((mState === 5 || mState === 2) && typeof mp.playVideo === "function") {
-					var mpVid = mp.querySelector("video");
-					if (!mpVid || !mpVid.__userPaused) {
-						try { mp.playVideo(); } catch (e) {}
+			// Trigger YouTube movie player or player elements
+			var players = document.querySelectorAll("#movie_player, #shorts-player, .html5-video-player");
+			for (var pIdx = 0; pIdx < players.length; pIdx++) {
+				var mp = players[pIdx];
+				if (mp && typeof mp.getPlayerState === "function") {
+					var mState = mp.getPlayerState();
+					// If cued (5), paused (2), or unstarted (-1), and user did not explicitly pause:
+					if (!userExplicitlyPaused && (mState === 5 || mState === 2 || mState === -1)) {
+						var mpVid = mp.querySelector("video");
+						if (mpVid && mpVid.ended) continue;
+						if (typeof mp.playVideo === "function") {
+							try { mp.playVideo(); } catch (e) {}
+						}
 					}
 				}
 			}
+
 			var cuedOverlay = document.querySelector(".ytp-cued-thumbnail-overlay:not([style*='display: none'])");
-			if (cuedOverlay) {
+			if (cuedOverlay && !userExplicitlyPaused) {
 				var playBtn = document.querySelector(".ytp-large-play-button, .ytp-play-button");
 				if (playBtn) {
 					try { playBtn.click(); } catch (e) {}
@@ -625,28 +665,48 @@
 		};
 
 		var resetAndCheck = function () {
-			var vids = document.querySelectorAll("video");
-			for (var i = 0; i < vids.length; i++) {
-				vids[i].__userPaused = false;
-			}
-			setTimeout(checkVideos, 100);
-			setTimeout(checkVideos, 400);
-			setTimeout(checkVideos, 1000);
+			userExplicitlyPaused = false;
+			setTimeout(checkVideos, 50);
+			setTimeout(checkVideos, 250);
+			setTimeout(checkVideos, 600);
+			setTimeout(checkVideos, 1200);
 		};
 
+		// Track explicit user pause gestures
+		document.addEventListener("click", function (e) {
+			var playBtn = e.target && e.target.closest && e.target.closest(".ytp-play-button");
+			if (playBtn) {
+				var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
+				var st = mp && typeof mp.getPlayerState === "function" ? mp.getPlayerState() : null;
+				var v = mp ? mp.querySelector("video") : document.querySelector("video");
+				var wasPlaying = st === 1 || (v && !v.paused);
+				userExplicitlyPaused = wasPlaying;
+				return;
+			}
+			// Clicking navigation or new video links unpauses
+			if (e.target && e.target.closest && e.target.closest("a[href*='/watch'], a[href*='/shorts/'], #navigation-button-down, #navigation-button-up, [aria-label*='Next' i], [aria-label*='Previous' i]")) {
+				resetAndCheck();
+			}
+		}, true);
+
+		window.addEventListener("keydown", function (e) {
+			if (isInputActive()) return;
+			if (e.code === "Space" || e.key === " " || e.key === "k" || e.key === "K") {
+				var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
+				var st = mp && typeof mp.getPlayerState === "function" ? mp.getPlayerState() : null;
+				var v = mp ? mp.querySelector("video") : document.querySelector("video");
+				var wasPlaying = st === 1 || (v && !v.paused);
+				userExplicitlyPaused = wasPlaying;
+				return;
+			}
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp" || e.key === "j") {
+				resetAndCheck();
+			}
+		}, true);
+
+		window.addEventListener("wheel", function () { resetAndCheck(); }, { passive: true });
 		window.addEventListener("yt-navigate-finish", resetAndCheck);
 		window.addEventListener("popstate", resetAndCheck);
-		window.addEventListener("keydown", function (e) {
-			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp" || e.key === "j" || e.key === "k") {
-				resetAndCheck();
-			}
-		}, true);
-		window.addEventListener("wheel", function () { resetAndCheck(); }, { passive: true });
-		document.addEventListener("click", function (e) {
-			if (e.target && e.target.closest && e.target.closest("#navigation-button-down, #navigation-button-up, [aria-label*='Next' i], [aria-label*='Previous' i]")) {
-				resetAndCheck();
-			}
-		}, true);
 
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", function () {
