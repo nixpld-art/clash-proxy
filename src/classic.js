@@ -18,7 +18,7 @@ import { request as httpRequest, Agent as HttpAgent } from "node:http";
 import { request as httpsRequest, Agent as HttpsAgent } from "node:https";
 import { connect as netConnect, isIPv4 } from "node:net";
 import { connect as tlsConnect } from "node:tls";
-import { resolve4 } from "node:dns";
+import { lookup as dnsLookup } from "node:dns";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
 
 // transient diagnostics (googlevideo 403s, upstream failures) — file
@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=10";
+const CLIENT_JS = "/classic-client.js?v=11";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -177,9 +177,9 @@ function createWarpSocksConnection(options, callback) {
 	if (isIPv4(host)) {
 		proceedWithIp(host);
 	} else {
-		resolve4(host, (err, addrs) => {
-			if (!err && addrs && addrs.length) {
-				proceedWithIp(addrs[0]);
+		dnsLookup(host, { family: 4 }, (err, address) => {
+			if (!err && address) {
+				proceedWithIp(address);
 			} else {
 				proceedWithIp(null);
 			}

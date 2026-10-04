@@ -578,13 +578,29 @@
 			}
 		};
 
-		window.addEventListener("yt-navigate-finish", function () {
+		var resetAndCheck = function () {
 			var vids = document.querySelectorAll("video");
 			for (var i = 0; i < vids.length; i++) {
 				vids[i].__userPaused = false;
 			}
-			setTimeout(checkVideos, 200);
-		});
+			setTimeout(checkVideos, 100);
+			setTimeout(checkVideos, 400);
+			setTimeout(checkVideos, 1000);
+		};
+
+		window.addEventListener("yt-navigate-finish", resetAndCheck);
+		window.addEventListener("popstate", resetAndCheck);
+		window.addEventListener("keydown", function (e) {
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp" || e.key === "j" || e.key === "k") {
+				resetAndCheck();
+			}
+		}, true);
+		window.addEventListener("wheel", function () { resetAndCheck(); }, { passive: true });
+		document.addEventListener("click", function (e) {
+			if (e.target && e.target.closest && e.target.closest("#navigation-button-down, #navigation-button-up, [aria-label*='Next' i], [aria-label*='Previous' i]")) {
+				resetAndCheck();
+			}
+		}, true);
 
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", function () {
