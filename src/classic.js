@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=7";
+const CLIENT_JS = "/classic-client.js?v=8";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -859,6 +859,47 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 	} catch (e) { dbg(`YTFALL throw ${e.message}`); return txt; }
 }
 
+// YouTube Shorts sequences (/youtubei/v1/reel/reel_watch_sequence and
+// /youtubei/v1/reel/reel_item_watch) embed prefetch playerResponses whose
+// formats are all SABR/UMP. Splice in ANDROID direct stream URLs for all
+// entries so scrolling through shorts plays seamlessly.
+async function spliceReelJson(json, jarId) {
+	if (!json || typeof json !== "object") return json;
+	const tasks = [];
+	function walk(node) {
+		if (!node || typeof node !== "object") return;
+		if (Array.isArray(node)) {
+			for (const item of node) walk(item);
+			return;
+		}
+		const pr = node.playerResponse || (node.unserializedPrefetchData && node.unserializedPrefetchData.playerResponse);
+		const vid = node.videoId || (pr && pr.videoDetails && pr.videoDetails.videoId);
+		if (pr && vid) {
+			tasks.push(async () => {
+				const alt = await androidPlayer(vid, jarId);
+				if (alt && alt.streamingData) {
+					stripSabr(alt.streamingData);
+					pr.streamingData = alt.streamingData;
+					if (alt.playabilityStatus) pr.playabilityStatus = alt.playabilityStatus;
+					dbg(`REEL_SPLICE ok vid=${vid} fmts=${(pr.streamingData.formats || []).length}`);
+				} else if (pr.streamingData) {
+					stripSabr(pr.streamingData);
+				}
+			});
+		}
+		for (const k of Object.keys(node)) {
+			if (typeof node[k] === "object" && node[k] !== null) {
+				walk(node[k]);
+			}
+		}
+	}
+	walk(json);
+	if (tasks.length) {
+		await Promise.all(tasks.map((t) => t()));
+	}
+	return json;
+}
+
 // true/false = embedded playability, null = no embedded response found
 async function ytPagePlayable(html) {
 	try {
@@ -1322,6 +1363,13 @@ export default async function classicRoutes(fastify) {
 						stripSabr(pJson.streamingData);
 						bodyTxt = JSON.stringify(pJson);
 					}
+				} catch {}
+			}
+			if (req.method === "POST" && target.pathname.includes("/youtubei/v1/reel/")) {
+				try {
+					const rJson = JSON.parse(bodyTxt);
+					const spliced = await spliceReelJson(rJson, jarId);
+					bodyTxt = JSON.stringify(spliced);
 				} catch {}
 			}
 			scanGvUrls(bodyTxt, target);

@@ -443,4 +443,92 @@
 			}
 		}
 	} catch (e) {}
+
+	// ---- Autoplay Enforcer -------------------------------------
+	// Ensures videos and shorts play automatically upon loading
+	(function () {
+		function triggerPlay(video) {
+			if (!video || !video.paused || video.ended || video.__userPaused) return;
+			video.autoplay = true;
+			try {
+				var p = video.play();
+				if (p && typeof p.then === "function") {
+					p.then(function () {
+						video.__hasAutoPlayed = true;
+					}).catch(function () {
+						// Browser blocked unmuted autoplay: mute and play immediately
+						if (!video.muted) {
+							video.muted = true;
+							var p2 = video.play();
+							if (p2 && typeof p2.then === "function") {
+								p2.then(function () {
+									video.__hasAutoPlayed = true;
+								}).catch(function () {});
+							}
+							// Unmute on the user's very first interaction anywhere on page
+							var unmute = function () {
+								try { video.muted = false; } catch (e) {}
+								window.removeEventListener("pointerdown", unmute, true);
+								window.removeEventListener("keydown", unmute, true);
+								window.removeEventListener("wheel", unmute, true);
+								window.removeEventListener("touchstart", unmute, true);
+							};
+							window.addEventListener("pointerdown", unmute, true);
+							window.addEventListener("keydown", unmute, true);
+							window.addEventListener("wheel", unmute, true);
+							window.addEventListener("touchstart", unmute, true);
+						}
+					});
+				}
+			} catch (e) {}
+		}
+
+		var checkVideos = function () {
+			var vids = document.querySelectorAll("video");
+			for (var i = 0; i < vids.length; i++) {
+				var v = vids[i];
+				if (!v.__initAutoplay) {
+					v.__initAutoplay = true;
+					v.addEventListener("play", function () { this.__hasAutoPlayed = true; });
+					v.addEventListener("pause", function () {
+						// Only mark user-paused if it previously played
+						if (this.__hasAutoPlayed && !this.seeking) this.__userPaused = true;
+					});
+					v.addEventListener("emptied", function () {
+						this.__userPaused = false;
+						this.__hasAutoPlayed = false;
+					});
+				}
+				if (v.paused && !v.ended && !v.__userPaused && v.readyState >= 1) {
+					triggerPlay(v);
+				}
+			}
+			// Trigger YouTube large play button if in initial cued state
+			var cuedOverlay = document.querySelector(".ytp-cued-thumbnail-overlay:not([style*='display: none'])");
+			if (cuedOverlay) {
+				var playBtn = document.querySelector(".ytp-large-play-button, .ytp-play-button");
+				if (playBtn) {
+					try { playBtn.click(); } catch (e) {}
+				}
+			}
+		};
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", function () {
+				checkVideos();
+				setInterval(checkVideos, 600);
+			});
+		} else {
+			checkVideos();
+			setInterval(checkVideos, 600);
+		}
+
+		window.addEventListener("load", checkVideos);
+		document.addEventListener("canplay", function (e) {
+			if (e.target && e.target.tagName === "VIDEO") triggerPlay(e.target);
+		}, true);
+		document.addEventListener("loadeddata", function (e) {
+			if (e.target && e.target.tagName === "VIDEO") triggerPlay(e.target);
+		}, true);
+	})();
 })();
