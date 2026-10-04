@@ -531,37 +531,41 @@
 	} catch (e) {}
 
 	// ---- Autoplay Enforcer -------------------------------------
-	// Ensures videos and shorts play automatically upon loading and navigation
+	// Ensures videos and shorts play automatically upon loading and navigation,
+	// without overriding explicit pauses or looping in the background.
 	(function () {
-		var userExplicitlyPaused = false;
-		var lastKnownUrl = location.href;
+		var activeVideoId = null;
+		var hasAutoPlayed = false;
 
-		function isInputActive() {
-			var active = document.activeElement;
-			if (!active) return false;
-			var tag = (active.tagName || "").toLowerCase();
-			return tag === "input" || tag === "textarea" || active.isContentEditable;
+		function getVideoIdFromUrl() {
+			try {
+				var u = location.href;
+				var sm = u.match(/\/shorts\/([\w-]{11})/);
+				if (sm) return sm[1];
+				var wm = u.match(/[?&]v=([\w-]{11})/);
+				if (wm) return wm[1];
+			} catch (e) {}
+			return null;
 		}
 
 		function triggerPlay(video) {
-			if (!video || !video.paused || video.ended || userExplicitlyPaused) return;
+			if (!video || !video.paused || video.ended || hasAutoPlayed) return;
 			video.autoplay = true;
 			try {
 				var p = video.play();
 				if (p && typeof p.then === "function") {
 					p.then(function () {
-						video.__hasAutoPlayed = true;
+						hasAutoPlayed = true;
 					}).catch(function () {
-						// Browser blocked unmuted autoplay: mute and play immediately
+						// Browser blocked unmuted autoplay: mute and play
 						if (!video.muted) {
 							video.muted = true;
 							var p2 = video.play();
 							if (p2 && typeof p2.then === "function") {
 								p2.then(function () {
-									video.__hasAutoPlayed = true;
+									hasAutoPlayed = true;
 								}).catch(function () {});
 							}
-							// Unmute on the user's very first interaction anywhere on page
 							var unmute = function () {
 								try { video.muted = false; } catch (e) {}
 								window.removeEventListener("pointerdown", unmute, true);
@@ -579,151 +583,98 @@
 			} catch (e) {}
 		}
 
-		var checkVideos = function () {
-			// URL change detector (SPA navigations)
-			if (location.href !== lastKnownUrl) {
-				lastKnownUrl = location.href;
-				userExplicitlyPaused = false;
+		function tryAutoplay() {
+			var vid = getVideoIdFromUrl();
+			if (vid && vid !== activeVideoId) {
+				activeVideoId = vid;
+				hasAutoPlayed = false;
 			}
+			if (hasAutoPlayed) return;
 
-			// Video element direct check
-			var vids = document.querySelectorAll("video");
-			for (var i = 0; i < vids.length; i++) {
-				var v = vids[i];
-				if (!v.__initAutoplay) {
-					v.__initAutoplay = true;
-					v.addEventListener("play", function () { this.__hasAutoPlayed = true; });
-					v.addEventListener("emptied", function () {
-						userExplicitlyPaused = false;
-						this.__hasAutoPlayed = false;
-					});
-					v.addEventListener("loadstart", function () {
-						userExplicitlyPaused = false;
-						this.__hasAutoPlayed = false;
-					});
-					v.addEventListener("ended", function () {
-						userExplicitlyPaused = false;
-					});
-				}
-				if (v.paused && !v.ended && !userExplicitlyPaused) {
-					if (v.readyState >= 1 || v.currentSrc || v.src) {
-						triggerPlay(v);
-					}
-				}
-			}
-
-			// Synchronize YouTube Shorts feed
-			try {
-				var urlStr = location.pathname + location.search + location.href;
-				var sm = urlStr.match(/\/shorts\/([\w-]{11})/);
-				var svid = sm ? sm[1] : null;
-				if (svid) {
-					var sp = document.querySelector("#shorts-player");
-					if (sp && typeof sp.loadVideoById === "function") {
-						var curVid = sp.getVideoData && sp.getVideoData() && sp.getVideoData().video_id;
-						var st = typeof sp.getPlayerState === "function" ? sp.getPlayerState() : null;
+			// Shorts player
+			if (vid && location.pathname.includes("/shorts/")) {
+				var sp = document.querySelector("#shorts-player");
+				if (sp && typeof sp.loadVideoById === "function") {
+					var curVid = sp.getVideoData && sp.getVideoData() && sp.getVideoData().video_id;
+					if (curVid !== vid) {
 						var now = Date.now();
-						if (curVid !== svid) {
-							if (sp.__lastLoadedVid !== svid || (now - (sp.__lastLoadTime || 0) > 4000)) {
-								sp.__lastLoadedVid = svid;
-								sp.__lastLoadTime = now;
-								sp.loadVideoById(svid);
-							}
-						} else if (!userExplicitlyPaused && (st === -1 || st === 5 || st === 2)) {
-							if (typeof sp.playVideo === "function") {
-								try { sp.playVideo(); } catch (e) {}
-							}
+						if (sp.__lastLoadedVid !== vid || (now - (sp.__lastLoadTime || 0) > 4000)) {
+							sp.__lastLoadedVid = vid;
+							sp.__lastLoadTime = now;
+							try { sp.loadVideoById(vid); } catch (e) {}
+						}
+					} else {
+						if (typeof sp.playVideo === "function") {
+							try { sp.playVideo(); } catch (e) {}
 						}
 					}
 				}
-			} catch (e) {}
+			}
 
-			// Trigger YouTube movie player or player elements
-			var players = document.querySelectorAll("#movie_player, #shorts-player, .html5-video-player");
-			for (var pIdx = 0; pIdx < players.length; pIdx++) {
-				var mp = players[pIdx];
-				if (mp && typeof mp.getPlayerState === "function") {
-					var mState = mp.getPlayerState();
-					// If cued (5), paused (2), or unstarted (-1), and user did not explicitly pause:
-					if (!userExplicitlyPaused && (mState === 5 || mState === 2 || mState === -1)) {
-						var mpVid = mp.querySelector("video");
-						if (mpVid && mpVid.ended) continue;
-						if (typeof mp.playVideo === "function") {
-							try { mp.playVideo(); } catch (e) {}
-						}
+			// Watch page movie player
+			var mp = document.querySelector("#movie_player, .html5-video-player");
+			if (mp && typeof mp.getPlayerState === "function") {
+				var st = mp.getPlayerState();
+				if (st === 5 || st === -1 || st === 2) {
+					if (typeof mp.playVideo === "function") {
+						try { mp.playVideo(); } catch (e) {}
 					}
 				}
+			}
+
+			// Direct video element
+			var v = document.querySelector("video");
+			if (v && v.paused && !v.ended) {
+				triggerPlay(v);
 			}
 
 			var cuedOverlay = document.querySelector(".ytp-cued-thumbnail-overlay:not([style*='display: none'])");
-			if (cuedOverlay && !userExplicitlyPaused) {
+			if (cuedOverlay) {
 				var playBtn = document.querySelector(".ytp-large-play-button, .ytp-play-button");
 				if (playBtn) {
 					try { playBtn.click(); } catch (e) {}
 				}
 			}
-		};
-
-		var resetAndCheck = function () {
-			userExplicitlyPaused = false;
-			setTimeout(checkVideos, 50);
-			setTimeout(checkVideos, 250);
-			setTimeout(checkVideos, 600);
-			setTimeout(checkVideos, 1200);
-		};
-
-		// Track explicit user pause gestures
-		document.addEventListener("click", function (e) {
-			var playBtn = e.target && e.target.closest && e.target.closest(".ytp-play-button");
-			if (playBtn) {
-				var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
-				var st = mp && typeof mp.getPlayerState === "function" ? mp.getPlayerState() : null;
-				var v = mp ? mp.querySelector("video") : document.querySelector("video");
-				var wasPlaying = st === 1 || (v && !v.paused);
-				userExplicitlyPaused = wasPlaying;
-				return;
-			}
-			// Clicking navigation or new video links unpauses
-			if (e.target && e.target.closest && e.target.closest("a[href*='/watch'], a[href*='/shorts/'], #navigation-button-down, #navigation-button-up, [aria-label*='Next' i], [aria-label*='Previous' i]")) {
-				resetAndCheck();
-			}
-		}, true);
-
-		window.addEventListener("keydown", function (e) {
-			if (isInputActive()) return;
-			if (e.code === "Space" || e.key === " " || e.key === "k" || e.key === "K") {
-				var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
-				var st = mp && typeof mp.getPlayerState === "function" ? mp.getPlayerState() : null;
-				var v = mp ? mp.querySelector("video") : document.querySelector("video");
-				var wasPlaying = st === 1 || (v && !v.paused);
-				userExplicitlyPaused = wasPlaying;
-				return;
-			}
-			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp" || e.key === "j") {
-				resetAndCheck();
-			}
-		}, true);
-
-		window.addEventListener("wheel", function () { resetAndCheck(); }, { passive: true });
-		window.addEventListener("yt-navigate-finish", resetAndCheck);
-		window.addEventListener("popstate", resetAndCheck);
-
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", function () {
-				checkVideos();
-				setInterval(checkVideos, 600);
-			});
-		} else {
-			checkVideos();
-			setInterval(checkVideos, 600);
 		}
 
-		window.addEventListener("load", checkVideos);
-		document.addEventListener("canplay", function (e) {
-			if (e.target && e.target.tagName === "VIDEO") triggerPlay(e.target);
+		function onNewVideo() {
+			var vid = getVideoIdFromUrl();
+			if (vid && vid !== activeVideoId) {
+				activeVideoId = vid;
+			}
+			hasAutoPlayed = false;
+			tryAutoplay();
+			setTimeout(tryAutoplay, 150);
+			setTimeout(tryAutoplay, 400);
+			setTimeout(tryAutoplay, 900);
+			setTimeout(tryAutoplay, 1800);
+		}
+
+		window.addEventListener("playing", function (e) {
+			if (e.target && e.target.tagName === "VIDEO") {
+				hasAutoPlayed = true;
+			}
 		}, true);
-		document.addEventListener("loadeddata", function (e) {
-			if (e.target && e.target.tagName === "VIDEO") triggerPlay(e.target);
+
+		window.addEventListener("yt-navigate-finish", onNewVideo);
+		window.addEventListener("popstate", onNewVideo);
+
+		// Shorts feed navigation (Arrow keys / wheel / navigation clicks)
+		window.addEventListener("keydown", function (e) {
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "PageDown" || e.key === "PageUp" || e.key === "j") {
+				setTimeout(onNewVideo, 100);
+			}
 		}, true);
+		window.addEventListener("wheel", function () {
+			setTimeout(onNewVideo, 150);
+		}, { passive: true });
+		document.addEventListener("click", function (e) {
+			if (e.target && e.target.closest && e.target.closest("a[href*='/watch'], a[href*='/shorts/'], #navigation-button-down, #navigation-button-up, [aria-label*='Next' i], [aria-label*='Previous' i]")) {
+				setTimeout(onNewVideo, 100);
+			}
+		}, true);
+
+		// Initial load
+		onNewVideo();
 	})();
 })();
