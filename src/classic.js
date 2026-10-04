@@ -16,8 +16,9 @@ import { appendFileSync, readFileSync } from "node:fs";
 import { gunzipSync, brotliDecompressSync, createGunzip, createInflate, createBrotliDecompress } from "node:zlib";
 import { request as httpRequest, Agent as HttpAgent } from "node:http";
 import { request as httpsRequest, Agent as HttpsAgent } from "node:https";
-import { connect as netConnect } from "node:net";
+import { connect as netConnect, isIPv4 } from "node:net";
 import { connect as tlsConnect } from "node:tls";
+import { resolve4 } from "node:dns";
 import { WebSocketServer, WebSocket as WsClient } from "ws";
 
 // transient diagnostics (googlevideo 403s, upstream failures) — file
@@ -64,99 +65,125 @@ const SOCKS_HOST = process.env.WARP_SOCKS_HOST || "127.0.0.1";
 const SOCKS_PORT = Number(process.env.WARP_SOCKS_PORT || 40000);
 
 function createWarpSocksConnection(options, callback) {
-	const sock = netConnect(SOCKS_PORT, SOCKS_HOST);
-	let buffer = Buffer.alloc(0);
-	let state = "greeting";
 	const host = options.host;
 	const port = Number(options.port) || (options.protocol === "https:" ? 443 : 80);
-	const hostBuf = Buffer.from(host, "utf8");
 
-	const onError = (err) => {
-		sock.destroy();
-		callback(err);
-	};
+	const proceedWithIp = (ipv4) => {
+		const sock = netConnect(SOCKS_PORT, SOCKS_HOST);
+		let buffer = Buffer.alloc(0);
+		let state = "greeting";
 
-	sock.on("error", onError);
-	sock.setTimeout(15000, () => {
-		sock.destroy();
-		callback(new Error("WARP SOCKS5 handshake timeout"));
-	});
+		const onError = (err) => {
+			sock.destroy();
+			callback(err);
+		};
 
-	sock.on("connect", () => {
-		sock.write(Buffer.from([0x05, 0x01, 0x00]));
-	});
+		sock.on("error", onError);
+		sock.setTimeout(15000, () => {
+			sock.destroy();
+			callback(new Error("WARP SOCKS5 handshake timeout"));
+		});
 
-	const onData = (chunk) => {
-		buffer = Buffer.concat([buffer, chunk]);
-		tryHandshake();
-	};
+		sock.on("connect", () => {
+			sock.write(Buffer.from([0x05, 0x01, 0x00]));
+		});
 
-	sock.on("data", onData);
+		const onData = (chunk) => {
+			buffer = Buffer.concat([buffer, chunk]);
+			tryHandshake();
+		};
 
-	function tryHandshake() {
-		if (state === "greeting") {
-			if (buffer.length < 2) return;
-			const greet = buffer.subarray(0, 2);
-			buffer = buffer.subarray(2);
-			if (greet[0] !== 0x05 || greet[1] !== 0x00) {
-				return onError(new Error("SOCKS5 auth rejected: " + greet[1]));
+		sock.on("data", onData);
+
+		function tryHandshake() {
+			if (state === "greeting") {
+				if (buffer.length < 2) return;
+				const greet = buffer.subarray(0, 2);
+				buffer = buffer.subarray(2);
+				if (greet[0] !== 0x05 || greet[1] !== 0x00) {
+					return onError(new Error("SOCKS5 auth rejected: " + greet[1]));
+				}
+				state = "connecting";
+				if (ipv4) {
+					// SOCKS5 ATYP 0x01 (IPv4) - ensures WARP uses IPv4 egress matching YouTube stream URLs
+					const req = Buffer.alloc(4 + 4 + 2);
+					req[0] = 0x05; req[1] = 0x01; req[2] = 0x00; req[3] = 0x01;
+					const octets = ipv4.split(".").map(Number);
+					for (let i = 0; i < 4; i++) req[4 + i] = octets[i];
+					req.writeUInt16BE(port & 0xffff, 8);
+					sock.write(req);
+				} else {
+					// Fallback to ATYP 0x03 (domain name)
+					const hostBuf = Buffer.from(host, "utf8");
+					const req = Buffer.alloc(7 + hostBuf.length);
+					req[0] = 0x05; req[1] = 0x01; req[2] = 0x00; req[3] = 0x03;
+					req[4] = hostBuf.length;
+					hostBuf.copy(req, 5);
+					req.writeUInt16BE(port & 0xffff, 5 + hostBuf.length);
+					sock.write(req);
+				}
 			}
-			state = "connecting";
-			const req = Buffer.alloc(7 + hostBuf.length);
-			req[0] = 0x05; req[1] = 0x01; req[2] = 0x00; req[3] = 0x03;
-			req[4] = hostBuf.length;
-			hostBuf.copy(req, 5);
-			req.writeUInt16BE(port & 0xffff, 5 + hostBuf.length);
-			sock.write(req);
+
+			if (state === "connecting") {
+				if (buffer.length < 4) return;
+				const rep = buffer[1];
+				const atyp = buffer[3];
+				let needed = 4;
+				if (atyp === 0x01) needed += 6;
+				else if (atyp === 0x03) {
+					if (buffer.length < 5) return;
+					needed += 1 + buffer[4] + 2;
+				} else if (atyp === 0x04) needed += 18;
+				else return onError(new Error("SOCKS5 bad atyp " + atyp));
+
+				if (buffer.length < needed) return;
+				if (rep !== 0x00) return onError(new Error("SOCKS5 connect failed: " + rep));
+
+				state = "done";
+				sock.removeListener("data", onData);
+				sock.removeListener("error", onError);
+				sock.setTimeout(0);
+
+				const leftover = buffer.subarray(needed);
+				if (leftover.length > 0) sock.unshift(leftover);
+
+				const isHttps = options.protocol === "https:" || port === 443;
+				if (isHttps) {
+					let cbCalled = false;
+					const tlsSocket = tlsConnect({
+						socket: sock,
+						servername: options.servername || host,
+					}, () => {
+						if (!cbCalled) {
+							cbCalled = true;
+							callback(null, tlsSocket);
+						}
+					});
+					tlsSocket.on("error", (err) => {
+						if (!cbCalled) {
+							cbCalled = true;
+							callback(err);
+						}
+					});
+					sock.on("error", () => {});
+				} else {
+					sock.on("error", () => {});
+					callback(null, sock);
+				}
+			}
 		}
+	};
 
-		if (state === "connecting") {
-			if (buffer.length < 4) return;
-			const rep = buffer[1];
-			const atyp = buffer[3];
-			let needed = 4;
-			if (atyp === 0x01) needed += 6;
-			else if (atyp === 0x03) {
-				if (buffer.length < 5) return;
-				needed += 1 + buffer[4] + 2;
-			} else if (atyp === 0x04) needed += 18;
-			else return onError(new Error("SOCKS5 bad atyp " + atyp));
-
-			if (buffer.length < needed) return;
-			if (rep !== 0x00) return onError(new Error("SOCKS5 connect failed: " + rep));
-
-			state = "done";
-			sock.removeListener("data", onData);
-			sock.removeListener("error", onError);
-			sock.setTimeout(0);
-
-			const leftover = buffer.subarray(needed);
-			if (leftover.length > 0) sock.unshift(leftover);
-
-			const isHttps = options.protocol === "https:" || port === 443;
-			if (isHttps) {
-				let cbCalled = false;
-				const tlsSocket = tlsConnect({
-					socket: sock,
-					servername: options.servername || host,
-				}, () => {
-					if (!cbCalled) {
-						cbCalled = true;
-						callback(null, tlsSocket);
-					}
-				});
-				tlsSocket.on("error", (err) => {
-					if (!cbCalled) {
-						cbCalled = true;
-						callback(err);
-					}
-				});
-				sock.on("error", () => {});
+	if (isIPv4(host)) {
+		proceedWithIp(host);
+	} else {
+		resolve4(host, (err, addrs) => {
+			if (!err && addrs && addrs.length) {
+				proceedWithIp(addrs[0]);
 			} else {
-				sock.on("error", () => {});
-				callback(null, sock);
+				proceedWithIp(null);
 			}
-		}
+		});
 	}
 }
 
@@ -698,31 +725,45 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 		// ANDROID splice replaces ciphered/SABR formats with direct URLs. Enabled by default.
 		if (process.env.CLASSIC_SPLICE === "0") return html;
 		if (!/(^|\.)youtube\.com$/i.test(target.hostname)) return html;
+		const vid = ytVideoIdFromUrl(target);
 		const loc = findYtPlayerResp(html);
-		if (!loc) { if (ytVideoIdFromUrl(target)) dbg(`SPLICE noloc len=${html.length}`); return html; }
+		if (!loc) {
+			if (vid) {
+				const alt = await androidPlayer(vid, jarId);
+				if (alt && alt.streamingData) {
+					stripSabr(alt.streamingData);
+					const script = `<script>var ytInitialPlayerResponse = ${JSON.stringify(alt).replace(/</g, "\\u003c")};</script>`;
+					dbg(`SPLICE injected_new vid=${vid}`);
+					if (/<head[^>]*>/i.test(html)) return html.replace(/<head([^>]*)>/i, (m, a) => `<head${a}>${script}`);
+					return script + html;
+				}
+				dbg(`SPLICE noloc_altfail vid=${vid}`);
+			}
+			return html;
+		}
 		let obj;
 		try { obj = JSON.parse(html.slice(loc.start, loc.end)); } catch (e) { dbg(`SPLICE parsefail ${String(e.message).slice(0, 60)}`); return html; }
 		const sd = obj && obj.streamingData;
 		const fmts = sd ? [...(sd.formats || []), ...(sd.adaptiveFormats || [])] : [];
 		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
-		if (fmts.length && fmts.some((f) => f.url)) {
-			if (!stripSabr(sd)) { dbg(`SPLICE direct st=${st} fmts=${fmts.length}`); return html; }
-			dbg(`SPLICE nosabr st=${st} fmts=${fmts.length}`);
-			const json0 = JSON.stringify(obj).replace(/</g, "\\u003c");
-			return html.slice(0, loc.start) + json0 + html.slice(loc.end);
-		}
-		const vid = (obj.videoDetails && obj.videoDetails.videoId) || ytVideoIdFromUrl(target);
-		if (!vid) { dbg(`SPLICE novid st=${st} fmts=${fmts.length}`); return html; }
+		const videoId = (obj.videoDetails && obj.videoDetails.videoId) || vid;
+		if (!videoId) { dbg(`SPLICE novid st=${st} fmts=${fmts.length}`); return html; }
 		const t0 = Date.now();
-		const alt = await androidPlayer(vid, jarId);
-		if (!alt || !alt.streamingData) { dbg(`SPLICE alt_null vid=${vid} st=${st} ms=${Date.now() - t0}`); return html; }
+		const alt = await androidPlayer(videoId, jarId);
+		if (!alt || !alt.streamingData) {
+			stripSabr(sd);
+			dbg(`SPLICE alt_null vid=${videoId} st=${st} ms=${Date.now() - t0}`);
+			return html;
+		}
 		obj.streamingData = alt.streamingData;
 		const stripped = stripSabr(obj.streamingData);
-		if (obj.playabilityStatus && obj.playabilityStatus.status !== "OK" &&
-			alt.playabilityStatus && alt.playabilityStatus.status === "OK") {
+		if ((!obj.playabilityStatus || obj.playabilityStatus.status !== "OK") && alt.playabilityStatus) {
 			obj.playabilityStatus = alt.playabilityStatus;
 		}
-		dbg(`SPLICE ok vid=${vid} st=${st}->${obj.playabilityStatus.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} sabr=${stripped ? "stripped" : "none"} ms=${Date.now() - t0}`);
+		if (!obj.videoDetails && alt.videoDetails) obj.videoDetails = alt.videoDetails;
+		if (!obj.playerConfig && alt.playerConfig) obj.playerConfig = alt.playerConfig;
+		if (!obj.playbackTracking && alt.playbackTracking) obj.playbackTracking = alt.playbackTracking;
+		dbg(`SPLICE ok vid=${videoId} st=${st}->${obj.playabilityStatus?.status} fmts=${fmts.length}->${[...(obj.streamingData.formats || []), ...(obj.streamingData.adaptiveFormats || [])].length} sabr=${stripped ? "stripped" : "none"} ms=${Date.now() - t0}`);
 		// escape '<' so a description containing "</script>" can't end the tag
 		const json = JSON.stringify(obj).replace(/</g, "\\u003c");
 		return html.slice(0, loc.start) + json + html.slice(loc.end);
@@ -783,7 +824,9 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		let obj;
 		try { obj = JSON.parse(txt); } catch { return txt; }
 		const st = obj && obj.playabilityStatus && obj.playabilityStatus.status;
-		if (st === "OK") return txt;
+		const sd = obj && obj.streamingData;
+		const hasUrls = sd && (sd.formats || []).some(f => f.url);
+		if (st === "OK" && hasUrls) return txt;
 		// videoId: prefer the walled response's own videoDetails, else the
 		// request body (browser POSTs are content-encoding: gzip).
 		let vid = (obj.videoDetails && obj.videoDetails.videoId) || null;
@@ -802,8 +845,15 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		}
 		if (!vid || !/^[\w-]{11}$/.test(vid)) { dbg(`YTFALL novid st=${st} enc=${reqBody ? reqBody.slice(0, 2).toString("hex") : "-"} rvid=${(obj.videoDetails && obj.videoDetails.videoId) || "-"}`); return txt; }
 		const t0 = Date.now();
+		const alt = await androidPlayer(vid);
+		if (alt && alt.streamingData) {
+			stripSabr(alt.streamingData);
+			dbg(`YTFALL android_ok vid=${vid} st=${st}->${alt.playabilityStatus?.status} ms=${Date.now() - t0}`);
+			return JSON.stringify(alt);
+		}
 		const emb = await ssrPlayer(vid, ua);
 		if (!emb) { dbg(`YTFALL miss vid=${vid} st=${st}`); return txt; }
+		stripSabr(emb.streamingData);
 		dbg(`YTFALL ok vid=${vid} st=${st}->OK fmts=${((emb.streamingData && emb.streamingData.adaptiveFormats) || []).length} ms=${Date.now() - t0}`);
 		return JSON.stringify(emb);
 	} catch (e) { dbg(`YTFALL throw ${e.message}`); return txt; }
@@ -1127,6 +1177,28 @@ export default async function classicRoutes(fastify) {
 			}
 		}
 		clearTimeout(timer);
+
+		// Follow redirects for googlevideo.com streams automatically server-side
+		let gvHops = 0;
+		while (target.hostname.endsWith(".googlevideo.com") && upstream.status >= 300 && upstream.status < 400 && gvHops++ < 3) {
+			const loc = upstream.headers.get("location");
+			if (!loc) break;
+			try {
+				const nextTarget = new URL(loc, target);
+				dbg(`GV_REDIR(${gvHops}) ${target.hostname} -> ${nextTarget.hostname}`);
+				target = nextTarget;
+				upstream = await smartFetch(nextTarget, {
+					method: req.method,
+					headers: buildReqHeaders(req, nextTarget, jarId, false),
+					body: upBody,
+					redirect: "manual",
+					signal: ac.signal,
+				});
+			} catch (e) {
+				dbg(`GV_REDIR_ERR ${e.message}`);
+				break;
+			}
+		}
 
 		const isGw = target.hostname.endsWith(".googlevideo.com");
 		if (isGw || upstream.status >= 400) {
