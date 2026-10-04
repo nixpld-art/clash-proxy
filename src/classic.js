@@ -1492,3 +1492,5 @@ export function classicUpgrade(req, socket, head) {
 		try { socket.destroy(); } catch {}
 	}
 }
+
+export { androidPlayer, smartFetch };
