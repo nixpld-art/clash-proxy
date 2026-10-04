@@ -489,14 +489,34 @@
 			}
 		});
 
-		if (window.Response && Response.prototype.json) {
-			var origRespJson = Response.prototype.json;
-			Response.prototype.json = function () {
-				return origRespJson.apply(this, arguments).then(function (data) {
-					stripServerAbrClient(data);
-					return data;
-				});
-			};
+		if (window.Response) {
+			if (Response.prototype.json) {
+				var origRespJson = Response.prototype.json;
+				Response.prototype.json = function () {
+					return origRespJson.apply(this, arguments).then(function (data) {
+						stripServerAbrClient(data);
+						return data;
+					});
+				};
+			}
+			if (Response.prototype.text) {
+				var origRespText = Response.prototype.text;
+				Response.prototype.text = function () {
+					var u = this.url || "";
+					return origRespText.apply(this, arguments).then(function (txt) {
+						if (txt && (u.includes("youtubei/v1/player") || u.includes("reel_") || txt.includes("streamingData") || txt.includes("useServerDrivenAbr"))) {
+							try {
+								var data = JSON.parse(txt);
+								stripServerAbrClient(data);
+								return JSON.stringify(data);
+							} catch (e) {
+								return txt;
+							}
+						}
+						return txt;
+					});
+				};
+			}
 		}
 	} catch (e) {}
 
@@ -564,10 +584,36 @@
 					}
 				}
 			}
+			// Synchronize YouTube Shorts feed
+			try {
+				var urlStr = location.pathname + location.search + location.href;
+				var sm = urlStr.match(/\/shorts\/([\w-]{11})/);
+				var svid = sm ? sm[1] : null;
+				if (svid) {
+					var sp = document.querySelector("#shorts-player");
+					if (sp && typeof sp.loadVideoById === "function") {
+						var curVid = sp.getVideoData && sp.getVideoData() && sp.getVideoData().video_id;
+						var st = typeof sp.getPlayerState === "function" ? sp.getPlayerState() : null;
+						if (curVid !== svid || st === -1) {
+							if (sp.__lastLoadedVid !== svid || st === -1) {
+								sp.__lastLoadedVid = svid;
+								sp.loadVideoById(svid);
+							}
+						}
+					}
+				}
+			} catch (e) {}
+
 			// Trigger YouTube large play button or cued player
-			var mp = document.querySelector("#movie_player, .html5-video-player");
-			if (mp && typeof mp.getPlayerState === "function" && mp.getPlayerState() === 5 && typeof mp.playVideo === "function") {
-				try { mp.playVideo(); } catch (e) {}
+			var mp = document.querySelector("#movie_player, #shorts-player, .html5-video-player");
+			if (mp && typeof mp.getPlayerState === "function") {
+				var mState = mp.getPlayerState();
+				if ((mState === 5 || mState === 2) && typeof mp.playVideo === "function") {
+					var mpVid = mp.querySelector("video");
+					if (!mpVid || !mpVid.__userPaused) {
+						try { mp.playVideo(); } catch (e) {}
+					}
+				}
 			}
 			var cuedOverlay = document.querySelector(".ytp-cued-thumbnail-overlay:not([style*='display: none'])");
 			if (cuedOverlay) {
