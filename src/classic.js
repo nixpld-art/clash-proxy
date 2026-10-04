@@ -135,12 +135,25 @@ function createWarpSocksConnection(options, callback) {
 
 			const isHttps = options.protocol === "https:" || port === 443;
 			if (isHttps) {
+				let cbCalled = false;
 				const tlsSocket = tlsConnect({
 					socket: sock,
 					servername: options.servername || host,
-				}, () => callback(null, tlsSocket));
-				tlsSocket.on("error", (err) => callback(err));
+				}, () => {
+					if (!cbCalled) {
+						cbCalled = true;
+						callback(null, tlsSocket);
+					}
+				});
+				tlsSocket.on("error", (err) => {
+					if (!cbCalled) {
+						cbCalled = true;
+						callback(err);
+					}
+				});
+				sock.on("error", () => {});
 			} else {
+				sock.on("error", () => {});
 				callback(null, sock);
 			}
 		}
@@ -167,6 +180,14 @@ function fetchViaWarp(target, init = {}) {
 				for (const [k, v] of init.headers) headers[k] = v;
 			} else {
 				Object.assign(headers, init.headers);
+			}
+		}
+
+		if (init.body != null) {
+			if (Buffer.isBuffer(init.body)) {
+				headers["content-length"] = init.body.length;
+			} else if (typeof init.body === "string") {
+				headers["content-length"] = Buffer.byteLength(init.body, "utf8");
 			}
 		}
 
@@ -674,10 +695,8 @@ function stripSabrFromHtml(html, target) {
 // the ANDROID streamingData (direct URLs) so the native <video> plays.
 async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 	try {
-		// ANDROID splice is opt-in legacy (CLASSIC_SPLICE=1); the modern
-		// web player plays the WEB response's own serverAbrStreamingUrl
-		// fine as long as we forward requests with the browser's headers.
-		if (process.env.CLASSIC_SPLICE !== "1") return html;
+		// ANDROID splice replaces ciphered/SABR formats with direct URLs. Enabled by default.
+		if (process.env.CLASSIC_SPLICE === "0") return html;
 		if (!/(^|\.)youtube\.com$/i.test(target.hostname)) return html;
 		const loc = findYtPlayerResp(html);
 		if (!loc) { if (ytVideoIdFromUrl(target)) dbg(`SPLICE noloc len=${html.length}`); return html; }
@@ -856,7 +875,7 @@ async function renderHtml(text, target, jarId, dbgFlags) {
 		text = text.replace(baseTag[0], "");
 	}
 
-	if (process.env.CLASSIC_STRIP_SABR === "1") {
+	if (process.env.CLASSIC_STRIP_SABR !== "0") {
 		text = stripSabrFromHtml(text, target);
 	}
 
@@ -912,7 +931,16 @@ try{var __I=self.importScripts;if(__I)self.importScripts=function(){return __I.a
 // ------------------------------------------------------------
 function spoofPlayerBody(buf) {
 	try {
-		const j = JSON.parse(buf.toString("utf8"));
+		let str = "";
+		try {
+			str = buf.toString("utf8");
+			JSON.parse(str);
+		} catch {
+			try { str = gunzipSync(buf).toString("utf8"); } catch {
+				try { str = brotliDecompressSync(buf).toString("utf8"); } catch { return null; }
+			}
+		}
+		const j = JSON.parse(str);
 		if (!j || typeof j !== "object" || !j.context || !j.context.client) return null;
 		const inc = j.context.client;
 		j.context.client = {
@@ -957,6 +985,7 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 		out["user-agent"] = ANDROID_UA;
 		out["x-youtube-client-name"] = "3";
 		out["x-youtube-client-version"] = ANDROID_CLIENT.clientVersion;
+		delete out["content-encoding"];
 		delete out["sec-ch-ua"];
 		delete out["sec-ch-ua-mobile"];
 		delete out["sec-ch-ua-platform"];
@@ -969,7 +998,7 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 		ck = ck ? ck + "; " + CANON_SOCS : CANON_SOCS;
 	}
 	if (ck) out.cookie = ck;
-	if (host.endsWith(".googlevideo.com") && process.env.CLASSIC_SPLICE === "1") {
+	if (host.endsWith(".googlevideo.com") && process.env.CLASSIC_SPLICE !== "0") {
 		// splice mode: stream URLs were generated with the ANDROID UA
 		out["user-agent"] = ANDROID_UA;
 		delete out["sec-ch-ua"];
@@ -1048,7 +1077,7 @@ export default async function classicRoutes(fastify) {
 				dbg(`UMPHDR origin=${req.headers.origin || "-"} referer=${(req.headers.referer || "-").slice(0, 80)} cookie=${(req.headers.cookie || "-").slice(0, 120)}`);
 				if (body.length <= 8192) dbg(`UMPREQFULL len=${body.length} hex=${body.toString("hex")}`);
 			}
-			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE === "1") {
+			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE !== "0") {
 				let keys = "?", parseOk = false, before = "?";
 				try { const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, "")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
 				const spoofed = spoofPlayerBody(body);
@@ -1211,8 +1240,17 @@ export default async function classicRoutes(fastify) {
 		const ctL = (ct || "").toLowerCase();
 		if (ctL.includes("json") || (ctL.startsWith("text/") && !/javascript|css/.test(ctL))) {
 			let bodyTxt = await upstream.text();
-			if (req.method === "POST" && target.pathname.includes("/youtubei/v1/player") && body) {
-				bodyTxt = await ytPlayerFallback(body, bodyTxt, target, req.headers["user-agent"]);
+			if (req.method === "POST" && target.pathname.includes("/youtubei/v1/player")) {
+				if (body) {
+					bodyTxt = await ytPlayerFallback(body, bodyTxt, target, req.headers["user-agent"]);
+				}
+				try {
+					const pJson = JSON.parse(bodyTxt);
+					if (pJson && pJson.streamingData) {
+						stripSabr(pJson.streamingData);
+						bodyTxt = JSON.stringify(pJson);
+					}
+				} catch {}
 			}
 			scanGvUrls(bodyTxt, target);
 			delete outHeaders["content-length"];
