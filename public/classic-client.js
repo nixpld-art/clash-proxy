@@ -455,6 +455,15 @@
 				for (var i = 0; i < node.length; i++) stripServerAbrClient(node[i]);
 				return;
 			}
+			if (node.frameworkUpdates && node.serviceTrackingParams && JSON.stringify(node.serviceTrackingParams).includes("ANDROID")) {
+				delete node.frameworkUpdates;
+				delete node.onResponseReceivedActions;
+				delete node.attestation;
+			}
+			if (node.playabilityStatus && node.streamingData) {
+				node.playabilityStatus.status = "OK";
+				node.playabilityStatus.playableInEmbed = true;
+			}
 			if (node.mediaCommonConfig && typeof node.mediaCommonConfig === "object") {
 				node.mediaCommonConfig.useServerDrivenAbr = false;
 			}
@@ -549,11 +558,17 @@
 						this.__hasAutoPlayed = false;
 					});
 				}
-				if (v.paused && !v.ended && !v.__userPaused && v.readyState >= 1) {
-					triggerPlay(v);
+				if (v.paused && !v.ended && !v.__userPaused) {
+					if (v.readyState >= 1 || v.currentSrc || v.src) {
+						triggerPlay(v);
+					}
 				}
 			}
-			// Trigger YouTube large play button if in initial cued state
+			// Trigger YouTube large play button or cued player
+			var mp = document.querySelector("#movie_player, .html5-video-player");
+			if (mp && typeof mp.getPlayerState === "function" && mp.getPlayerState() === 5 && typeof mp.playVideo === "function") {
+				try { mp.playVideo(); } catch (e) {}
+			}
 			var cuedOverlay = document.querySelector(".ytp-cued-thumbnail-overlay:not([style*='display: none'])");
 			if (cuedOverlay) {
 				var playBtn = document.querySelector(".ytp-large-play-button, .ytp-play-button");

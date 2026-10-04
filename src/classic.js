@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=9";
+const CLIENT_JS = "/classic-client.js?v=10";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -785,6 +785,13 @@ async function spliceYtStreaming(html, target, jarId, dbgFlags) {
 		if ((!obj.playabilityStatus || obj.playabilityStatus.status !== "OK") && alt.playabilityStatus) {
 			obj.playabilityStatus = alt.playabilityStatus;
 		}
+		if (obj.playabilityStatus) {
+			obj.playabilityStatus.status = "OK";
+			obj.playabilityStatus.playableInEmbed = true;
+		}
+		delete obj.frameworkUpdates;
+		delete obj.onResponseReceivedActions;
+		delete obj.attestation;
 		if (!obj.videoDetails && alt.videoDetails) obj.videoDetails = alt.videoDetails;
 		if (!obj.playerConfig && alt.playerConfig) obj.playerConfig = alt.playerConfig;
 		if (!obj.playbackTracking && alt.playbackTracking) obj.playbackTracking = alt.playbackTracking;
@@ -875,6 +882,13 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		if (alt && alt.streamingData) {
 			stripSabr(alt.streamingData);
 			stripServerAbrRecursively(alt);
+			delete alt.frameworkUpdates;
+			delete alt.onResponseReceivedActions;
+			delete alt.attestation;
+			if (alt.playabilityStatus) {
+				alt.playabilityStatus.status = "OK";
+				alt.playabilityStatus.playableInEmbed = true;
+			}
 			dbg(`YTFALL android_ok vid=${vid} st=${st}->${alt.playabilityStatus?.status} ms=${Date.now() - t0}`);
 			return JSON.stringify(alt);
 		}
@@ -882,6 +896,13 @@ async function ytPlayerFallback(reqBody, txt, target, ua) {
 		if (!emb) { dbg(`YTFALL miss vid=${vid} st=${st}`); return txt; }
 		stripSabr(emb.streamingData);
 		stripServerAbrRecursively(emb);
+		delete emb.frameworkUpdates;
+		delete emb.onResponseReceivedActions;
+		delete emb.attestation;
+		if (emb.playabilityStatus) {
+			emb.playabilityStatus.status = "OK";
+			emb.playabilityStatus.playableInEmbed = true;
+		}
 		dbg(`YTFALL ok vid=${vid} st=${st}->OK fmts=${((emb.streamingData && emb.streamingData.adaptiveFormats) || []).length} ms=${Date.now() - t0}`);
 		return JSON.stringify(emb);
 	} catch (e) { dbg(`YTFALL throw ${e.message}`); return txt; }
@@ -908,14 +929,27 @@ async function spliceReelJson(json, jarId) {
 				if (alt && alt.streamingData) {
 					stripSabr(alt.streamingData);
 					stripServerAbrRecursively(alt);
+					delete alt.frameworkUpdates;
+					delete alt.onResponseReceivedActions;
+					delete alt.attestation;
+					if (alt.playabilityStatus) {
+						alt.playabilityStatus.status = "OK";
+						alt.playabilityStatus.playableInEmbed = true;
+					}
 					pr.streamingData = alt.streamingData;
 					if (alt.playabilityStatus) pr.playabilityStatus = alt.playabilityStatus;
 					if (alt.playerConfig) pr.playerConfig = alt.playerConfig;
+					delete pr.frameworkUpdates;
+					delete pr.onResponseReceivedActions;
+					delete pr.attestation;
 					stripServerAbrRecursively(pr);
 					dbg(`REEL_SPLICE ok vid=${vid} fmts=${(pr.streamingData.formats || []).length}`);
 				} else if (pr.streamingData) {
 					stripSabr(pr.streamingData);
 					stripServerAbrRecursively(pr);
+					delete pr.frameworkUpdates;
+					delete pr.onResponseReceivedActions;
+					delete pr.attestation;
 				}
 			});
 		}
@@ -1218,6 +1252,13 @@ export default async function classicRoutes(fastify) {
 					if (alt && alt.streamingData) {
 						stripSabr(alt.streamingData);
 						stripServerAbrRecursively(alt);
+						delete alt.frameworkUpdates;
+						delete alt.onResponseReceivedActions;
+						delete alt.attestation;
+						if (alt.playabilityStatus) {
+							alt.playabilityStatus.status = "OK";
+							alt.playabilityStatus.playableInEmbed = true;
+						}
 						const payload = JSON.stringify(alt);
 						const outHeaders = {};
 						if (newJar) outHeaders["set-cookie"] = `${JAR_COOKIE}=${jarId}; Path=/; Max-Age=15552000; SameSite=Lax`;
