@@ -1202,14 +1202,31 @@ export default async function classicRoutes(fastify) {
 				if (body.length <= 8192) dbg(`UMPREQFULL len=${body.length} hex=${body.toString("hex")}`);
 			}
 			if (body && body.length && target.pathname.includes("/youtubei/v1/player") && process.env.CLASSIC_SPLICE !== "0") {
-				let keys = "?", parseOk = false, before = "?";
-				try { const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, "")); parseOk = true; before = j0?.context?.client?.clientName + "/" + j0?.context?.client?.clientVersion + " videoId=" + j0?.videoId; keys = Object.keys(j0).join(","); } catch {}
-				const spoofed = spoofPlayerBody(body);
-				dbg(`PLAYER_IN len=${body.length} parse=${parseOk} keys=[${keys}] before=${before} spoofed=${!!spoofed}`);
-				if (!parseOk) {
-					const peek = body.slice(0, 200).toString("latin1").replace(/[\x00-\x1f]/g, " ");
-					dbg(`PLAYER_PEEK enc=${req.headers["content-encoding"] || "-"} ct=${req.headers["content-type"] || "-"} head=${peek}`);
+				let vid = null;
+				try {
+					const j0 = JSON.parse(body.toString("utf8").replace(/^﻿/, ""));
+					vid = j0?.videoId;
+				} catch {}
+				if (!vid) {
+					try { vid = JSON.parse(gunzipSync(body).toString("utf8")).videoId; } catch {}
 				}
+				if (!vid) {
+					try { vid = JSON.parse(brotliDecompressSync(body).toString("utf8")).videoId; } catch {}
+				}
+				if (vid && /^[\w-]{11}$/.test(vid)) {
+					const alt = await androidPlayer(vid, jarId);
+					if (alt && alt.streamingData) {
+						stripSabr(alt.streamingData);
+						stripServerAbrRecursively(alt);
+						const payload = JSON.stringify(alt);
+						const outHeaders = {};
+						if (newJar) outHeaders["set-cookie"] = `${JAR_COOKIE}=${jarId}; Path=/; Max-Age=15552000; SameSite=Lax`;
+						outHeaders["content-type"] = "application/json; charset=utf-8";
+						dbg(`PLAYER_DIRECT answered for vid=${vid} fmts=${(alt.streamingData.formats || []).length} adp=${(alt.streamingData.adaptiveFormats || []).length}`);
+						return reply.code(200).headers(outHeaders).type("application/json; charset=utf-8").send(payload);
+					}
+				}
+				const spoofed = spoofPlayerBody(body);
 				if (spoofed) { body = spoofed; isPlayerSpoof = true; }
 			}
 		}
