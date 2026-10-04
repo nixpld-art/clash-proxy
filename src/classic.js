@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=16";
+const CLIENT_JS = "/classic-client.js?v=17";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -1141,7 +1141,21 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 				try {
 					const refU = new URL(String(v), "http://localhost");
 					if (refU.host === req.headers.host && !refU.pathname.startsWith(PREFIX)) {
-						out.referer = new URL(refU.pathname + refU.search + refU.hash, target.origin).href;
+						if (refU.pathname !== "/") {
+							out.referer = new URL(refU.pathname + refU.search + refU.hash, target.origin).href;
+						} else {
+							const arr = jarId ? recentDocs.get("j:" + jarId) : null;
+							let found = null;
+							if (arr) {
+								for (const d of arr) {
+									if (d.href && d.href.startsWith(target.origin)) {
+										found = d.href;
+										break;
+									}
+								}
+							}
+							out.referer = found || target.origin + "/";
+						}
 					} else {
 						out.referer = target.origin + "/";
 					}

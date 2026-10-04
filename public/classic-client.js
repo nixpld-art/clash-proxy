@@ -107,6 +107,50 @@
 		} catch (e) {}
 	} catch (e) {}
 
+	// ---- postMessage / MessageEvent cross-origin bridge ----
+	try {
+		var origPM = Window.prototype.postMessage;
+		Window.prototype.postMessage = function (msg, targetOrigin, transfer) {
+			var to = (typeof targetOrigin === "string" && targetOrigin !== "*") ? "*" : targetOrigin;
+			return transfer !== undefined ? origPM.call(this, msg, to, transfer) : origPM.call(this, msg, to);
+		};
+		try {
+			var origWinPM = window.postMessage;
+			if (origWinPM && origWinPM !== origPM) {
+				window.postMessage = function (msg, targetOrigin, transfer) {
+					var to = (typeof targetOrigin === "string" && targetOrigin !== "*") ? "*" : targetOrigin;
+					return transfer !== undefined ? origWinPM.call(this, msg, to, transfer) : origWinPM.call(this, msg, to);
+				};
+			}
+		} catch (e2) {}
+	} catch (e) {}
+
+	try {
+		var origMsgOrigin = Object.getOwnPropertyDescriptor(MessageEvent.prototype, "origin");
+		var origMsgGet = origMsgOrigin ? origMsgOrigin.get : null;
+		Object.defineProperty(MessageEvent.prototype, "origin", {
+			get: function () {
+				var raw = origMsgGet ? origMsgGet.call(this) : "";
+				if (raw === ORIGIN) {
+					try {
+						if (this.source && this.source.__CLASSIC__ && this.source.__CLASSIC__.base) {
+							return new NativeURL(this.source.__CLASSIC__.base).origin;
+						}
+					} catch (e3) {}
+					try {
+						if (this.source && this.source.document && this.source.document.URL) {
+							var unw = unwrap(this.source.document.URL);
+							if (unw) return new NativeURL(unw).origin;
+						}
+					} catch (e4) {}
+					return getTbOrigin ? getTbOrigin() : raw;
+				}
+				return raw;
+			},
+			configurable: true
+		});
+	} catch (e) {}
+
 	// ---- clean address at boot ------------------------------------
 	// SPAs read location.pathname before anything else and route an
 	// unfamiliar "/classic/https://..." to their own 404 (TikTok did
