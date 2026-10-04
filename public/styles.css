@@ -4982,6 +4982,7 @@ body.theme-blood-orange, html.theme-blood-orange {
    Retro Game Controller Side Dock
    ============================================================ */
 .retro-controller-dock {
+	display: none;
 	position: fixed;
 	left: 18px;
 	top: 50%;
@@ -4991,13 +4992,14 @@ body.theme-blood-orange, html.theme-blood-orange {
 	transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.ultimate-layout .retro-controller-dock:not(.hidden) {
+.ultimate-layout .retro-controller-dock {
 	display: block !important;
 }
 
-/* Hide dock when actively browsing inside web frame */
+/* Hide dock when actively browsing inside web frame or explicitly hidden */
 .ultimate-layout #browser-chrome:not(.hidden) ~ .retro-controller-dock,
-.ultimate-layout.is-browsing .retro-controller-dock {
+.ultimate-layout.is-browsing .retro-controller-dock,
+.retro-controller-dock.hidden {
 	display: none !important;
 }
 
