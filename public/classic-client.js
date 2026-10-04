@@ -79,6 +79,34 @@
 	}
 	if (!targetBase) targetBase = unwrap(location.href) || location.href;
 
+	try {
+		function getTbOrigin() {
+			try { return new NativeURL(targetBase).origin; } catch (e) { return ORIGIN; }
+		}
+		function getTbHost() {
+			try { return new NativeURL(targetBase).hostname; } catch (e) { return location.hostname; }
+		}
+		try { Object.defineProperty(window, "origin", { get: getTbOrigin, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(Document.prototype, "domain", { get: getTbHost, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(Document.prototype, "URL", { get: function () { return targetBase; }, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(Document.prototype, "documentURI", { get: function () { return targetBase; }, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(Document.prototype, "baseURI", { get: function () { return targetBase; }, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(Navigator.prototype, "webdriver", { get: function () { return false; }, configurable: true }); } catch (e) {}
+		try { Object.defineProperty(navigator, "webdriver", { get: function () { return false; }, configurable: true }); } catch (e) {}
+		try {
+			var origReferrer = Object.getOwnPropertyDescriptor(Document.prototype, "referrer");
+			var origRefGet = origReferrer ? origReferrer.get : null;
+			Object.defineProperty(Document.prototype, "referrer", {
+				get: function () {
+					var r = origRefGet ? origRefGet.call(this) : "";
+					var unw = unwrap(r);
+					return unw || (r && r.indexOf(ORIGIN) >= 0 ? "" : r);
+				},
+				configurable: true
+			});
+		} catch (e) {}
+	} catch (e) {}
+
 	// ---- clean address at boot ------------------------------------
 	// SPAs read location.pathname before anything else and route an
 	// unfamiliar "/classic/https://..." to their own 404 (TikTok did

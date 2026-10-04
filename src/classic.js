@@ -28,7 +28,7 @@ export function dbg(line) {
 }
 
 const PREFIX = "/classic/";
-const CLIENT_JS = "/classic-client.js?v=15";
+const CLIENT_JS = "/classic-client.js?v=16";
 const JAR_COOKIE = "cpjar";
 const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
 
@@ -1135,7 +1135,20 @@ function buildReqHeaders(req, target, jarId, isPlayerSpoof) {
 		}
 		if (lk === "referer" || lk === "referrer") {
 			const unw = unwrapProxy(String(v), req.headers.host);
-			out.referer = unw || target.origin + "/";
+			if (unw) {
+				out.referer = unw;
+			} else {
+				try {
+					const refU = new URL(String(v), "http://localhost");
+					if (refU.host === req.headers.host && !refU.pathname.startsWith(PREFIX)) {
+						out.referer = new URL(refU.pathname + refU.search + refU.hash, target.origin).href;
+					} else {
+						out.referer = target.origin + "/";
+					}
+				} catch {
+					out.referer = target.origin + "/";
+				}
+			}
 			continue;
 		}
 		out[lk] = Array.isArray(v) ? v.join(", ") : String(v);
