@@ -4720,3 +4720,614 @@ html.static-bg #particle-canvas {
 		bottom: 14px;
 	}
 }
+
+/* ============================================================
+   12 Ultimate Color Variations
+   ============================================================ */
+body.theme-monochrome, html.theme-monochrome {
+	--accent-primary: #ffffff;
+	--accent-secondary: #a1a1aa;
+	--accent: #e4e4e7;
+	--accent-light: #ffffff;
+	--accent-glow: rgba(255, 255, 255, 0.35);
+	--accent-glow-strong: rgba(255, 255, 255, 0.6);
+	--border-accent: rgba(255, 255, 255, 0.4);
+	--accent-gradient: linear-gradient(135deg, #ffffff 0%, #71717a 100%);
+	--shadow-glow: 0 0 25px rgba(255, 255, 255, 0.25);
+}
+
+body.theme-sky-blue, html.theme-sky-blue {
+	--accent-primary: #38bdf8;
+	--accent-secondary: #0284c7;
+	--accent: #0284c7;
+	--accent-light: #38bdf8;
+	--accent-glow: rgba(56, 189, 248, 0.4);
+	--accent-glow-strong: rgba(56, 189, 248, 0.7);
+	--border-accent: rgba(56, 189, 248, 0.4);
+	--accent-gradient: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+	--shadow-glow: 0 0 25px rgba(56, 189, 248, 0.35);
+}
+
+body.theme-neon-emerald, html.theme-neon-emerald {
+	--accent-primary: #10b981;
+	--accent-secondary: #059669;
+	--accent: #059669;
+	--accent-light: #10b981;
+	--accent-glow: rgba(16, 185, 129, 0.4);
+	--accent-glow-strong: rgba(16, 185, 129, 0.7);
+	--border-accent: rgba(16, 185, 129, 0.4);
+	--accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	--shadow-glow: 0 0 25px rgba(16, 185, 129, 0.35);
+}
+
+body.theme-crimson-red, html.theme-crimson-red {
+	--accent-primary: #f43f5e;
+	--accent-secondary: #e11d48;
+	--accent: #e11d48;
+	--accent-light: #f43f5e;
+	--accent-glow: rgba(244, 63, 94, 0.4);
+	--accent-glow-strong: rgba(244, 63, 94, 0.7);
+	--border-accent: rgba(244, 63, 94, 0.4);
+	--accent-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+	--shadow-glow: 0 0 25px rgba(244, 63, 94, 0.35);
+}
+
+body.theme-sunset-amber, html.theme-sunset-amber {
+	--accent-primary: #f59e0b;
+	--accent-secondary: #d97706;
+	--accent: #d97706;
+	--accent-light: #f59e0b;
+	--accent-glow: rgba(245, 158, 11, 0.4);
+	--accent-glow-strong: rgba(245, 158, 11, 0.7);
+	--border-accent: rgba(245, 158, 11, 0.4);
+	--accent-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+	--shadow-glow: 0 0 25px rgba(245, 158, 11, 0.35);
+}
+
+body.theme-cyber-violet, html.theme-cyber-violet {
+	--accent-primary: #8b5cf6;
+	--accent-secondary: #7c3aed;
+	--accent: #7c3aed;
+	--accent-light: #8b5cf6;
+	--accent-glow: rgba(139, 92, 246, 0.4);
+	--accent-glow-strong: rgba(139, 92, 246, 0.7);
+	--border-accent: rgba(139, 92, 246, 0.4);
+	--accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+	--shadow-glow: 0 0 25px rgba(139, 92, 246, 0.35);
+}
+
+body.theme-hot-pink, html.theme-hot-pink {
+	--accent-primary: #ec4899;
+	--accent-secondary: #db2777;
+	--accent: #db2777;
+	--accent-light: #ec4899;
+	--accent-glow: rgba(236, 72, 153, 0.4);
+	--accent-glow-strong: rgba(236, 72, 153, 0.7);
+	--border-accent: rgba(236, 72, 153, 0.4);
+	--accent-gradient: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+	--shadow-glow: 0 0 25px rgba(236, 72, 153, 0.35);
+}
+
+body.theme-electric-gold, html.theme-electric-gold {
+	--accent-primary: #eab308;
+	--accent-secondary: #ca8a04;
+	--accent: #ca8a04;
+	--accent-light: #eab308;
+	--accent-glow: rgba(234, 179, 8, 0.4);
+	--accent-glow-strong: rgba(234, 179, 8, 0.7);
+	--border-accent: rgba(234, 179, 8, 0.4);
+	--accent-gradient: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+	--shadow-glow: 0 0 25px rgba(234, 179, 8, 0.35);
+}
+
+body.theme-deep-sapphire, html.theme-deep-sapphire {
+	--accent-primary: #3b82f6;
+	--accent-secondary: #1d4ed8;
+	--accent: #1d4ed8;
+	--accent-light: #3b82f6;
+	--accent-glow: rgba(59, 130, 246, 0.4);
+	--accent-glow-strong: rgba(59, 130, 246, 0.7);
+	--border-accent: rgba(59, 130, 246, 0.4);
+	--accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+	--shadow-glow: 0 0 25px rgba(59, 130, 246, 0.35);
+}
+
+body.theme-toxic-lime, html.theme-toxic-lime {
+	--accent-primary: #84cc16;
+	--accent-secondary: #65a30d;
+	--accent: #65a30d;
+	--accent-light: #84cc16;
+	--accent-glow: rgba(132, 204, 22, 0.4);
+	--accent-glow-strong: rgba(132, 204, 22, 0.7);
+	--border-accent: rgba(132, 204, 22, 0.4);
+	--accent-gradient: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+	--shadow-glow: 0 0 25px rgba(132, 204, 22, 0.35);
+}
+
+body.theme-arctic-cyan, html.theme-arctic-cyan {
+	--accent-primary: #06b6d4;
+	--accent-secondary: #0891b2;
+	--accent: #0891b2;
+	--accent-light: #06b6d4;
+	--accent-glow: rgba(6, 182, 212, 0.4);
+	--accent-glow-strong: rgba(6, 182, 212, 0.7);
+	--border-accent: rgba(6, 182, 212, 0.4);
+	--accent-gradient: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+	--shadow-glow: 0 0 25px rgba(6, 182, 212, 0.35);
+}
+
+body.theme-blood-orange, html.theme-blood-orange {
+	--accent-primary: #f97316;
+	--accent-secondary: #ea580c;
+	--accent: #ea580c;
+	--accent-light: #f97316;
+	--accent-glow: rgba(249, 115, 22, 0.4);
+	--accent-glow-strong: rgba(249, 115, 22, 0.7);
+	--border-accent: rgba(249, 115, 22, 0.4);
+	--accent-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+	--shadow-glow: 0 0 25px rgba(249, 115, 22, 0.35);
+}
+
+/* ============================================================
+   ⚡ Barebones Mode (Zero-Lag RAM Saver)
+   ============================================================ */
+.barebones-mode #nav-profile,
+.barebones-mode #nav-friends,
+.barebones-mode #nav-chat,
+.barebones-mode #nav-leaderboard,
+.barebones-mode #nav-lounge,
+.barebones-mode #nav-owner-panel,
+.barebones-mode #user-header-widget,
+.barebones-mode #chat-drawer,
+.barebones-mode #cai-btn,
+.barebones-mode #cai-panel,
+.barebones-mode .lounge-badge,
+.barebones-mode .xp-progress-card {
+	display: none !important;
+}
+
+.barebones-mode {
+	--bg-primary: #050508 !important;
+	--bg-secondary: #0b0b10 !important;
+	--bg-glass: #0e0e14 !important;
+	--border-subtle: rgba(255, 255, 255, 0.08) !important;
+}
+
+.barebones-mode * {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}
+
+/* ============================================================
+   🕹️ Ultimate Minimalist Layout
+   ============================================================ */
+/* Hide the 3 lines hamburger buttons */
+.ultimate-layout #sidebar-toggle-btn,
+.ultimate-layout #nav-sidebar-btn {
+	display: none !important;
+}
+
+.ultimate-layout {
+	--bg-primary: #000000;
+	--bg-secondary: #08080a;
+	--bg-tertiary: #101014;
+	--bg-glass: rgba(10, 10, 12, 0.85);
+	--border-subtle: rgba(255, 255, 255, 0.1);
+	--border-hover: rgba(255, 255, 255, 0.22);
+	--radius-md: 10px;
+	--radius-lg: 14px;
+}
+
+/* Shift main content on desktop to leave room for the retro controller */
+@media (min-width: 960px) {
+	.ultimate-layout .main-content {
+		padding-left: 100px;
+		padding-right: 30px;
+	}
+}
+
+/* Canvas stacking */
+#ultimate-canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.ultimate-layout #particle-canvas {
+	display: none !important;
+}
+
+.ultimate-layout #ultimate-canvas:not(.hidden) {
+	display: block;
+}
+
+/* Minimalist Search Box in Ultimate Layout */
+.ultimate-layout .search-wrapper {
+	background: #08080a;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+	border-radius: 12px;
+	transition: all 0.2s ease;
+}
+
+.ultimate-layout .search-wrapper:focus-within {
+	border-color: var(--accent-primary);
+	box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.ultimate-layout .hero-title {
+	letter-spacing: -0.04em;
+	font-weight: 900;
+}
+
+/* Minimalist Speed Dial Cards */
+.ultimate-layout .shortcut-card {
+	background: #0c0c10;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 10px;
+	transition: all 0.2s ease;
+}
+
+.ultimate-layout .shortcut-card:hover {
+	border-color: var(--accent-primary);
+	background: #121218;
+	transform: translateY(-2px);
+}
+
+/* ============================================================
+   Retro Game Controller Side Dock
+   ============================================================ */
+.retro-controller-dock {
+	position: fixed;
+	left: 18px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 999;
+	user-select: none;
+	transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ultimate-layout .retro-controller-dock:not(.hidden) {
+	display: block !important;
+}
+
+/* Hide dock when actively browsing inside web frame */
+.ultimate-layout #browser-chrome:not(.hidden) ~ .retro-controller-dock,
+.ultimate-layout.is-browsing .retro-controller-dock {
+	display: none !important;
+}
+
+.retro-controller-body {
+	width: 72px;
+	background: linear-gradient(180deg, #1c1c24 0%, #101016 100%);
+	border: 2px solid rgba(255, 255, 255, 0.12);
+	border-radius: 36px;
+	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 16px rgba(0, 0, 0, 0.5);
+	padding: 14px 8px 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	position: relative;
+}
+
+.retro-controller-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+}
+
+.retro-controller-led {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--accent-primary, #fff);
+	box-shadow: 0 0 8px var(--accent-primary, #fff);
+	transition: all 0.3s ease;
+}
+
+.barebones-mode .retro-controller-led {
+	background: #10b981;
+	box-shadow: 0 0 8px #10b981;
+}
+
+.retro-controller-brand {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 8px;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	color: rgba(255, 255, 255, 0.35);
+	text-transform: uppercase;
+}
+
+/* --- D-Pad Cross --- */
+.retro-dpad-container {
+	width: 54px;
+	height: 54px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.retro-dpad {
+	width: 54px;
+	height: 54px;
+	position: relative;
+}
+
+.retro-dpad-btn {
+	position: absolute;
+	background: #14141a;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: rgba(255, 255, 255, 0.75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.15s ease;
+	outline: none;
+}
+
+.retro-dpad-btn svg {
+	pointer-events: none;
+}
+
+.retro-dpad-btn:hover {
+	background: #242430;
+	color: #ffffff;
+	border-color: var(--accent-primary);
+	box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.retro-dpad-btn:active {
+	transform: scale(0.92);
+}
+
+.retro-dpad-btn.active {
+	color: var(--accent-primary);
+	border-color: var(--accent-primary);
+	background: #1c1c26;
+	box-shadow: inset 0 0 8px var(--accent-glow);
+}
+
+.retro-dpad-up {
+	top: 0;
+	left: 18px;
+	width: 18px;
+	height: 20px;
+	border-radius: 4px 4px 0 0;
+	border-bottom: none;
+}
+
+.retro-dpad-down {
+	bottom: 0;
+	left: 18px;
+	width: 18px;
+	height: 20px;
+	border-radius: 0 0 4px 4px;
+	border-top: none;
+}
+
+.retro-dpad-left {
+	top: 18px;
+	left: 0;
+	width: 20px;
+	height: 18px;
+	border-radius: 4px 0 0 4px;
+	border-right: none;
+}
+
+.retro-dpad-right {
+	top: 18px;
+	right: 0;
+	width: 20px;
+	height: 18px;
+	border-radius: 0 4px 4px 0;
+	border-left: none;
+}
+
+.retro-dpad-pivot {
+	position: absolute;
+	top: 18px;
+	left: 18px;
+	width: 18px;
+	height: 18px;
+	background: #14141a;
+	pointer-events: none;
+}
+
+/* --- Select / Start Rubber Pills --- */
+.retro-pill-controls {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	width: 100%;
+	padding: 2px 0;
+}
+
+.retro-pill-btn {
+	background: #202028;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 10px;
+	padding: 3px 6px;
+	cursor: pointer;
+	outline: none;
+	transition: all 0.15s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.retro-pill-btn:hover {
+	background: #2e2e3a;
+	border-color: var(--accent-primary);
+	box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.retro-pill-btn:active {
+	transform: scale(0.9);
+}
+
+.retro-pill-text {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 7px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.6);
+	letter-spacing: 0.05em;
+}
+
+/* --- Action Buttons (Rest of the stuff) --- */
+.retro-action-cluster {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: center;
+	width: 100%;
+	padding-top: 4px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	transition: all 0.3s ease;
+}
+
+/* When Barebones Mode is ON: action buttons are hidden, leaving strictly Proxy, Games, Settings */
+.barebones-mode .retro-action-cluster {
+	display: none !important;
+}
+
+.retro-arcade-btn {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #242430 0%, #15151c 100%);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: rgba(255, 255, 255, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	outline: none;
+	transition: all 0.15s ease;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.retro-arcade-btn svg {
+	pointer-events: none;
+}
+
+.retro-arcade-btn:hover {
+	color: #fff;
+	border-color: var(--accent-primary);
+	background: linear-gradient(135deg, #303040 0%, #1e1e28 100%);
+	box-shadow: 0 0 12px var(--accent-glow);
+	transform: translateY(-1px);
+}
+
+.retro-arcade-btn:active {
+	transform: translateY(1px) scale(0.94);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.retro-arcade-btn.active {
+	color: var(--accent-primary);
+	border-color: var(--accent-primary);
+	box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* --- Color Variations Grid in Settings --- */
+.ultimate-colors-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+	gap: 8px;
+}
+
+.ultimate-color-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	outline: none;
+}
+
+.ultimate-color-btn:hover {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.25);
+	transform: translateY(-1px);
+}
+
+.ultimate-color-btn.active {
+	border-color: var(--accent-primary);
+	background: rgba(255, 255, 255, 0.12);
+	box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.ultimate-color-swatch {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Highlighted Settings Card */
+.settings-card.highlight-card {
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+/* Mobile responsive retro controller */
+@media (max-width: 960px) {
+	.retro-controller-dock {
+		left: 8px;
+		top: auto;
+		bottom: 16px;
+		transform: none;
+	}
+	.retro-controller-body {
+		width: 58px;
+		padding: 10px 4px 12px;
+		gap: 8px;
+	}
+	.retro-dpad-container, .retro-dpad {
+		width: 46px;
+		height: 46px;
+	}
+	.retro-dpad-up, .retro-dpad-down {
+		left: 15px;
+		width: 16px;
+		height: 16px;
+	}
+	.retro-dpad-left, .retro-dpad-right {
+		top: 15px;
+		width: 16px;
+		height: 16px;
+	}
+	.retro-dpad-pivot {
+		top: 15px;
+		left: 15px;
+		width: 16px;
+		height: 16px;
+	}
+	.retro-arcade-btn {
+		width: 28px;
+		height: 28px;
+	}
+	.ultimate-layout .main-content {
+		padding-left: 70px;
+	}
+}
+

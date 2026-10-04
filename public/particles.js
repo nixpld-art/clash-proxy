@@ -147,9 +147,31 @@
 				animationId = null;
 			}
 			renderStatic();
-		} else if (!running) {
+		} else if (!running && !particlesDisabled) {
 			running = true;
 			animate();
+		}
+	};
+
+	let particlesDisabled = false;
+	window.clashSetParticlesDisabled = function (disabled) {
+		particlesDisabled = !!disabled;
+		if (particlesDisabled) {
+			running = false;
+			if (animationId) {
+				cancelAnimationFrame(animationId);
+				animationId = null;
+			}
+			canvas.classList.add("hidden");
+			ctx.clearRect(0, 0, width, height);
+		} else {
+			canvas.classList.remove("hidden");
+			if (!document.documentElement.classList.contains("static-bg") && !document.documentElement.classList.contains("barebones-mode")) {
+				running = true;
+				animate();
+			} else {
+				renderStatic();
+			}
 		}
 	};
 
@@ -166,16 +188,21 @@
 
 	// --- Start ---
 	window.addEventListener("resize", () => {
+		if (particlesDisabled) return;
 		resize();
 		initParticles();
-		if (document.documentElement.classList.contains("static-bg")) {
+		if (document.documentElement.classList.contains("static-bg") || document.documentElement.classList.contains("barebones-mode")) {
 			renderStatic();
 		}
 	});
 
 	resize();
 	initParticles();
-	if (document.documentElement.classList.contains("static-bg")) {
+	const isUltimateInit = document.documentElement.classList.contains("ultimate-layout");
+	const isBarebonesInit = document.documentElement.classList.contains("barebones-mode");
+	if (isUltimateInit) {
+		window.clashSetParticlesDisabled(true);
+	} else if (document.documentElement.classList.contains("static-bg") || isBarebonesInit) {
 		running = false;
 		renderStatic();
 	} else {

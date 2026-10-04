@@ -107,6 +107,14 @@ const settingGhostMode = document.getElementById("setting-ghost-mode");
 const cloakBtns = document.querySelectorAll(".cloak-btn");
 const themeBtns = document.querySelectorAll(".theme-btn");
 
+// Barebones Mode & Ultimate Minimalist Layout Elements
+const settingBarebonesMode = document.getElementById("setting-barebones-mode");
+const settingUltimateLayout = document.getElementById("setting-ultimate-layout");
+const ultimateColorBtns = document.querySelectorAll(".ultimate-color-btn");
+const retroControllerDock = document.getElementById("retro-controller-dock");
+const retroBtnSelect = document.getElementById("retro-btn-select");
+const retroBtnStart = document.getElementById("retro-btn-start");
+
 // Chromebook Optimizer Elements
 const settingPerfStaticBg = document.getElementById("setting-perf-staticbg");
 const settingPerfLightUi = document.getElementById("setting-perf-lightui");
@@ -2170,8 +2178,15 @@ function applyUserSettings(settings) {
 	if (settingGhostMode) settingGhostMode.checked = !!settings.ghostMode;
 
 	if (settings.theme) {
+		const wasBarebones = document.documentElement.classList.contains("barebones-mode");
+		const wasUltimate = document.documentElement.classList.contains("ultimate-layout");
+		const ultColor = getUltimateColor();
 		document.body.className = "";
-		if (settings.theme !== "neon-purple") {
+		if (wasBarebones) document.body.classList.add("barebones-mode");
+		if (wasUltimate) {
+			document.body.classList.add("ultimate-layout");
+			document.body.classList.add(`theme-${ultColor}`);
+		} else if (settings.theme !== "neon-purple") {
 			document.body.classList.add(`theme-${settings.theme}`);
 		}
 		themeBtns.forEach(btn => {
@@ -4211,9 +4226,15 @@ cloakBtns.forEach(btn => {
 
 themeBtns.forEach(btn => {
 	btn.addEventListener("click", () => {
-		const theme = btn.dataset.theme;
+		const wasBarebones = document.documentElement.classList.contains("barebones-mode");
+		const wasUltimate = document.documentElement.classList.contains("ultimate-layout");
+		const ultColor = getUltimateColor();
 		document.body.className = "";
-		if (theme !== "neon-purple") {
+		if (wasBarebones) document.body.classList.add("barebones-mode");
+		if (wasUltimate) {
+			document.body.classList.add("ultimate-layout");
+			document.body.classList.add(`theme-${ultColor}`);
+		} else if (theme !== "neon-purple") {
 			document.body.classList.add(`theme-${theme}`);
 		}
 		themeBtns.forEach(b => b.classList.toggle("active", b.dataset.theme === theme));
@@ -4558,43 +4579,61 @@ document.addEventListener("keydown", (e) => {
 	}
 });
 
+function navigateToPage(targetPage) {
+	if (!targetPage) return;
+
+	// Owner Panel opens INSIDE the site (server proxies it, owner-gated)
+	if (targetPage === "owner-panel") {
+		closeSidebar();
+		location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
+		return;
+	}
+
+	// In Barebones mode, strictly guard non-essential pages
+	const isBarebones = document.documentElement.classList.contains("barebones-mode");
+	if (isBarebones && targetPage !== "proxy" && targetPage !== "games" && targetPage !== "settings") {
+		if (typeof showToast === "function") {
+			showToast("Barebones Mode active: Only Proxy, Games, and Settings are enabled to save RAM.", "info");
+		}
+		return;
+	}
+
+	document.querySelectorAll(".sidebar-link").forEach((l) => {
+		l.classList.toggle("active", l.dataset.page === targetPage);
+	});
+
+	// Sync active state to retro controller dock buttons
+	document.querySelectorAll("#retro-controller-dock [data-page]").forEach((btn) => {
+		btn.classList.toggle("active", btn.dataset.page === targetPage);
+	});
+
+	pages.forEach((p) => p.classList.remove("active"));
+	const page = document.getElementById(`page-${targetPage}`);
+	if (page) page.classList.add("active");
+
+	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat") {
+		framesContainer.classList.add("hidden");
+		browserChrome.classList.add("hidden");
+		mainContent.classList.remove("hidden");
+		mainContent.classList.remove("new-tab-mode");
+	}
+
+	if (targetPage === "profile") renderProfilePage();
+	if (targetPage === "friends") loadFriends();
+	if (targetPage === "leaderboard") loadLeaderboard();
+	if (targetPage === "lounge") loadLoungeRooms();
+	if (targetPage === "chat") {
+		closeChatDrawer();
+		loadChatConversations();
+	}
+
+	closeSidebar();
+}
+
 sidebarLinks.forEach((link) => {
 	link.addEventListener("click", (e) => {
 		e.preventDefault();
-		const targetPage = link.dataset.page;
-
-		// Owner Panel opens INSIDE the site (server proxies it, owner-gated)
-		if (targetPage === "owner-panel") {
-			e.stopPropagation();
-			closeSidebar();
-			location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
-			return;
-		}
-
-		document.querySelectorAll(".sidebar-link").forEach((l) => l.classList.remove("active"));
-		link.classList.add("active");
-
-		pages.forEach((p) => p.classList.remove("active"));
-		const page = document.getElementById(`page-${targetPage}`);
-		if (page) page.classList.add("active");
-
-		if (targetPage === "games" || targetPage === "settings" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat") {
-			framesContainer.classList.add("hidden");
-			browserChrome.classList.add("hidden");
-			mainContent.classList.remove("hidden");
-			mainContent.classList.remove("new-tab-mode");
-		}
-
-		if (targetPage === "profile") renderProfilePage();
-		if (targetPage === "friends") loadFriends();
-		if (targetPage === "leaderboard") loadLeaderboard();
-		if (targetPage === "lounge") loadLoungeRooms();
-		if (targetPage === "chat") {
-			closeChatDrawer();
-			loadChatConversations();
-		}
-
-		closeSidebar();
+		navigateToPage(link.dataset.page);
 	});
 });
 
@@ -4668,3 +4707,245 @@ updateShieldUI();
 
 // Initialize Bookmarks & Speed Dial
 loadBookmarks();
+
+// ============================================================
+// Barebones Mode & Ultimate Minimalist Layout Engine
+// ============================================================
+
+const ULTIMATE_THEMES = [
+	"monochrome",
+	"sky-blue",
+	"neon-emerald",
+	"crimson-red",
+	"sunset-amber",
+	"cyber-violet",
+	"hot-pink",
+	"electric-gold",
+	"deep-sapphire",
+	"toxic-lime",
+	"arctic-cyan",
+	"blood-orange"
+];
+
+function isBarebonesActive() {
+	try {
+		return localStorage.getItem("clash_barebones") === "true";
+	} catch (e) {
+		return false;
+	}
+}
+
+function isUltimateLayoutActive() {
+	try {
+		return localStorage.getItem("clash_ultimate_layout") === "true";
+	} catch (e) {
+		return false;
+	}
+}
+
+function getUltimateColor() {
+	try {
+		return localStorage.getItem("clash_ultimate_color") || "monochrome";
+	} catch (e) {
+		return "monochrome";
+	}
+}
+
+function applyBarebonesMode(enabled, notify = false) {
+	try {
+		localStorage.setItem("clash_barebones", enabled ? "true" : "false");
+	} catch (e) {}
+
+	if (enabled) {
+		document.documentElement.classList.add("barebones-mode");
+		document.body.classList.add("barebones-mode");
+	} else {
+		document.documentElement.classList.remove("barebones-mode");
+		document.body.classList.remove("barebones-mode");
+	}
+
+	if (settingBarebonesMode) {
+		settingBarebonesMode.checked = !!enabled;
+	}
+
+	// In Barebones mode, redirect away from heavy pages if user is currently on one
+	if (enabled) {
+		const activePage = document.querySelector(".page.active");
+		const activePageId = activePage ? activePage.id.replace("page-", "") : "proxy";
+		if (activePageId !== "proxy" && activePageId !== "games" && activePageId !== "settings") {
+			navigateToPage("proxy");
+		}
+	}
+
+	// Update background renderers (freeze/unfreeze canvas animations)
+	const isUlt = isUltimateLayoutActive();
+	if (window.clashSetUltimateBg) {
+		window.clashSetUltimateBg(isUlt);
+	}
+	if (window.clashSetParticlesDisabled) {
+		window.clashSetParticlesDisabled(enabled || isUlt);
+	}
+
+	if (notify && typeof showToast === "function") {
+		showToast(
+			enabled
+				? "Barebones Mode active: RAM usage minimized (Proxy, Games & Settings only)"
+				: "Barebones Mode disabled: All features restored",
+			"info"
+		);
+	}
+}
+
+function applyUltimateLayout(enabled, notify = false) {
+	try {
+		localStorage.setItem("clash_ultimate_layout", enabled ? "true" : "false");
+	} catch (e) {}
+
+	if (enabled) {
+		document.documentElement.classList.add("ultimate-layout");
+		document.body.classList.add("ultimate-layout");
+		const color = getUltimateColor();
+		setUltimateColor(color, false);
+	} else {
+		document.documentElement.classList.remove("ultimate-layout");
+		document.body.classList.remove("ultimate-layout");
+		ULTIMATE_THEMES.forEach((t) => {
+			document.documentElement.classList.remove(`theme-${t}`);
+			document.body.classList.remove(`theme-${t}`);
+		});
+	}
+
+	if (settingUltimateLayout) {
+		settingUltimateLayout.checked = !!enabled;
+	}
+
+	// Update canvas and particle backgrounds
+	const isBare = isBarebonesActive();
+	if (window.clashSetUltimateBg) {
+		window.clashSetUltimateBg(enabled);
+	}
+	if (window.clashSetParticlesDisabled) {
+		window.clashSetParticlesDisabled(enabled || isBare);
+	}
+
+	if (notify && typeof showToast === "function") {
+		showToast(
+			enabled
+				? "Ultimate Minimalist Layout enabled with Retro Controller Dock"
+				: "Ultimate Layout disabled: Standard layout restored",
+			"success"
+		);
+	}
+}
+
+function setUltimateColor(colorKey, notify = false) {
+	if (!ULTIMATE_THEMES.includes(colorKey)) {
+		colorKey = "monochrome";
+	}
+
+	try {
+		localStorage.setItem("clash_ultimate_color", colorKey);
+	} catch (e) {}
+
+	ULTIMATE_THEMES.forEach((t) => {
+		document.documentElement.classList.remove(`theme-${t}`);
+		document.body.classList.remove(`theme-${t}`);
+	});
+
+	if (isUltimateLayoutActive()) {
+		document.documentElement.classList.add(`theme-${colorKey}`);
+		document.body.classList.add(`theme-${colorKey}`);
+	}
+
+	if (ultimateColorBtns && ultimateColorBtns.length) {
+		ultimateColorBtns.forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.color === colorKey);
+		});
+	}
+
+	if (window.clashSetUltimateColor) {
+		window.clashSetUltimateColor(colorKey);
+	}
+
+	if (notify && typeof showToast === "function") {
+		const formatted = colorKey.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+		showToast(`Theme updated to ${formatted}`, "info");
+	}
+}
+
+function cycleUltimateColor() {
+	const current = getUltimateColor();
+	const idx = ULTIMATE_THEMES.indexOf(current);
+	const nextIdx = idx >= 0 ? (idx + 1) % ULTIMATE_THEMES.length : 0;
+	const nextColor = ULTIMATE_THEMES[nextIdx];
+	setUltimateColor(nextColor, true);
+}
+
+function initBarebonesAndUltimate() {
+	const barebones = isBarebonesActive();
+	const ultimate = isUltimateLayoutActive();
+	const color = getUltimateColor();
+
+	// Apply stored preferences on boot
+	applyBarebonesMode(barebones, false);
+	applyUltimateLayout(ultimate, false);
+	setUltimateColor(color, false);
+
+	// Settings switch events
+	if (settingBarebonesMode) {
+		settingBarebonesMode.addEventListener("change", () => {
+			applyBarebonesMode(settingBarebonesMode.checked, true);
+		});
+	}
+
+	if (settingUltimateLayout) {
+		settingUltimateLayout.addEventListener("change", () => {
+			applyUltimateLayout(settingUltimateLayout.checked, true);
+		});
+	}
+
+	// 12-Color swatch events
+	if (ultimateColorBtns) {
+		ultimateColorBtns.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const c = btn.dataset.color;
+				if (c) setUltimateColor(c, true);
+			});
+		});
+	}
+
+	// Retro Controller Dock pill buttons
+	if (retroBtnSelect) {
+		retroBtnSelect.addEventListener("click", (e) => {
+			e.preventDefault();
+			cycleUltimateColor();
+		});
+	}
+
+	if (retroBtnStart) {
+		retroBtnStart.addEventListener("click", (e) => {
+			e.preventDefault();
+			applyBarebonesMode(!isBarebonesActive(), true);
+		});
+	}
+
+	// Retro Controller Dock navigation buttons
+	const retroNavButtons = document.querySelectorAll("#retro-controller-dock [data-page]");
+	retroNavButtons.forEach((btn) => {
+		btn.addEventListener("click", (e) => {
+			e.preventDefault();
+			const target = btn.dataset.page;
+			if (target) navigateToPage(target);
+		});
+	});
+
+	// Sync initial active page highlight to retro controller dock
+	const initialPage = document.querySelector(".page.active");
+	const initialPageId = initialPage ? initialPage.id.replace("page-", "") : "proxy";
+	retroNavButtons.forEach((btn) => {
+		btn.classList.toggle("active", btn.dataset.page === initialPageId);
+	});
+}
+
+// Initialize Barebones & Ultimate Layout
+initBarebonesAndUltimate();
