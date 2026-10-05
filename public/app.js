@@ -4449,26 +4449,300 @@ function showToast({ icon = "🔔", title = "Notification", message = "", type =
 }
 
 // ============================================================
-// Arcade Games Library Logic
+// Arcade Games Library Logic (Popular Top Sort, Game of the Week, Daily Suggestions)
 // ============================================================
+
+const gowContainer = document.getElementById("game-of-the-week-container");
+const suggestedContainer = document.getElementById("suggested-games-container");
+const filterChipsContainer = document.getElementById("games-filter-chips");
+const gamesLibraryTitle = document.getElementById("games-library-title");
+const gamesLibraryCount = document.getElementById("games-library-count");
 
 let allGames = [];
 let currentDisplayList = [];
 let renderedCount = 0;
 const BATCH_SIZE = 150;
+let activeFilter = "all";
+
+// Top Popular Game Keywords (Ordered by Prominence)
+const POPULAR_KEYWORDS = [
+	"eaglercraft", "minecraft", "1v1.lol", "retro bowl", "subway surfers", 
+	"slope", "bitlife", "cookie clicker", "geometry dash", "smash karts", 
+	"basketball stars", "super mario", "tetris", "crossy road", "fnaf", 
+	"five nights", "paper.io", "the oregon trail", "doom", "moto x3m", 
+	"monkey mart", "sonic", "pac-man", "flappy bird", "run 3", "happy wheels", 
+	"drift hunters", "drive mad", "ovo", "tunnel rush", "space invaders", 
+	"street fighter", "mortal kombat", "galaga", "out run", "zelda", 
+	"pokemon", "roblox", "prince of persia", "wolfenstein 3d", "simcity", 
+	"aladdin", "metal gear", "bad ice cream", "fireboy and watergirl"
+];
+
+function getPopularRank(game) {
+	if (!game || !game.title) return 999999;
+	const t = game.title.toLowerCase();
+	for (let i = 0; i < POPULAR_KEYWORDS.length; i++) {
+		if (t.includes(POPULAR_KEYWORDS[i])) {
+			return i;
+		}
+	}
+	return 999999;
+}
+
+function isPopularGame(game) {
+	return getPopularRank(game) < 999999;
+}
+
+function sortGamesWithPopularFirst(list) {
+	return [...list].sort((a, b) => {
+		const rankA = getPopularRank(a);
+		const rankB = getPopularRank(b);
+		if (rankA !== rankB) return rankA - rankB;
+		return (a.title || "").localeCompare(b.title || "");
+	});
+}
+
+// ------------------------------------------------------------
+// Game of the Week (Hero Feature Showcase)
+// ------------------------------------------------------------
+const GAME_OF_THE_WEEK_POOL = [
+	{
+		keyword: "eaglercraft",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "🔥 2X XP BOOST",
+		tagline: "Full in-browser Minecraft multiplayer, survival, and custom servers. Pure 60FPS unblocked gameplay."
+	},
+	{
+		keyword: "retro bowl",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "🏈 TOP SPORTS HIT",
+		tagline: "Call audibles, manage your franchise, and dominate retro gridiron football right in your browser."
+	},
+	{
+		keyword: "subway surfers",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "🏃 TOP RUNNER",
+		tagline: "Dodge trains, surf the tracks, and collect high scores in the legendary fast-paced arcade runner."
+	},
+	{
+		keyword: "the oregon trail",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "🤠 RETRO LEGEND",
+		tagline: "Ford the river, hunt buffalo, and survive the historic trek across America in this classic DOS adventure."
+	},
+	{
+		keyword: "geometry dash",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "⚡ RHYTHM HIT",
+		tagline: "Jump, fly, and flip through pulse-pounding rhythm obstacles synced to electronic soundtracks."
+	},
+	{
+		keyword: "doom",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "💀 CLASSIC FPS",
+		tagline: "Rip and tear across the Martian moons in the father of all first-person shooters running in pure DOSBox."
+	},
+	{
+		keyword: "cookie clicker",
+		badge: "👑 GAME OF THE WEEK",
+		tag: "🍪 ADDICTIVE IDLE",
+		tagline: "Bake quadrillions of cookies, recruit grandmas, and manipulate the confectionery cosmos."
+	}
+];
+
+function renderGameOfTheWeek(list) {
+	if (!gowContainer || !list || list.length === 0) return;
+	
+	const now = new Date();
+	const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+	const weekNum = Math.floor((now - startOfYear) / (7 * 24 * 60 * 60 * 1000));
+	const featuredConfig = GAME_OF_THE_WEEK_POOL[weekNum % GAME_OF_THE_WEEK_POOL.length];
+
+	let featuredGame = list.find(g => (g.title || "").toLowerCase().includes(featuredConfig.keyword));
+	if (!featuredGame) featuredGame = list[0];
+	if (!featuredGame) return;
+
+	gowContainer.innerHTML = `
+		<div class="gow-hero">
+			<div class="gow-left">
+				<div class="gow-badge-row">
+					<span class="gow-badge-crown">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+						</svg>
+						${featuredConfig.badge}
+					</span>
+					<span class="gow-badge-tag">${featuredConfig.tag}</span>
+				</div>
+				<h2 class="gow-title">${escapeHtml(featuredGame.title)}</h2>
+				<p class="gow-desc">${escapeHtml(featuredConfig.tagline)}</p>
+			</div>
+			<div class="gow-right">
+				<button class="gow-play-btn" id="gow-play-now-btn">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+						<polygon points="5 3 19 12 5 21 5 3"></polygon>
+					</svg>
+					Play Now
+				</button>
+				<button class="gow-stealth-btn" id="gow-stealth-btn" title="Open stealthily in about:blank">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+						<polyline points="15 3 21 3 21 9"></polyline>
+						<line x1="10" y1="14" x2="21" y2="3"></line>
+					</svg>
+					about:blank
+				</button>
+			</div>
+		</div>
+	`;
+
+	const playBtn = document.getElementById("gow-play-now-btn");
+	const stealthBtn = document.getElementById("gow-stealth-btn");
+	if (playBtn) playBtn.addEventListener("click", () => createTab(featuredGame.url, true));
+	if (stealthBtn) stealthBtn.addEventListener("click", () => openAboutBlank(featuredGame.url));
+}
+
+// ------------------------------------------------------------
+// Suggested Games (Daily Picks that change every day)
+// ------------------------------------------------------------
+function getDailySuggestedGames(list, count = 5) {
+	if (!list || list.length === 0) return [];
+	
+	const now = new Date();
+	const seedStr = `${now.getUTCFullYear()}-${now.getUTCMonth() + 1}-${now.getUTCDate()}`;
+	let hash = 0;
+	for (let i = 0; i < seedStr.length; i++) {
+		hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+		hash |= 0;
+	}
+	hash = Math.abs(hash);
+
+	const picked = [];
+	const usedUrls = new Set();
+	let cur = hash;
+
+	for (let attempt = 0; attempt < 120 && picked.length < count; attempt++) {
+		cur = (cur * 9301 + 49297) % 233280;
+		const idx = Math.floor((cur / 233280) * list.length);
+		const game = list[idx];
+		if (game && !usedUrls.has(game.url) && (game.title || "").length > 2) {
+			usedUrls.add(game.url);
+			picked.push(game);
+		}
+	}
+	return picked;
+}
+
+function renderSuggestedGames(list) {
+	if (!suggestedContainer || !list || list.length === 0) return;
+	const dailyGames = getDailySuggestedGames(list, 5);
+	if (dailyGames.length === 0) return;
+
+	suggestedContainer.innerHTML = `
+		<div class="suggested-header-row">
+			<div class="suggested-title-group">
+				<h3 class="suggested-title">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
+						<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+					</svg>
+					Suggested For You
+				</h3>
+				<span class="suggested-badge">Daily Picks</span>
+			</div>
+			<span class="suggested-timer-badge">✨ Rotates every 24h</span>
+		</div>
+		<div class="suggested-games-grid" id="suggested-games-grid"></div>
+	`;
+
+	const grid = document.getElementById("suggested-games-grid");
+	if (!grid) return;
+
+	dailyGames.forEach(game => {
+		const card = document.createElement("div");
+		card.className = "suggested-card";
+		card.innerHTML = `
+			<span class="suggested-card-tag">Daily Pick</span>
+			<div class="game-card-icon">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="6" y1="12" x2="10" y2="12"></line>
+					<line x1="8" y1="10" x2="8" y2="14"></line>
+					<circle cx="15" cy="13" r="1"></circle>
+					<circle cx="17.5" cy="10.5" r="1"></circle>
+					<path d="M18.7 18.7a8.5 8.5 0 0 0 2.3-5.7v-2a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v2a8.5 8.5 0 0 0 2.3 5.7L7 21h10l1.7-2.3z"></path>
+				</svg>
+			</div>
+			<span class="game-card-title">${escapeHtml(game.title)}</span>
+			<button class="game-card-aboutblank-btn" title="Open in about:blank">
+				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+					<polyline points="15 3 21 3 21 9"></polyline>
+					<line x1="10" y1="14" x2="21" y2="3"></line>
+				</svg>
+				about:blank
+			</button>
+		`;
+		card.addEventListener("click", (e) => {
+			if (e.target.closest(".game-card-aboutblank-btn")) {
+				e.stopPropagation();
+				if (game.url) openAboutBlank(game.url);
+			} else {
+				if (game.url) createTab(game.url, true);
+			}
+		});
+		grid.appendChild(card);
+	});
+}
+
+function applyCurrentFilterAndSearch() {
+	const query = (gamesSearchInput ? gamesSearchInput.value : "").toLowerCase().trim();
+	let filtered = allGames;
+
+	if (activeFilter === "popular") {
+		filtered = filtered.filter(g => isPopularGame(g));
+		if (gamesLibraryTitle) gamesLibraryTitle.textContent = "🔥 Top Popular Games";
+	} else if (activeFilter !== "all") {
+		filtered = filtered.filter(g => (g.cat || "").toLowerCase() === activeFilter.toLowerCase());
+		if (gamesLibraryTitle) gamesLibraryTitle.textContent = `${activeFilter} Games`;
+	} else {
+		if (gamesLibraryTitle) gamesLibraryTitle.textContent = "All Games";
+	}
+
+	if (query) {
+		filtered = filtered.filter(g => 
+			(g.title || "").toLowerCase().includes(query) || 
+			(g.filename || "").toLowerCase().includes(query)
+		);
+	}
+
+	if (gamesLibraryCount) {
+		gamesLibraryCount.textContent = `${filtered.length.toLocaleString()} Games`;
+	}
+
+	renderGames(filtered);
+}
 
 async function loadGamesLibrary() {
 	try {
 		const res = await fetch("/api/games");
 		if (!res.ok) throw new Error("Failed to load games list");
 		const data = await res.json();
-		allGames = Array.isArray(data) ? data : (data.games || []);
+		const rawGames = Array.isArray(data) ? data : (data.games || []);
+		
+		// Sort with popular games prioritized at the top
+		allGames = sortGamesWithPopularFirst(rawGames);
 		
 		if (gamesCountBadge) {
 			gamesCountBadge.textContent = `${allGames.length.toLocaleString()}`;
 		}
+		if (gamesLibraryCount) {
+			gamesLibraryCount.textContent = `${allGames.length.toLocaleString()} Games`;
+		}
 		
-		renderGames(allGames);
+		// Render Game of the Week & Suggested Daily Games
+		renderGameOfTheWeek(allGames);
+		renderSuggestedGames(allGames);
+
+		// Render main games grid
+		applyCurrentFilterAndSearch();
 	} catch (err) {
 		console.error("Games fetch error:", err);
 		if (gamesGrid) {
@@ -4498,7 +4772,9 @@ function renderGames(gamesList, reset = true) {
 		card.className = "game-card";
 		card.dataset.gameUrl = game.url;
 		card.dataset.gameTitle = game.title;
+		const isHot = isPopularGame(game);
 		card.innerHTML = `
+			${isHot ? `<span class="game-popular-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Hot</span>` : ""}
 			<div class="game-card-icon">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<line x1="6" y1="12" x2="10" y2="12"></line>
@@ -4542,17 +4818,19 @@ window.addEventListener("scroll", () => {
 });
 
 if (gamesSearchInput) {
-	gamesSearchInput.addEventListener("input", (e) => {
-		const query = e.target.value.toLowerCase().trim();
-		if (!query) {
-			renderGames(allGames);
-			return;
-		}
-		const filtered = allGames.filter(g => 
-			g.title.toLowerCase().includes(query) || 
-			g.filename.toLowerCase().includes(query)
-		);
-		renderGames(filtered);
+	gamesSearchInput.addEventListener("input", () => {
+		applyCurrentFilterAndSearch();
+	});
+}
+
+if (filterChipsContainer) {
+	filterChipsContainer.addEventListener("click", (e) => {
+		const btn = e.target.closest(".game-filter-chip");
+		if (!btn) return;
+		filterChipsContainer.querySelectorAll(".game-filter-chip").forEach(c => c.classList.remove("active"));
+		btn.classList.add("active");
+		activeFilter = btn.dataset.filter || "all";
+		applyCurrentFilterAndSearch();
 	});
 }
 
