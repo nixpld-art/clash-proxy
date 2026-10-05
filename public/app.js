@@ -284,7 +284,7 @@ const TILTED_CROWN_SVG = `
 
 function isUserTed(username) {
 	const u = (username || "").toLowerCase();
-	return u === "ted" || u === "nils";
+	return u === "ted" || u === "nils" || u === "ozzy";
 }
 
 // The gold crown shows for the founders AND any owner-level account
@@ -1338,12 +1338,15 @@ function renderUserHeader() {
 		</div>
 	`;
 
-	// Reveal Owner Panel sidebar link (separate localhost:8081 server, owner PC only) for privileged users
+	// Reveal Owner Panel sidebar link ONLY for true Owners (Ted, Nils, Ozzy)
+	const isOwner = isTed;
 	if (navOwnerPanel) {
-		navOwnerPanel.style.display = (isTed || currentUser.role === "admin") ? "" : "none";
+		navOwnerPanel.style.display = isOwner ? "" : "none";
 	}
+	const navStaffPanelEl = document.getElementById("nav-staff-panel");
+	const retroBtnStaffEl = document.getElementById("retro-btn-staff");
 
-	// Rank chip → opens YOUR panel (Owner → control panel, Game Tester → testing panel)
+	// Rank chip → opens YOUR panel (Owner → control panel, Staff member → Staff Panel)
 	const rankChip = userHeaderWidget.querySelector(".user-pill-badge");
 	if (rankChip) {
 		rankChip.style.cursor = "pointer";
@@ -1351,11 +1354,17 @@ function renderUserHeader() {
 		const applyRankName = (d) => { if (d && d.rankName) rankChip.textContent = d.rankName; };
 		applyRankName(window.__myRankCache);
 		if (authToken) {
-			// Always revalidate: role/rank may have changed since the last render
-			// (promotion, demotion, Owner Mode, database reset).
 			fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } })
 				.then((r) => (r.ok ? r.json() : null))
-				.then((d) => { if (d) { window.__myRankCache = d; applyRankName(d); } })
+				.then((d) => {
+					if (d) {
+						window.__myRankCache = d;
+						applyRankName(d);
+						if (navOwnerPanel) navOwnerPanel.style.display = d.isOwner ? "" : "none";
+						if (navStaffPanelEl) navStaffPanelEl.style.display = d.hasStaffPanel ? "" : "none";
+						if (retroBtnStaffEl) retroBtnStaffEl.style.display = d.hasStaffPanel ? "" : "none";
+					}
+				})
 				.catch(() => {});
 		}
 		if (!rankChip.dataset.bound) {
@@ -1363,14 +1372,15 @@ function renderUserHeader() {
 			rankChip.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				const tokenQ = "?token=" + encodeURIComponent(authToken || "");
-				if (isTed || currentUser.role === "admin") { location.href = "/panel/" + tokenQ; return; }
-				let d = null;
-				try {
-					const r = await fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } });
-					if (r.ok) { d = await r.json(); window.__myRankCache = d; applyRankName(d); }
-				} catch {}
-				d = d || window.__myRankCache;
-				if (d && (d.privileges || []).includes("game-testing")) { location.href = "/panel/testing/" + tokenQ; return; }
+				const d = window.__myRankCache;
+				if (isOwner || (d && d.isOwner)) {
+					location.href = "/panel/" + tokenQ;
+					return;
+				}
+				if (d && d.hasStaffPanel) {
+					navigateToPage("staff-panel");
+					return;
+				}
 				document.getElementById("nav-profile")?.click();
 			});
 		}
@@ -1392,6 +1402,10 @@ function renderGuestHeader() {
 	`;
 	const navOwnerPanelEl = document.getElementById("nav-owner-panel");
 	if (navOwnerPanelEl) navOwnerPanelEl.style.display = "none";
+	const navStaffPanelEl = document.getElementById("nav-staff-panel");
+	if (navStaffPanelEl) navStaffPanelEl.style.display = "none";
+	const retroBtnStaffEl = document.getElementById("retro-btn-staff");
+	if (retroBtnStaffEl) retroBtnStaffEl.style.display = "none";
 	const btn = document.getElementById("header-auth-btn");
 	if (btn) btn.addEventListener("click", () => openAuthModal("login"));
 }
@@ -1794,15 +1808,23 @@ async function renderProfilePage() {
 
 	profileDisplayName.textContent = currentUser.display_name || currentUser.displayName || currentUser.username;
 	profileDisplayName.className = `profile-display-name ${nameThemeClass}`;
+	if (currentUser.settings && currentUser.settings.staffNameGlow) {
+		profileDisplayName.classList.add("staff-name-glow");
+	}
+
+	const titleBadgeHtml = (currentUser.equippedTitle && currentUser.equippedTitle !== "none")
+		? ` <span class="title-badge ${currentUser.equippedTitle}">🏷️ ${escapeHtml(currentUser.equippedTitle.replace('title-', '').replace(/-/g, ' '))}</span>`
+		: "";
+
 	if (isTed) {
 		profileLevelBadge.className = "level-badge admin-root-badge";
 		profileLevelBadge.textContent = "DEV";
-		profileRankTitle.innerHTML = currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : "👑 FOUNDER";
+		profileRankTitle.innerHTML = (currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : "👑 FOUNDER") + titleBadgeHtml;
 	} else {
 		profileDisplayName.classList.remove("ted-vip-name");
 		profileLevelBadge.className = "level-badge";
 		profileLevelBadge.textContent = `Lv. ${currentUser.level || 1}`;
-		profileRankTitle.innerHTML = currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : escapeHtml(getRankTitle(currentUser.level || 1));
+		profileRankTitle.innerHTML = (currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : escapeHtml(getRankTitle(currentUser.level || 1))) + titleBadgeHtml;
 	}
 
 	profileUsernameTag.textContent = `@${currentUser.username}`;
@@ -4933,7 +4955,7 @@ function navigateToPage(targetPage) {
 	const page = document.getElementById(`page-${targetPage}`);
 	if (page) page.classList.add("active");
 
-	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat") {
+	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
 		framesContainer.classList.add("hidden");
 		browserChrome.classList.add("hidden");
 		mainContent.classList.remove("hidden");
@@ -4948,6 +4970,8 @@ function navigateToPage(targetPage) {
 		closeChatDrawer();
 		loadChatConversations();
 	}
+	if (targetPage === "bazaar") loadBazaarShop();
+	if (targetPage === "staff-panel") loadStaffPanel();
 
 	closeSidebar();
 }
@@ -5238,3 +5262,639 @@ function initBarebonesAndUltimate() {
 
 // Initialize Barebones & Ultimate Layout
 initBarebonesAndUltimate();
+
+// ============================================================
+// 🛍️ Clash Bazaar Shop Controller
+// ============================================================
+let bazaarCatalogData = null;
+let currentBazaarFilter = "all";
+
+async function loadBazaarShop() {
+	const grid = document.getElementById("bazaar-items-grid");
+	const coinsDisplay = document.getElementById("bazaar-coins-display");
+	if (!grid) return;
+
+	if (!authToken) {
+		grid.innerHTML = `
+			<div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: rgba(16,22,40,0.6); border-radius: 16px;">
+				<div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
+				<h3 style="color: #fff; margin-bottom: 8px;">Sign In to Enter Clash Bazaar</h3>
+				<p style="color: #94a3b8; max-width: 420px; margin: 0 auto 18px;">Create an account or sign in to earn Clash Coins and unlock custom frames, name effects, and titles.</p>
+				<button class="btn btn-primary" onclick="openAuthModal('login')">Sign In / Register</button>
+			</div>
+		`;
+		if (coinsDisplay) coinsDisplay.textContent = "0";
+		return;
+	}
+
+	grid.innerHTML = `
+		<div style="grid-column: 1 / -1; text-align: center; padding: 36px; color: #94a3b8;">
+			<div class="spinner" style="margin: 0 auto 12px;"></div>
+			Loading cosmetic catalog...
+		</div>
+	`;
+
+	try {
+		const res = await fetch("/api/bazaar/catalog", {
+			headers: { Authorization: "Bearer " + authToken }
+		});
+		const data = await res.json();
+		if (!res.ok) throw new Error(data.error || "Failed to load catalog");
+
+		bazaarCatalogData = data;
+		if (coinsDisplay) coinsDisplay.textContent = (data.coins || 0).toLocaleString();
+		if (currentUser) currentUser.coins = data.coins;
+
+		renderBazaarItems();
+	} catch (err) {
+		grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #f87171; padding: 24px;">${escapeHtml(err.message)}</div>`;
+	}
+}
+
+function renderBazaarItems() {
+	const grid = document.getElementById("bazaar-items-grid");
+	if (!grid || !bazaarCatalogData) return;
+
+	const items = bazaarCatalogData.catalog || [];
+	const filtered = currentBazaarFilter === "all" 
+		? items 
+		: items.filter((i) => i.type === currentBazaarFilter);
+
+	if (filtered.length === 0) {
+		grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 36px;">No cosmetics found in this category.</div>`;
+		return;
+	}
+
+	grid.innerHTML = filtered.map((item) => {
+		let previewHtml = "";
+		if (item.type === "frame") {
+			previewHtml = `
+				<div class="avatar-frame-container ${item.id}" style="width: 64px; height: 64px;">
+					<div class="user-pill-avatar avatar-1" style="width: 56px; height: 56px;"></div>
+				</div>
+			`;
+		} else if (item.type === "name_theme") {
+			previewHtml = `
+				<div style="font-size: 1.15rem; font-weight: 800;" class="${item.id}">
+					${escapeHtml(currentUser?.username || "Player")}
+				</div>
+			`;
+		} else if (item.type === "chat_theme") {
+			previewHtml = `
+				<div class="${item.id}" style="width: 85%;">
+					<div class="chat-bubble mine" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 10px; text-align: center;">
+						💬 Sample Bubble
+					</div>
+				</div>
+			`;
+		} else if (item.type === "title") {
+			previewHtml = `
+				<span class="title-badge ${item.id}" style="font-size: 0.85rem; padding: 4px 12px;">
+					${escapeHtml(item.name)}
+				</span>
+			`;
+		}
+
+		let actionBtn = "";
+		if (!item.owned) {
+			actionBtn = `
+				<button class="bazaar-action-btn bazaar-btn-buy" data-buy-id="${item.id}">
+					Buy ${item.cost} 💎
+				</button>
+			`;
+		} else if (item.isEquipped) {
+			actionBtn = `
+				<button class="bazaar-action-btn bazaar-btn-equipped" data-equip-id="${item.id}" data-item-type="${item.type}" data-unequip="true">
+					✓ Equipped
+				</button>
+			`;
+		} else {
+			actionBtn = `
+				<button class="bazaar-action-btn bazaar-btn-equip" data-equip-id="${item.id}" data-item-type="${item.type}">
+					Equip
+				</button>
+			`;
+		}
+
+		const typeLabels = { frame: "Avatar Frame", name_theme: "Name Effect", chat_theme: "Chat Bubble", title: "Title Badge" };
+
+		return `
+			<div class="bazaar-card">
+				<div class="bazaar-card-preview">
+					${previewHtml}
+				</div>
+				<div class="bazaar-card-header">
+					<div>
+						<h4 class="bazaar-card-title">${item.icon} ${escapeHtml(item.name)}</h4>
+						<span class="bazaar-card-type-chip">${typeLabels[item.type] || item.type}</span>
+					</div>
+				</div>
+				<p class="bazaar-card-desc">${escapeHtml(item.description)}</p>
+				<div class="bazaar-card-footer">
+					<div class="bazaar-price">
+						${item.owned ? '<span style="color:#10b981;font-size:0.85rem">Owned</span>' : `<span>${item.cost}</span> 💎`}
+						${item.discountApplied && !item.owned ? '<span class="bazaar-discount-tag">25% OFF</span>' : ''}
+					</div>
+					<div>
+						${actionBtn}
+					</div>
+				</div>
+			</div>
+		`;
+	}).join("");
+
+	// Attach buy buttons
+	grid.querySelectorAll("[data-buy-id]").forEach((btn) => {
+		btn.addEventListener("click", async () => {
+			const itemId = btn.dataset.buyId;
+			btn.disabled = true;
+			btn.textContent = "Unlocking...";
+			try {
+				const res = await fetch("/api/bazaar/buy", {
+					method: "POST",
+					headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+					body: JSON.stringify({ itemId })
+				});
+				const d = await res.json();
+				if (!res.ok) throw new Error(d.error || "Purchase failed");
+				if (typeof showToast === "function") showToast(d.message || "Item unlocked!", "success");
+				await loadBazaarShop();
+			} catch (err) {
+				if (typeof showToast === "function") showToast(err.message, "error");
+				btn.disabled = false;
+				btn.textContent = "Buy";
+			}
+		});
+	});
+
+	// Attach equip buttons
+	grid.querySelectorAll("[data-equip-id]").forEach((btn) => {
+		btn.addEventListener("click", async () => {
+			const itemId = btn.dataset.equipId;
+			const itemType = btn.dataset.itemType;
+			const unequip = btn.dataset.unequip === "true";
+			btn.disabled = true;
+			try {
+				const res = await fetch("/api/bazaar/equip", {
+					method: "POST",
+					headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+					body: JSON.stringify({ itemId, itemType, unequip })
+				});
+				const d = await res.json();
+				if (!res.ok) throw new Error(d.error || "Equip failed");
+				if (typeof showToast === "function") showToast(d.message || "Equipped!", "success");
+
+				// Update currentUser locally
+				if (currentUser) {
+					if (itemType === "frame") currentUser.equippedFrame = unequip ? "none" : itemId;
+					if (itemType === "name_theme") currentUser.equippedNameTheme = unequip ? "none" : itemId;
+					if (itemType === "chat_theme") currentUser.equippedChatTheme = unequip ? "none" : itemId;
+					if (itemType === "title") currentUser.equippedTitle = unequip ? "none" : itemId;
+				}
+				renderUserHeader();
+				renderProfilePage();
+				await loadBazaarShop();
+			} catch (err) {
+				if (typeof showToast === "function") showToast(err.message, "error");
+				btn.disabled = false;
+			}
+		});
+	});
+}
+
+// Bazaar Filter Tabs Listeners
+document.querySelectorAll("[data-bazaar-filter]").forEach((btn) => {
+	btn.addEventListener("click", () => {
+		document.querySelectorAll("[data-bazaar-filter]").forEach((b) => b.classList.remove("active"));
+		btn.classList.add("active");
+		currentBazaarFilter = btn.dataset.bazaarFilter;
+		renderBazaarItems();
+	});
+});
+
+// Bazaar Daily Claim Button Listener
+const bazaarClaimBtn = document.getElementById("bazaar-daily-claim-btn");
+if (bazaarClaimBtn) {
+	bazaarClaimBtn.addEventListener("click", async () => {
+		if (!authToken) {
+			openAuthModal("login");
+			return;
+		}
+		bazaarClaimBtn.disabled = true;
+		bazaarClaimBtn.textContent = "Claiming...";
+		try {
+			const res = await fetch("/api/bazaar/daily-reward", {
+				method: "POST",
+				headers: { Authorization: "Bearer " + authToken }
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Claim failed");
+			if (typeof showToast === "function") showToast(d.message || "+50 Coins Claimed!", "success");
+			await loadBazaarShop();
+		} catch (err) {
+			if (typeof showToast === "function") showToast(err.message, "info");
+			bazaarClaimBtn.disabled = false;
+			bazaarClaimBtn.textContent = "🎁 Claim Daily +50 Coins";
+		}
+	});
+}
+
+// ============================================================
+// 🛡️ Staff Member Console Controller
+// ============================================================
+let staffMeData = null;
+
+async function loadStaffPanel() {
+	const container = document.getElementById("staff-panel-container");
+	if (!container) return;
+
+	// Load stored theme preference
+	const savedTheme = localStorage.getItem("clash_staff_panel_theme") || "midnight";
+	container.dataset.staffTheme = savedTheme;
+	document.querySelectorAll("[data-staff-theme-set]").forEach((btn) => {
+		btn.classList.toggle("active", btn.dataset.staffThemeSet === savedTheme);
+	});
+
+	if (!authToken) {
+		if (typeof showToast === "function") showToast("Please sign in to access the Staff Console.", "info");
+		navigateToPage("proxy");
+		return;
+	}
+
+	try {
+		const res = await fetch("/api/staff/me", {
+			headers: { Authorization: "Bearer " + authToken }
+		});
+		const data = await res.json();
+		if (!res.ok) {
+			if (typeof showToast === "function") showToast(data.error || "Staff access denied.", "error");
+			navigateToPage("proxy");
+			return;
+		}
+
+		staffMeData = data;
+		renderStaffPanelHeader(data);
+		applyStaffPermissionGates(data.privileges || [], data.isOwner);
+		loadStaffAuditLog();
+		loadStaffReports();
+	} catch (err) {
+		console.error("Staff panel error:", err);
+	}
+}
+
+function renderStaffPanelHeader(data) {
+	const userNameEl = document.getElementById("staff-user-name");
+	const rankChipEl = document.getElementById("staff-rank-chip");
+	const privsCountEl = document.getElementById("staff-privs-count");
+	const customTagInput = document.getElementById("staff-custom-tag-input");
+	const glowStatusEl = document.getElementById("staff-glow-status-text");
+
+	if (userNameEl) userNameEl.textContent = data.user?.displayName || data.user?.username || "Staff";
+	if (rankChipEl) rankChipEl.textContent = data.rankName || "STAFF";
+	if (privsCountEl) privsCountEl.textContent = data.isOwner ? "All (Owner Access)" : (data.privileges?.length || 0);
+	if (customTagInput && data.user?.customTag) customTagInput.value = data.user.customTag;
+	if (glowStatusEl) glowStatusEl.textContent = data.user?.nameGlow ? "Active ✨" : "Disabled";
+}
+
+function applyStaffPermissionGates(privileges, isOwner) {
+	const privSet = new Set(privileges);
+
+	// Map card IDs to required permission
+	const gateMap = {
+		"card-mod-kick": "mod-kick",
+		"card-mod-mute": "mod-mute",
+		"card-mod-warn": "mod-warn",
+		"card-mod-chat-clear": "mod-chat-clear",
+		"card-mod-reports": "mod-reports",
+		"card-chat-broadcast": "chat-broadcast",
+		"card-server-motd": "server-motd-edit",
+		"card-game-testing": "game-testing",
+		"card-game-feature": "game-feature",
+		"card-game-bug-reports": "game-bug-reports",
+		"card-cosmetic-custom-tag": "cosmetic-custom-tag",
+		"card-cosmetic-name-glow": "cosmetic-name-glow",
+		"card-bazaar-badge": "bazaar-exclusive-badge"
+	};
+
+	Object.entries(gateMap).forEach(([cardId, requiredPriv]) => {
+		const card = document.getElementById(cardId);
+		if (!card) return;
+
+		const hasAccess = isOwner || privSet.has(requiredPriv);
+		let existingLock = card.querySelector(".staff-tool-locked");
+
+		if (hasAccess) {
+			if (existingLock) existingLock.remove();
+			card.querySelectorAll("input, button, select, textarea").forEach((el) => {
+				el.disabled = false;
+			});
+		} else {
+			if (!existingLock) {
+				const lockDiv = document.createElement("div");
+				lockDiv.className = "staff-tool-locked";
+				lockDiv.innerHTML = `
+					<div class="staff-tool-locked-icon">🔒</div>
+					<div class="staff-tool-locked-title">Requires '${requiredPriv}'</div>
+					<div class="staff-tool-locked-sub">You do not have permission to execute this staff tool. Contact the Owner to request access.</div>
+				`;
+				card.appendChild(lockDiv);
+			}
+			card.querySelectorAll("input, button, select, textarea").forEach((el) => {
+				el.disabled = true;
+			});
+		}
+	});
+}
+
+async function loadStaffReports() {
+	const list = document.getElementById("staff-reports-list");
+	if (!list) return;
+
+	try {
+		const res = await fetch("/api/staff/reports", {
+			headers: { Authorization: "Bearer " + authToken }
+		});
+		if (!res.ok) {
+			list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Reports locked (requires 'mod-reports' permission).</div>`;
+			return;
+		}
+		const data = await res.json();
+		const reports = data.reports || [];
+		if (reports.length === 0) {
+			list.innerHTML = `<div style="color:#10b981; font-size:0.88rem; padding: 12px; text-align: center;">✓ No open community reports in queue.</div>`;
+			return;
+		}
+
+		list.innerHTML = reports.map((r) => `
+			<div style="background:rgba(0,0,0,0.35);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:10px;">
+				<div>
+					<div style="color:#fff;font-weight:700;font-size:0.88rem">Report on @${escapeHtml(r.reported_username)}</div>
+					<div style="color:#94a3b8;font-size:0.8rem">${escapeHtml(r.category)}: ${escapeHtml(r.details || "No details")}</div>
+				</div>
+				<button class="staff-btn staff-btn-danger" style="padding:4px 10px;font-size:0.75rem" onclick="resolveStaffReport(${r.id})">Resolve</button>
+			</div>
+		`).join("");
+	} catch (e) {
+		list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Unable to load reports.</div>`;
+	}
+}
+
+async function resolveStaffReport(reportId) {
+	try {
+		const res = await fetch("/api/staff/reports/resolve", {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+			body: JSON.stringify({ reportId })
+		});
+		const d = await res.json();
+		if (res.ok) {
+			if (typeof showToast === "function") showToast("Report resolved.", "success");
+			loadStaffReports();
+		}
+	} catch (e) {}
+}
+
+async function loadStaffAuditLog() {
+	const list = document.getElementById("staff-audit-log-list");
+	if (!list) return;
+
+	try {
+		const res = await fetch("/api/staff/audit", {
+			headers: { Authorization: "Bearer " + authToken }
+		});
+		if (!res.ok) {
+			list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Audit log locked (requires 'mod-audit-view' permission).</div>`;
+			return;
+		}
+		const data = await res.json();
+		const logs = data.logs || [];
+		if (logs.length === 0) {
+			list.innerHTML = `<div style="color:#94a3b8; font-size:0.88rem; padding: 12px; text-align: center;">No audit log entries recorded yet.</div>`;
+			return;
+		}
+
+		list.innerHTML = logs.map((l) => `
+			<div style="background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-family:monospace;font-size:0.8rem;color:#cbd5e1;display:flex;justify-content:space-between;gap:8px;">
+				<span><b>[${escapeHtml(l.action)}]</b> ${escapeHtml(l.detail)}</span>
+				<span style="color:#64748b;font-size:0.75rem">${new Date(l.created_at).toLocaleTimeString()}</span>
+			</div>
+		`).join("");
+	} catch (e) {
+		list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Unable to load audit log.</div>`;
+	}
+}
+
+// Staff Panel Appearance Customizer Listeners
+document.querySelectorAll("[data-staff-theme-set]").forEach((btn) => {
+	btn.addEventListener("click", () => {
+		const theme = btn.dataset.staffThemeSet;
+		const container = document.getElementById("staff-panel-container");
+		if (container) container.dataset.staffTheme = theme;
+		localStorage.setItem("clash_staff_panel_theme", theme);
+		document.querySelectorAll("[data-staff-theme-set]").forEach((b) => b.classList.remove("active"));
+		btn.classList.add("active");
+	});
+});
+
+// Staff Panel Tab Switching Listeners
+document.querySelectorAll("[data-staff-tab]").forEach((btn) => {
+	btn.addEventListener("click", () => {
+		const tabKey = btn.dataset.staffTab;
+		document.querySelectorAll("[data-staff-tab]").forEach((b) => b.classList.remove("active"));
+		btn.classList.add("active");
+
+		document.querySelectorAll(".staff-tab-content").forEach((c) => c.classList.remove("active"));
+		const targetContent = document.getElementById(`staff-tab-${tabKey}`);
+		if (targetContent) targetContent.classList.add("active");
+	});
+});
+
+// Staff Panel Tool Action Buttons
+const staffKickBtn = document.getElementById("staff-btn-kick");
+if (staffKickBtn) {
+	staffKickBtn.addEventListener("click", async () => {
+		const targetUsername = document.getElementById("staff-kick-user")?.value?.trim();
+		const reason = document.getElementById("staff-kick-reason")?.value?.trim() || "Kicked by staff";
+		if (!targetUsername) return showToast("Enter player username to kick.", "warning");
+
+		try {
+			const res = await fetch("/api/staff/kick", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ targetUsername, reason })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Kick failed");
+			showToast(d.message || "Player disconnected.", "success");
+			document.getElementById("staff-kick-user").value = "";
+			document.getElementById("staff-kick-reason").value = "";
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffMuteBtn = document.getElementById("staff-btn-mute");
+if (staffMuteBtn) {
+	staffMuteBtn.addEventListener("click", async () => {
+		const targetUsername = document.getElementById("staff-mute-user")?.value?.trim();
+		const durationMinutes = document.getElementById("staff-mute-duration")?.value || 15;
+		const reason = document.getElementById("staff-mute-reason")?.value?.trim() || "Muted by staff";
+		if (!targetUsername) return showToast("Enter player username to mute.", "warning");
+
+		try {
+			const res = await fetch("/api/staff/mute", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ targetUsername, durationMinutes, reason })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Mute failed");
+			showToast(d.message || "Player timed out.", "success");
+			document.getElementById("staff-mute-user").value = "";
+			document.getElementById("staff-mute-reason").value = "";
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffWarnBtn = document.getElementById("staff-btn-warn");
+if (staffWarnBtn) {
+	staffWarnBtn.addEventListener("click", async () => {
+		const targetUsername = document.getElementById("staff-warn-user")?.value?.trim();
+		const reason = document.getElementById("staff-warn-reason")?.value?.trim();
+		if (!targetUsername || !reason) return showToast("Enter both username and warning notice.", "warning");
+
+		try {
+			const res = await fetch("/api/staff/warn", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ targetUsername, reason })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Warning failed");
+			showToast(d.message || "Warning issued.", "success");
+			document.getElementById("staff-warn-user").value = "";
+			document.getElementById("staff-warn-reason").value = "";
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffClearChatBtn = document.getElementById("staff-btn-clear-chat");
+if (staffClearChatBtn) {
+	staffClearChatBtn.addEventListener("click", async () => {
+		if (!confirm("Are you sure you want to purge recent global chat messages?")) return;
+		try {
+			const res = await fetch("/api/staff/clear-chat", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken }
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Failed to clear chat");
+			showToast(d.message || "Chat cleared.", "success");
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffBroadcastBtn = document.getElementById("staff-btn-broadcast");
+if (staffBroadcastBtn) {
+	staffBroadcastBtn.addEventListener("click", async () => {
+		const message = document.getElementById("staff-broadcast-msg")?.value?.trim();
+		if (!message) return showToast("Enter announcement text to broadcast.", "warning");
+
+		try {
+			const res = await fetch("/api/staff/broadcast", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ message })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Broadcast failed");
+			showToast("Announcement broadcasted!", "success");
+			document.getElementById("staff-broadcast-msg").value = "";
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffMotdBtn = document.getElementById("staff-btn-motd");
+if (staffMotdBtn) {
+	staffMotdBtn.addEventListener("click", async () => {
+		const motd = document.getElementById("staff-motd-text")?.value?.trim();
+		if (!motd) return showToast("Enter MOTD text.", "warning");
+
+		try {
+			const res = await fetch("/api/staff/motd", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ motd })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Failed to update MOTD");
+			showToast(d.message || "MOTD updated.", "success");
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffSaveTagBtn = document.getElementById("staff-btn-save-tag");
+if (staffSaveTagBtn) {
+	staffSaveTagBtn.addEventListener("click", async () => {
+		const customTag = document.getElementById("staff-custom-tag-input")?.value?.trim();
+		try {
+			const res = await fetch("/api/staff/custom-tag", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
+				body: JSON.stringify({ customTag })
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Failed to update tag");
+			showToast("Custom tag updated!", "success");
+			if (currentUser) currentUser.custom_tag = d.customTag;
+			renderUserHeader();
+			renderProfilePage();
+			loadStaffAuditLog();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+
+const staffToggleGlowBtn = document.getElementById("staff-btn-toggle-glow");
+if (staffToggleGlowBtn) {
+	staffToggleGlowBtn.addEventListener("click", async () => {
+		try {
+			const res = await fetch("/api/staff/name-glow", {
+				method: "POST",
+				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken }
+			});
+			const d = await res.json();
+			if (!res.ok) throw new Error(d.error || "Failed to toggle glow");
+			const active = !!d.staffNameGlow;
+			document.getElementById("staff-glow-status-text").textContent = active ? "Active ✨" : "Disabled";
+			showToast(`Staff name glow ${active ? 'activated' : 'disabled'}.`, "success");
+			if (currentUser) {
+				currentUser.settings = currentUser.settings || {};
+				currentUser.settings.staffNameGlow = active;
+			}
+			renderUserHeader();
+			renderProfilePage();
+		} catch (err) {
+			showToast(err.message, "error");
+		}
+	});
+}
+

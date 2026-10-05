@@ -8,9 +8,10 @@ import { randomBytes, createCipheriv, createHash } from "node:crypto";
 import Database from "better-sqlite3";
 
 import db from "../src/db.js";
-import { BADGES } from "../src/auth-utils.js";
+import { BADGES, isPrivilegedUsername } from "../src/auth-utils.js";
 import { askAIReply, validateOpenRouterKey } from "../src/routes/ai.js";
 import { BAZAAR_CATALOG } from "../src/routes/bazaar.js";
+import { PRIVILEGES, ALL_PRIVILEGE_IDS } from "../src/ranks.js";
 import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,29 +29,8 @@ const PANEL_DB_PATH = path.join(__dirname, "panel.db");
 const INDEX_PATH = path.join(__dirname, "index.html");
 const BACKUP_DIR = path.join(__dirname, "backups");
 
-// Every privilege below is a full OWNER-level privilege.
-const PRIVILEGES = [
-	{ id: "user-management", name: "User Management", desc: "Edit any player's stats, tag, name & profile" },
-	{ id: "role-assignment", name: "Role Assignment", desc: "Promote or demote any player's system role" },
-	{ id: "achievement-control", name: "Achievement Control", desc: "Grant or revoke any badge / achievement" },
-	{ id: "server-broadcast", name: "Server Broadcast", desc: "Send server-wide live announcements" },
-	{ id: "god-mode", name: "God Mode", desc: "Activate instant God Mode on your account" },
-	{ id: "owner-mode", name: "Owner Mode", desc: "Toggle temporary global Owner Mode" },
-	{ id: "account-takeover", name: "Account Takeover", desc: "Log into any account (password bypass)" },
-	{ id: "password-reset", name: "Password Reset", desc: "Reset any player's password" },
-	{ id: "economy-control", name: "Economy Control", desc: "Control coins, Bazaar prices & cosmetics" },
-	{ id: "content-moderation", name: "Content Moderation", desc: "Moderate chat, lounge & messages" },
-	{ id: "shield-control", name: "Clash Shield Control", desc: "Configure Clash Shield & whitelists" },
-	{ id: "game-library", name: "Game Library", desc: "Manage the game library & titles" },
-	{ id: "game-testing", name: "Game Testing", desc: "Approve, publish & reject staged games before they go live" },
-	{ id: "script-control", name: "Script Control", desc: "Manage userscripts" },
-	{ id: "save-access", name: "Save Data Access", desc: "Access game saves" },
-	{ id: "server-control", name: "Server Control", desc: "Server configuration & restart" },
-	{ id: "database-access", name: "Database Access", desc: "Full database access" },
-	{ id: "social-moderation", name: "Social Moderation", desc: "Moderate friends, presence & profiles" },
-	{ id: "panel-access", name: "Owner Panel Access", desc: "Access this Owner Panel" },
-	{ id: "all-access", name: "⚡ ALL OWNER PRIVILEGES", desc: "Master key — every owner privilege at once" }
-];
+// Custom rank privileges: granted to staff/rank members for use in the Staff Panel.
+// True site ownership (Founder level) is reserved for Ted, Nils, and Ozzy.
 const PRIV_IDS = new Set(PRIVILEGES.map((p) => p.id));
 const USER_COLS = "id, username, display_name, avatar_url, role, custom_tag, level, xp, coins, banned, banned_until, muted, muted_until, last_ip, streak_days, games_played_override, sites_visited_override";
 
@@ -570,8 +550,9 @@ const server = http.createServer(async (req, res) => {
 			const user = db.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).get(userId);
 			if (!user) return json(res, 404, { error: "User not found." });
 			const store = loadStore();
-			const prev = store.assignments[String(userId)];
-			db.prepare("UPDATE users SET role = 'admin', custom_tag = ? WHERE id = ?").run(rankName, userId);
+			const isFounder = isPrivilegedUsername(user.username);
+			const newRole = isFounder ? "admin" : (user.role === "admin" ? "admin" : "staff");
+			db.prepare("UPDATE users SET role = ?, custom_tag = ? WHERE id = ?").run(newRole, rankName, userId);
 			store.assignments[String(userId)] = {
 				presetId, rankName, privileges,
 				username: user.username,

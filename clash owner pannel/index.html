@@ -194,7 +194,7 @@
 				<h2>🏅 Rank Presets <button class="btn small gold" id="new-preset-btn">+ New Rank</button></h2>
 				<p class="sec-hint">Create ranks (like Moderator or Game Tester) and choose exactly which powers each rank gets.</p>
 				<div id="preset-list" class="grid" style="gap:9px"></div>
-				<div class="note">All privileges are owner-level. Assigning a rank grants full owner access on the main site and shows the rank name as the player's tag.</div>
+				<div class="note">Rank privileges grant access to staff tools in the in-site Staff Panel. Ranks do not grant root Owner Panel access.</div>
 			</div>
 			<div class="card" id="preset-editor" style="display:none">
 				<h2 id="preset-editor-title">➕ New Rank</h2>
@@ -707,7 +707,7 @@
 <div class="overlay" id="assign-overlay">
 	<div class="modal">
 		<h3>Assign Rank → <span id="assign-user-label"></span></h3>
-		<p class="muted" style="margin-bottom:12px">All privileges are <b style="color:var(--gold)">owner-level</b>. Applying gives the player full owner access on the main site and shows the rank name as their tag.</p>
+		<p class="muted" style="margin-bottom:12px">Privileges grant role capabilities in the <b style="color:var(--accent)">Staff Panel</b>. Ranks do not grant root Owner Panel access.</p>
 		<div class="form-row"><label>Rank name (tag)</label><input type="text" id="assign-rank-name" maxlength="40" /></div>
 		<div class="form-row"><label>Start from a preset (optional)</label><select id="assign-preset"><option value="">— Custom privileges —</option></select></div>
 		<div class="row" style="margin-bottom:8px">

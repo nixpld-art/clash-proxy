@@ -180,6 +180,9 @@ try {
 	if (!userCols.includes("equipped_chat_theme")) {
 		db.exec("ALTER TABLE users ADD COLUMN equipped_chat_theme TEXT DEFAULT 'none'");
 	}
+	if (!userCols.includes("equipped_title")) {
+		db.exec("ALTER TABLE users ADD COLUMN equipped_title TEXT DEFAULT 'none'");
+	}
 	if (!userCols.includes("banned")) {
 		db.exec("ALTER TABLE users ADD COLUMN banned INTEGER DEFAULT 0");
 	}

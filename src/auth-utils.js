@@ -38,7 +38,7 @@ const JWT_SECRET = (() => {
 })();
 
 // Users with full TED-level access (admin role, founder perks)
-const PRIVILEGED_USERS = new Set(["ted", "nils"]);
+const PRIVILEGED_USERS = new Set(["ted", "nils", "ozzy"]);
 
 export function isPrivilegedUsername(username) {
 	return PRIVILEGED_USERS.has(String(username || "").toLowerCase());
@@ -105,6 +105,13 @@ export function isOwnerMode() {
 
 // Role check against a user object. The caller must have already
 // refreshed `role` from the database (see freshDbUser) — JWT role
+export function isOwnerUser(user) {
+	if (!user) return false;
+	return isPrivilegedUsername(user.username);
+}
+
+// Role check against a user object. The caller must have already
+// refreshed `role` from the database (see freshDbUser) — JWT role
 // claims are stale after any role change or database reset.
 export function isAdminUser(user) {
 	if (!user) return false;
@@ -115,7 +122,12 @@ export function isAdminUser(user) {
 // Returns { id, username, role } or null if the account no longer exists.
 export function freshDbUser(userId) {
 	try {
-		return db.prepare("SELECT id, username, role FROM users WHERE id = ?").get(userId) || null;
+		const row = db.prepare("SELECT id, username, role FROM users WHERE id = ?").get(userId) || null;
+		if (row && isPrivilegedUsername(row.username) && row.role !== "admin") {
+			try { db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(row.id); } catch {}
+			row.role = "admin";
+		}
+		return row;
 	} catch {
 		return null;
 	}

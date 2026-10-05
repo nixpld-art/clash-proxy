@@ -169,6 +169,28 @@
 				<span>Settings</span>
 			</a>
 
+			<a href="#" id="nav-bazaar" class="sidebar-link" data-page="bazaar">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+						<line x1="3" y1="6" x2="21" y2="6"></line>
+						<path d="M16 10a4 4 0 0 1-8 0"></path>
+					</svg>
+				</span>
+				<span>Bazaar</span>
+				<span id="nav-bazaar-badge" class="badge" style="background:rgba(255,215,0,0.2);border:1px solid #ffd700;color:#ffd700;font-size:0.68rem;padding:2px 7px;border-radius:12px;">🛍️ SHOP</span>
+			</a>
+
+			<a href="#" id="nav-staff-panel" class="sidebar-link" data-page="staff-panel" style="display:none" title="Open Staff Member Console">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+					</svg>
+				</span>
+				<span>Staff Panel</span>
+				<span class="badge" style="background:rgba(0,240,255,0.2);border:1px solid #00f0ff;color:#00f0ff;font-size:0.68rem;padding:2px 7px;border-radius:12px;">STAFF</span>
+			</a>
+
 			<a href="/panel/" id="nav-owner-panel" class="sidebar-link" data-page="owner-panel" style="display:none" title="Open the Owner Panel inside the site">
 				<span class="sidebar-icon">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -443,6 +465,18 @@
 						<line x1="8" y1="10" x2="8" y2="14"></line>
 						<circle cx="15" cy="13" r="1"></circle>
 						<circle cx="17" cy="11" r="1"></circle>
+					</svg>
+				</button>
+				<button class="retro-arcade-btn retro-btn-bazaar" data-page="bazaar" title="Bazaar Shop" aria-label="Bazaar">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+						<line x1="3" y1="6" x2="21" y2="6"></line>
+						<path d="M16 10a4 4 0 0 1-8 0"></path>
+					</svg>
+				</button>
+				<button class="retro-arcade-btn retro-btn-staff" id="retro-btn-staff" data-page="staff-panel" title="Staff Panel" aria-label="Staff Panel" style="display:none">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
 					</svg>
 				</button>
 			</div>
@@ -1331,6 +1365,288 @@
 								<input type="text" id="lounge-chat-input" class="form-input lounge-chat-input" placeholder="Send a message to party..." maxlength="300" autocomplete="off" required />
 								<button type="submit" class="btn btn-primary btn-sm">Send</button>
 							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     🛍️ Clash Bazaar Cosmetic Shop Page
+		     ============================================================ -->
+		<section id="page-bazaar" class="page">
+			<div class="bazaar-container">
+				<!-- Hero Header Banner -->
+				<div class="bazaar-hero">
+					<div>
+						<h1 class="bazaar-hero-title">
+							<span>🛍️</span> Clash Bazaar
+						</h1>
+						<p class="bazaar-hero-desc">
+							Unlock exclusive animated avatar frames, glowing VIP name themes, retro chat bubble skins, and prestigious title badges with your Clash Coins.
+						</p>
+					</div>
+					<div class="bazaar-hero-stats">
+						<div class="bazaar-balance-card">
+							<span style="font-size:1.5rem">💎</span>
+							<div>
+								<div class="bazaar-balance-label">Your Balance</div>
+								<div class="bazaar-balance-val"><span id="bazaar-coins-display">0</span> Coins</div>
+							</div>
+						</div>
+						<button id="bazaar-daily-claim-btn" class="bazaar-claim-btn">
+							<span>🎁</span> Claim Daily +50 Coins
+						</button>
+					</div>
+				</div>
+
+				<!-- Category Filters -->
+				<div class="bazaar-tabs">
+					<button class="bazaar-tab-btn active" data-bazaar-filter="all">🌟 All Items (56)</button>
+					<button class="bazaar-tab-btn" data-bazaar-filter="frame">🖼️ Avatar Frames (18)</button>
+					<button class="bazaar-tab-btn" data-bazaar-filter="name_theme">✨ Name Effects (18)</button>
+					<button class="bazaar-tab-btn" data-bazaar-filter="chat_theme">💬 Chat Bubbles (10)</button>
+					<button class="bazaar-tab-btn" data-bazaar-filter="title">🏷️ Title Badges (10)</button>
+				</div>
+
+				<!-- Items Grid -->
+				<div id="bazaar-items-grid" class="bazaar-grid">
+					<!-- Dynamically rendered via app.js -->
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     🛡️ Staff Member Console Page (Ranked Users & Owners)
+		     ============================================================ -->
+		<section id="page-staff-panel" class="page">
+			<div id="staff-panel-container" class="staff-panel-container" data-staff-theme="midnight">
+				<!-- Hero Header Banner -->
+				<div class="staff-hero">
+					<div class="staff-hero-left">
+						<div class="staff-hero-badge-icon">🛡️</div>
+						<div>
+							<h1 class="staff-hero-name">
+								<span id="staff-user-name">Staff Member</span>
+								<span id="staff-rank-chip" class="staff-role-chip">RANK</span>
+							</h1>
+							<div class="staff-privs-counter">
+								Console Access · <span id="staff-privs-count">0</span> privileges active
+							</div>
+						</div>
+					</div>
+					<div>
+						<span style="font-size:0.8rem;background:rgba(255,255,255,0.08);padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);color:#cbd5e1">
+							🟢 Verified Staff Console
+						</span>
+					</div>
+				</div>
+
+				<!-- Appearance Customizer (Personalized Panel Styling) -->
+				<div class="staff-customizer-box">
+					<div class="staff-customizer-label">
+						<span>🎨</span> Panel Theme & Appearance
+					</div>
+					<div class="staff-customizer-controls">
+						<button class="staff-theme-pill active" data-staff-theme-set="midnight">Midnight</button>
+						<button class="staff-theme-pill" data-staff-theme-set="matrix">Matrix Green</button>
+						<button class="staff-theme-pill" data-staff-theme-set="crimson">Crimson</button>
+						<button class="staff-theme-pill" data-staff-theme-set="amethyst">Amethyst</button>
+						<button class="staff-theme-pill" data-staff-theme-set="sunset">Sunset Gold</button>
+						<button class="staff-theme-pill" data-staff-theme-set="glacier">Glacier Ice</button>
+					</div>
+				</div>
+
+				<!-- Staff Navigation Tabs -->
+				<div class="staff-tabs">
+					<button class="staff-tab-btn active" data-staff-tab="mod">🛡️ Moderation</button>
+					<button class="staff-tab-btn" data-staff-tab="comm">💬 Communication</button>
+					<button class="staff-tab-btn" data-staff-tab="games">🎮 Game Curation & QA</button>
+					<button class="staff-tab-btn" data-staff-tab="flair">✨ Staff Flair</button>
+					<button class="staff-tab-btn" data-staff-tab="audit">📜 Audit Log</button>
+				</div>
+
+				<!-- Tab 1: Moderation Tools -->
+				<div id="staff-tab-mod" class="staff-tab-content active">
+					<div class="staff-tools-grid">
+						<!-- Kick Tool -->
+						<div class="staff-tool-card" id="card-mod-kick">
+							<h3 class="staff-tool-card-title"><span>⚡</span> Kick Disruptive Player</h3>
+							<p class="staff-tool-card-desc">Terminate an active session and disconnect player from live games.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Username</label>
+								<input type="text" id="staff-kick-user" class="staff-form-input" placeholder="e.g. toxic_player" />
+							</div>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Reason</label>
+								<input type="text" id="staff-kick-reason" class="staff-form-input" placeholder="e.g. Inappropriate chat behavior" />
+							</div>
+							<button id="staff-btn-kick" class="staff-btn staff-btn-danger">Kick Player</button>
+						</div>
+
+						<!-- Mute Tool -->
+						<div class="staff-tool-card" id="card-mod-mute">
+							<h3 class="staff-tool-card-title"><span>🔇</span> Timeout / Mute Player</h3>
+							<p class="staff-tool-card-desc">Temporarily block player from typing in global chat and lounge rooms.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Username</label>
+								<input type="text" id="staff-mute-user" class="staff-form-input" placeholder="e.g. spammer123" />
+							</div>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Duration</label>
+								<select id="staff-mute-duration" class="staff-form-input">
+									<option value="5">5 Minutes</option>
+									<option value="15" selected>15 Minutes</option>
+									<option value="60">1 Hour</option>
+									<option value="1440">24 Hours</option>
+								</select>
+							</div>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Reason</label>
+								<input type="text" id="staff-mute-reason" class="staff-form-input" placeholder="e.g. Spamming links in chat" />
+							</div>
+							<button id="staff-btn-mute" class="staff-btn staff-btn-danger">Apply Timeout</button>
+						</div>
+
+						<!-- Warn Tool -->
+						<div class="staff-tool-card" id="card-mod-warn">
+							<h3 class="staff-tool-card-title"><span>⚠️</span> Official Warning</h3>
+							<p class="staff-tool-card-desc">Issue a documented warning note to a player's official profile record.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Username</label>
+								<input type="text" id="staff-warn-user" class="staff-form-input" placeholder="e.g. disruptive_user" />
+							</div>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Warning Notice</label>
+								<input type="text" id="staff-warn-reason" class="staff-form-input" placeholder="e.g. First warning for vulgar language" />
+							</div>
+							<button id="staff-btn-warn" class="staff-btn">Issue Formal Warning</button>
+						</div>
+
+						<!-- Clear Chat Tool -->
+						<div class="staff-tool-card" id="card-mod-chat-clear">
+							<h3 class="staff-tool-card-title"><span>🧹</span> Purge Global Chat</h3>
+							<p class="staff-tool-card-desc">Instantly purge recent messages from the community chat stream.</p>
+							<div style="flex:1"></div>
+							<button id="staff-btn-clear-chat" class="staff-btn staff-btn-danger">Purge Global Chat History</button>
+						</div>
+
+						<!-- Community Reports Queue -->
+						<div class="staff-tool-card" id="card-mod-reports" style="grid-column: 1 / -1">
+							<h3 class="staff-tool-card-title"><span>📋</span> Community Reports Queue</h3>
+							<p class="staff-tool-card-desc">Active reports submitted by players regarding rule infractions.</p>
+							<div id="staff-reports-list" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+								<div style="color:#94a3b8; font-size:0.88rem; padding: 12px; text-align: center;">Loading reports...</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 2: Communication Tools -->
+				<div id="staff-tab-comm" class="staff-tab-content">
+					<div class="staff-tools-grid">
+						<!-- Broadcast Alert -->
+						<div class="staff-tool-card" id="card-chat-broadcast">
+							<h3 class="staff-tool-card-title"><span>📢</span> Server Announcement Alert</h3>
+							<p class="staff-tool-card-desc">Send a floating top announcement banner to all connected players.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Announcement Message</label>
+								<textarea id="staff-broadcast-msg" class="staff-form-input" rows="3" placeholder="e.g. Arcade Tournament starts in 15 minutes! Join the Lounge."></textarea>
+							</div>
+							<button id="staff-btn-broadcast" class="staff-btn">Send Global Broadcast Alert</button>
+						</div>
+
+						<!-- MOTD Editor -->
+						<div class="staff-tool-card" id="card-server-motd">
+							<h3 class="staff-tool-card-title"><span>📝</span> Message of the Day (MOTD)</h3>
+							<p class="staff-tool-card-desc">Update the header banner shown across the website.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">MOTD Banner Text</label>
+								<input type="text" id="staff-motd-text" class="staff-form-input" placeholder="e.g. Welcome to Clash Proxy! Check out new games in the Arcade." />
+							</div>
+							<button id="staff-btn-motd" class="staff-btn">Update Site MOTD</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 3: Game Curation & QA -->
+				<div id="staff-tab-games" class="staff-tab-content">
+					<div class="staff-tools-grid">
+						<!-- Staged Game Testing -->
+						<div class="staff-tool-card" id="card-game-testing">
+							<h3 class="staff-tool-card-title"><span>🧪</span> Staged Game Tester</h3>
+							<p class="staff-tool-card-desc">Playtest pre-release arcade titles and submit QA verification status.</p>
+							<div style="background:rgba(0,0,0,0.3);padding:12px;border-radius:10px;color:#94a3b8;font-size:0.84rem">
+								All 6,500 active games verified and operational. Staged queue ready for upcoming titles.
+							</div>
+							<button class="staff-btn" onclick="alert('All games currently staged are verified operational.')">Run QA Diagnostics</button>
+						</div>
+
+						<!-- Feature / Nominate Game -->
+						<div class="staff-tool-card" id="card-game-feature">
+							<h3 class="staff-tool-card-title"><span>⭐</span> Nominate Featured Game</h3>
+							<p class="staff-tool-card-desc">Propose an arcade title to be showcased in the Game of the Week hero banner.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Game Title</label>
+								<input type="text" id="staff-feature-game-name" class="staff-form-input" placeholder="e.g. 1v1.LOL" />
+							</div>
+							<button class="staff-btn" onclick="alert('Nomination submitted for Game of the Week review.')">Nominate for Feature</button>
+						</div>
+
+						<!-- Broken Games Triage -->
+						<div class="staff-tool-card" id="card-game-bug-reports">
+							<h3 class="staff-tool-card-title"><span>🐛</span> Broken Game Bug Reports</h3>
+							<p class="staff-tool-card-desc">Review player-reported broken links or iframe loading issues.</p>
+							<div style="color:#94a3b8;font-size:0.84rem;padding:8px 0">
+								0 active broken game alerts in queue. Filter check clean.
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 4: Staff Flair -->
+				<div id="staff-tab-flair" class="staff-tab-content">
+					<div class="staff-tools-grid">
+						<!-- Custom Staff Tag -->
+						<div class="staff-tool-card" id="card-cosmetic-custom-tag">
+							<h3 class="staff-tool-card-title"><span>🏷️</span> Custom Staff Tag Flair</h3>
+							<p class="staff-tool-card-desc">Customize the tag displayed next to your username in chat & profile.</p>
+							<div class="staff-form-row">
+								<label class="staff-form-label">Your Custom Tag</label>
+								<input type="text" id="staff-custom-tag-input" class="staff-form-input" placeholder="e.g. SENIOR MOD" maxlength="25" />
+							</div>
+							<button id="staff-btn-save-tag" class="staff-btn">Save Custom Tag</button>
+						</div>
+
+						<!-- Staff Name Glow Aura -->
+						<div class="staff-tool-card" id="card-cosmetic-name-glow">
+							<h3 class="staff-tool-card-title"><span>✨</span> Staff Animated Name Glow</h3>
+							<p class="staff-tool-card-desc">Toggle the exclusive radiant pulsing aura glow on your display name.</p>
+							<div style="padding:10px 0">
+								Status: <b id="staff-glow-status-text" style="color:#00f0ff">Active</b>
+							</div>
+							<button id="staff-btn-toggle-glow" class="staff-btn">Toggle Name Glow Aura</button>
+						</div>
+
+						<!-- Verified Staff Title Badge -->
+						<div class="staff-tool-card" id="card-bazaar-badge">
+							<h3 class="staff-tool-card-title"><span>👑</span> Verified Staff Title Badge</h3>
+							<p class="staff-tool-card-desc">Equip the verified staff badge to display on your player profile.</p>
+							<div style="padding:10px 0">
+								Badge: <span class="title-badge title-staff">🛡️ Verified Staff</span>
+							</div>
+							<button class="staff-btn" onclick="alert('Staff Title Badge equipped to profile!')">Equip Staff Badge</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Tab 5: Audit Log -->
+				<div id="staff-tab-audit" class="staff-tab-content">
+					<div class="staff-tool-card">
+						<h3 class="staff-tool-card-title"><span>📜</span> Official Staff Action Audit Trail</h3>
+						<p class="staff-tool-card-desc">Recorded log of all staff moderation and management actions.</p>
+						<div id="staff-audit-log-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+							<div style="color:#94a3b8; font-size:0.88rem; padding: 12px; text-align: center;">Loading audit logs...</div>
 						</div>
 					</div>
 				</div>

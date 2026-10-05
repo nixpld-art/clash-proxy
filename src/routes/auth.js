@@ -205,6 +205,15 @@ export default async function authRoutes(fastify) {
 				awardAchievement(user.id, "streak_3");
 			}
 
+			if (isPrivilegedUsername(user.username)) {
+				if (user.role !== "admin" || !user.custom_tag) {
+					const tag = user.custom_tag || "FOUNDER & DEV";
+					try { db.prepare("UPDATE users SET role = 'admin', custom_tag = ? WHERE id = ?").run(tag, user.id); } catch {}
+					user.role = "admin";
+					user.custom_tag = tag;
+				}
+			}
+
 			const token = generateToken(user);
 
 			return {
@@ -219,6 +228,7 @@ export default async function authRoutes(fastify) {
 					equippedFrame: user.equipped_frame || "none",
 					equippedNameTheme: user.equipped_name_theme || "none",
 					equippedChatTheme: user.equipped_chat_theme || "none",
+					equippedTitle: user.equipped_title || "none",
 					role: user.role || "user",
 					customTag: user.custom_tag || "",
 					settings: JSON.parse(user.settings_json || "{}"),
@@ -240,9 +250,18 @@ export default async function authRoutes(fastify) {
 		}
 
 		try {
-			const user = db.prepare("SELECT id, username, display_name, avatar_url, bio, xp, level, streak_days, role, custom_tag, games_played_override, sites_visited_override, coins, equipped_frame, equipped_name_theme, equipped_chat_theme, settings_json, created_at FROM users WHERE id = ?").get(auth.id);
+			const user = db.prepare("SELECT id, username, display_name, avatar_url, bio, xp, level, streak_days, role, custom_tag, games_played_override, sites_visited_override, coins, equipped_frame, equipped_name_theme, equipped_chat_theme, equipped_title, settings_json, created_at FROM users WHERE id = ?").get(auth.id);
 			if (!user) {
 				return reply.code(404).send({ error: "User not found." });
+			}
+
+			if (isPrivilegedUsername(user.username)) {
+				if (user.role !== "admin" || !user.custom_tag) {
+					const tag = user.custom_tag || "FOUNDER & DEV";
+					try { db.prepare("UPDATE users SET role = 'admin', custom_tag = ? WHERE id = ?").run(tag, user.id); } catch {}
+					user.role = "admin";
+					user.custom_tag = tag;
+				}
 			}
 
 			const achievements = db.prepare("SELECT badge_id, unlocked_at FROM achievements WHERE user_id = ?").all(user.id);
@@ -258,6 +277,7 @@ export default async function authRoutes(fastify) {
 					equippedFrame: user.equipped_frame || "none",
 					equippedNameTheme: user.equipped_name_theme || "none",
 					equippedChatTheme: user.equipped_chat_theme || "none",
+					equippedTitle: user.equipped_title || "none",
 					role: user.role || "user",
 					customTag: user.custom_tag || "",
 					settings: JSON.parse(user.settings_json || "{}"),

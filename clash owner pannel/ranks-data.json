@@ -2,24 +2,53 @@
 	"presets": [
 		{
 			"id": "pmuim2r8gyvc7",
-			"name": "Mod",
+			"name": "Moderator",
 			"privileges": [
-				"game-library",
-				"social-moderation"
-			]
-		},
-		{
-			"id": "pmuqwhzosgdcj",
-			"name": "Owner",
-			"privileges": [
-				"all-access"
+				"mod-kick",
+				"mod-mute",
+				"mod-warn",
+				"mod-chat-clear",
+				"mod-reports",
+				"chat-color",
+				"member-inspector"
 			]
 		},
 		{
 			"id": "pmuqwjg0tk8ni",
-			"name": "Aura",
+			"name": "Game Curator / QA",
 			"privileges": [
-				"social-moderation"
+				"game-testing",
+				"game-feature",
+				"game-bug-reports",
+				"game-tag-editor"
+			]
+		},
+		{
+			"id": "pmuqwhzosgdcj",
+			"name": "Senior Staff",
+			"privileges": [
+				"mod-kick",
+				"mod-mute",
+				"mod-warn",
+				"mod-chat-clear",
+				"mod-reports",
+				"mod-audit-view",
+				"chat-broadcast",
+				"chat-color",
+				"chat-slowmode",
+				"social-pin",
+				"member-inspector",
+				"game-testing",
+				"game-feature",
+				"game-bug-reports",
+				"game-tag-editor",
+				"cosmetic-custom-tag",
+				"cosmetic-name-glow",
+				"bazaar-staff-discount",
+				"bazaar-exclusive-badge",
+				"server-motd-edit",
+				"server-maintenance-alert",
+				"whitelist-manage"
 			]
 		}
 	],
@@ -28,27 +57,90 @@
 			"presetId": null,
 			"rankName": "Owner",
 			"privileges": [
-				"all-access"
+				"mod-kick",
+				"mod-mute",
+				"mod-warn",
+				"mod-chat-clear",
+				"mod-reports",
+				"mod-audit-view",
+				"chat-broadcast",
+				"chat-color",
+				"chat-slowmode",
+				"social-pin",
+				"member-inspector",
+				"game-testing",
+				"game-feature",
+				"game-bug-reports",
+				"game-tag-editor",
+				"cosmetic-custom-tag",
+				"cosmetic-name-glow",
+				"bazaar-staff-discount",
+				"bazaar-exclusive-badge",
+				"server-motd-edit",
+				"server-maintenance-alert",
+				"whitelist-manage"
 			],
 			"username": "Nils",
 			"prevTag": "FOUNDER & DEV",
 			"prevRole": "admin"
 		},
 		"2": {
-			"presetId": "pmup80ai0j3gf",
+			"presetId": null,
 			"rankName": "Owner",
 			"privileges": [
-				"all-access"
+				"mod-kick",
+				"mod-mute",
+				"mod-warn",
+				"mod-chat-clear",
+				"mod-reports",
+				"mod-audit-view",
+				"chat-broadcast",
+				"chat-color",
+				"chat-slowmode",
+				"social-pin",
+				"member-inspector",
+				"game-testing",
+				"game-feature",
+				"game-bug-reports",
+				"game-tag-editor",
+				"cosmetic-custom-tag",
+				"cosmetic-name-glow",
+				"bazaar-staff-discount",
+				"bazaar-exclusive-badge",
+				"server-motd-edit",
+				"server-maintenance-alert",
+				"whitelist-manage"
 			],
 			"username": "ozzy",
 			"prevTag": "FOUNDER & DEV",
 			"prevRole": "admin"
 		},
 		"4": {
-			"presetId": "pmup80ai0j3gf",
+			"presetId": null,
 			"rankName": "Owner",
 			"privileges": [
-				"all-access"
+				"mod-kick",
+				"mod-mute",
+				"mod-warn",
+				"mod-chat-clear",
+				"mod-reports",
+				"mod-audit-view",
+				"chat-broadcast",
+				"chat-color",
+				"chat-slowmode",
+				"social-pin",
+				"member-inspector",
+				"game-testing",
+				"game-feature",
+				"game-bug-reports",
+				"game-tag-editor",
+				"cosmetic-custom-tag",
+				"cosmetic-name-glow",
+				"bazaar-staff-discount",
+				"bazaar-exclusive-badge",
+				"server-motd-edit",
+				"server-maintenance-alert",
+				"whitelist-manage"
 			],
 			"username": "ted",
 			"prevTag": "FOUNDER & DEV",

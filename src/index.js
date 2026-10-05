@@ -105,6 +105,8 @@ import chatRoutes from "./routes/chat.js";
 import adminRoutes from "./routes/admin.js";
 import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
+import bazaarRoutes from "./routes/bazaar.js";
+import staffRoutes from "./routes/staff.js";
 import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys, dbg } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
@@ -176,6 +178,8 @@ fastify.register(chatRoutes);
 fastify.register(adminRoutes);
 fastify.register(loungeRoutes);
 fastify.register(aiRoutes);
+fastify.register(bazaarRoutes);
+fastify.register(staffRoutes);
 // Classic mode — Service-Worker-free proxy engine (/classic/<url>)
 fastify.register(classicRoutes);
 
@@ -859,11 +863,11 @@ function panelProxy(req, reply) {
 		return;
 	}
 	const user = { ...decoded, role: dbRow.role, username: dbRow.username };
-	// Panel entry = DATABASE role (testing panel = explicit privilege grant).
-	// Never the JWT claim, never Owner Mode.
-	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : dbRow.role === "admin");
+	// Root Owner Panel (/panel/) is strictly for site owners (Ted, Nils, Ozzy or admin key holders)
+	const isOwner = isPrivilegedUsername(dbRow.username) || (dbRow.role === "admin" && isPrivilegedUsername(dbRow.username));
+	const allowed = user && (isTestingPath ? hasPrivilege(user, "game-testing") : isOwner);
 	if (!allowed) {
-		panelDeny(reply, `You're signed in as <b>${String(dbRow.username).replace(/[<>&"]/g, "")}</b>, but this area is Owner-only.`, true);
+		panelDeny(reply, `You're signed in as <b>${String(dbRow.username).replace(/[<>&"]/g, "")}</b>, but this root area is Owner-only.<br><br>Staff members and ranked players can access the in-site <a href="/#staff-panel" style="color:#00f0ff;text-decoration:underline;font-weight:bold;">Staff Panel</a>.`, true);
 		return;
 	}
 	// First arrival via the app link: pin token into HttpOnly cookie, strip it from the URL
@@ -941,12 +945,17 @@ fastify.get("/api/me/ranks", async (req, reply) => {
 	const dbUser = freshDbUser(tokenUser.id);
 	if (!dbUser) return reply.code(401).send({ error: "Account no longer exists on this server." });
 	const user = { ...tokenUser, role: dbUser.role, username: dbUser.username };
-	const r = userRank(user);
-	const isAdmin = isAdminUser(user);
-	// Owner Mode is cosmetic-only: it makes everyone's chip say "Owner"
-	// and never grants panel/API access (those check DB role directly).
-	const showOwner = isAdmin || isOwnerMode();
-	return { rankName: r.rankName || (showOwner ? "Owner" : null), privileges: r.privileges, admin: showOwner };
+	const r = userRank(user) || { rankName: null, privileges: [] };
+	const isOwner = isPrivilegedUsername(user.username);
+	const showOwner = isOwner || isOwnerMode();
+	const hasStaffPanel = isOwner || !!r.rankName || (r.privileges && r.privileges.length > 0) || dbUser.role === "staff" || dbUser.role === "admin";
+	return {
+		rankName: r.rankName || (showOwner ? "Owner" : null),
+		privileges: r.privileges || [],
+		admin: isOwner,
+		isOwner,
+		hasStaffPanel
+	};
 });
 
 fastify.all("/panel", panelProxy);

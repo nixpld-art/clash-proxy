@@ -16,7 +16,7 @@
 		"chat": true,
 		"leaderboard": true,
 		"friends": true,
-		"bazaar": false,
+		"bazaar": true,
 		"games": true
 	},
 	"rateLimit": {
