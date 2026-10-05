@@ -190,6 +190,7 @@ fastify.post("/api/panel/games/reload", async (request, reply) => {
 	if (!requireLocal(request, reply)) return;
 	loadGameTitles();
 	cachedGames = null;
+	perfHtmlCache.clear();
 	return { ok: true, count: getGamesList().length };
 });
 
@@ -390,6 +391,247 @@ fastify.register(fastifyStatic, {
 	decorateReply: false,
 });
 
+// ============================================================
+// Game Unblocker & Filter Bypass for Schools (e.g. LGfL)
+// Neutralizes school-blocked ad SDKs and proxies external assets/iframes
+// ============================================================
+function isAdUrl(u) {
+	if (!u || typeof u !== "string") return false;
+	const lower = u.toLowerCase();
+	return (
+		lower.includes("script.google.com/macros/") ||
+		lower.includes("imasdk.googleapis.com") ||
+		lower.includes("googletagmanager.com") ||
+		lower.includes("google-analytics.com") ||
+		lower.includes("pagead2.googlesyndication.com") ||
+		lower.includes("s0.2mdn.net") ||
+		lower.includes("adinplay.com") ||
+		lower.includes("gameanalytics.com") ||
+		lower.includes("scorecardresearch.com") ||
+		lower.includes("brandmetrics.com") ||
+		lower.includes("doubleclick.net") ||
+		lower.includes("serve.app.playsaurus.com") ||
+		lower.includes("serve.playsaurus.com")
+	);
+}
+
+function proxyExternalUrl(u) {
+	if (!u || typeof u !== "string") return u;
+	const trimmed = u.trim();
+	if (
+		trimmed.startsWith("/classic/") ||
+		trimmed.startsWith("/scram/") ||
+		trimmed.startsWith("data:") ||
+		trimmed.startsWith("blob:") ||
+		trimmed.startsWith("about:") ||
+		trimmed.startsWith("javascript:")
+	) {
+		return trimmed;
+	}
+	if (trimmed.startsWith("//")) {
+		return "/classic/https:" + trimmed;
+	}
+	if (/^https?:\/\//i.test(trimmed)) {
+		return "/classic/" + trimmed;
+	}
+	return trimmed;
+}
+
+function unblockGameHtml(html) {
+	if (!html || typeof html !== "string") return html;
+
+	// 1. Rewrite <base href="...">
+	html = html.replace(/<base([^>]+)href=["']([^"']+)["']([^>]*)>/gi, (match, p1, href, p2) => {
+		if (/^https?:\/\/|^\/\//i.test(href)) {
+			return `<base${p1}href="${proxyExternalUrl(href)}"${p2}>`;
+		}
+		return match;
+	});
+
+	// 2. Rewrite <iframe ... src="...">
+	html = html.replace(/<iframe([^>]+)src=["']([^"']+)["']([^>]*)>/gi, (match, p1, src, p2) => {
+		if (isAdUrl(src)) {
+			return `<iframe${p1}src="about:blank"${p2}>`;
+		}
+		if (/^https?:\/\/|^\/\//i.test(src)) {
+			return `<iframe${p1}src="${proxyExternalUrl(src)}"${p2}>`;
+		}
+		return match;
+	});
+
+	// 3. Rewrite <script ... src="...">
+	html = html.replace(/<script([^>]+)src=["']([^"']+)["']([^>]*)>/gi, (match, p1, src, p2) => {
+		if (isAdUrl(src)) {
+			return `<script${p1}src="data:text/javascript,/*clash-ad-blocked*/"${p2}>`;
+		}
+		if (/^https?:\/\/|^\/\//i.test(src)) {
+			return `<script${p1}src="${proxyExternalUrl(src)}"${p2}>`;
+		}
+		return match;
+	});
+
+	// 4. Rewrite <link ... href="...">
+	html = html.replace(/<link([^>]+)href=["']([^"']+)["']([^>]*)>/gi, (match, p1, href, p2) => {
+		if (isAdUrl(href)) {
+			return "";
+		}
+		if (/^https?:\/\/|^\/\//i.test(href)) {
+			return `<link${p1}href="${proxyExternalUrl(href)}"${p2}>`;
+		}
+		return match;
+	});
+
+	// 5. Rewrite <embed ... src="..."> & <param ... value="...">
+	html = html.replace(/<embed([^>]+)src=["']([^"']+)["']([^>]*)>/gi, (match, p1, src, p2) => {
+		if (/^https?:\/\/|^\/\//i.test(src)) {
+			return `<embed${p1}src="${proxyExternalUrl(src)}"${p2}>`;
+		}
+		return match;
+	});
+	html = html.replace(/<param([^>]+)value=["']([^"']+)["']([^>]*)>/gi, (match, p1, val, p2) => {
+		if (/^https?:\/\/|^\/\//i.test(val)) {
+			return `<param${p1}value="${proxyExternalUrl(val)}"${p2}>`;
+		}
+		return match;
+	});
+
+	return html;
+}
+
+const GAME_UNBLOCK_SHIM = `<script data-clash-unblock>
+(function(){
+try {
+	var s = document.createElement("style");
+	s.textContent = "#ad-container, #ad-iframe, #close-ad, #ad-right-mask, .ad-banner, .adsbygoogle, #afg_frame { display: none !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; visibility: hidden !important; }";
+	(document.head || document.documentElement).appendChild(s);
+} catch(e) {}
+
+try {
+	window.google = window.google || {};
+	window.google.ima = window.google.ima || {
+		AdDisplayContainer: function() { return { initialize: function() {}, destroy: function() {} }; },
+		AdsLoader: function() { return {
+			addEventListener: function(evt, fn) {},
+			requestAds: function() {
+				setTimeout(function() {
+					if (typeof window.google.ima.onAdError === "function") window.google.ima.onAdError();
+				}, 10);
+			},
+			contentComplete: function() {}
+		}; },
+		AdsRequest: function() {},
+		ViewMode: { NORMAL: 0, FULLSCREEN: 1 },
+		AdErrorEvent: { Type: { AD_ERROR: "adError" } },
+		AdsManagerLoadedEvent: { Type: { ADS_MANAGER_LOADED: "adsManagerLoaded" } }
+	};
+	window.PokiSDK = window.PokiSDK || {
+		init: function() { return Promise.resolve(); },
+		commercialBreak: function() { return Promise.resolve(); },
+		rewardedBreak: function() { return Promise.resolve(true); },
+		displayAd: function() { return Promise.resolve(); },
+		gameLoadingStart: function() {},
+		gameLoadingFinished: function() {},
+		gameplayStart: function() {},
+		gameplayStop: function() {},
+		setDebug: function() {}
+	};
+	window.Crazygames = window.Crazygames || {
+		init: function() { return Promise.resolve(); },
+		requestAd: function(t, cb) { if (cb) cb(); },
+		hasAdblock: function() { return Promise.resolve(false); }
+	};
+	window.aiptag = window.aiptag || { cmd: { display: [], player: [] } };
+} catch(e) {}
+
+function isAd(u) {
+	if (!u || typeof u !== "string") return false;
+	var l = u.toLowerCase();
+	return l.indexOf("script.google.com/macros/") !== -1 ||
+		l.indexOf("imasdk.googleapis.com") !== -1 ||
+		l.indexOf("googletagmanager.com") !== -1 ||
+		l.indexOf("pagead2") !== -1 ||
+		l.indexOf("doubleclick.net") !== -1 ||
+		l.indexOf("playsaurus.com") !== -1;
+}
+
+function toProxy(u) {
+	if (!u || typeof u !== "string") return u;
+	var t = u.trim();
+	if (t.startsWith("/classic/") || t.startsWith("/scram/") || t.startsWith("data:") || t.startsWith("blob:") || t.startsWith("about:") || t.startsWith("javascript:")) {
+		return u;
+	}
+	if (t.startsWith("//")) {
+		return "/classic/" + window.location.protocol + t;
+	}
+	if (/^https?:\/\//i.test(t)) {
+		if (!t.startsWith(window.location.origin)) {
+			return "/classic/" + t;
+		}
+	}
+	return u;
+}
+
+var origFetch = window.fetch;
+if (origFetch) {
+	window.fetch = function(res, init) {
+		if (typeof res === "string") {
+			if (isAd(res)) return Promise.reject(new Error("Ad blocked"));
+			res = toProxy(res);
+		} else if (res && res.url) {
+			if (isAd(res.url)) return Promise.reject(new Error("Ad blocked"));
+			try { res = new Request(toProxy(res.url), res); } catch(e) {}
+		}
+		return origFetch.call(this, res, init);
+	};
+}
+
+var origXhr = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+	if (typeof url === "string") {
+		if (isAd(url)) url = "data:text/plain,";
+		else url = toProxy(url);
+	}
+	return origXhr.call(this, method, url, async, user, password);
+};
+
+try {
+	var iframeDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, "src");
+	if (iframeDesc && iframeDesc.set) {
+		var origIframeSet = iframeDesc.set;
+		Object.defineProperty(HTMLIFrameElement.prototype, "src", {
+			set: function(val) {
+				if (typeof val === "string") {
+					if (isAd(val)) return origIframeSet.call(this, "about:blank");
+					val = toProxy(val);
+				}
+				return origIframeSet.call(this, val);
+			},
+			get: iframeDesc.get,
+			configurable: true
+		});
+	}
+} catch(e) {}
+
+try {
+	var scriptDesc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
+	if (scriptDesc && scriptDesc.set) {
+		var origScriptSet = scriptDesc.set;
+		Object.defineProperty(HTMLScriptElement.prototype, "src", {
+			set: function(val) {
+				if (typeof val === "string") {
+					if (isAd(val)) return origScriptSet.call(this, "data:text/javascript,/*ad*/");
+					val = toProxy(val);
+				}
+				return origScriptSet.call(this, val);
+			},
+			get: scriptDesc.get,
+			configurable: true
+		});
+	}
+} catch(e) {}
+})();
+</script>`;
+
 // Chromebook Optimizer — inject the Frame Boost bootstrap into game pages
 // before any game script runs (forces high-performance WebGL + clamps DPR).
 const PERF_BOOTSTRAP = `<script data-clash-perf>
@@ -445,11 +687,23 @@ fastify.addHook("onSend", async (req, reply, payload) => {
 			return payload;
 		}
 
-		if (html.includes("data-clash-perf")) return payload;
-		if (/<head[^>]*>/i.test(html)) {
-			html = html.replace(/<head[^>]*>/i, (m) => m + PERF_BOOTSTRAP);
-		} else {
-			html = PERF_BOOTSTRAP + html;
+		// Apply URL unblocking & LGfL filter bypass
+		html = unblockGameHtml(html);
+
+		// Inject unblocker shim and perf bootstrap
+		if (!html.includes("data-clash-unblock")) {
+			const inject = GAME_UNBLOCK_SHIM + (html.includes("data-clash-perf") ? "" : PERF_BOOTSTRAP);
+			if (/<head[^>]*>/i.test(html)) {
+				html = html.replace(/<head[^>]*>/i, (m) => m + inject);
+			} else {
+				html = inject + html;
+			}
+		} else if (!html.includes("data-clash-perf")) {
+			if (/<head[^>]*>/i.test(html)) {
+				html = html.replace(/<head[^>]*>/i, (m) => m + PERF_BOOTSTRAP);
+			} else {
+				html = PERF_BOOTSTRAP + html;
+			}
 		}
 
 		const out = typeof payload === "string" ? html : Buffer.from(html, "utf8");

@@ -27,8 +27,12 @@
 	/* Accent */
 	--accent: #6c5ce7;
 	--accent-light: #a29bfe;
+	--accent-primary: #a29bfe;
+	--accent-secondary: #6c5ce7;
 	--accent-glow: rgba(108, 92, 231, 0.4);
 	--accent-glow-strong: rgba(108, 92, 231, 0.7);
+	--accent-gradient: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+	--shadow-glow: 0 0 25px rgba(108, 92, 231, 0.35);
 
 	/* Status */
 	--status-ok: #00d2a0;
@@ -4722,8 +4726,20 @@ html.static-bg #particle-canvas {
 }
 
 /* ============================================================
-   12 Ultimate Color Variations
+   12 Ultimate Color Variations + Neon Purple
    ============================================================ */
+body.theme-neon-purple, html.theme-neon-purple {
+	--accent-primary: #a29bfe;
+	--accent-secondary: #6c5ce7;
+	--accent: #6c5ce7;
+	--accent-light: #a29bfe;
+	--accent-glow: rgba(108, 92, 231, 0.4);
+	--accent-glow-strong: rgba(108, 92, 231, 0.7);
+	--border-accent: rgba(108, 92, 231, 0.4);
+	--accent-gradient: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+	--shadow-glow: 0 0 25px rgba(108, 92, 231, 0.35);
+}
+
 body.theme-monochrome, html.theme-monochrome {
 	--accent-primary: #ffffff;
 	--accent-secondary: #a1a1aa;
@@ -4873,6 +4889,10 @@ body.theme-blood-orange, html.theme-blood-orange {
    ============================================================ */
 
 /* Hero Logo Dynamic Color Tint & Glow */
+html.theme-neon-purple .hero-logo,
+body.theme-neon-purple .hero-logo {
+	filter: drop-shadow(0 0 22px rgba(162, 155, 254, 0.8)) !important;
+}
 html.theme-monochrome .hero-logo,
 body.theme-monochrome .hero-logo {
 	filter: grayscale(100%) brightness(1.2) drop-shadow(0 0 18px rgba(255, 255, 255, 0.45)) !important;

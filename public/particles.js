@@ -175,6 +175,38 @@
 		}
 	};
 
+	function hexOrRgbToRgbString(colorStr) {
+		if (!colorStr) return null;
+		colorStr = colorStr.trim();
+		if (colorStr.startsWith("#")) {
+			let hex = colorStr.slice(1);
+			if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+			const num = parseInt(hex, 16);
+			if (isNaN(num)) return null;
+			return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+		}
+		if (colorStr.startsWith("rgb")) {
+			const m = colorStr.match(/\d+[\s,]+\d+[\s,]+\d+/);
+			if (m) return m[0].replace(/[\s,]+/g, ", ");
+		}
+		return null;
+	}
+
+	window.clashUpdateParticleColor = function () {
+		try {
+			const style = getComputedStyle(document.documentElement);
+			const primary = (style.getPropertyValue("--accent-primary") || style.getPropertyValue("--accent-light") || "").trim();
+			const secondary = (style.getPropertyValue("--accent-secondary") || style.getPropertyValue("--accent") || "").trim();
+			const pRgb = hexOrRgbToRgbString(primary);
+			const sRgb = hexOrRgbToRgbString(secondary);
+			if (pRgb) CONFIG.particleColor = pRgb;
+			if (sRgb) CONFIG.linkColor = sRgb;
+			if (!running && !particlesDisabled && (document.documentElement.classList.contains("static-bg") || document.documentElement.classList.contains("barebones-mode"))) {
+				renderStatic();
+			}
+		} catch (e) {}
+	};
+
 	// --- Mouse tracking ---
 	window.addEventListener("mousemove", (e) => {
 		mouse.x = e.clientX;
@@ -198,6 +230,7 @@
 
 	resize();
 	initParticles();
+	window.clashUpdateParticleColor();
 	const isUltimateInit = document.documentElement.classList.contains("ultimate-layout");
 	const isBarebonesInit = document.documentElement.classList.contains("barebones-mode");
 	if (isUltimateInit) {

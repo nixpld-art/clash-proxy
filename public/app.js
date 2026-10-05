@@ -2172,26 +2172,89 @@ async function loadLeaderboard() {
 // Settings & Cloaking Controller
 // ============================================================
 
+const ALL_SITE_THEMES = [
+	"neon-purple",
+	"monochrome",
+	"sky-blue",
+	"neon-emerald",
+	"crimson-red",
+	"sunset-amber",
+	"cyber-violet",
+	"hot-pink",
+	"electric-gold",
+	"deep-sapphire",
+	"toxic-lime",
+	"arctic-cyan",
+	"blood-orange",
+	"cyber-blue",
+	"emerald-matrix",
+	"crimson-flame"
+];
+
+function applySiteTheme(themeName, notify = false) {
+	if (!themeName || !ALL_SITE_THEMES.includes(themeName)) {
+		themeName = "neon-purple";
+	}
+
+	try {
+		localStorage.setItem("clash_theme", themeName);
+		localStorage.setItem("clash_ultimate_color", themeName);
+	} catch (e) {}
+
+	ALL_SITE_THEMES.forEach((t) => {
+		document.documentElement.classList.remove(`theme-${t}`);
+		document.body.classList.remove(`theme-${t}`);
+	});
+
+	document.documentElement.classList.add(`theme-${themeName}`);
+	document.body.classList.add(`theme-${themeName}`);
+
+	if (typeof themeBtns !== "undefined" && themeBtns.length) {
+		themeBtns.forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.theme === themeName);
+		});
+	}
+
+	if (typeof ultimateColorBtns !== "undefined" && ultimateColorBtns && ultimateColorBtns.length) {
+		ultimateColorBtns.forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.color === themeName);
+		});
+	}
+
+	if (window.clashSetUltimateColor) {
+		window.clashSetUltimateColor(themeName);
+	}
+	if (window.clashUpdateParticleColor) {
+		window.clashUpdateParticleColor();
+	}
+
+	if (typeof authToken !== "undefined" && authToken) {
+		fetch("/api/profile", {
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${authToken}`
+			},
+			body: JSON.stringify({ settings: { theme: themeName } })
+		}).catch(() => {});
+	}
+
+	if (notify && typeof showToast === "function") {
+		const formatted = themeName
+			.split("-")
+			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+			.join(" ");
+		showToast(`Theme updated to ${formatted}`, "info");
+	}
+}
+
 function applyUserSettings(settings) {
 	if (!settings) return;
 
 	if (settingGhostMode) settingGhostMode.checked = !!settings.ghostMode;
 
 	if (settings.theme) {
-		const wasBarebones = document.documentElement.classList.contains("barebones-mode");
-		const wasUltimate = document.documentElement.classList.contains("ultimate-layout");
-		const ultColor = getUltimateColor();
-		document.body.className = "";
-		if (wasBarebones) document.body.classList.add("barebones-mode");
-		if (wasUltimate) {
-			document.body.classList.add("ultimate-layout");
-			document.body.classList.add(`theme-${ultColor}`);
-		} else if (settings.theme !== "neon-purple") {
-			document.body.classList.add(`theme-${settings.theme}`);
-		}
-		themeBtns.forEach(btn => {
-			btn.classList.toggle("active", btn.dataset.theme === settings.theme);
-		});
+		applySiteTheme(settings.theme, false);
 	}
 
 	if (settings.cloak) {
@@ -4226,28 +4289,9 @@ cloakBtns.forEach(btn => {
 
 themeBtns.forEach(btn => {
 	btn.addEventListener("click", () => {
-		const wasBarebones = document.documentElement.classList.contains("barebones-mode");
-		const wasUltimate = document.documentElement.classList.contains("ultimate-layout");
-		const ultColor = getUltimateColor();
-		document.body.className = "";
-		if (wasBarebones) document.body.classList.add("barebones-mode");
-		if (wasUltimate) {
-			document.body.classList.add("ultimate-layout");
-			document.body.classList.add(`theme-${ultColor}`);
-		} else if (theme !== "neon-purple") {
-			document.body.classList.add(`theme-${theme}`);
-		}
-		themeBtns.forEach(b => b.classList.toggle("active", b.dataset.theme === theme));
-
-		if (authToken) {
-			fetch("/api/profile", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({ settings: { theme } })
-			}).catch(()=>{});
+		const theme = btn.dataset.theme;
+		if (theme) {
+			applySiteTheme(theme, true);
 		}
 	});
 });
@@ -4805,14 +4849,12 @@ function applyUltimateLayout(enabled, notify = false) {
 		document.documentElement.classList.add("ultimate-layout");
 		document.body.classList.add("ultimate-layout");
 		const color = getUltimateColor();
-		setUltimateColor(color, false);
+		applySiteTheme(color, false);
 	} else {
 		document.documentElement.classList.remove("ultimate-layout");
 		document.body.classList.remove("ultimate-layout");
-		ULTIMATE_THEMES.forEach((t) => {
-			document.documentElement.classList.remove(`theme-${t}`);
-			document.body.classList.remove(`theme-${t}`);
-		});
+		const color = localStorage.getItem("clash_theme") || "neon-purple";
+		applySiteTheme(color, false);
 	}
 
 	if (settingUltimateLayout) {
@@ -4839,38 +4881,7 @@ function applyUltimateLayout(enabled, notify = false) {
 }
 
 function setUltimateColor(colorKey, notify = false) {
-	if (!ULTIMATE_THEMES.includes(colorKey)) {
-		colorKey = "monochrome";
-	}
-
-	try {
-		localStorage.setItem("clash_ultimate_color", colorKey);
-	} catch (e) {}
-
-	ULTIMATE_THEMES.forEach((t) => {
-		document.documentElement.classList.remove(`theme-${t}`);
-		document.body.classList.remove(`theme-${t}`);
-	});
-
-	if (isUltimateLayoutActive()) {
-		document.documentElement.classList.add(`theme-${colorKey}`);
-		document.body.classList.add(`theme-${colorKey}`);
-	}
-
-	if (ultimateColorBtns && ultimateColorBtns.length) {
-		ultimateColorBtns.forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.color === colorKey);
-		});
-	}
-
-	if (window.clashSetUltimateColor) {
-		window.clashSetUltimateColor(colorKey);
-	}
-
-	if (notify && typeof showToast === "function") {
-		const formatted = colorKey.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-		showToast(`Theme updated to ${formatted}`, "info");
-	}
+	applySiteTheme(colorKey, notify);
 }
 
 function cycleUltimateColor() {
@@ -4884,12 +4895,12 @@ function cycleUltimateColor() {
 function initBarebonesAndUltimate() {
 	const barebones = isBarebonesActive();
 	const ultimate = isUltimateLayoutActive();
-	const color = getUltimateColor();
+	const color = localStorage.getItem("clash_theme") || localStorage.getItem("clash_ultimate_color") || "neon-purple";
 
 	// Apply stored preferences on boot
 	applyBarebonesMode(barebones, false);
 	applyUltimateLayout(ultimate, false);
-	setUltimateColor(color, false);
+	applySiteTheme(color, false);
 
 	// Settings switch events
 	if (settingBarebonesMode) {
