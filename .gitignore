@@ -23,3 +23,5 @@ scratch/
 scratch-test.mjs
 
 data/.owner-key
+scratch_*
+snap_*.png
