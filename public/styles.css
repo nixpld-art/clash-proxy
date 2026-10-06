@@ -6733,12 +6733,15 @@ body[class*="theme-"] .status-dot {
    📌 Horizontal Top Quick-Access Pin Bar (Minimalist Aesthetic)
    ============================================================ */
 .top-quick-access-bar {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	margin-left: 14px;
-	position: relative;
-	max-width: calc(100vw - 320px);
+	max-width: calc(100% - 240px);
+	z-index: 15;
 }
 
 .quick-access-pins-list {
@@ -6847,7 +6850,7 @@ body[class*="theme-"] .status-dot {
 .quick-access-popover {
 	position: absolute;
 	top: calc(100% + 8px);
-	left: 0;
+	right: 0;
 	width: 290px;
 	background: #0a0d14;
 	border: 1px solid rgba(255, 255, 255, 0.14);
@@ -6935,13 +6938,24 @@ body[class*="theme-"] .status-dot {
 	height: 16px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
 	.top-quick-access-bar {
-		max-width: calc(100vw - 120px);
-		margin-left: 8px;
+		max-width: calc(100% - 150px);
 	}
 	.quick-access-manage-btn .manage-text {
 		display: none;
+	}
+}
+
+@media (max-width: 580px) {
+	.top-quick-access-bar {
+		max-width: calc(100% - 100px);
+	}
+	.quick-access-pin-label {
+		display: none;
+	}
+	.quick-access-pin-pill {
+		padding: 5px 8px;
 	}
 }
 
