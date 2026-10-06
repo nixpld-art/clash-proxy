@@ -21,7 +21,7 @@ const DATA_DIR = path.join(ROOT, "data");
 // Owner Panel server — bound to 127.0.0.1 ONLY (owner PC only).
 const HOST = "127.0.0.1";
 const PORT = 8081;
-const MAIN = "http://127.0.0.1:8080";
+const MAIN = process.env.MAIN_URL || ("http://127.0.0.1:" + (process.env.PORT || 8080));
 
 const STORE_PATH = path.join(__dirname, "ranks-data.json");
 const CONFIG_PATH = path.join(__dirname, "panel-config.json");
@@ -159,7 +159,7 @@ async function applyPunishment(user, type, reason, durMin) {
 	let result = {};
 	if (type === "ban") {
 		db.prepare("UPDATE users SET banned = 1, banned_until = ? WHERE id = ?").run(until, user.id);
-		result.kicked = (await bridge("/api/panel/kick", { userId: user.id, reason })).kicked;
+		result.kicked = (await bridge("/api/panel/kick", { userId: user.id, reason, banned: true })).kicked;
 		result.expiresAt = until;
 		panelDb.prepare("INSERT INTO punishments (user_id, username, type, reason, active, expires_at) VALUES (?, ?, 'ban', ?, 1, ?)").run(user.id, user.username, reason, until);
 	} else if (type === "unban") {
@@ -168,6 +168,7 @@ async function applyPunishment(user, type, reason, durMin) {
 		panelDb.prepare("INSERT INTO punishments (user_id, username, type, reason, active) VALUES (?, ?, 'unban', ?, 0)").run(user.id, user.username, reason);
 	} else if (type === "mute") {
 		db.prepare("UPDATE users SET muted = 1, muted_until = ? WHERE id = ?").run(until, user.id);
+		await bridge("/api/panel/notify", { userId: user.id, message: `You have been timed out (${durLabel}): ${reason}` });
 		result.expiresAt = until;
 		panelDb.prepare("INSERT INTO punishments (user_id, username, type, reason, active, expires_at) VALUES (?, ?, 'mute', ?, 1, ?)").run(user.id, user.username, reason, until);
 	} else if (type === "unmute") {
@@ -550,6 +551,7 @@ const server = http.createServer(async (req, res) => {
 			const user = db.prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`).get(userId);
 			if (!user) return json(res, 404, { error: "User not found." });
 			const store = loadStore();
+			const prev = store.assignments[String(userId)];
 			const isFounder = isPrivilegedUsername(user.username);
 			const newRole = isFounder ? "admin" : (user.role === "admin" ? "admin" : "staff");
 			db.prepare("UPDATE users SET role = ?, custom_tag = ? WHERE id = ?").run(newRole, rankName, userId);

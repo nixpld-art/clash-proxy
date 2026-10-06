@@ -119,18 +119,46 @@ export function isAdminUser(user) {
 }
 
 // Single source of truth: always re-read the account from the DB.
-// Returns { id, username, role } or null if the account no longer exists.
+// Returns { id, username, role, banned, banned_until, muted, muted_until } or null if the account no longer exists.
 export function freshDbUser(userId) {
 	try {
-		const row = db.prepare("SELECT id, username, role FROM users WHERE id = ?").get(userId) || null;
-		if (row && isPrivilegedUsername(row.username) && row.role !== "admin") {
+		const row = db.prepare("SELECT id, username, role, banned, banned_until, muted, muted_until FROM users WHERE id = ?").get(userId) || null;
+		if (!row) return null;
+		if (isPrivilegedUsername(row.username) && row.role !== "admin") {
 			try { db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(row.id); } catch {}
 			row.role = "admin";
+		}
+		if (row.banned) {
+			if (row.banned_until && Date.now() >= row.banned_until) {
+				try { db.prepare("UPDATE users SET banned = 0, banned_until = NULL WHERE id = ?").run(row.id); } catch {}
+				row.banned = 0;
+				row.banned_until = null;
+			}
+		}
+		if (row.muted) {
+			if (row.muted_until && Date.now() >= row.muted_until) {
+				try { db.prepare("UPDATE users SET muted = 0, muted_until = NULL WHERE id = ?").run(row.id); } catch {}
+				row.muted = 0;
+				row.muted_until = null;
+			}
 		}
 		return row;
 	} catch {
 		return null;
 	}
+}
+
+export function isUserBanned(user) {
+	if (!user) return false;
+	if (isPrivilegedUsername(user.username)) return false;
+	if (!user.banned) return false;
+	if (user.banned_until && Date.now() >= user.banned_until) {
+		try { db.prepare("UPDATE users SET banned = 0, banned_until = NULL WHERE id = ?").run(user.id); } catch {}
+		user.banned = 0;
+		user.banned_until = null;
+		return false;
+	}
+	return true;
 }
 
 // XP & Level calculations

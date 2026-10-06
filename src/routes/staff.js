@@ -1,6 +1,7 @@
 import db from "../db.js";
 import { extractAuthUser, isPrivilegedUsername, isAdminUser, freshDbUser } from "../auth-utils.js";
 import { userRank, hasPrivilege, PRIVILEGES } from "../ranks.js";
+import { kickUser, notifyUser } from "../presence.js";
 import Database from "better-sqlite3";
 import path from "node:path";
 import fs from "node:fs";
@@ -40,7 +41,10 @@ export default async function staffRoutes(fastify, options) {
 			if (!dbUser) {
 				return reply.code(401).send({ error: "User not found." });
 			}
-			req.authUser = { ...auth, role: dbUser.role, username: dbUser.username };
+			if (dbUser.banned && (!dbUser.banned_until || Date.now() < dbUser.banned_until)) {
+				return reply.code(403).send({ error: "Your account is currently suspended.", banned: true });
+			}
+			req.authUser = { ...auth, role: dbUser.role, username: dbUser.username, custom_tag: dbUser.custom_tag };
 		}
 	});
 
@@ -49,9 +53,10 @@ export default async function staffRoutes(fastify, options) {
 		const user = req.authUser;
 		const r = userRank(user);
 		const isOwner = isPrivilegedUsername(user.username);
+		const hasStaffRole = user.role === "staff" || user.role === "admin";
 
-		// If user has no rank and is not owner, deny
-		if (!r.rankName && !isOwner && r.privileges.length === 0) {
+		// If user has no rank and is not owner and not staff role, deny
+		if (!isOwner && !hasStaffRole && (!r || (!r.rankName && (!r.privileges || r.privileges.length === 0)))) {
 			return reply.code(403).send({
 				error: "Access Denied: You do not have an active Staff rank assigned.",
 				hasAccess: false
@@ -95,6 +100,7 @@ export default async function staffRoutes(fastify, options) {
 		}
 
 		audit("kick", `Kicked @${target.username}: ${reason}`, user.username);
+		kickUser(target.id, reason);
 		return { success: true, message: `Disconnected player @${target.username}.` };
 	});
 
@@ -124,6 +130,12 @@ export default async function staffRoutes(fastify, options) {
 				);
 			} catch {}
 		}
+		notifyUser(target.id, {
+			type: "muted_notice",
+			duration: dur,
+			until,
+			reason
+		});
 		audit("mute", `Muted @${target.username} for ${dur}m: ${reason}`, user.username);
 		return { success: true, message: `Muted @${target.username} for ${dur} minutes.` };
 	});

@@ -1355,7 +1355,20 @@ function renderUserHeader() {
 		applyRankName(window.__myRankCache);
 		if (authToken) {
 			fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } })
-				.then((r) => (r.ok ? r.json() : null))
+				.then(async (r) => {
+					const data = await r.json().catch(() => null);
+					if (r.status === 403 && data && data.banned) {
+						showToast({
+							icon: "🚫",
+							title: "Account Suspended",
+							message: data.error || "Your account has been banned.",
+							type: "error"
+						});
+						if (typeof logout === "function") logout();
+						return null;
+					}
+					return r.ok ? data : null;
+				})
 				.then((d) => {
 					if (d) {
 						window.__myRankCache = d;
@@ -1547,9 +1560,13 @@ function connectPresenceSocket() {
 			}
 		};
 
-		presenceWs.onclose = () => {
+		presenceWs.onclose = (e) => {
 			presenceWs = null;
 			if (pingInterval) clearInterval(pingInterval);
+			if (e && e.code === 4003) {
+				// Banned: do not auto-reconnect
+				return;
+			}
 			if (authToken) setTimeout(connectPresenceSocket, 5000);
 		};
 	} catch (err) {
@@ -1671,6 +1688,40 @@ function handlePresenceMessage(data) {
 			message: data.message,
 			type: "system-announcement-banner",
 			duration: 10000
+		});
+	} else if (data.type === "kicked") {
+		showToast({
+			icon: "🚫",
+			title: data.banned ? "Account Suspended" : "Disconnected",
+			message: data.message || "Disconnected by staff.",
+			type: "error",
+			duration: 10000
+		});
+		if (data.banned && typeof logout === "function") {
+			logout();
+		}
+	} else if (data.type === "muted_notice") {
+		showToast({
+			icon: "⏳",
+			title: "Timed Out",
+			message: `You have been muted (${data.duration || "15"}m): ${data.reason || "Staff moderation"}`,
+			type: "error",
+			duration: 8000
+		});
+	} else if (data.type === "owner_notice") {
+		showToast({
+			icon: "📢",
+			title: "Staff Notice",
+			message: data.message,
+			type: "info",
+			duration: 8000
+		});
+	} else if (data.type === "error" || data.type === "chat_error") {
+		showToast({
+			icon: "⚠️",
+			title: "Notice",
+			message: data.message || data.error || "Action not permitted.",
+			type: "error"
 		});
 	}
 }
@@ -4987,10 +5038,31 @@ function navigateToPage(targetPage) {
 
 sidebarLinks.forEach((link) => {
 	link.addEventListener("click", (e) => {
+		if (link.id === "nav-owner-panel") {
+			e.preventDefault();
+			const tokenQ = "?token=" + encodeURIComponent(authToken || "");
+			location.href = "/panel/" + tokenQ;
+			return;
+		}
 		e.preventDefault();
 		navigateToPage(link.dataset.page);
 	});
 });
+
+function handleHashNavigation() {
+	if (location.hash) {
+		const target = location.hash.replace("#", "").trim();
+		if (target) {
+			navigateToPage(target);
+		}
+	}
+}
+window.addEventListener("hashchange", handleHashNavigation);
+if (document.readyState === "complete" || document.readyState === "interactive") {
+	setTimeout(handleHashNavigation, 100);
+} else {
+	window.addEventListener("DOMContentLoaded", () => setTimeout(handleHashNavigation, 100));
+}
 
 // ============================================================
 // Keyboard Shortcuts

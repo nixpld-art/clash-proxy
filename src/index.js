@@ -110,7 +110,7 @@ import staffRoutes from "./routes/staff.js";
 import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys, dbg } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
-import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken } from "./auth-utils.js";
+import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken, isUserBanned } from "./auth-utils.js";
 import { hasPrivilege, userRank } from "./ranks.js";
 
 // ============================================================
@@ -241,14 +241,14 @@ fastify.post("/api/panel/notify", async (req, reply) => {
 
 fastify.post("/api/panel/kick", async (req, reply) => {
 	if (!requireLocal(req, reply)) return;
-	const { username, userId, reason } = req.body || {};
+	const { username, userId, reason, banned } = req.body || {};
 	let id = parseInt(userId, 10);
 	if (!Number.isInteger(id) && username) {
 		const row = db.prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)").get(String(username));
 		id = row?.id;
 	}
 	if (!Number.isInteger(id)) return reply.code(400).send({ error: "User not found" });
-	const ok = kickUser(id, String(reason || "Disconnected by an administrator").slice(0, 200));
+	const ok = kickUser(id, String(reason || "Disconnected by an administrator").slice(0, 200), !!banned);
 	return { ok, kicked: ok };
 });
 
@@ -944,7 +944,10 @@ fastify.get("/api/me/ranks", async (req, reply) => {
 	// Role from the DATABASE so the rank chip always matches the panel.
 	const dbUser = freshDbUser(tokenUser.id);
 	if (!dbUser) return reply.code(401).send({ error: "Account no longer exists on this server." });
-	const user = { ...tokenUser, role: dbUser.role, username: dbUser.username };
+	if (isUserBanned(dbUser)) {
+		return reply.code(403).send({ error: "Account suspended", banned: true, bannedUntil: dbUser.banned_until });
+	}
+	const user = { ...tokenUser, role: dbUser.role, username: dbUser.username, custom_tag: dbUser.custom_tag };
 	const r = userRank(user) || { rankName: null, privileges: [] };
 	const isOwner = isPrivilegedUsername(user.username);
 	const showOwner = isOwner || isOwnerMode();

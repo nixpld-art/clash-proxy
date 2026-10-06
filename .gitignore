@@ -25,3 +25,5 @@ scratch-test.mjs
 data/.owner-key
 scratch_*
 snap_*.png
+
+games_archive_backup/

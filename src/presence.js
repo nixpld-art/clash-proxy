@@ -45,8 +45,15 @@ function formatRemaining(ms) {
 function moderateOutgoing(userId, content) {
 	try {
 		const cfg = getChatConfig();
-		const user = db.prepare("SELECT role, muted, muted_until FROM users WHERE id = ?").get(userId);
-		const staff = user?.role === "admin";
+		const user = db.prepare("SELECT role, muted, muted_until, banned, banned_until FROM users WHERE id = ?").get(userId);
+		if (user?.banned) {
+			if (user.banned_until && Date.now() >= user.banned_until) {
+				db.prepare("UPDATE users SET banned = 0, banned_until = NULL WHERE id = ?").run(userId);
+			} else {
+				return "Your account is currently suspended.";
+			}
+		}
+		const staff = user?.role === "admin" || user?.role === "staff";
 		if (user?.muted) {
 			if (user.muted_until && Date.now() >= user.muted_until) {
 				// Timed-out expired — auto-lift
@@ -245,12 +252,32 @@ presenceWss.on("connection", (ws, req) => {
 
 				currentUserId = decoded.id;
 
+				const user = db.prepare("SELECT settings_json, banned, banned_until FROM users WHERE id = ?").get(currentUserId);
+				if (!user) {
+					ws.send(JSON.stringify({ type: "error", message: "Account not found." }));
+					ws.close(4001, "not_found");
+					return;
+				}
+
+				if (user.banned) {
+					if (user.banned_until && Date.now() >= user.banned_until) {
+						db.prepare("UPDATE users SET banned = 0, banned_until = NULL WHERE id = ?").run(currentUserId);
+						user.banned = 0;
+					} else {
+						const banMsg = user.banned_until
+							? `Account suspended for another ${formatRemaining(user.banned_until - Date.now())}.`
+							: "Account permanently suspended by network administrators.";
+						ws.send(JSON.stringify({ type: "kicked", message: banMsg, banned: true }));
+						ws.close(4003, "banned");
+						return;
+					}
+				}
+
 				if (!activeSockets.has(currentUserId)) {
 					activeSockets.set(currentUserId, new Set());
 				}
 				activeSockets.get(currentUserId).add(ws);
 
-				const user = db.prepare("SELECT settings_json FROM users WHERE id = ?").get(currentUserId);
 				const settings = JSON.parse(user?.settings_json || "{}");
 				const ghostMode = !!settings.ghostMode;
 
@@ -547,13 +574,13 @@ export function broadcastSystemAnnouncement(message, senderUsername = "TED") {
 // ============================================================
 // Owner Panel hooks: kick + live presence stats
 // ============================================================
-export function kickUser(userId, reason = "Disconnected by an administrator") {
+export function kickUser(userId, reason = "Disconnected by an administrator", isBan = false) {
 	const sockets = activeSockets.get(Number(userId));
 	if (!sockets || sockets.size === 0) return false;
 	for (const ws of [...sockets]) {
 		try {
-			ws.send(JSON.stringify({ type: "kicked", message: reason }));
-			ws.close(4001, "kicked");
+			ws.send(JSON.stringify({ type: "kicked", message: reason, banned: !!isBan }));
+			ws.close(isBan ? 4003 : 4001, isBan ? "banned" : "kicked");
 		} catch {}
 	}
 	try {

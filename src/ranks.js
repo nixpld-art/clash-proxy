@@ -63,15 +63,37 @@ export function userRank(user) {
 		};
 	}
 	const ranks = readRanks();
-	const a = (ranks.assignments || {})[String(user.id)] || null;
-	if (!a || !a.username) return { rankName: null, privileges: [], presetId: null, isOwner: false };
-	if (String(user.username || "").toLowerCase() !== String(a.username).toLowerCase()) {
+	let a = (ranks.assignments || {})[String(user.id)] || null;
+	if (!a) {
+		const targetLower = String(user.username || "").toLowerCase();
+		for (const [uid, assign] of Object.entries(ranks.assignments || {})) {
+			if (assign && assign.username && String(assign.username).toLowerCase() === targetLower) {
+				a = assign;
+				break;
+			}
+		}
+	}
+
+	if (!a) {
+		if (user.role === "staff" || user.role === "admin" || (user.custom_tag && user.custom_tag.trim())) {
+			const defaultPrivs = [
+				"mod-kick", "mod-mute", "mod-warn", "mod-chat-clear",
+				"mod-reports", "chat-color", "member-inspector", "game-testing"
+			];
+			return {
+				rankName: user.custom_tag || (user.role === "admin" ? "Admin" : "Staff Member"),
+				privileges: defaultPrivs,
+				presetId: null,
+				isOwner: false
+			};
+		}
 		return { rankName: null, privileges: [], presetId: null, isOwner: false };
 	}
+
 	const preset = a && a.presetId ? (ranks.presets || []).find((p) => p.id === a.presetId) : null;
 	const privileges = [...new Set([...(a.privileges || []), ...(preset?.privileges || [])])];
 	return {
-		rankName: a?.rankName || preset?.name || null,
+		rankName: a?.rankName || preset?.name || user.custom_tag || "Staff Member",
 		privileges,
 		presetId: a?.presetId || null,
 		isOwner: false
