@@ -4236,6 +4236,15 @@ function launchAboutBlankCloak(customDecoy) {
 	doc.body.style.overflow = "hidden";
 	doc.body.appendChild(iframe);
 
+	// Black out original screen before replacing with decoy (Noblocc style)
+	document.documentElement.style.background = "#000000";
+	document.documentElement.style.color = "#000000";
+	if (document.body) {
+		document.body.style.background = "#000000";
+		document.body.style.color = "#000000";
+		document.body.innerHTML = "";
+	}
+
 	// Immediately replace the original tab with the decoy site!
 	window.location.replace(decoy);
 }
@@ -4253,7 +4262,7 @@ function initAboutBlankCloakSettings() {
 			showToast({
 				icon: "⚡",
 				title: "Auto-Cloak",
-				message: e.target.checked ? "Auto About:Blank enabled for future sessions." : "Auto About:Blank disabled."
+				message: e.target.checked ? "Auto About:Blank enabled. On next open, original tab blackouts and launches cloaked tab." : "Auto About:Blank disabled."
 			});
 		});
 	}
@@ -4278,7 +4287,7 @@ function initAboutBlankCloakSettings() {
 		});
 	});
 
-	// Check Auto About:Blank on startup
+	// Check Auto About:Blank fallback if pre-paint popup was deferred
 	try {
 		const autoCloak = localStorage.getItem("clash_aboutblank_auto") === "true";
 		if (autoCloak && window.self === window.top) {

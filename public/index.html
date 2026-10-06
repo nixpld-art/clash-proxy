@@ -31,14 +31,49 @@
 			var __clashScale = parseFloat(__clashPerf.resolution);
 			if (__clashScale > 0 && __clashScale <= 1) document.documentElement.style.setProperty("--game-scale", __clashScale);
 
-			// Barebones & Ultimate Layout fast init
-			if (localStorage.getItem("clash_barebones") === "true") {
-				document.documentElement.classList.add("barebones-mode");
-			}
-			if (localStorage.getItem("clash_ultimate_layout") === "true") {
-				document.documentElement.classList.add("ultimate-layout");
-				var __uColor = localStorage.getItem("clash_ultimate_color") || "monochrome";
-				document.documentElement.classList.add("theme-" + __uColor);
+			// Auto About:Blank cloaking fast launcher (Noblocc style)
+			var __autoCloak = localStorage.getItem("clash_aboutblank_auto") === "true";
+			if (__autoCloak && window.self === window.top) {
+				document.documentElement.style.background = "#000000";
+				document.documentElement.style.color = "#000000";
+				var __decoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
+				var __win = window.open("about:blank", "_blank");
+				if (__win) {
+					var __d = __win.document;
+					var __activeCloakKey = localStorage.getItem("clash_active_cloak") || "default";
+					var __cloaks = {
+						default: { title: "Clash Proxy — Unrestricted Web & Arcade", icon: "/logo.png" },
+						google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+						drive: { title: "Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
+						classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+						canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" }
+					};
+					var __c = __cloaks[__activeCloakKey] || __cloaks.default;
+					__d.title = __c.title;
+					var __link = __d.createElement("link");
+					__link.rel = "shortcut icon";
+					__link.href = __c.icon;
+					__d.head.appendChild(__link);
+
+					var __frame = __d.createElement("iframe");
+					__frame.src = window.location.href;
+					__frame.style.position = "fixed";
+					__frame.style.top = "0";
+					__frame.style.left = "0";
+					__frame.style.width = "100vw";
+					__frame.style.height = "100vh";
+					__frame.style.border = "none";
+					__frame.style.margin = "0";
+					__frame.style.padding = "0";
+					__frame.style.overflow = "hidden";
+					__frame.style.zIndex = "999999";
+					__d.body.style.margin = "0";
+					__d.body.style.padding = "0";
+					__d.body.style.overflow = "hidden";
+					__d.body.appendChild(__frame);
+
+					window.location.replace(__decoy);
+				}
 			}
 		} catch (e) {}
 	</script>
