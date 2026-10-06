@@ -5005,11 +5005,16 @@ function navigateToPage(targetPage) {
 		btn.classList.toggle("active", btn.dataset.page === targetPage);
 	});
 
+	// Sync active state to top quick-access pin bar pills
+	document.querySelectorAll("#quick-access-pins-list .quick-access-pin-pill").forEach((pill) => {
+		pill.classList.toggle("active", pill.dataset.page === targetPage);
+	});
+
 	pages.forEach((p) => p.classList.remove("active"));
 	const page = document.getElementById(`page-${targetPage}`);
 	if (page) page.classList.add("active");
 
-	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
+	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "soundboard" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
 		framesContainer.classList.add("hidden");
 		browserChrome.classList.add("hidden");
 		mainContent.classList.remove("hidden");
@@ -5025,6 +5030,7 @@ function navigateToPage(targetPage) {
 		loadChatConversations();
 	}
 	if (targetPage === "bazaar") loadBazaarShop();
+	if (targetPage === "soundboard") initSoundboard();
 	if (targetPage === "staff-panel") loadStaffPanel();
 
 	closeSidebar();
@@ -5972,4 +5978,434 @@ if (staffToggleGlowBtn) {
 		}
 	});
 }
+
+// ============================================================
+// 📌 Horizontal Top Quick-Access Pin Bar (Minimalist Aesthetic)
+// ============================================================
+const QUICK_ACCESS_STORAGE_KEY = "clash_quick_access_pins";
+const DEFAULT_PINNED_TABS = ["proxy", "games", "soundboard", "settings", "chat", "bazaar"];
+
+const ALL_NAV_TABS = [
+	{ id: "proxy", title: "Proxy", icon: "🌐" },
+	{ id: "games", title: "Games", icon: "🎮" },
+	{ id: "soundboard", title: "Soundboard", icon: "🔊" },
+	{ id: "settings", title: "Settings", icon: "⚙️" },
+	{ id: "chat", title: "Chat", icon: "💬" },
+	{ id: "bazaar", title: "Bazaar", icon: "🛍️" },
+	{ id: "lounge", title: "Lounge", icon: "🕹️" },
+	{ id: "leaderboard", title: "Leaderboard", icon: "🏆" },
+	{ id: "profile", title: "Profile", icon: "👤" },
+	{ id: "friends", title: "Friends", icon: "👥" },
+	{ id: "staff-panel", title: "Staff", icon: "🛡️", staffOnly: true }
+];
+
+function currentUserHasStaffAccess() {
+	return !!(window.__myRankCache && window.__myRankCache.hasStaffPanel);
+}
+
+function getPinnedTabs() {
+	try {
+		const raw = localStorage.getItem(QUICK_ACCESS_STORAGE_KEY);
+		if (raw) {
+			const parsed = JSON.parse(raw);
+			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+		}
+	} catch {}
+	return [...DEFAULT_PINNED_TABS];
+}
+
+function savePinnedTabs(tabs) {
+	try {
+		localStorage.setItem(QUICK_ACCESS_STORAGE_KEY, JSON.stringify(tabs));
+	} catch {}
+	renderQuickAccessBar();
+}
+
+function togglePinTab(tabId) {
+	let current = getPinnedTabs();
+	if (current.includes(tabId)) {
+		current = current.filter(id => id !== tabId);
+		if (current.length === 0) current = ["proxy"]; // keep at least 1
+	} else {
+		current.push(tabId);
+	}
+	savePinnedTabs(current);
+}
+
+function renderQuickAccessBar() {
+	const pinsContainer = document.getElementById("quick-access-pins-list");
+	if (!pinsContainer) return;
+	pinsContainer.innerHTML = "";
+
+	const pinned = getPinnedTabs();
+	const activePage = document.querySelector(".page.active")?.id?.replace("page-", "") || "proxy";
+	const isStaff = currentUserHasStaffAccess();
+
+	pinned.forEach(id => {
+		const tab = ALL_NAV_TABS.find(t => t.id === id);
+		if (!tab) return;
+		if (tab.staffOnly && !isStaff) return;
+
+		const pill = document.createElement("button");
+		pill.className = "quick-access-pin-pill" + (activePage === id ? " active" : "");
+		pill.dataset.page = id;
+		pill.title = `Switch to ${tab.title}`;
+		pill.innerHTML = `
+			<span class="quick-access-pin-icon">${tab.icon}</span>
+			<span class="quick-access-pin-label">${tab.title}</span>
+			<span class="unpin-cross" title="Unpin ${tab.title}">&times;</span>
+		`;
+
+		pill.addEventListener("click", (e) => {
+			if (e.target.classList.contains("unpin-cross")) {
+				e.stopPropagation();
+				togglePinTab(id);
+				return;
+			}
+			navigateToPage(id);
+		});
+
+		pinsContainer.appendChild(pill);
+	});
+
+	renderQuickAccessPopoverList();
+}
+
+function renderQuickAccessPopoverList() {
+	const listEl = document.getElementById("quick-access-items-toggle");
+	if (!listEl) return;
+	listEl.innerHTML = "";
+
+	const pinned = getPinnedTabs();
+	const isStaff = currentUserHasStaffAccess();
+
+	ALL_NAV_TABS.forEach(tab => {
+		if (tab.staffOnly && !isStaff) return;
+		const isPinned = pinned.includes(tab.id);
+
+		const row = document.createElement("div");
+		row.className = "quick-access-item-row";
+		row.innerHTML = `
+			<div class="quick-access-item-info">
+				<span>${tab.icon}</span>
+				<span>${tab.title}</span>
+			</div>
+			<input type="checkbox" class="quick-access-item-checkbox" ${isPinned ? "checked" : ""} />
+		`;
+
+		const cb = row.querySelector(".quick-access-item-checkbox");
+		row.addEventListener("click", (e) => {
+			if (e.target !== cb) cb.checked = !cb.checked;
+			togglePinTab(tab.id);
+		});
+
+		listEl.appendChild(row);
+	});
+}
+
+function initQuickAccessBar() {
+	const manageBtn = document.getElementById("quick-access-manage-btn");
+	const popover = document.getElementById("quick-access-popover");
+	const closeBtn = document.getElementById("quick-access-popover-close");
+
+	if (manageBtn && popover) {
+		manageBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
+			popover.classList.toggle("hidden");
+			if (!popover.classList.contains("hidden")) {
+				renderQuickAccessPopoverList();
+			}
+		});
+
+		if (closeBtn) {
+			closeBtn.addEventListener("click", (e) => {
+				e.stopPropagation();
+				popover.classList.add("hidden");
+			});
+		}
+
+		document.addEventListener("click", (e) => {
+			if (!popover.contains(e.target) && !manageBtn.contains(e.target)) {
+				popover.classList.add("hidden");
+			}
+		});
+	}
+
+	renderQuickAccessBar();
+}
+
+// ============================================================
+// 🔊 Meme & Gaming Soundboard (MyInstants Powered)
+// ============================================================
+let soundboardCatalog = [];
+let soundboardCategories = [];
+let currentSoundboardCategory = "all";
+let soundboardSearchTerm = "";
+const soundboardActiveAudios = new Map();
+const soundboardFavKey = "clash_soundboard_favorites";
+const soundboardVolKey = "clash_soundboard_volume";
+
+function getSoundboardFavorites() {
+	try {
+		return new Set(JSON.parse(localStorage.getItem(soundboardFavKey) || "[]"));
+	} catch {
+		return new Set();
+	}
+}
+
+function toggleSoundboardFavorite(soundId) {
+	const favs = getSoundboardFavorites();
+	if (favs.has(soundId)) favs.delete(soundId);
+	else favs.add(soundId);
+	try {
+		localStorage.setItem(soundboardFavKey, JSON.stringify([...favs]));
+	} catch {}
+	renderSoundboardGrid();
+}
+
+function getSoundboardVolume() {
+	try {
+		const saved = localStorage.getItem(soundboardVolKey);
+		if (saved !== null) return Math.max(0, Math.min(1, parseFloat(saved)));
+	} catch {}
+	return 0.85;
+}
+
+function setSoundboardVolume(vol) {
+	vol = Math.max(0, Math.min(1, vol));
+	try {
+		localStorage.setItem(soundboardVolKey, vol.toString());
+	} catch {}
+	soundboardActiveAudios.forEach(audio => {
+		try { audio.volume = vol; } catch {}
+	});
+	const label = document.getElementById("soundboard-volume-label");
+	if (label) label.textContent = `${Math.round(vol * 100)}%`;
+	const icon = document.getElementById("soundboard-vol-icon");
+	if (icon) {
+		icon.textContent = vol === 0 ? "🔇" : vol < 0.4 ? "🔉" : "🔊";
+	}
+}
+
+function stopAllSoundboardAudios() {
+	soundboardActiveAudios.forEach((audio, id) => {
+		try {
+			audio.pause();
+			audio.currentTime = 0;
+		} catch {}
+	});
+	soundboardActiveAudios.clear();
+	document.querySelectorAll(".sound-pad.playing").forEach(pad => pad.classList.remove("playing"));
+}
+
+function playSoundboardAudio(soundId, customUrl) {
+	if (!soundId && !customUrl) return;
+
+	// Reset if already playing this sound
+	const existing = soundboardActiveAudios.get(soundId);
+	if (existing) {
+		try {
+			existing.pause();
+			existing.currentTime = 0;
+		} catch {}
+		soundboardActiveAudios.delete(soundId);
+	}
+
+	const audioSrc = customUrl || `/api/soundboard/audio/${encodeURIComponent(soundId)}`;
+	const audio = new Audio(audioSrc);
+	audio.volume = getSoundboardVolume();
+
+	const pad = document.querySelector(`.sound-pad[data-sound-id="${soundId}"]`);
+	if (pad) pad.classList.add("playing");
+
+	soundboardActiveAudios.set(soundId, audio);
+
+	audio.onended = () => {
+		if (pad) pad.classList.remove("playing");
+		soundboardActiveAudios.delete(soundId);
+	};
+
+	audio.onerror = () => {
+		if (pad) pad.classList.remove("playing");
+		soundboardActiveAudios.delete(soundId);
+		if (typeof showToast === "function") {
+			showToast(`Failed to load audio for '${soundId}'`, "error");
+		}
+	};
+
+	audio.play().catch(err => {
+		if (pad) pad.classList.remove("playing");
+		soundboardActiveAudios.delete(soundId);
+		console.warn("Audio playback prevented:", err);
+	});
+}
+
+async function loadSoundboardCatalog() {
+	try {
+		const res = await fetch("/api/soundboard/sounds");
+		if (!res.ok) throw new Error("Could not load soundboard");
+		const data = await res.json();
+		soundboardCatalog = data.sounds || [];
+		soundboardCategories = data.categories || [];
+		renderSoundboardGrid();
+	} catch (err) {
+		console.error("Soundboard load error:", err);
+	}
+}
+
+function renderSoundboardGrid() {
+	const grid = document.getElementById("soundboard-grid");
+	const emptyState = document.getElementById("soundboard-empty-state");
+	if (!grid) return;
+
+	grid.innerHTML = "";
+	const favs = getSoundboardFavorites();
+	const q = soundboardSearchTerm.trim().toLowerCase();
+
+	const filtered = soundboardCatalog.filter(sound => {
+		if (currentSoundboardCategory === "favorites") {
+			if (!favs.has(sound.id)) return false;
+		} else if (currentSoundboardCategory !== "all") {
+			if (sound.category !== currentSoundboardCategory) return false;
+		}
+		if (q) {
+			const inTitle = sound.title.toLowerCase().includes(q);
+			const inId = sound.id.toLowerCase().includes(q);
+			const inCat = sound.category.toLowerCase().includes(q);
+			if (!inTitle && !inId && !inCat) return false;
+		}
+		return true;
+	});
+
+	if (filtered.length === 0) {
+		grid.classList.add("hidden");
+		if (emptyState) emptyState.classList.remove("hidden");
+		return;
+	}
+
+	grid.classList.remove("hidden");
+	if (emptyState) emptyState.classList.add("hidden");
+
+	filtered.forEach(sound => {
+		const isFav = favs.has(sound.id);
+		const isPlaying = soundboardActiveAudios.has(sound.id);
+
+		const pad = document.createElement("div");
+		pad.className = "sound-pad" + (isPlaying ? " playing" : "");
+		pad.dataset.soundId = sound.id;
+		pad.title = `Click to play: ${sound.title}`;
+
+		pad.innerHTML = `
+			<button class="sound-pad-fav ${isFav ? "active" : ""}" title="${isFav ? "Remove from Favorites" : "Add to Favorites"}">★</button>
+			<div class="sound-pad-icon">${sound.icon || "🔊"}</div>
+			<div class="sound-pad-title">${sound.title}</div>
+			<div class="sound-pad-cat">${sound.category}</div>
+			<div class="sound-pad-play-indicator"></div>
+		`;
+
+		pad.querySelector(".sound-pad-fav").addEventListener("click", (e) => {
+			e.stopPropagation();
+			toggleSoundboardFavorite(sound.id);
+		});
+
+		pad.addEventListener("click", () => {
+			playSoundboardAudio(sound.id);
+		});
+
+		grid.appendChild(pad);
+	});
+}
+
+let soundboardInitialized = false;
+function initSoundboard() {
+	if (soundboardInitialized) return;
+	soundboardInitialized = true;
+
+	const searchInput = document.getElementById("soundboard-search-input");
+	const clearBtn = document.getElementById("soundboard-search-clear");
+	const stopAllBtn = document.getElementById("soundboard-stop-all-btn");
+	const volSlider = document.getElementById("soundboard-volume-slider");
+	const customInput = document.getElementById("soundboard-custom-input");
+	const customPlayBtn = document.getElementById("soundboard-custom-play-btn");
+
+	// Master volume
+	const vol = getSoundboardVolume();
+	if (volSlider) {
+		volSlider.value = Math.round(vol * 100);
+		setSoundboardVolume(vol);
+		volSlider.addEventListener("input", (e) => {
+			setSoundboardVolume(parseFloat(e.target.value) / 100);
+		});
+	}
+
+	if (stopAllBtn) {
+		stopAllBtn.addEventListener("click", stopAllSoundboardAudios);
+	}
+
+	if (searchInput) {
+		searchInput.addEventListener("input", (e) => {
+			soundboardSearchTerm = e.target.value;
+			if (clearBtn) clearBtn.classList.toggle("hidden", !e.target.value);
+			renderSoundboardGrid();
+		});
+	}
+
+	if (clearBtn) {
+		clearBtn.addEventListener("click", () => {
+			if (searchInput) {
+				searchInput.value = "";
+				soundboardSearchTerm = "";
+				clearBtn.classList.add("hidden");
+				renderSoundboardGrid();
+				searchInput.focus();
+			}
+		});
+	}
+
+	// Categories
+	const catBtns = document.querySelectorAll(".soundboard-cat-btn");
+	catBtns.forEach(btn => {
+		btn.addEventListener("click", () => {
+			catBtns.forEach(b => b.classList.remove("active"));
+			btn.classList.add("active");
+			currentSoundboardCategory = btn.dataset.cat || "all";
+			renderSoundboardGrid();
+		});
+	});
+
+	// Custom sound fetcher
+	if (customPlayBtn && customInput) {
+		const triggerCustom = () => {
+			let val = customInput.value.trim();
+			if (!val) return;
+			val = val.replace(/^https?:\/\/www\.myinstants\.com\/en\/instant\//i, "");
+			val = val.replace(/^https?:\/\/www\.myinstants\.com\/media\/sounds\//i, "");
+			val = val.replace(/\.mp3$/i, "").replace(/\/$/, "");
+			val = val.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+			if (val) {
+				playSoundboardAudio(val);
+				if (typeof showToast === "function") {
+					showToast(`Playing '${val}' from MyInstants...`, "info");
+				}
+			}
+		};
+		customPlayBtn.addEventListener("click", triggerCustom);
+		customInput.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				triggerCustom();
+			}
+		});
+	}
+
+	loadSoundboardCatalog();
+}
+
+// Automatically initialize Top Quick-Access Bar on startup
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", initQuickAccessBar);
+} else {
+	initQuickAccessBar();
+}
+
 

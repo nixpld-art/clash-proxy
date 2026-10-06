@@ -20,7 +20,7 @@
 	<script src="/controller/controller.api.js"></script>
 
 	<!-- Styles -->
-	<link rel="stylesheet" href="styles.css?v=3" />
+	<link rel="stylesheet" href="styles.css?v=4" />
 
 	<!-- Pre-paint Performance & Layout Initializer -->
 	<script>
@@ -127,7 +127,7 @@
 	<script src="shield.js?v=30" defer></script>
 	<script src="particles.js?v=32" defer></script>
 	<script src="ultimate-bg.js?v=1" defer></script>
-	<script src="app.js?v=60" defer></script>
+	<script src="app.js?v=61" defer></script>
 	<script src="clash-ai.js?v=1" defer></script>
 </head>
 
@@ -234,6 +234,17 @@
 				</span>
 				<span>Clash Lounge</span>
 				<span id="nav-lounge-badge" class="badge lounge-badge">🎮 LOUNGE</span>
+			</a>
+
+			<a href="#" id="nav-soundboard" class="sidebar-link" data-page="soundboard">
+				<span class="sidebar-icon">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+						<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+					</svg>
+				</span>
+				<span>Soundboard</span>
+				<span id="nav-soundboard-badge" class="badge" style="background:rgba(255,107,129,0.2);border:1px solid #ff6b81;color:#ff6b81;font-size:0.68rem;padding:2px 7px;border-radius:12px;">🔊 MEMES</span>
 			</a>
 
 			<a href="#" id="nav-settings" class="sidebar-link" data-page="settings">
@@ -551,6 +562,12 @@
 						<path d="M16 10a4 4 0 0 1-8 0"></path>
 					</svg>
 				</button>
+				<button class="retro-arcade-btn retro-btn-soundboard" data-page="soundboard" title="Meme Soundboard" aria-label="Soundboard">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+						<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+					</svg>
+				</button>
 				<button class="retro-arcade-btn retro-btn-staff" id="retro-btn-staff" data-page="staff-panel" title="Staff Panel" aria-label="Staff Panel" style="display:none">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -571,6 +588,29 @@
 				<span></span>
 				<span></span>
 			</button>
+
+			<!-- Top Horizontal Quick-Access Pin Bar (Minimalist aesthetic) -->
+			<div id="top-quick-access-bar" class="top-quick-access-bar">
+				<div id="quick-access-pins-list" class="quick-access-pins-list">
+					<!-- Pinned tabs rendered dynamically -->
+				</div>
+				<button id="quick-access-manage-btn" class="quick-access-manage-btn" title="Customize pinned tabs" aria-label="Pin tabs">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="12" y1="5" x2="12" y2="19"></line>
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+					</svg>
+					<span class="manage-text">Pin</span>
+				</button>
+				<!-- Manage Popover -->
+				<div id="quick-access-popover" class="quick-access-popover hidden">
+					<div class="quick-access-popover-header">
+						<span>📌 Pin Tabs to Top Bar</span>
+						<button id="quick-access-popover-close" class="quick-access-popover-close">&times;</button>
+					</div>
+					<div class="quick-access-popover-desc">Toggle tabs to pin to the top bar:</div>
+					<div id="quick-access-items-toggle" class="quick-access-items-toggle"></div>
+				</div>
+			</div>
 
 			<div class="top-bar-spacer"></div>
 
@@ -1726,6 +1766,76 @@
 							<div style="color:#94a3b8; font-size:0.88rem; padding: 12px; text-align: center;">Loading audit logs...</div>
 						</div>
 					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     ⚡ Soundboard (MyInstants Meme & Gaming FX)
+		     ============================================================ -->
+		<section id="page-soundboard" class="page">
+			<div class="soundboard-container">
+				<!-- Header with title, volume control & action controls -->
+				<div class="soundboard-header">
+					<div class="soundboard-header-left">
+						<div class="soundboard-badge">🔊 MYINSTANTS AUDIO FX</div>
+						<h1 class="soundboard-title">⚡ Meme Soundboard</h1>
+						<p class="soundboard-subtitle">Instant meme & gaming audio effects powered by MyInstants. Streamed safely through Clash Proxy.</p>
+					</div>
+					<div class="soundboard-header-right">
+						<div class="soundboard-master-vol">
+							<span class="soundboard-vol-icon" id="soundboard-vol-icon">🔊</span>
+							<input type="range" id="soundboard-volume-slider" min="0" max="100" value="85" class="soundboard-slider" title="Master Soundboard Volume" />
+							<span id="soundboard-volume-label" class="soundboard-vol-val">85%</span>
+						</div>
+						<button id="soundboard-stop-all-btn" class="soundboard-btn-stop" title="Stop all playing audio">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+								<rect x="5" y="5" width="14" height="14" rx="2"></rect>
+							</svg>
+							<span>Stop All</span>
+						</button>
+					</div>
+				</div>
+
+				<!-- Search, Categories & Filter Bar -->
+				<div class="soundboard-controls-bar">
+					<div class="soundboard-search-wrapper">
+						<svg class="soundboard-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"></circle>
+							<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+						</svg>
+						<input type="text" id="soundboard-search-input" class="soundboard-search-input" placeholder="Search 65+ sounds (e.g. Vine boom, Metal pipe, OOF, Discord, Bruh)..." autocomplete="off" spellcheck="false" />
+						<button id="soundboard-search-clear" class="soundboard-search-clear hidden">&times;</button>
+					</div>
+
+					<div class="soundboard-categories" id="soundboard-categories">
+						<button class="soundboard-cat-btn active" data-cat="all">🎵 All</button>
+						<button class="soundboard-cat-btn" data-cat="favorites">⭐ Favorites</button>
+						<button class="soundboard-cat-btn" data-cat="memes">🔥 Memes</button>
+						<button class="soundboard-cat-btn" data-cat="gaming">🎮 Gaming</button>
+						<button class="soundboard-cat-btn" data-cat="reactions">😂 Reactions</button>
+						<button class="soundboard-cat-btn" data-cat="anime">✨ Anime</button>
+						<button class="soundboard-cat-btn" data-cat="effects">🔊 Sound FX</button>
+					</div>
+				</div>
+
+				<!-- Custom MyInstants Sound Streamer Bar -->
+				<div class="soundboard-custom-bar">
+					<span class="custom-bar-tag">⚡ MYINSTANTS FETCHER</span>
+					<input type="text" id="soundboard-custom-input" class="soundboard-custom-input" placeholder="Play any MyInstants sound name (e.g. 'vine-boom', 'oof', 'metal-pipe')..." />
+					<button id="soundboard-custom-play-btn" class="soundboard-btn-primary">▶ Play Sound</button>
+				</div>
+
+				<!-- Soundboard Grid -->
+				<div id="soundboard-grid" class="soundboard-grid">
+					<!-- Dynamically rendered sound pads -->
+				</div>
+
+				<!-- Empty State (when search returns 0) -->
+				<div id="soundboard-empty-state" class="soundboard-empty-state hidden">
+					<div class="empty-icon">🔍</div>
+					<h3>No sound effects found</h3>
+					<p>Try searching for a different meme or clear the search filter.</p>
 				</div>
 			</div>
 		</section>

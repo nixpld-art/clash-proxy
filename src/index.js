@@ -107,6 +107,7 @@ import loungeRoutes from "./routes/lounge.js";
 import aiRoutes from "./routes/ai.js";
 import bazaarRoutes from "./routes/bazaar.js";
 import staffRoutes from "./routes/staff.js";
+import soundboardRoutes from "./routes/soundboard.js";
 import classicRoutes, { classicUpgrade, resolveClassicRedirect, resolveStrippedRedirect, classicClientKeys, dbg } from "./classic.js";
 import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
@@ -180,6 +181,7 @@ fastify.register(loungeRoutes);
 fastify.register(aiRoutes);
 fastify.register(bazaarRoutes);
 fastify.register(staffRoutes);
+fastify.register(soundboardRoutes);
 // Classic mode — Service-Worker-free proxy engine (/classic/<url>)
 fastify.register(classicRoutes);
 

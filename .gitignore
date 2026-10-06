@@ -9,6 +9,7 @@ sj-v1-backup/
 *.db-shm
 *.db-wal
 data/.jwt-secret
+data/sounds/
 jarvis-key.txt
 clash owner pannel/jarvis-key.txt
 clash owner pannel/backups/
