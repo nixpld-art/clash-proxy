@@ -4270,7 +4270,7 @@ function launchAboutBlankCloak(customDecoy) {
 	doc.head.appendChild(link);
 
 	const iframe = doc.createElement("iframe");
-	iframe.src = window.location.href;
+	iframe.src = window.location.origin + window.location.pathname + "?embedded=1";
 	iframe.style.position = "fixed";
 	iframe.style.top = "0";
 	iframe.style.left = "0";
@@ -4281,10 +4281,13 @@ function launchAboutBlankCloak(customDecoy) {
 	iframe.style.padding = "0";
 	iframe.style.overflow = "hidden";
 	iframe.style.zIndex = "999999";
+	iframe.allow = "autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; microphone; camera; encrypted-media";
+	iframe.allowFullscreen = true;
 
 	doc.body.style.margin = "0";
 	doc.body.style.padding = "0";
 	doc.body.style.overflow = "hidden";
+	doc.body.style.background = "#0b0d14";
 	doc.body.appendChild(iframe);
 
 	// Black out original screen before replacing with decoy (Noblocc style)
@@ -4307,7 +4310,7 @@ function initAboutBlankCloakSettings() {
 	}
 
 	if (settingAboutBlankAuto) {
-		settingAboutBlankAuto.checked = localStorage.getItem("clash_aboutblank_auto") === "true";
+		settingAboutBlankAuto.checked = localStorage.getItem("clash_aboutblank_auto") !== "false";
 		settingAboutBlankAuto.addEventListener("change", (e) => {
 			localStorage.setItem("clash_aboutblank_auto", e.target.checked ? "true" : "false");
 			showToast({
@@ -4337,15 +4340,6 @@ function initAboutBlankCloakSettings() {
 			localStorage.setItem("clash_aboutblank_decoy", url);
 		});
 	});
-
-	// Check Auto About:Blank fallback if pre-paint popup was deferred
-	try {
-		const autoCloak = localStorage.getItem("clash_aboutblank_auto") === "true";
-		if (autoCloak && window.self === window.top) {
-			const decoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
-			launchAboutBlankCloak(decoy);
-		}
-	} catch(e) {}
 }
 
 initAboutBlankCloakSettings();

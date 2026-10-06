@@ -32,47 +32,89 @@
 			if (__clashScale > 0 && __clashScale <= 1) document.documentElement.style.setProperty("--game-scale", __clashScale);
 
 			// Auto About:Blank cloaking fast launcher (Noblocc style)
-			var __autoCloak = localStorage.getItem("clash_aboutblank_auto") === "true";
-			if (__autoCloak && window.self === window.top) {
+			var __isTop = window.self === window.top;
+			var __isEmbedded = window.location.search.indexOf("embedded=1") !== -1;
+			var __hasDirect = window.location.search.indexOf("direct=1") !== -1 || window.location.hash === "#direct";
+			var __autoCloak = localStorage.getItem("clash_aboutblank_auto") !== "false" && !__hasDirect && !__isEmbedded;
+
+			if (__isTop && __autoCloak) {
 				document.documentElement.style.background = "#000000";
-				document.documentElement.style.color = "#000000";
-				var __decoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
-				var __win = window.open("about:blank", "_blank");
-				if (__win) {
-					var __d = __win.document;
-					var __activeCloakKey = localStorage.getItem("clash_active_cloak") || "default";
-					var __cloaks = {
-						default: { title: "Clash Proxy — Unrestricted Web & Arcade", icon: "/logo.png" },
-						google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
-						drive: { title: "Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
-						classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
-						canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" }
+				document.documentElement.style.color = "#ffffff";
+
+				function __doLaunch() {
+					try {
+						var win = window.open("about:blank", "_blank");
+						if (!win || win.closed) return false;
+						var d = win.document;
+						var activeCloakKey = localStorage.getItem("clash_active_cloak") || "classroom";
+						var cloaks = {
+							default: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+							google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+							drive: { title: "Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
+							classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+							canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" }
+						};
+						var c = cloaks[activeCloakKey] || cloaks.classroom;
+						d.title = c.title;
+						var link = d.createElement("link");
+						link.rel = "shortcut icon";
+						link.href = c.icon;
+						d.head.appendChild(link);
+
+						var frame = d.createElement("iframe");
+						frame.src = window.location.origin + window.location.pathname + "?embedded=1";
+						frame.style.position = "fixed";
+						frame.style.top = "0";
+						frame.style.left = "0";
+						frame.style.width = "100vw";
+						frame.style.height = "100vh";
+						frame.style.border = "none";
+						frame.style.margin = "0";
+						frame.style.padding = "0";
+						frame.style.overflow = "hidden";
+						frame.style.zIndex = "999999";
+						frame.allow = "autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; microphone; camera; encrypted-media";
+						frame.allowFullscreen = true;
+						d.body.style.margin = "0";
+						d.body.style.padding = "0";
+						d.body.style.overflow = "hidden";
+						d.body.style.background = "#0b0d14";
+						d.body.appendChild(frame);
+
+						var decoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
+						window.location.replace(decoy);
+						return true;
+					} catch (e) {
+						return false;
+					}
+				}
+
+				var __launched = __doLaunch();
+				if (!__launched) {
+					var __injectCover = function() {
+						if (document.getElementById("noblocc-cover")) return;
+						var cover = document.createElement("div");
+						cover.id = "noblocc-cover";
+						cover.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;background:#000000;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;";
+						cover.innerHTML = '<div style="background:#131722;border:1px solid rgba(255,255,255,0.18);color:#ffffff;padding:14px 28px;border-radius:999px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.85);letter-spacing:0.3px;"><span>⚡</span> Click anywhere to launch Clash Proxy</div><div style="color:rgba(255,255,255,0.45);font-size:12px;margin-top:12px;">Auto-opening in About:Blank &bull; Original tab switches to Classroom</div>';
+						var __trigger = function(ev) {
+							if (ev) ev.stopPropagation();
+							if (__doLaunch()) {
+								var decoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
+								window.location.replace(decoy);
+							}
+						};
+						cover.addEventListener("click", __trigger);
+						window.addEventListener("click", __trigger);
+						window.addEventListener("keydown", __trigger);
+						if (document.body) document.body.appendChild(cover);
+						else document.addEventListener("DOMContentLoaded", function() { if (document.body) document.body.appendChild(cover); });
 					};
-					var __c = __cloaks[__activeCloakKey] || __cloaks.default;
-					__d.title = __c.title;
-					var __link = __d.createElement("link");
-					__link.rel = "shortcut icon";
-					__link.href = __c.icon;
-					__d.head.appendChild(__link);
-
-					var __frame = __d.createElement("iframe");
-					__frame.src = window.location.href;
-					__frame.style.position = "fixed";
-					__frame.style.top = "0";
-					__frame.style.left = "0";
-					__frame.style.width = "100vw";
-					__frame.style.height = "100vh";
-					__frame.style.border = "none";
-					__frame.style.margin = "0";
-					__frame.style.padding = "0";
-					__frame.style.overflow = "hidden";
-					__frame.style.zIndex = "999999";
-					__d.body.style.margin = "0";
-					__d.body.style.padding = "0";
-					__d.body.style.overflow = "hidden";
-					__d.body.appendChild(__frame);
-
-					window.location.replace(__decoy);
+					if (document.readyState === "loading") {
+						document.addEventListener("DOMContentLoaded", __injectCover);
+					} else {
+						__injectCover();
+					}
 				}
 			}
 		} catch (e) {}
