@@ -1,5 +1,5 @@
 import db from "../db.js";
-import { extractAuthUser, getXpRequiredForLevel, getXpForNextLevel, BADGES, awardAchievement } from "../auth-utils.js";
+import { extractAuthUser, getXpRequiredForLevel, getXpForNextLevel, BADGES, awardAchievement, generateToken, isPrivilegedUsername } from "../auth-utils.js";
 
 export default async function profileRoutes(fastify) {
 	// Public profile view
@@ -44,15 +44,36 @@ export default async function profileRoutes(fastify) {
 		};
 	});
 
-	// Update own profile
+	// Update own profile (display name, avatar, bio, settings, and username)
 	fastify.patch("/api/profile", async (req, reply) => {
 		const auth = extractAuthUser(req);
 		if (!auth) return reply.code(401).send({ error: "Unauthorized" });
 
-		const { display_name, avatar_url, bio, settings } = req.body || {};
+		const { username, display_name, avatar_url, bio, settings } = req.body || {};
 
 		const user = db.prepare("SELECT * FROM users WHERE id = ?").get(auth.id);
 		if (!user) return reply.code(404).send({ error: "User not found" });
+
+		let newUsername = user.username;
+		let tokenChanged = false;
+		if (username !== undefined && typeof username === "string") {
+			const cleanUsername = username.trim().toLowerCase();
+			if (cleanUsername !== user.username.toLowerCase()) {
+				if (!/^[a-zA-Z0-9_]{3,20}$/.test(cleanUsername)) {
+					return reply.code(400).send({ error: "Username must be 3-20 letters, numbers, or underscores." });
+				}
+				const reserved = ["admin", "owner", "guest", "anonymous", "system", "moderator", "mod", "clash"];
+				if (reserved.includes(cleanUsername) && !isPrivilegedUsername(user.username)) {
+					return reply.code(400).send({ error: "This username is reserved." });
+				}
+				const existing = db.prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?) AND id != ?").get(cleanUsername, user.id);
+				if (existing) {
+					return reply.code(409).send({ error: "Username is already taken by another user." });
+				}
+				newUsername = cleanUsername;
+				tokenChanged = true;
+			}
+		}
 
 		const newDisplayName = (display_name !== undefined && typeof display_name === "string") ? display_name.trim().slice(0, 30) : user.display_name;
 		const newAvatar = (avatar_url !== undefined && typeof avatar_url === "string") ? avatar_url : user.avatar_url;
@@ -71,11 +92,16 @@ export default async function profileRoutes(fastify) {
 
 		db.prepare(`
 			UPDATE users
-			SET display_name = ?, avatar_url = ?, bio = ?, settings_json = ?
+			SET username = ?, display_name = ?, avatar_url = ?, bio = ?, settings_json = ?
 			WHERE id = ?
-		`).run(newDisplayName, newAvatar, newBio, newSettings, user.id);
+		`).run(newUsername, newDisplayName, newAvatar, newBio, newSettings, user.id);
 
-		const updated = db.prepare("SELECT id, username, display_name, avatar_url, bio, xp, level, streak_days, settings_json FROM users WHERE id = ?").get(user.id);
+		const updated = db.prepare("SELECT id, username, display_name, avatar_url, bio, xp, level, streak_days, settings_json, role, custom_tag FROM users WHERE id = ?").get(user.id);
+
+		let newToken = null;
+		if (tokenChanged) {
+			newToken = generateToken(updated);
+		}
 
 		return {
 			success: true,
@@ -84,7 +110,8 @@ export default async function profileRoutes(fastify) {
 				settings: JSON.parse(updated.settings_json || "{}"),
 				currentLevelXp: getXpRequiredForLevel(updated.level),
 				nextLevelXp: getXpForNextLevel(updated.level)
-			}
+			},
+			token: newToken
 		};
 	});
 

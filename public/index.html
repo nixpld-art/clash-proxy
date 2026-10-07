@@ -127,7 +127,7 @@
 	<script src="shield.js?v=30" defer></script>
 	<script src="particles.js?v=32" defer></script>
 	<script src="ultimate-bg.js?v=1" defer></script>
-	<script src="app.js?v=63" defer></script>
+	<script src="app.js?v=64" defer></script>
 	<script src="clash-ai.js?v=1" defer></script>
 </head>
 
@@ -206,20 +206,6 @@
 				</span>
 				<span>Chat</span>
 				<span id="chat-nav-unread-badge" class="badge chat-nav-unread-badge hidden">0</span>
-			</a>
-
-			<a href="#" id="nav-leaderboard" class="sidebar-link" data-page="leaderboard">
-				<span class="sidebar-icon">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-						<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-						<path d="M4 22h16"></path>
-						<path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"></path>
-						<path d="M18 14.66V17c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-2.34"></path>
-						<path d="M6 4h12a2 2 0 0 1 2 2v7a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2Z"></path>
-					</svg>
-				</span>
-				<span>Leaderboard</span>
 			</a>
 
 			<a href="#" id="nav-lounge" class="sidebar-link" data-page="lounge">
@@ -536,16 +522,6 @@
 						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
 					</svg>
 				</button>
-				<button class="retro-arcade-btn retro-btn-leaderboard" data-page="leaderboard" title="Leaderboard" aria-label="Leaderboard">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-						<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-						<path d="M4 22h16"></path>
-						<path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"></path>
-						<path d="M18 14.66V17c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-2.34"></path>
-						<path d="M6 4h12a2 2 0 0 1 2 2v7a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2Z"></path>
-					</svg>
-				</button>
 				<button class="retro-arcade-btn retro-btn-lounge" data-page="lounge" title="Clash Lounge" aria-label="Lounge">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<rect x="2" y="6" width="20" height="12" rx="4"></rect>
@@ -759,7 +735,10 @@
 							<span id="profile-level-badge" class="level-badge">Lv. 1</span>
 							<span id="profile-rank-title" class="rank-title">Novice Navigator</span>
 						</div>
-						<p id="profile-username-tag" class="profile-tag">@guest</p>
+						<div style="display:inline-flex;align-items:center;gap:6px">
+							<p id="profile-username-tag" class="profile-tag" style="margin:0">@guest</p>
+							<button id="quick-edit-username-btn" class="change-username-btn" title="Change Username" style="background:none;border:none;cursor:pointer;font-size:0.85rem;opacity:0.75;padding:2px 4px;border-radius:4px">✏️</button>
+						</div>
 						<p id="profile-bio" class="profile-bio">Sign in to save your level, XP, friends, and achievements!</p>
 					</div>
 
@@ -863,28 +842,6 @@
 				<div class="friends-section">
 					<h3 class="section-title">Offline (<span id="offline-friends-count">0</span>)</h3>
 					<div id="offline-friends-list" class="friends-list"></div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Leaderboard Section -->
-		<section id="page-leaderboard" class="page">
-			<div class="leaderboard-container">
-				<div class="leaderboard-header">
-					<h1 class="page-title">Global Leaderboard</h1>
-					<p class="page-subtitle">Top ranked Clash Proxy players & navigators ranked by XP</p>
-				</div>
-
-				<div class="leaderboard-card">
-					<div class="leaderboard-table-header">
-						<span class="col-rank">Rank</span>
-						<span class="col-user">User</span>
-						<span class="col-level">Level</span>
-						<span class="col-xp">Total XP</span>
-					</div>
-					<div id="leaderboard-list" class="leaderboard-list">
-						<div class="leaderboard-loading">Loading top rankings...</div>
-					</div>
 				</div>
 			</div>
 		</section>
@@ -1940,6 +1897,12 @@
 						<div class="avatar-option avatar-7" data-avatar="avatar-7"></div>
 						<div class="avatar-option avatar-8" data-avatar="avatar-8"></div>
 					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-username">Username (@handle)</label>
+					<input type="text" id="edit-username" class="form-input" maxlength="20" placeholder="e.g. shadow_ninja" autocomplete="off" />
+					<span class="form-hint" style="font-size: 0.75rem; color: #8892b0; margin-top: 4px; display: block;">Letters, numbers, and underscores (3-20 characters).</span>
 				</div>
 
 				<div class="form-group">

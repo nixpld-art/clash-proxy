@@ -99,9 +99,6 @@ const onlineFriendsList = document.getElementById("online-friends-list");
 const offlineFriendsCount = document.getElementById("offline-friends-count");
 const offlineFriendsList = document.getElementById("offline-friends-list");
 
-// Leaderboard Section Elements
-const leaderboardList = document.getElementById("leaderboard-list");
-
 // Settings Section Elements
 const settingGhostMode = document.getElementById("setting-ghost-mode");
 const cloakBtns = document.querySelectorAll(".cloak-btn");
@@ -206,9 +203,11 @@ const registerErrorMsg = document.getElementById("register-error");
 const profileModal = document.getElementById("profile-modal");
 const profileModalClose = document.getElementById("profile-modal-close");
 const editProfileForm = document.getElementById("edit-profile-form");
+const editUsernameInput = document.getElementById("edit-username");
 const editDisplayNameInput = document.getElementById("edit-display-name");
 const editBioInput = document.getElementById("edit-bio");
 const avatarOptions = document.querySelectorAll(".avatar-option");
+const quickEditUsernameBtn = document.getElementById("quick-edit-username-btn");
 
 // Toast Container
 const toastContainer = document.getElementById("toast-container");
@@ -2242,54 +2241,6 @@ async function removeFriend(friendshipId) {
 			loadFriends();
 		}
 	} catch (err) {}
-}
-
-// ============================================================
-// Leaderboard Controller
-// ============================================================
-
-async function loadLeaderboard() {
-	if (!leaderboardList) return;
-	try {
-		const res = await fetch("/api/levels/leaderboard");
-		const data = await res.json();
-		if (res.ok && data.success) {
-			leaderboardList.innerHTML = "";
-			data.leaderboard.forEach(u => {
-				const row = document.createElement("div");
-				row.className = "leaderboard-row";
-
-				let rankDisplay = `#${u.rank}`;
-				if (u.rank === 1) rankDisplay = "🥇";
-				else if (u.rank === 2) rankDisplay = "🥈";
-				else if (u.rank === 3) rankDisplay = "🥉";
-
-				const isTed = isUserTed(u.username);
-				row.innerHTML = `
-					<span class="col-rank rank-${u.rank}">${rankDisplay}</span>
-					<div class="col-user">
-						<div class="ted-avatar-wrap">
-							<div class="leaderboard-user-avatar ${escapeHtml(u.avatar_url || 'avatar-1')}"></div>
-							${hasCrown(u) ? TILTED_CROWN_SVG : ''}
-						</div>
-						<div>
-							<div class="leaderboard-user-name ${isTed ? 'ted-vip-name' : ''}">
-								<span class="leaderboard-status-dot ${u.online ? 'online' : 'offline'}" title="${u.online ? 'Online' : 'Offline'}"></span>
-								${escapeHtml(u.display_name || u.username)}
-								${u.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(u.custom_tag)}</span>` : ''}
-							</div>
-							<div class="leaderboard-user-tag">@${escapeHtml(u.username)}</div>
-						</div>
-					</div>
-					<span class="col-level">${isTed ? '<span class="admin-root-badge">DEV</span>' : 'Lv. ' + (u.level || 1)}</span>
-					<span class="col-xp">${(u.xp || 0).toLocaleString()} XP</span>
-				`;
-				leaderboardList.appendChild(row);
-			});
-		}
-	} catch (err) {
-		leaderboardList.innerHTML = `<div class="leaderboard-loading">Failed to load leaderboard.</div>`;
-	}
 }
 
 // ============================================================
@@ -4538,6 +4489,7 @@ let selectedAvatar = "avatar-1";
 function openProfileModal() {
 	if (!profileModal || !currentUser) return;
 	selectedAvatar = currentUser.avatar_url || "avatar-1";
+	if (editUsernameInput) editUsernameInput.value = currentUser.username || "";
 	if (editDisplayNameInput) editDisplayNameInput.value = currentUser.display_name || currentUser.username;
 	if (editBioInput) editBioInput.value = currentUser.bio || "";
 
@@ -4554,6 +4506,17 @@ function closeProfileModal() {
 
 if (profileModalClose) profileModalClose.addEventListener("click", closeProfileModal);
 
+if (quickEditUsernameBtn) {
+	quickEditUsernameBtn.addEventListener("click", () => {
+		if (!currentUser || !authToken) {
+			openAuthModal("login");
+			return;
+		}
+		openProfileModal();
+		setTimeout(() => { if (editUsernameInput) editUsernameInput.focus(); }, 120);
+	});
+}
+
 avatarOptions.forEach(opt => {
 	opt.addEventListener("click", () => {
 		avatarOptions.forEach(o => o.classList.remove("selected"));
@@ -4567,8 +4530,9 @@ if (editProfileForm) {
 		e.preventDefault();
 		if (!authToken) return;
 
-		const displayName = editDisplayNameInput.value.trim();
-		const bio = editBioInput.value.trim();
+		const username = editUsernameInput ? editUsernameInput.value.trim().toLowerCase() : "";
+		const displayName = editDisplayNameInput ? editDisplayNameInput.value.trim() : "";
+		const bio = editBioInput ? editBioInput.value.trim() : "";
 
 		try {
 			const res = await fetch("/api/profile", {
@@ -4578,6 +4542,7 @@ if (editProfileForm) {
 					Authorization: `Bearer ${authToken}`
 				},
 				body: JSON.stringify({
+					username: username,
 					display_name: displayName,
 					avatar_url: selectedAvatar,
 					bio: bio
@@ -4586,8 +4551,14 @@ if (editProfileForm) {
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.error || "Save failed");
 
+			if (data.token) {
+				authToken = data.token;
+				localStorage.setItem("clash_token", authToken);
+			}
+
 			currentUser = data.user;
-	window.__myRankCache = null;
+			localStorage.setItem("clash_user", JSON.stringify(currentUser));
+			window.__myRankCache = null;
 			closeProfileModal();
 			renderUserHeader();
 			renderProfilePage();
@@ -5132,7 +5103,7 @@ function navigateToPage(targetPage) {
 	const page = document.getElementById(`page-${targetPage}`);
 	if (page) page.classList.add("active");
 
-	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "soundboard" || targetPage === "profile" || targetPage === "friends" || targetPage === "leaderboard" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
+	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "soundboard" || targetPage === "profile" || targetPage === "friends" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
 		framesContainer.classList.add("hidden");
 		browserChrome.classList.add("hidden");
 		mainContent.classList.remove("hidden");
@@ -5141,7 +5112,6 @@ function navigateToPage(targetPage) {
 
 	if (targetPage === "profile") renderProfilePage();
 	if (targetPage === "friends") loadFriends();
-	if (targetPage === "leaderboard") loadLeaderboard();
 	if (targetPage === "lounge") loadLoungeRooms();
 	if (targetPage === "chat") {
 		closeChatDrawer();
@@ -6112,7 +6082,6 @@ const ALL_NAV_TABS = [
 	{ id: "chat", title: "Chat", icon: "💬" },
 	{ id: "bazaar", title: "Bazaar", icon: "🛍️" },
 	{ id: "lounge", title: "Lounge", icon: "🕹️" },
-	{ id: "leaderboard", title: "Leaderboard", icon: "🏆" },
 	{ id: "profile", title: "Profile", icon: "👤" },
 	{ id: "friends", title: "Friends", icon: "👥" },
 	{ id: "staff-panel", title: "Staff", icon: "🛡️", staffOnly: true }
