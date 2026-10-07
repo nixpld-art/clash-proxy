@@ -1270,6 +1270,20 @@ if (proxyForm) {
 // User Authentication & Session System
 // ============================================================
 
+// Cross-Mirror Session Ingestion (URL hash or query param)
+try {
+	const hashMatch = window.location.hash.match(/[#&]clash_session=([A-Za-z0-9._-]+)/);
+	const queryMatch = window.location.search.match(/[?&]clash_session=([A-Za-z0-9._-]+)/);
+	const incomingToken = (hashMatch && hashMatch[1]) || (queryMatch && queryMatch[1]);
+	if (incomingToken) {
+		localStorage.setItem("clash_jwt_token", incomingToken);
+		const cleanHash = window.location.hash.replace(/[#&]clash_session=[A-Za-z0-9._-]+/, "").replace(/^#&/, "#");
+		const cleanSearch = window.location.search.replace(/[?&]clash_session=[A-Za-z0-9._-]+/, "").replace(/^&/, "?");
+		const cleanUrl = window.location.pathname + (cleanSearch && cleanSearch !== "?" ? cleanSearch : "") + (cleanHash && cleanHash !== "#" ? cleanHash : "");
+		history.replaceState(null, "", cleanUrl || "/");
+	}
+} catch (e) {}
+
 let currentUser = null;
 let authToken = localStorage.getItem("clash_jwt_token") || null;
 
@@ -2332,6 +2346,39 @@ function applyUserSettings(settings) {
 
 	if (settings.cloak) {
 		applyCloak(settings.cloak);
+	}
+
+	if (settings.activeCloak) {
+		applyCloak(settings.activeCloak);
+	}
+
+	// Restore pinned quick-access tabs
+	if (Array.isArray(settings.quickAccessPins) && settings.quickAccessPins.length > 0) {
+		try {
+			localStorage.setItem(QUICK_ACCESS_STORAGE_KEY, JSON.stringify(settings.quickAccessPins));
+			if (typeof renderQuickAccessBar === "function") renderQuickAccessBar();
+		} catch (e) {}
+	}
+
+	// Restore soundboard favorites
+	if (Array.isArray(settings.soundboardFavorites)) {
+		try {
+			localStorage.setItem(soundboardFavKey, JSON.stringify(settings.soundboardFavorites));
+			if (typeof renderSoundboardGrid === "function") renderSoundboardGrid();
+		} catch (e) {}
+	}
+
+	// Restore soundboard volume
+	if (typeof settings.soundboardVolume === "number" && typeof setSoundboardVolume === "function") {
+		setSoundboardVolume(settings.soundboardVolume);
+	}
+
+	// Restore mirrors list
+	if (Array.isArray(settings.mirrors)) {
+		try {
+			localStorage.setItem("clash_mirrors_list", JSON.stringify(settings.mirrors));
+			if (typeof renderMirrorsGrid === "function") renderMirrorsGrid();
+		} catch (e) {}
 	}
 }
 
@@ -4387,23 +4434,29 @@ function closeAuthModal() {
 }
 
 function switchAuthTab(tab) {
-	if (tab === "login") {
-		tabLoginBtn.classList.add("active");
-		tabRegisterBtn.classList.remove("active");
-		loginForm.classList.remove("hidden");
-		registerForm.classList.add("hidden");
-		if (loginUsernameInput) setTimeout(() => loginUsernameInput.focus(), 50);
-	} else {
-		tabRegisterBtn.classList.add("active");
-		tabLoginBtn.classList.remove("active");
-		registerForm.classList.remove("hidden");
-		loginForm.classList.add("hidden");
-		if (regUsernameInput) setTimeout(() => regUsernameInput.focus(), 50);
+	const tabSyncBtn = document.getElementById("tab-sync-btn");
+	const syncForm = document.getElementById("sync-form");
+
+	tabLoginBtn.classList.toggle("active", tab === "login");
+	tabRegisterBtn.classList.toggle("active", tab === "register");
+	if (tabSyncBtn) tabSyncBtn.classList.toggle("active", tab === "sync");
+
+	loginForm.classList.toggle("hidden", tab !== "login");
+	registerForm.classList.toggle("hidden", tab !== "register");
+	if (syncForm) syncForm.classList.toggle("hidden", tab !== "sync");
+
+	if (tab === "login" && loginUsernameInput) setTimeout(() => loginUsernameInput.focus(), 50);
+	if (tab === "register" && regUsernameInput) setTimeout(() => regUsernameInput.focus(), 50);
+	if (tab === "sync") {
+		const syncInput = document.getElementById("sync-code-input");
+		if (syncInput) setTimeout(() => syncInput.focus(), 50);
 	}
 }
 
 if (tabLoginBtn) tabLoginBtn.addEventListener("click", () => switchAuthTab("login"));
 if (tabRegisterBtn) tabRegisterBtn.addEventListener("click", () => switchAuthTab("register"));
+const tabSyncBtn = document.getElementById("tab-sync-btn");
+if (tabSyncBtn) tabSyncBtn.addEventListener("click", () => switchAuthTab("sync"));
 if (authModalClose) authModalClose.addEventListener("click", closeAuthModal);
 
 if (loginForm) {
@@ -4417,6 +4470,27 @@ if (registerForm) {
 	registerForm.addEventListener("submit", (e) => {
 		e.preventDefault();
 		registerUser(regUsernameInput.value, regPasswordInput.value, regDisplayNameInput.value);
+	});
+}
+
+const syncForm = document.getElementById("sync-form");
+if (syncForm) {
+	syncForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const raw = (document.getElementById("sync-code-input")?.value || "").trim();
+		if (!raw) return;
+		let token = raw;
+		const hashMatch = raw.match(/[#&]clash_session=([A-Za-z0-9._-]+)/);
+		const queryMatch = raw.match(/[?&]clash_session=([A-Za-z0-9._-]+)/);
+		if (hashMatch && hashMatch[1]) token = hashMatch[1];
+		else if (queryMatch && queryMatch[1]) token = queryMatch[1];
+
+		authToken = token;
+		localStorage.setItem("clash_jwt_token", authToken);
+		closeAuthModal();
+		initAuth().then(() => {
+			showToast("Session synced successfully across mirrors!", "success");
+		});
 	});
 }
 
@@ -4984,6 +5058,12 @@ function navigateToPage(targetPage) {
 	if (targetPage === "owner-panel") {
 		closeSidebar();
 		location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
+		return;
+	}
+
+	if (targetPage === "mirrors") {
+		closeSidebar();
+		if (typeof openMirrorsHubModal === "function") openMirrorsHubModal();
 		return;
 	}
 
@@ -5990,6 +6070,7 @@ const ALL_NAV_TABS = [
 	{ id: "games", title: "Games", icon: "🎮" },
 	{ id: "soundboard", title: "Soundboard", icon: "🔊" },
 	{ id: "settings", title: "Settings", icon: "⚙️" },
+	{ id: "mirrors", title: "Mirrors", icon: "🔗" },
 	{ id: "chat", title: "Chat", icon: "💬" },
 	{ id: "bazaar", title: "Bazaar", icon: "🛍️" },
 	{ id: "lounge", title: "Lounge", icon: "🕹️" },
@@ -6019,6 +6100,7 @@ function savePinnedTabs(tabs) {
 		localStorage.setItem(QUICK_ACCESS_STORAGE_KEY, JSON.stringify(tabs));
 	} catch {}
 	renderQuickAccessBar();
+	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
 }
 
 function togglePinTab(tabId) {
@@ -6161,6 +6243,7 @@ function toggleSoundboardFavorite(soundId) {
 		localStorage.setItem(soundboardFavKey, JSON.stringify([...favs]));
 	} catch {}
 	renderSoundboardGrid();
+	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
 }
 
 function getSoundboardVolume() {
@@ -6185,6 +6268,7 @@ function setSoundboardVolume(vol) {
 	if (icon) {
 		icon.textContent = vol === 0 ? "🔇" : vol < 0.4 ? "🔉" : "🔊";
 	}
+	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
 }
 
 function stopAllSoundboardAudios() {
@@ -6407,5 +6491,261 @@ if (document.readyState === "loading") {
 } else {
 	initQuickAccessBar();
 }
+
+// ============================================================
+// 🔄 Cloud Preference Sync & Database Auto-Save Engine
+// ============================================================
+let userPrefSyncTimeout = null;
+function syncUserPreferencesToServer() {
+	if (!authToken || !currentUser) return;
+	clearTimeout(userPrefSyncTimeout);
+	userPrefSyncTimeout = setTimeout(async () => {
+		try {
+			const currentSettings = currentUser.settings || {};
+			const quickAccessPins = typeof getPinnedTabs === "function" ? getPinnedTabs() : [];
+			const soundboardFavorites = typeof getSoundboardFavorites === "function" ? [...getSoundboardFavorites()] : [];
+			const soundboardVolume = typeof getSoundboardVolume === "function" ? getSoundboardVolume() : 0.85;
+			const activeCloak = localStorage.getItem("clash_active_cloak") || "default";
+			const theme = localStorage.getItem("clash_theme") || "neon-purple";
+			const barebones = localStorage.getItem("clash_barebones") === "true";
+			const ultimateLayout = localStorage.getItem("clash_ultimate_layout") === "true";
+			const ultimateColor = localStorage.getItem("clash_ultimate_color") || "monochrome";
+			const mirrors = typeof getSavedMirrorsList === "function" ? getSavedMirrorsList() : [];
+
+			const merged = {
+				...currentSettings,
+				quickAccessPins,
+				soundboardFavorites,
+				soundboardVolume,
+				activeCloak,
+				theme,
+				barebones,
+				ultimateLayout,
+				ultimateColor,
+				mirrors
+			};
+
+			const res = await fetch("/api/profile", {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${authToken}`
+				},
+				body: JSON.stringify({ settings: merged })
+			});
+			if (res.ok) {
+				const data = await res.json();
+				if (data.user?.settings) currentUser.settings = data.user.settings;
+			}
+		} catch (e) {}
+	}, 800);
+}
+
+// ============================================================
+// 🌐 26 Cloudflare Mirrors & Cross-Domain Auto-Sync Hub
+// ============================================================
+const DEFAULT_MIRRORS_STORAGE_KEY = "clash_mirrors_list";
+const DEFAULT_MIRRORS = [
+	"https://clash-proxy-9045.bot.nu"
+];
+
+function getSavedMirrorsList() {
+	try {
+		const raw = localStorage.getItem(DEFAULT_MIRRORS_STORAGE_KEY);
+		if (raw) {
+			const parsed = JSON.parse(raw);
+			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+		}
+	} catch (e) {}
+	return [...DEFAULT_MIRRORS];
+}
+
+function saveMirrorsList(list) {
+	try {
+		localStorage.setItem(DEFAULT_MIRRORS_STORAGE_KEY, JSON.stringify(list));
+	} catch (e) {}
+	renderMirrorsGrid();
+	syncUserPreferencesToServer();
+}
+
+function openMirrorsHubModal() {
+	const modal = document.getElementById("mirrors-hub-modal");
+	if (!modal) return;
+	modal.classList.remove("hidden");
+	renderMirrorsGrid();
+
+	const userStatus = document.getElementById("mirrors-user-status");
+	if (userStatus) {
+		if (currentUser) {
+			userStatus.textContent = `Signed in as ${currentUser.display_name || currentUser.username}`;
+		} else {
+			userStatus.textContent = "Guest Mode • Sign in to save your settings across all 26 links!";
+		}
+	}
+}
+
+function closeMirrorsHubModal() {
+	const modal = document.getElementById("mirrors-hub-modal");
+	if (modal) modal.classList.add("hidden");
+}
+
+function getAuthenticatedMirrorUrl(mirrorUrl) {
+	let clean = String(mirrorUrl || "").trim();
+	if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
+		clean = "https://" + clean;
+	}
+	clean = clean.replace(/\/$/, "");
+	if (authToken) {
+		return `${clean}/#clash_session=${encodeURIComponent(authToken)}`;
+	}
+	return clean;
+}
+
+function renderMirrorsGrid() {
+	const grid = document.getElementById("mirrors-grid");
+	const countTag = document.getElementById("mirrors-count-tag");
+	if (!grid) return;
+	grid.innerHTML = "";
+
+	const mirrors = getSavedMirrorsList();
+	if (countTag) countTag.textContent = `${mirrors.length} Available`;
+
+	if (mirrors.length === 0) {
+		grid.innerHTML = `<div style="text-align:center;color:#94a3b8;padding:20px;font-size:0.85rem;">No mirror links added yet. Click 'Manage 26 Links' to paste your worker links!</div>`;
+		return;
+	}
+
+	mirrors.forEach((url, idx) => {
+		let domainName = url.replace(/^https?:\/\//i, "").replace(/\/.*$/, "");
+		const row = document.createElement("div");
+		row.className = "mirror-item-row";
+		row.innerHTML = `
+			<div class="mirror-info">
+				<span class="mirror-dot"></span>
+				<span class="mirror-name" title="${url}">#${idx + 1} ${domainName}</span>
+			</div>
+			<div class="mirror-actions">
+				<button class="mirror-btn-open" title="Open this mirror in a new tab with your login & data synced">⚡ Open</button>
+				<button class="mirror-btn-copy" title="Copy auto-login link to clipboard">📋 Copy</button>
+			</div>
+		`;
+
+		const openBtn = row.querySelector(".mirror-btn-open");
+		const copyBtn = row.querySelector(".mirror-btn-copy");
+
+		openBtn.addEventListener("click", () => {
+			const target = getAuthenticatedMirrorUrl(url);
+			window.open(target, "_blank");
+		});
+
+		copyBtn.addEventListener("click", () => {
+			const target = getAuthenticatedMirrorUrl(url);
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(target).then(() => {
+					showToast(`Copied auto-login link for #${idx + 1}!`, "success");
+				}).catch(() => {
+					prompt("Copy your mirror link:", target);
+				});
+			} else {
+				prompt("Copy your mirror link:", target);
+			}
+		});
+
+		grid.appendChild(row);
+	});
+}
+
+function initMirrorsHub() {
+	const topBtn = document.getElementById("top-mirrors-hub-btn");
+	const closeBtn = document.getElementById("mirrors-modal-close");
+	const copyAutoLoginBtn = document.getElementById("mirrors-copy-autologin-btn");
+	const toggleManageBtn = document.getElementById("mirrors-toggle-manage-btn");
+	const manageBox = document.getElementById("mirrors-manage-box");
+	const bulkInput = document.getElementById("mirrors-bulk-input");
+	const saveBulkBtn = document.getElementById("mirrors-save-bulk-btn");
+	const cancelBulkBtn = document.getElementById("mirrors-cancel-bulk-btn");
+
+	if (topBtn) topBtn.addEventListener("click", openMirrorsHubModal);
+	if (closeBtn) closeBtn.addEventListener("click", closeMirrorsHubModal);
+
+	if (copyAutoLoginBtn) {
+		copyAutoLoginBtn.addEventListener("click", () => {
+			const currentOrigin = window.location.origin;
+			const target = getAuthenticatedMirrorUrl(currentOrigin);
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(target).then(() => {
+					showToast("Auto-login link copied! Bookmark it or open anywhere to stay logged in.", "success");
+				}).catch(() => {
+					prompt("Copy your auto-login link:", target);
+				});
+			} else {
+				prompt("Copy your auto-login link:", target);
+			}
+		});
+	}
+
+	if (toggleManageBtn && manageBox) {
+		toggleManageBtn.addEventListener("click", () => {
+			manageBox.classList.toggle("hidden");
+			if (!manageBox.classList.contains("hidden") && bulkInput) {
+				const current = getSavedMirrorsList();
+				bulkInput.value = current.join("\n");
+				bulkInput.focus();
+			}
+		});
+	}
+
+	if (cancelBulkBtn && manageBox) {
+		cancelBulkBtn.addEventListener("click", () => {
+			manageBox.classList.add("hidden");
+		});
+	}
+
+	if (saveBulkBtn && bulkInput && manageBox) {
+		saveBulkBtn.addEventListener("click", () => {
+			const lines = bulkInput.value
+				.split("\n")
+				.map(l => l.trim())
+				.filter(l => l.length > 0 && !l.startsWith("#"));
+
+			if (lines.length === 0) {
+				showToast("Please enter at least one mirror URL.", "error");
+				return;
+			}
+
+			saveMirrorsList(lines);
+			manageBox.classList.add("hidden");
+			showToast(`Saved ${lines.length} mirror links to your account!`, "success");
+		});
+	}
+
+	// Cross-window session listener (BroadcastChannel and window.opener)
+	window.addEventListener("message", (ev) => {
+		if (ev.data?.type === "CLASH_REQUEST_AUTH" && authToken) {
+			try {
+				ev.source?.postMessage({ type: "CLASH_AUTH_PAYLOAD", token: authToken }, "*");
+			} catch (e) {}
+		} else if (ev.data?.type === "CLASH_AUTH_PAYLOAD" && ev.data.token && !authToken) {
+			authToken = ev.data.token;
+			localStorage.setItem("clash_jwt_token", authToken);
+			initAuth();
+			showToast("Session synced automatically across your mirror tabs!", "success");
+		}
+	});
+
+	if (!authToken && window.opener) {
+		try {
+			window.opener.postMessage({ type: "CLASH_REQUEST_AUTH" }, "*");
+		} catch (e) {}
+	}
+}
+
+// Initialize Mirrors Hub
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", initMirrorsHub);
+} else {
+	initMirrorsHub();
+}
+
 
 

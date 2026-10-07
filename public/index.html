@@ -20,7 +20,7 @@
 	<script src="/controller/controller.api.js"></script>
 
 	<!-- Styles -->
-	<link rel="stylesheet" href="styles.css?v=5" />
+	<link rel="stylesheet" href="styles.css?v=6" />
 
 	<!-- Pre-paint Performance & Layout Initializer -->
 	<script>
@@ -127,7 +127,7 @@
 	<script src="shield.js?v=30" defer></script>
 	<script src="particles.js?v=32" defer></script>
 	<script src="ultimate-bg.js?v=1" defer></script>
-	<script src="app.js?v=61" defer></script>
+	<script src="app.js?v=62" defer></script>
 	<script src="clash-ai.js?v=1" defer></script>
 </head>
 
@@ -613,6 +613,12 @@
 			</div>
 
 			<div class="top-bar-spacer"></div>
+
+			<!-- Mirrors & Cross-Domain Session Sync Button -->
+			<button id="top-mirrors-hub-btn" class="top-mirrors-hub-btn" title="26 Mirrors & Cross-Domain Auto-Login Hub">
+				<span class="mirrors-icon">🌐</span>
+				<span class="mirrors-label">26 Mirrors</span>
+			</button>
 
 			<!-- User Header Widget -->
 			<div id="user-header-widget" class="user-header-widget">
@@ -1857,6 +1863,7 @@
 			<div class="auth-tabs">
 				<button id="tab-login-btn" class="auth-tab active">Sign In</button>
 				<button id="tab-register-btn" class="auth-tab">Create Account</button>
+				<button id="tab-sync-btn" class="auth-tab">⚡ Quick Sync</button>
 			</div>
 
 			<!-- Login Form -->
@@ -1893,6 +1900,19 @@
 				</div>
 				<div id="register-error" class="auth-error-msg hidden"></div>
 				<button type="submit" class="btn btn-primary btn-block">Create Account</button>
+			</form>
+
+			<!-- Sync Form (Cross-Domain Session & Data Restore) -->
+			<form id="sync-form" class="auth-form hidden" autocomplete="off">
+				<div class="form-group">
+					<label for="sync-code-input">Paste Auto-Login Link or Session Token</label>
+					<input type="text" id="sync-code-input" class="form-input" placeholder="Paste link or token here..." required />
+				</div>
+				<div id="sync-error" class="auth-error-msg hidden"></div>
+				<button type="submit" class="btn btn-primary btn-block">Restore & Sign In Instantly</button>
+				<p style="font-size:0.75rem;color:#64748b;margin-top:10px;text-align:center;line-height:1.4;">
+					Tip: Clicking any mirror from your <b>26 Mirrors Hub</b> logs you in automatically without typing anything!
+				</p>
 			</form>
 		</div>
 	</div>
@@ -1965,6 +1985,57 @@
 
 				<button type="submit" class="btn btn-primary btn-block">Add to Speed Dial</button>
 			</form>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Mirrors Hub & Cross-Domain Auto-Sync Modal
+	     ============================================================ -->
+	<div id="mirrors-hub-modal" class="modal-overlay hidden">
+		<div class="modal-card mirrors-modal-card">
+			<div class="modal-header">
+				<div class="modal-logo">
+					<span style="font-size:1.4rem">🌐</span>
+					<span class="modal-title">Clash Mirrors & Cloud Session Hub</span>
+				</div>
+				<button id="mirrors-modal-close" class="modal-close-btn">&times;</button>
+			</div>
+
+			<div class="mirrors-sync-banner" id="mirrors-sync-banner">
+				<div class="sync-banner-icon">⚡</div>
+				<div class="sync-banner-text">
+					<div class="sync-banner-title" id="mirrors-user-status">Cross-Domain Session Active</div>
+					<div class="sync-banner-desc">Switching links? All links keep you signed in with your saved pins, soundboard favorites, and XP!</div>
+				</div>
+			</div>
+
+			<div class="mirrors-actions-row">
+				<button id="mirrors-copy-autologin-btn" class="btn btn-primary" title="Copies a link with your session attached so opening it anywhere auto-logs in">
+					<span>📋</span> Copy Auto-Login Link
+				</button>
+				<button id="mirrors-toggle-manage-btn" class="btn btn-secondary">
+					<span>⚙️</span> Manage 26 Links
+				</button>
+			</div>
+
+			<!-- Dynamic Mirrors Grid -->
+			<div class="mirrors-list-header">
+				<span>Active Cloudflare Mirrors</span>
+				<span id="mirrors-count-tag" class="badge">26 Available</span>
+			</div>
+			<div id="mirrors-grid" class="mirrors-grid">
+				<!-- Mirrors rendered dynamically with 1-click launch -->
+			</div>
+
+			<!-- Manage / Paste Bulk Links Box -->
+			<div id="mirrors-manage-box" class="mirrors-manage-box hidden">
+				<label class="form-label" style="font-size:0.8rem;color:#94a3b8;margin-bottom:6px;display:block;">Paste your 26 Cloudflare worker mirror links (one per line):</label>
+				<textarea id="mirrors-bulk-input" class="form-input form-textarea" rows="5" placeholder="https://mirror1.subdomain.workers.dev&#10;https://mirror2.subdomain.workers.dev"></textarea>
+				<div style="display:flex;gap:8px;margin-top:10px;">
+					<button id="mirrors-save-bulk-btn" class="btn btn-primary">Save to Account</button>
+					<button id="mirrors-cancel-bulk-btn" class="btn btn-secondary">Cancel</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
