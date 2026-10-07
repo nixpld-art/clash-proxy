@@ -1,406 +1,202 @@
 "use strict";
 
 /**
- * Clash Proxy v3.0 — Main Application Logic
+ * Aura OS 2.0 — Autonomous Web & Arcade Engine
  *
- * Manages Scramjet V2 proxy engine, Arcade Games library,
- * user authentication, profiles, friend networks, real-time presence,
- * XP/Level gamification, and UI pages.
+ * Full Feature Architecture:
+ * - Anonymous Device Vault (zero registration / zero personal identities)
+ * - 3 Proxy Engine Modes: Auto (Recommended), Service Worker (Scramjet V2), Classic (No SW)
+ * - Search Engine selector (Google, DuckDuckGo, Bing, Brave, Yahoo)
+ * - Aura Shield & AdBlocker integration
+ * - Chromebook Optimizer (Static BG, Light UI, Frame boost, Resolution scaling)
+ * - Ghost Mode (zero trace privacy)
+ * - Complete Cloak Suite (Drive, Classroom, Canvas, Khan, Custom, Panic Key with Custom URL)
+ * - About:Blank Cloaker with Decoy Redirect & Auto-Launch
+ * - 3,958+ Unblocked Arcade catalog with instant search & pagination
+ * - Aura Intelligence AI Assistant
+ * - School-safe Sound FX Deck
+ * - Secret Operator Modal with Anonymous Device KPIs & Owner Panel login for Nils, Ted, Ozzy
  */
 
-// Remote logging
-window.addEventListener("error", (e) => {
-	fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "error", message: e.message, filename: e.filename, lineno: e.lineno }) }).catch(()=>{});
-});
-window.addEventListener("unhandledrejection", (e) => {
-	fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "unhandledrejection", reason: e.reason ? e.reason.toString() : "Unknown", stack: e.reason && e.reason.stack }) }).catch(()=>{});
-});
-
 // ============================================================
-// DOM Elements
+// 1. Toast Notification Utility
 // ============================================================
-
-// Landing page / Proxy Form
-const mainContent = document.getElementById("main-content");
-const proxyForm = document.getElementById("proxy-form");
-const proxyInput = document.getElementById("proxy-input");
-const proxyError = document.getElementById("proxy-error");
-const proxyErrorMessage = document.getElementById("proxy-error-message");
-const statusDot = document.getElementById("status-dot");
-const statusText = document.getElementById("status-text");
-
-// Browser Chrome
-const browserChrome = document.getElementById("browser-chrome");
-const tabList = document.getElementById("tab-list");
-const newTabBtn = document.getElementById("new-tab-btn");
-const framesContainer = document.getElementById("frames-container");
-
-// Nav buttons
-const navBackBtn = document.getElementById("nav-back-btn");
-const navForwardBtn = document.getElementById("nav-forward-btn");
-const navRefreshBtn = document.getElementById("nav-refresh-btn");
-const navHomeBtn = document.getElementById("nav-home-btn");
-const navFullscreenBtn = document.getElementById("nav-fullscreen-btn");
-const fullscreenIconEnter = document.getElementById("fullscreen-icon-enter");
-const fullscreenIconExit = document.getElementById("fullscreen-icon-exit");
-const navUrlInput = document.getElementById("nav-url-input");
-const navAboutblankBtn = document.getElementById("nav-aboutblank-btn");
-const navSidebarBtn = document.getElementById("nav-sidebar-btn");
-
-// Floating Game Controls
-const gameControlsBar = document.getElementById("game-controls-bar");
-const gameCtrlBack = document.getElementById("game-ctrl-back");
-const gameCtrlFullscreen = document.getElementById("game-ctrl-fullscreen");
-const gameCtrlAboutblank = document.getElementById("game-ctrl-aboutblank");
-
-// Sidebar & Navigation
-const sidebar = document.getElementById("sidebar");
-const sidebarOverlay = document.getElementById("sidebar-overlay");
-const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
-const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
-const sidebarLinks = document.querySelectorAll(".sidebar-link");
-const pages = document.querySelectorAll(".page");
-const userHeaderWidget = document.getElementById("user-header-widget");
-const friendsBadge = document.getElementById("friends-badge");
-
-// Games Section
-const gamesGrid = document.getElementById("games-grid");
-const gamesSearchInput = document.getElementById("games-search-input");
-const gamesCountBadge = document.getElementById("games-count-badge");
-
-// Profile Section Elements
-const profileAvatarDisplay = document.getElementById("profile-avatar-display");
-const changeAvatarBtn = document.getElementById("change-avatar-btn");
-const profileDisplayName = document.getElementById("profile-display-name");
-const profileLevelBadge = document.getElementById("profile-level-badge");
-const profileRankTitle = document.getElementById("profile-rank-title");
-const profileUsernameTag = document.getElementById("profile-username-tag");
-const profileBio = document.getElementById("profile-bio");
-const editProfileBtn = document.getElementById("edit-profile-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const profileLoginBtn = document.getElementById("profile-login-btn");
-const xpCurrentDisplay = document.getElementById("xp-current-display");
-const xpNextDisplay = document.getElementById("xp-next-display");
-const xpBarFill = document.getElementById("xp-bar-fill");
-const statGamesPlayed = document.getElementById("stat-games-played");
-const statSitesVisited = document.getElementById("stat-sites-visited");
-const statLoginStreak = document.getElementById("stat-login-streak");
-const statBadgesUnlocked = document.getElementById("stat-badges-unlocked");
-const badgesGrid = document.getElementById("badges-grid");
-
-// Friends Section Elements
-const addFriendForm = document.getElementById("add-friend-form");
-const friendUsernameInput = document.getElementById("friend-username-input");
-const pendingRequestsSection = document.getElementById("pending-requests-section");
-const pendingCount = document.getElementById("pending-count");
-const pendingRequestsList = document.getElementById("pending-requests-list");
-const onlineFriendsCount = document.getElementById("online-friends-count");
-const onlineFriendsList = document.getElementById("online-friends-list");
-const offlineFriendsCount = document.getElementById("offline-friends-count");
-const offlineFriendsList = document.getElementById("offline-friends-list");
-
-// Settings Section Elements
-const settingGhostMode = document.getElementById("setting-ghost-mode");
-const cloakBtns = document.querySelectorAll(".cloak-btn");
-const themeBtns = document.querySelectorAll(".theme-btn");
-
-// Barebones Mode & Ultimate Minimalist Layout Elements
-const settingBarebonesMode = document.getElementById("setting-barebones-mode");
-const settingUltimateLayout = document.getElementById("setting-ultimate-layout");
-const ultimateColorBtns = document.querySelectorAll(".ultimate-color-btn");
-const retroControllerDock = document.getElementById("retro-controller-dock");
-const retroBtnSelect = document.getElementById("retro-btn-select");
-const retroBtnStart = document.getElementById("retro-btn-start");
-
-// Chromebook Optimizer Elements
-const settingPerfStaticBg = document.getElementById("setting-perf-staticbg");
-const settingPerfLightUi = document.getElementById("setting-perf-lightui");
-const settingPerfFrameBoost = document.getElementById("setting-perf-frameboost");
-const settingPerfResolution = document.getElementById("setting-perf-resolution");
-
-// Clash Shield Elements
-const navShieldBtn = document.getElementById("nav-shield-btn");
-const shieldPopover = document.getElementById("shield-popover");
-const shieldCountBadge = document.getElementById("shield-count-badge");
-const popoverShieldCount = document.getElementById("popover-shield-count");
-const shieldStatusPill = document.getElementById("shield-status-pill");
-const shieldStatusText = document.getElementById("shield-status-text");
-const popoverToggleAdBlock = document.getElementById("popover-toggle-adblock");
-const popoverTogglePopups = document.getElementById("popover-toggle-popups");
-const popoverToggleDarkMode = document.getElementById("popover-toggle-darkmode");
-const shieldWhitelistBtn = document.getElementById("shield-whitelist-btn");
-const settingShieldAdBlock = document.getElementById("setting-shield-adblock");
-const settingShieldPopups = document.getElementById("setting-shield-popups");
-const settingShieldDarkMode = document.getElementById("setting-shield-darkmode");
-const settingShieldTotalBlocked = document.getElementById("setting-shield-total-blocked");
-const settingShieldDataSaved = document.getElementById("setting-shield-data-saved");
-const settingShieldClearStats = document.getElementById("setting-shield-clear-stats");
-
-// Bookmarks & Speed Dial Elements
-const navBookmarkBtn = document.getElementById("nav-bookmark-btn");
-const speedDialGrid = document.getElementById("speed-dial-grid");
-const addShortcutBtn = document.getElementById("add-shortcut-btn");
-const shortcutModal = document.getElementById("shortcut-modal");
-const shortcutModalClose = document.getElementById("shortcut-modal-close");
-const shortcutForm = document.getElementById("shortcut-form");
-const shortcutTitle = document.getElementById("shortcut-title");
-const shortcutUrl = document.getElementById("shortcut-url");
-const shortcutIcon = document.getElementById("shortcut-icon");
-
-// Floating Chat Drawer Elements
-const chatDrawer = document.getElementById("chat-drawer");
-const chatMinimizeBtn = document.getElementById("chat-minimize-btn");
-const chatCloseBtn = document.getElementById("chat-close-btn");
-const chatFriendAvatar = document.getElementById("chat-friend-avatar");
-const chatFriendName = document.getElementById("chat-friend-name");
-const chatFriendStatus = document.getElementById("chat-friend-status");
-const chatMessagesContainer = document.getElementById("chat-messages-container");
-const chatShareGameBtn = document.getElementById("chat-share-game-btn");
-const chatShareTabBtn = document.getElementById("chat-share-tab-btn");
-const chatInputForm = document.getElementById("chat-input-form");
-const chatMessageInput = document.getElementById("chat-message-input");
-
-// Dedicated Chat Page Elements
-const pageChat = document.getElementById("page-chat");
-const navChat = document.getElementById("nav-chat");
-const chatNavUnreadBadge = document.getElementById("chat-nav-unread-badge");
-const chatPageOnlineCount = document.getElementById("chat-page-online-count");
-const chatSearchInput = document.getElementById("chat-search-input");
-const chatConversationsList = document.getElementById("chat-conversations-list");
-const chatEmptySelection = document.getElementById("chat-empty-selection");
-const chatActiveFeedWrap = document.getElementById("chat-active-feed-wrap");
-const chatActiveAvatar = document.getElementById("chat-active-avatar");
-const chatActiveStatusDot = document.getElementById("chat-active-status-dot");
-const chatActiveName = document.getElementById("chat-active-name");
-const chatActiveUsername = document.getElementById("chat-active-username");
-const chatActivePresence = document.getElementById("chat-active-presence");
-const chatHeaderInviteBtn = document.getElementById("chat-header-invite-btn");
-const chatHeaderProfileBtn = document.getElementById("chat-header-profile-btn");
-const chatPageMessages = document.getElementById("chat-page-messages");
-const chatPageTyping = document.getElementById("chat-page-typing");
-const chatPageTypingText = document.getElementById("chat-page-typing-text");
-const chatPageForm = document.getElementById("chat-page-form");
-const chatPageInput = document.getElementById("chat-page-input");
-const chatPageSendBtn = document.getElementById("chat-page-send-btn");
-const chatPageShareGameBtn = document.getElementById("chat-page-share-game-btn");
-const chatPageShareTabBtn = document.getElementById("chat-page-share-tab-btn");
-
-// Modals
-const authModal = document.getElementById("auth-modal");
-const authModalClose = document.getElementById("auth-modal-close");
-const tabLoginBtn = document.getElementById("tab-login-btn");
-const tabRegisterBtn = document.getElementById("tab-register-btn");
-const loginForm = document.getElementById("login-form");
-const registerForm = document.getElementById("register-form");
-const loginUsernameInput = document.getElementById("login-username");
-const loginPasswordInput = document.getElementById("login-password");
-const regUsernameInput = document.getElementById("reg-username");
-const regDisplayNameInput = document.getElementById("reg-displayname");
-const regPasswordInput = document.getElementById("reg-password");
-const loginErrorMsg = document.getElementById("login-error");
-const registerErrorMsg = document.getElementById("register-error");
-
-const profileModal = document.getElementById("profile-modal");
-const profileModalClose = document.getElementById("profile-modal-close");
-const editProfileForm = document.getElementById("edit-profile-form");
-const editUsernameInput = document.getElementById("edit-username");
-const editDisplayNameInput = document.getElementById("edit-display-name");
-const editBioInput = document.getElementById("edit-bio");
-const avatarOptions = document.querySelectorAll(".avatar-option");
-const quickEditUsernameBtn = document.getElementById("quick-edit-username-btn");
-
-// Toast Container
-const toastContainer = document.getElementById("toast-container");
-
-// Owner Panel sidebar link (leads to the separate owner panel on localhost:8081)
-const navOwnerPanel = document.getElementById("nav-owner-panel");
-
-
-// Clash Lounge Elements
-const navLounge = document.getElementById("nav-lounge");
-const pageLounge = document.getElementById("page-lounge");
-const loungeOpenCreateBtn = document.getElementById("lounge-open-create-btn");
-const loungeJoinCodeInput = document.getElementById("lounge-join-code-input");
-const loungeJoinCodeBtn = document.getElementById("lounge-join-code-btn");
-const loungeCreateDrawer = document.getElementById("lounge-create-drawer");
-const loungeCreateClose = document.getElementById("lounge-create-close");
-const loungeCreateForm = document.getElementById("lounge-create-form");
-const loungeInputName = document.getElementById("lounge-input-name");
-const loungeSelectGame = document.getElementById("lounge-select-game");
-const loungeSelectMax = document.getElementById("lounge-select-max");
-const loungeCreateCancel = document.getElementById("lounge-create-cancel");
-const loungeLobbyView = document.getElementById("lounge-lobby-view");
-const loungeActiveRoomView = document.getElementById("lounge-active-room-view");
-const loungeRoomsGrid = document.getElementById("lounge-rooms-grid");
-const loungeActiveCount = document.getElementById("lounge-active-count");
-const loungeRefreshRoomsBtn = document.getElementById("lounge-refresh-rooms-btn");
-const loungeRoomTitle = document.getElementById("lounge-room-title");
-const loungeRoomCodeBadge = document.getElementById("lounge-room-code-badge");
-const loungeFeaturedGamePill = document.getElementById("lounge-featured-game-pill");
-const loungeLaunchGameBtn = document.getElementById("lounge-launch-game-btn");
-const loungeLeaveRoomBtn = document.getElementById("lounge-leave-room-btn");
-const loungeMembersList = document.getElementById("lounge-members-list");
-const loungeMembersCount = document.getElementById("lounge-members-count");
-const loungeChatMessages = document.getElementById("lounge-chat-messages");
-const loungeChatForm = document.getElementById("lounge-chat-form");
-const loungeChatInput = document.getElementById("lounge-chat-input");
-
-// About:Blank Cloaking Elements
-const settingAboutBlankAuto = document.getElementById("setting-aboutblank-autocloak");
-const settingAboutBlankDecoyUrl = document.getElementById("setting-aboutblank-decoy-url");
-const settingAboutBlankLaunchBtn = document.getElementById("setting-aboutblank-launch-btn");
-const aboutBlankPresetBtns = document.querySelectorAll(".aboutblank-preset-btn");
-const navAboutBlankBtn = document.getElementById("nav-aboutblank-btn");
-
-// Game Controls Modal Elements
-const navToolkitBtn = document.getElementById("nav-toolkit-btn");
-const gameToolkitModal = document.getElementById("game-toolkit-modal");
-const gameToolkitModalClose = document.getElementById("game-toolkit-modal-close");
-const toolkitActiveGamePill = document.getElementById("toolkit-active-game-pill");
-const speedButtons = document.querySelectorAll(".speed-btn");
-const tweakToggleDarkmode = document.getElementById("tweak-toggle-darkmode");
-const tweakToggleFps = document.getElementById("tweak-toggle-fps");
-const tweakToggleAutoclick = document.getElementById("tweak-toggle-autoclick");
-
-// Tilted Crown SVG
-const TILTED_CROWN_SVG = `
-	<span class="ted-tilted-crown" title="Founder & Dev Crown">
-		<svg viewBox="0 0 24 24" width="24" height="24">
-			<defs>
-				<linearGradient id="gold-crown-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-					<stop offset="0%" stop-color="#fff275" />
-					<stop offset="50%" stop-color="#ffd700" />
-					<stop offset="100%" stop-color="#e67e22" />
-				</linearGradient>
-			</defs>
-			<path d="M2 19h20v2H2v-2zm1.5-3L6 8l5 5 7-9 2.5 12H3.5z" fill="url(#gold-crown-grad)"/>
-			<circle cx="6" cy="8" r="1.3" fill="#ffffff" />
-			<circle cx="11" cy="13" r="1.3" fill="#ffffff" />
-			<circle cx="18" cy="5" r="1.3" fill="#ffffff" />
-		</svg>
-	</span>
-`;
-
-function isUserTed(username) {
-	const u = (username || "").toLowerCase();
-	return u === "ted" || u === "nils" || u === "ozzy";
-}
-
-// The gold crown shows for the founders AND any owner-level account
-// (role admin — granted from the Owner Panel or Jarvis's `give @user the crown`).
-function hasCrown(user) {
-	return !!user && (isUserTed(user.username) || user.role === "admin");
+const toastEl = document.getElementById("aura-toast");
+let toastTimer = null;
+function showToast(message, duration = 3000) {
+	if (!toastEl) return;
+	toastEl.textContent = message;
+	toastEl.classList.remove("hidden");
+	toastEl.classList.add("visible");
+	clearTimeout(toastTimer);
+	toastTimer = setTimeout(() => {
+		toastEl.classList.remove("visible");
+		setTimeout(() => toastEl.classList.add("hidden"), 300);
+	}, duration);
 }
 
 // ============================================================
-// Scramjet V2 Setup
+// 2. Anonymous Device Vault Key Architecture
 // ============================================================
+function generateVaultId() {
+	const rand = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+	return `AURA-${rand()}-${rand()}`;
+}
 
-let sjController = null;
-let connection = null;
+let vaultId = localStorage.getItem("aura_vault_id");
+const urlParams = new URLSearchParams(window.location.search);
+const hashVault = window.location.hash.match(/[#&]vault=([A-Za-z0-9_-]+)/);
+const importedVault = urlParams.get("vault") || (hashVault && hashVault[1]);
 
-function stripYTConsent(html) {
-	let out = html;
-	let cut = 0;
-	try {
-		const idx = out.indexOf('"interstitial"');
-		if (idx >= 0) {
-			const brace = out.indexOf("{", idx);
-			if (brace > 0 && brace - idx < 30) {
-				let depth = 0, i = brace, inStr = false, esc = false, end = -1;
-				for (; i < out.length; i++) {
-					const c = out[i];
-					if (inStr) {
-						if (esc) esc = false;
-						else if (c === "\\") esc = true;
-						else if (c === '"') inStr = false;
-						continue;
-					}
-					if (c === '"') { inStr = true; continue; }
-					if (c === "{") depth++;
-					else if (c === "}") { depth--; if (depth === 0) { end = i; break; } }
-				}
-				if (end > 0 && out.slice(brace, brace + 80).includes("consentBumpV2Renderer")) {
-					let from = idx, to = end + 1;
-					if (out[to] === ",") to++;
-					else if (idx > 0 && out[idx - 1] === ",") from = idx - 1;
-					out = out.slice(0, from) + out.slice(to);
-					cut++;
-				}
-			}
+if (importedVault) {
+	vaultId = importedVault.toUpperCase();
+	localStorage.setItem("aura_vault_id", vaultId);
+} else if (!vaultId) {
+	vaultId = generateVaultId();
+	localStorage.setItem("aura_vault_id", vaultId);
+}
+
+const vaultDisplay = document.getElementById("vault-key-display");
+const vaultFull = document.getElementById("vault-key-full");
+const vaultPill = document.getElementById("vault-key-pill");
+const copyVaultBtn = document.getElementById("copy-vault-btn");
+const importVaultBtn = document.getElementById("import-vault-btn");
+
+if (vaultDisplay) vaultDisplay.textContent = vaultId;
+if (vaultFull) vaultFull.textContent = vaultId;
+
+function copyVaultKey() {
+	if (!vaultId) return;
+	navigator.clipboard.writeText(vaultId).then(() => {
+		showToast("✓ Anonymous Vault Key copied to clipboard!");
+	}).catch(() => {
+		showToast(`Vault Key: ${vaultId}`);
+	});
+}
+if (vaultPill) vaultPill.addEventListener("click", copyVaultKey);
+if (copyVaultBtn) copyVaultBtn.addEventListener("click", copyVaultKey);
+
+if (importVaultBtn) {
+	importVaultBtn.addEventListener("click", () => {
+		const entered = prompt("Enter or paste your Vault Key (e.g. AURA-XXXX-XXXX):", vaultId);
+		if (entered && entered.trim()) {
+			const cleaned = entered.trim().toUpperCase();
+			localStorage.setItem("aura_vault_id", cleaned);
+			showToast("✓ Vault Key updated! Reloading...");
+			setTimeout(() => location.reload(), 600);
 		}
-		out = out.replace(/"consentBumpV2Renderer",\s*/g, "").replace(/,\s*"consentBumpV2Renderer"/g, "").replace(/\[\s*"consentBumpV2Renderer"\s*\]/g, "[]");
-	} catch (e) {}
-	return { html: out, cut };
-}
-
-// ============================================================
-// Proxy engine mode — Auto (SW with Classic fallback), forced
-// Service Worker, or forced Classic (no Service Worker at all).
-// ============================================================
-const PROXY_MODE_KEY = "clash_proxy_mode";
-let classicMode = false;
-
-function getProxyMode() {
-	try {
-		const v = localStorage.getItem(PROXY_MODE_KEY);
-		return v === "sw" || v === "classic" ? v : "auto";
-	} catch (e) { return "auto"; }
-}
-
-function enableClassicMode(reason) {
-	const first = !classicMode;
-	classicMode = true;
-	console.log("[Clash Proxy] Classic mode active:", reason);
-	if (first) {
-		fetch("/api/log", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ type: "classic_mode", reason: String(reason || "").slice(0, 120) })
-		}).catch(() => {});
-		try { setStatus("ready", "Classic mode active — no Service Worker needed"); } catch (e) {}
-	}
-}
-
-// Settings dropdown (Proxy Engine card in index.html)
-const settingProxyMode = document.getElementById("setting-proxy-mode");
-if (settingProxyMode) {
-	try { settingProxyMode.value = getProxyMode(); } catch (e) {}
-	settingProxyMode.addEventListener("change", () => {
-		try { localStorage.setItem(PROXY_MODE_KEY, settingProxyMode.value); } catch (e) {}
-		location.reload();
 	});
 }
 
-const initSWPromise = (async function initSW() {
+// Ghost mode check
+function isGhostMode() {
+	return localStorage.getItem("aura_ghost_mode") === "true";
+}
+
+// Telemetry & Activity Tracker (Guest ID based)
+function trackActivity(type, data = {}) {
+	if (isGhostMode()) return;
 	try {
-		if (getProxyMode() === "classic") {
-			enableClassicMode("forced by settings");
+		fetch("/api/activity/track", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Guest-Id": vaultId
+			},
+			body: JSON.stringify({ type, data, guestId: vaultId })
+		}).catch(() => {});
+	} catch (e) {}
+}
+trackActivity("aura_session_start");
+
+// ============================================================
+// 3. View Management (Floating Island Dock)
+// ============================================================
+const dockItems = document.querySelectorAll(".dock-item");
+const views = document.querySelectorAll(".aura-view");
+const brandHomeBtn = document.getElementById("brand-home-btn");
+
+function switchView(viewName) {
+	views.forEach(v => {
+		if (v.id === `view-${viewName}`) {
+			v.classList.add("active");
+		} else {
+			v.classList.remove("active");
+		}
+	});
+
+	dockItems.forEach(item => {
+		if (item.dataset.view === viewName) {
+			item.classList.add("active");
+		} else {
+			item.classList.remove("active");
+		}
+	});
+
+	window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+dockItems.forEach(item => {
+	item.addEventListener("click", () => {
+		const target = item.dataset.view;
+		if (target) switchView(target);
+	});
+});
+
+if (brandHomeBtn) {
+	brandHomeBtn.addEventListener("click", () => switchView("browse"));
+}
+
+// ============================================================
+// 4. Scramjet V2 & Classic Fallback Proxy Engine
+// ============================================================
+const PROXY_MODE_KEY = "aura_proxy_mode";
+function getProxyMode() {
+	const mode = localStorage.getItem(PROXY_MODE_KEY);
+	return mode === "sw" || mode === "classic" ? mode : "auto";
+}
+
+let sjController = null;
+let classicMode = false;
+let activeProxyIframe = null;
+
+const initSWPromise = (async () => {
+	const chosenMode = getProxyMode();
+	if (chosenMode === "classic") {
+		classicMode = true;
+		console.log("[Aura] Forced Classic mode via user settings");
+		return false;
+	}
+
+	try {
+		if (!("serviceWorker" in navigator)) {
+			classicMode = true;
 			return false;
 		}
 
-		// Register with a timeout: on networks that block Service
-		// Workers, register()/ready can hang forever instead of throwing.
 		let registration = null;
 		try {
 			registration = await Promise.race([
-				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW unavailable")),
-				new Promise((_, rej) => setTimeout(() => rej(new Error("service-worker-timeout")), 6000)),
+				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW missing")),
+				new Promise((_, rej) => setTimeout(() => rej(new Error("sw_timeout")), 5000))
 			]);
 		} catch (swErr) {
-			enableClassicMode(swErr && swErr.message ? swErr.message : swErr);
-			return false;
+			if (chosenMode === "auto") {
+				classicMode = true;
+				console.log("[Aura] SW blocked or timed out, auto falling back to Classic mode");
+				return false;
+			}
+			throw swErr;
 		}
 
 		if (navigator.serviceWorker && !navigator.serviceWorker.controller) {
-			await new Promise((res) => {
+			await new Promise(res => {
 				navigator.serviceWorker.addEventListener("controllerchange", () => res(), { once: true });
 				setTimeout(res, 500);
 			});
 		}
 
 		const swController = (navigator.serviceWorker && navigator.serviceWorker.controller) || (registration && registration.active);
-
 		const workerPath = (typeof _CONFIG !== "undefined" && _CONFIG.baremuxWorkerPath) ? _CONFIG.baremuxWorkerPath : "/baremux/worker.js";
 		const transportPath = (typeof _CONFIG !== "undefined" && _CONFIG.transportPath) ? _CONFIG.transportPath : "/libcurl/index.mjs";
 		const wispUrl = (typeof _CONFIG !== "undefined" && _CONFIG.wispUrl) ? _CONFIG.wispUrl : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`;
@@ -410,213 +206,23 @@ const initSWPromise = (async function initSW() {
 			const libcurlMod = await import(transportPath);
 			const LibcurlClass = libcurlMod.default;
 			const libcurlClient = new LibcurlClass({ wisp: wispUrl });
-			const ensureTransport = async () => {
-				for (let i = 0; i < 40 && !libcurlClient.ready; i++) {
-					try { await libcurlClient.init(); } catch (e) { await new Promise((r) => setTimeout(r, 400)); }
-				}
-			};
-			await ensureTransport();
+			for (let i = 0; i < 30 && !libcurlClient.ready; i++) {
+				try { await libcurlClient.init(); } catch (e) { await new Promise(r => setTimeout(r, 400)); }
+			}
 			transportAdapter = {
 				ready: true,
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
-					if (!libcurlClient.ready) await ensureTransport();
-					// 🛡️ Clash Shield Check
-					if (typeof ClashShield !== "undefined") {
-						const activeTab = tabs.find((t) => t.id === activeTabId);
-						const currentHost = activeTab && activeTab.url ? activeTab.url : "";
-						if (ClashShield.shouldBlock(remote, currentHost)) {
-							ClashShield.recordBlock(remote, activeTabId);
-							return {
-								body: new ReadableStream({ start(c) { c.close(); } }),
-								status: 204,
-								statusText: "Blocked by Clash Shield",
-								headers: [["Content-Type", "text/plain"], ["X-Clash-Shield", "Blocked"]]
-							};
-						}
-					}
-
-				let hdrs = headers;
-				if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) hdrs = Array.from(hdrs.entries());
-				if (Array.isArray(hdrs) && method === "GET" && /^https:\/\/www\.youtube\.com\/(watch|results|shorts|feed|@|@)/.test(String(remote))) {
-					const destEntry = hdrs.find((h) => String(h[0]).toLowerCase() === "sec-fetch-dest");
-					if (!destEntry || String(destEntry[1]) !== "document") {
-						const keep = new Set(["cookie", "user-agent", "sec-ch-ua", "sec-ch-ua-mobile", "sec-ch-ua-platform", "sec-ch-ua-arch", "sec-ch-ua-bitness", "sec-ch-ua-full-version", "sec-ch-ua-full-version-list", "sec-ch-ua-model", "sec-ch-ua-platform-version", "sec-ch-ua-wow64", "sec-ch-ua-form-factors", "referer", "viewport-width", "dpr", "device-memory"]);
-						hdrs = hdrs.filter((h) => keep.has(String(h[0]).toLowerCase()));
-						hdrs.push(["accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"]);
-						hdrs.push(["accept-language", "en-GB,en;q=0.9"]);
-						hdrs.push(["sec-fetch-dest", "document"]);
-						hdrs.push(["sec-fetch-mode", "navigate"]);
-						hdrs.push(["sec-fetch-site", "none"]);
-						hdrs.push(["sec-fetch-user", "?1"]);
-						hdrs.push(["upgrade-insecure-requests", "1"]);
-					}
-				}
-				try {
-					if (/youtube\.com\/watch/.test(String(remote))) {
-						const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 40) : "-"; };
-						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
-					}
-				} catch (e) {}
-				try {
-					const rh = new URL(String(remote));
-					const SFX = [".youtube.com", ".googlevideo.com", ".ytimg.com", ".ggpht.com", ".googleapis.com", ".gstatic.com", ".google.com", ".google.co.uk", ".googleusercontent.com", ".googleadservices.com", ".googlesyndication.com", ".google-analytics.com", ".gvt1.com", ".doubleclick.net"];
-					const hn = rh.hostname.toLowerCase();
-					const matched = SFX.some((s) => hn === s.slice(1) || hn.endsWith(s));
-					const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
-					if (matched) {
-						const ci = hdrs.findIndex((h) => String(h[0]).toLowerCase() === "cookie");
-						if (ci >= 0) {
-							const parts = String(hdrs[ci][1]).split(";").map((s) => s.trim()).filter((s) => s && !/^SOCS=/i.test(s));
-							parts.push(CANON_SOCS);
-							hdrs[ci] = [hdrs[ci][0], parts.join("; ")];
-						} else {
-							hdrs.push(["cookie", CANON_SOCS]);
-						}
-					}
-					if (hn === "www.youtube.com" || hn === "youtube.com" || hn === "consent.youtube.com") {
-						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force", host: hn, matched, n: hdrs.length, ct: method }) }).catch(() => {});
-					}
-				} catch (e) {
-					fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force_err", err: String(e).slice(0, 150) }) }).catch(() => {});
-				}
-					// libcurl transport drops all custom headers when given [[k,v],...]:
-					// HeadersDict() iterates `for key in obj` and turns array indices into
-					// header names. Convert to a plain object so Cookie / Content-Encoding /
-					// X-YouTube-* actually reach the server.
-					let hdrsOut = hdrs;
-					if (Array.isArray(hdrsOut)) {
-						const ho = {};
-						for (const h of hdrsOut) {
-							if (h && h.length >= 2 && h[0] != null) ho[String(h[0])] = String(h[1]);
-						}
-						hdrsOut = ho;
-					}
-					const resp = await libcurlClient.request(remote, method, body, hdrsOut, signal);
-					try {
-						const ru = String(remote);
-						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor|youtube\.com\/t/.test(ru)) {
-							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 90) : "-"; };
-							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
-							const ckv = ck ? String(ck[1]) : "";
-							let hd = "";
-							try { hd = JSON.stringify((hdrs || []).map((h) => [String(h[0]).toLowerCase(), String(h[1]).slice(0, 80)])).slice(0, 1400); } catch (e) {}
-							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ckfull: ckv, ua: g("user-agent"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
-						}
-						if (/youtube|consent/.test(ru)) {
-							const sc = [];
-							let loc = "";
-							for (const [k, vals] of Object.entries(resp.headers || {})) {
-								if (String(k).toLowerCase() === "set-cookie") {
-									for (const v of (Array.isArray(vals) ? vals : [vals])) sc.push(String(v).slice(0, 130));
-								}
-								if (String(k).toLowerCase() === "location") loc = String(Array.isArray(vals) ? vals[0] : vals).slice(0, 120);
-							}
-							if (sc.length || (resp.status >= 300 && resp.status < 400)) {
-								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_resp", url: ru.slice(0, 100), status: resp.status, loc, sc }) }).catch(() => {});
-							}
-						}
-					} catch (e) {}
-					let sanitizedCut = 0;
-					try {
-						const scanRu = String(remote);
-						let ctHdr = "";
-						for (const [k, vals] of Object.entries(resp.headers || {})) {
-							if (String(k).toLowerCase() === "content-type") { ctHdr = String(Array.isArray(vals) ? vals[0] : vals); break; }
-						}
-						const isYtDoc = (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(scanRu)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function" && /text\/html/.test(ctHdr);
-						if (isYtDoc) {
-							const reader = resp.body.getReader();
-							const dec = new TextDecoder();
-							const MAX = 4000000;
-							const chunks = [];
-							let total = 0;
-							let scanBuf = "";
-							let decided = false;
-							let stopReason = "";
-							const post = (type, extra) => {
-								const base = {
-									type,
-									url: scanRu.slice(0, 110),
-									homePos: scanBuf.indexOf("ytInitialData"),
-									histPos: scanBuf.indexOf("Your YouTube History is off"),
-									beforePos: scanBuf.indexOf("Before you continue to YouTube"),
-									rejPos: scanBuf.indexOf("Reject all"),
-									scanned: total
-								};
-								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...base, ...extra }) }).catch(() => {});
-							};
-							const decide = (tag) => {
-								if (decided) return;
-								decided = true;
-								post("yt_page_kind", { kind: tag });
-							};
-							while (!stopReason) {
-								let timer = null;
-								const timeout = new Promise((res) => { timer = setTimeout(() => res("t"), 25000); });
-								const r = await Promise.race([reader.read(), timeout]);
-								clearTimeout(timer);
-								if (r === "t") { stopReason = "idle-timeout"; break; }
-								if (r.done) { stopReason = "end"; break; }
-								if (r.value) {
-									chunks.push(r.value);
-									total += r.value.length;
-									scanBuf += dec.decode(r.value, { stream: true });
-									if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
-									if (!decided) {
-										if (/ytInitialData/.test(scanBuf)) decide("home");
-										else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
-									}
-									if (total > MAX) { stopReason = "overcap"; break; }
-								}
-							}
-							try { scanBuf += dec.decode(); } catch (e) {}
-							post("yt_page_final", { kind: decided ? "decided" : "none", stop: stopReason, total });
-							let emit = chunks;
-							let more = stopReason === "overcap";
-							if (stopReason !== "idle-timeout" && stopReason !== "overcap" && scanBuf.includes("consentBumpV2Renderer")) {
-								const s = stripYTConsent(scanBuf);
-								post("yt_strip", { cut: s.cut, len: s.html.length, before: scanBuf.length });
-								if (s.cut > 0) {
-									sanitizedCut = s.cut;
-									emit = [new TextEncoder().encode(s.html)];
-									more = false;
-									try { reader.cancel(); } catch (e) {}
-								}
-							}
-							resp.body = new ReadableStream({
-								start(controller) {
-									try { for (const c of emit) controller.enqueue(c); } catch (e) {}
-									if (more) {
-										const pump = () => {
-											reader.read().then((rr) => {
-												if (rr.done) { try { controller.close(); } catch (e) {} return; }
-												try { controller.enqueue(rr.value); pump(); } catch (e) {}
-											}).catch(() => { try { controller.close(); } catch (e) {} });
-										};
-										pump();
-									} else {
-										try { controller.close(); } catch (e) {}
-									}
-								}
-							});
-						}
-					} catch (e) {
-						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_strip_err", err: String(e).slice(0, 150) }) }).catch(() => {});
-					}
-					const rawPairs = [];
-					for (const [k, vals] of Object.entries(resp.headers || {})) {
-						if (sanitizedCut > 0 && String(k).toLowerCase() === "content-length") continue;
-						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
-						else rawPairs.push([k, vals]);
-					}
-					return { body: resp.body, status: resp.status, statusText: resp.statusText, headers: rawPairs };
+					let hdrs = headers;
+					if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) hdrs = Array.from(hdrs.entries());
+					return libcurlClient.request(remote, method, body, hdrs, signal);
 				},
-				connect: (...args) => libcurlClient.connect(...args),
+				connect: (remote, protocols) => libcurlClient.connect(remote, protocols)
 			};
-		} catch (e) {
-			console.error("[Clash Proxy] libcurl transport init failed:", e);
-			fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "transport_error", message: e.message }) }).catch(() => {});
+		} catch (tpErr) {
+			console.warn("[Aura] libcurl transport fallback to classic:", tpErr);
+			classicMode = true;
+			return false;
 		}
 
 		if (transportAdapter) {
@@ -637,32 +243,31 @@ const initSWPromise = (async function initSW() {
 					},
 					transport: transportAdapter,
 				});
-
-				if (typeof sjController.init === "function") {
-					await sjController.init();
-				}
-				console.log("[Clash Proxy] Scramjet Controller active with prefix:", sjController.prefix);
+				if (typeof sjController.init === "function") await sjController.init();
 			}
 		}
 
-		// If the SW/scramjet stack didn't fully come up (blocked
-		// registration, missing controller, transport failure), fall
-		// back to the Service-Worker-free Classic engine instead of
-		// hanging on "Connecting to Proxy...".
-		if (!sjController) {
-			enableClassicMode("service worker or controller unavailable");
-			return false;
-		}
-
-		setStatus("ready", "Ready — Enter a URL or search query");
+		if (!sjController && chosenMode === "auto") classicMode = true;
 		return true;
 	} catch (err) {
-		console.error("[Clash Proxy] Initialization error:", err);
-		fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "initSW_error", message: err.message, stack: err.stack }) }).catch(()=>{});
-		enableClassicMode(err && err.message ? err.message : err);
+		classicMode = true;
 		return false;
 	}
 })();
+
+// Search Engine Resolution
+const SEARCH_ENGINES = {
+	google: "https://www.google.com/search?q=%s",
+	duckduckgo: "https://duckduckgo.com/?q=%s",
+	bing: "https://www.bing.com/search?q=%s",
+	brave: "https://search.brave.com/search?q=%s",
+	yahoo: "https://search.yahoo.com/search?p=%s"
+};
+
+function getSearchEngineTemplate() {
+	const saved = localStorage.getItem("aura_search_engine") || "google";
+	return SEARCH_ENGINES[saved] || SEARCH_ENGINES.google;
+}
 
 function resolveSearchUrl(input) {
 	if (!input) return "";
@@ -670,6090 +275,867 @@ function resolveSearchUrl(input) {
 	if (trimmed.startsWith("/") || trimmed.startsWith("./") || trimmed.startsWith("http://localhost") || trimmed.startsWith("http://127.0.0.1")) {
 		return trimmed;
 	}
-	const template = (typeof _CONFIG !== "undefined" && _CONFIG.searchEngine) ? _CONFIG.searchEngine : "https://duckduckgo.com/?q=%s";
 	try {
 		return new URL(trimmed).toString();
 	} catch (e) {}
 	try {
-		const urlWithProtocol = new URL(`https://${trimmed}`);
-		if (urlWithProtocol.hostname.includes(".")) {
-			return urlWithProtocol.toString();
-		}
+		const u = new URL(`https://${trimmed}`);
+		if (u.hostname.includes(".")) return u.toString();
 	} catch (e) {}
+	const template = getSearchEngineTemplate();
 	return template.replace("%s", encodeURIComponent(trimmed));
 }
 
-// ============================================================
-// Tab Management System
-// ============================================================
+// Proxy Browser UI Controls
+const omnibarInput = document.getElementById("omnibar-input");
+const omnibarGoBtn = document.getElementById("omnibar-go-btn");
+const omnibarEngineBadge = document.getElementById("omnibar-engine-badge");
+const proxyDeck = document.getElementById("proxy-frame-deck");
+const proxyHost = document.getElementById("proxy-frames-host");
+const deckUrl = document.getElementById("deck-current-url");
+const deckBackBtn = document.getElementById("deck-back-btn");
+const deckForwardBtn = document.getElementById("deck-forward-btn");
+const deckReloadBtn = document.getElementById("deck-reload-btn");
+const deckAboutblankBtn = document.getElementById("deck-aboutblank-btn");
+const deckCloseBtn = document.getElementById("deck-close-btn");
 
-let tabs = [];
-let activeTabId = null;
-let tabCounter = 0;
-let newTabPending = null;
-
-async function createTab(rawInput, isGame = false) {
-	tabCounter++;
-	const tabId = `tab-${tabCounter}`;
-
-	const tab = {
-		id: tabId,
-		title: "New Tab",
-		url: "",
-		favicon: "",
-		loading: true,
-		iframe: null,
-		isNewTab: !rawInput,
-		isGame: !!isGame,
-	};
-
-	tabs.push(tab);
-	activeTabId = tabId;
-
-	if (rawInput) {
-		await navigateTab(tabId, rawInput, isGame);
-	} else {
-		newTabPending = tabId;
-		showNewTabPage();
-	}
-
-	renderTabs();
-	return tab;
+function updateOmnibarEngineBadge() {
+	if (!omnibarEngineBadge) return;
+	const currentEngine = localStorage.getItem("aura_search_engine") || "google";
+	const labels = { google: "Google", duckduckgo: "DuckDuckGo", bing: "Bing", brave: "Brave", yahoo: "Yahoo" };
+	omnibarEngineBadge.textContent = labels[currentEngine] || "Google";
 }
+updateOmnibarEngineBadge();
 
-async function navigateTab(tabId, rawInput, isGame = false) {
-	const tab = tabs.find((t) => t.id === tabId);
-	if (!tab) return;
+let currentNavigatedUrl = "";
 
-	tab.loading = true;
-	tab.isNewTab = false;
-	newTabPending = null;
+async function navigateProxy(rawInput) {
+	if (!rawInput) return;
+	const targetUrl = resolveSearchUrl(rawInput);
+	currentNavigatedUrl = targetUrl;
 
-	let targetUrl = resolveSearchUrl(rawInput);
-	tab.url = targetUrl;
-	tab.isGame = !!isGame || targetUrl.includes("/games/") || targetUrl.endsWith(".html");
-	tab.title = tab.isGame ? "Playing Game" : (extractDomain(targetUrl) || "Loading...");
-	renderTabs();
+	if (deckUrl) deckUrl.textContent = targetUrl;
+	if (proxyDeck) proxyDeck.classList.remove("hidden");
+	switchView("browse");
 
-	trackActivity(tab.isGame ? "game_play" : "proxy_browse", { url: targetUrl });
+	// Clean out previous frame
+	if (proxyHost) proxyHost.innerHTML = "";
+	const iframe = document.createElement("iframe");
+	iframe.className = "proxy-frame";
+	iframe.allow = "camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen";
+	iframe.setAttribute("allowfullscreen", "true");
+	activeProxyIframe = iframe;
+	if (proxyHost) proxyHost.appendChild(iframe);
 
-	if (typeof ClashShield !== "undefined") {
-		ClashShield.resetTabCount(tabId);
-		updateShieldUI();
-	}
+	trackActivity("proxy_browse", { target: targetUrl });
 
-	if (tab.iframe) {
-		tab.iframe.remove();
-		tab.iframe = null;
-	}
+	await initSWPromise;
 
-	const isLocalGame = targetUrl.startsWith("/games/") || 
-		(targetUrl.startsWith(location.origin + "/games/")) ||
-		(!targetUrl.startsWith("http://") && !targetUrl.startsWith("https://") && targetUrl.includes("game"));
+	const isYouTube = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\b/i.test(targetUrl);
+	const mode = getProxyMode();
+	let routed = false;
 
-	try {
-		const iframe = document.createElement("iframe");
-		iframe.className = "proxy-frame";
-		iframe.dataset.tabId = tabId;
-		iframe.setAttribute("allow", "autoplay; fullscreen; microphone; camera; display-capture; clipboard-read; clipboard-write; encrypted-media; picture-in-picture");
-
-		tab.iframe = iframe;
-		framesContainer.appendChild(iframe);
-		try { if (typeof injectConsentDismisser === "function") injectConsentDismisser(iframe); } catch (e) {}
-
-		iframe.onload = () => {
-			tab.loading = false;
-			renderTabs();
-			if (typeof ClashShield !== "undefined") {
-				ClashShield.applyToFrame(iframe, tab.url);
-			}
-			if (typeof injectGameSpeedHook === "function") {
-				injectGameSpeedHook(iframe.contentWindow, typeof currentGameSpeed !== "undefined" ? currentGameSpeed : 1.0);
-			}
-			if (typeof injectConsentDismisser === "function") {
-				injectConsentDismisser(iframe);
-				setTimeout(() => {
-					try { injectConsentDismisser(iframe); } catch (e) {}
-				}, 1500);
-			}
-			if (typeof injectActiveUserscripts === "function") {
-				injectActiveUserscripts(iframe, tab.url, tab.title);
-				// Second-pass injection for Emscripten / WebAssembly loaders
-				setTimeout(() => {
-					if (iframe && iframe.contentWindow) {
-						injectActiveUserscripts(iframe, tab.url, tab.title);
-					}
-				}, 1000);
-			}
-		};
-
-		if (isLocalGame) {
-			const normalizedGameUrl = targetUrl.startsWith("/") ? targetUrl : "/" + targetUrl.replace(/^https?:\/\/[^\/]+\//, "");
-			iframe.src = normalizedGameUrl;
-			tab.loading = false;
-			tab.title = targetUrl.split("/").pop().replace(".html", "").replace(/cl/g, "");
-			renderTabs();
-
-			// Award gameplay XP & update presence
-			awardXp("game_play", { gameTitle: tab.title });
-			broadcastActivity("playing", `Playing ${tab.title}`);
-		} else {
-			await initSWPromise;
-
-			const isYouTube = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\b/i.test(targetUrl);
-			let routed = false;
-			if (!classicMode && !isYouTube && sjController) {
-				try {
-					const frame = sjController.createFrame(iframe);
-					frame.go(targetUrl);
-					routed = true;
-				} catch (err) {
-					console.warn("[Clash Proxy] createFrame initial attempt:", err);
-					try {
-						if (typeof sjController.wait === "function") await sjController.wait();
-						const frame = sjController.createFrame(iframe);
-						frame.go(targetUrl);
-						routed = true;
-					} catch (e2) {
-						console.error("[Clash Proxy] createFrame retry failed:", e2);
-					}
-				}
-			}
-
-			if (!routed) {
-				// Classic mode (or YouTube or scramjet failed): server-side proxy, no SW
-				iframe.src = (classicMode || isYouTube)
-					? "/classic/" + targetUrl
-					: "/scram/service/" + encodeURIComponent(targetUrl);
-			}
-
-			tab.loading = false;
-			tab.title = extractDomain(targetUrl);
-			renderTabs();
-
-			// Award browse XP & update presence
-			awardXp("browse", { domain: extractDomain(targetUrl) });
-			broadcastActivity("browsing", `Browsing ${extractDomain(targetUrl)}`);
-		}
-
-		renderTabs();
-		updateNavUrl(rawInput);
-		showBrowserView();
-		showActiveFrame();
-		updateShieldUI();
-		updateBookmarkStarForActiveTab();
-
-	} catch (err) {
-		console.error("[Clash Proxy] Navigation error:", err);
-		tab.loading = false;
-		tab.title = extractDomain(targetUrl) || "Web Page";
-		renderTabs();
-		updateShieldUI();
-		updateBookmarkStarForActiveTab();
-	}
-}
-
-function switchToTab(tabId) {
-	activeTabId = tabId;
-	const tab = tabs.find((t) => t.id === tabId);
-	renderTabs();
-	updateShieldUI();
-	updateBookmarkStarForActiveTab();
-
-	if (tab && tab.isNewTab) {
-		newTabPending = tabId;
-		showNewTabPage();
-	} else if (tab && tab.url) {
-		newTabPending = null;
-		showBrowserView();
-		showActiveFrame();
-		updateNavUrl(tab.url);
-
-		if (tab.isGame) {
-			broadcastActivity("playing", `Playing ${tab.title}`);
-		} else {
-			broadcastActivity("browsing", `Browsing ${extractDomain(tab.url)}`);
-		}
-	}
-}
-
-function closeTab(tabId) {
-	const idx = tabs.findIndex((t) => t.id === tabId);
-	if (idx === -1) return;
-
-	const tab = tabs[idx];
-	if (tab.iframe) {
-		silenceFrame(tab.iframe);
-		tab.iframe.remove();
-	}
-	tabs.splice(idx, 1);
-
-	if (typeof ClashShield !== "undefined") {
-		ClashShield.removeTab(tabId);
-	}
-	updateShieldUI();
-	updateBookmarkStarForActiveTab();
-
-	if (tabs.length === 0) {
-		showLandingPage();
-		broadcastActivity("online", "In Lobby");
-	} else {
-		if (activeTabId === tabId) {
-			const nextTab = tabs[Math.min(idx, tabs.length - 1)];
-			switchToTab(nextTab.id);
-		} else {
-			renderTabs();
-		}
-	}
-}
-
-function renderTabs() {
-	tabList.innerHTML = "";
-	tabs.forEach((tab) => {
-		const tabEl = document.createElement("div");
-		tabEl.className = `tab ${tab.id === activeTabId ? "active" : ""}`;
-		tabEl.dataset.tabId = tab.id;
-
-		tabEl.innerHTML = `
-			<div class="tab-favicon">
-				${tab.loading ? `<div class="tab-spinner"></div>` : `<span class="tab-icon">${tab.isGame ? "🕹️" : "🌐"}</span>`}
-			</div>
-			<span class="tab-title">${escapeHtml(tab.title || "New Tab")}</span>
-			<button class="tab-close" aria-label="Close tab" title="Close">&times;</button>
-		`;
-
-		tabEl.addEventListener("click", (e) => {
-			if (e.target.closest(".tab-close")) {
-				e.stopPropagation();
-				closeTab(tab.id);
-			} else {
-				switchToTab(tab.id);
-			}
-		});
-
-		tabList.appendChild(tabEl);
-	});
-}
-
-const silencedMedia = new WeakMap();
-let mediaGuardStarted = false;
-
-function silenceFrame(f) {
-	try {
-		const doc = f && f.contentDocument;
-		if (!doc) return;
-		doc.querySelectorAll("video,audio").forEach((m) => {
-			if (!silencedMedia.has(m)) silencedMedia.set(m, m.muted);
-			try { m.muted = true; } catch (e) {}
-			try { m.pause(); } catch (e) {}
-		});
-	} catch (e) {}
-}
-
-function unsilenceFrame(f) {
-	try {
-		const doc = f && f.contentDocument;
-		if (!doc) return;
-		doc.querySelectorAll("video,audio").forEach((m) => {
-			if (silencedMedia.has(m)) {
-				try { m.muted = silencedMedia.get(m); } catch (e) {}
-				silencedMedia.delete(m);
-			}
-		});
-	} catch (e) {}
-}
-
-function startMediaGuard() {
-	if (mediaGuardStarted) return;
-	mediaGuardStarted = true;
-	setInterval(() => {
+	if (mode !== "classic" && !classicMode && !isYouTube && sjController) {
 		try {
-			if (!framesContainer || !framesContainer.querySelectorAll) return;
-			const containerHidden = framesContainer.classList.contains("hidden");
-			const active = containerHidden ? null : framesContainer.querySelector("iframe.active");
-			framesContainer.querySelectorAll("iframe").forEach((f) => {
-				if (f === active) return;
-				silenceFrame(f);
-			});
-		} catch (e) {}
-	}, 1000);
-}
+			const frame = sjController.createFrame(iframe);
+			frame.go(targetUrl);
+			routed = true;
+		} catch (e) {
+			console.warn("[Aura] Scramjet route retry:", e);
+			try {
+				if (typeof sjController.wait === "function") await sjController.wait();
+				const frame = sjController.createFrame(iframe);
+				frame.go(targetUrl);
+				routed = true;
+			} catch (e2) {}
+		}
+	}
 
-function showActiveFrame() {
-	const iframes = framesContainer.querySelectorAll("iframe");
-	iframes.forEach((f) => {
-		const isActive = f.dataset.tabId === activeTabId;
-		f.classList.toggle("active", isActive);
-		if (isActive) unsilenceFrame(f);
-	});
-	startMediaGuard();
-
-	const activeTab = tabs.find(t => t.id === activeTabId);
-	if (gameControlsBar) {
-		const isGameTab = activeTab && (activeTab.url?.includes("/games/") || activeTab.url?.endsWith(".html") || activeTab.isGame);
-		gameControlsBar.classList.toggle("hidden", !isGameTab);
+	if (!routed) {
+		// Classic server-side fallback
+		iframe.src = (mode === "classic" || classicMode || isYouTube)
+			? "/classic/" + targetUrl
+			: "/scram/service/" + encodeURIComponent(targetUrl);
 	}
 }
 
-function showBrowserView() {
-	mainContent.classList.add("hidden");
-	browserChrome.classList.remove("hidden");
-	framesContainer.classList.remove("hidden");
+function handleOmnibarSubmit() {
+	const val = omnibarInput ? omnibarInput.value.trim() : "";
+	if (val) navigateProxy(val);
 }
 
-function showNewTabPage() {
-	browserChrome.classList.remove("hidden");
-	framesContainer.classList.remove("hidden");
-	mainContent.classList.remove("hidden");
-	mainContent.classList.add("new-tab-mode");
-
-	const iframes = framesContainer.querySelectorAll("iframe");
-	iframes.forEach((f) => {
-		f.classList.remove("active");
-		silenceFrame(f);
-	});
-	startMediaGuard();
-
-	if (gameControlsBar) gameControlsBar.classList.add("hidden");
-
-	navUrlInput.value = "";
-	setTimeout(() => proxyInput.focus(), 50);
-}
-
-function showLandingPage() {
-	mainContent.classList.remove("hidden");
-	mainContent.classList.remove("new-tab-mode");
-	browserChrome.classList.add("hidden");
-	framesContainer.classList.add("hidden");
-	if (gameControlsBar) gameControlsBar.classList.add("hidden");
-	proxyInput.value = "";
-	activeTabId = null;
-	newTabPending = null;
-	tabs = [];
-	framesContainer.querySelectorAll("iframe").forEach(silenceFrame);
-	renderTabs();
-	setTimeout(() => proxyInput.focus(), 50);
-}
-
-// ============================================================
-// About:Blank Cloaking & Game Controls
-// ============================================================
-
-function openAboutBlank(urlToOpen) {
-	try {
-		const win = window.open("about:blank", "_blank");
-		if (!win || win.closed) {
-			showToast({ icon: "⚠️", title: "Pop-up Blocked", message: "Please allow pop-ups for this site to open in about:blank." });
-			return;
-		}
-
-		win.document.title = "Google Drive";
-		const doc = win.document;
-		doc.body.style.margin = "0";
-		doc.body.style.padding = "0";
-		doc.body.style.height = "100vh";
-		doc.body.style.overflow = "hidden";
-		doc.body.style.background = "#000";
-
-		const iframe = doc.createElement("iframe");
-		iframe.style.width = "100%";
-		iframe.style.height = "100%";
-		iframe.style.border = "none";
-		iframe.style.outline = "none";
-		// Apply the Chromebook Optimizer resolution inside about:blank popups too
-		// (they have no proxy stylesheet, so do the low-res box + upscale inline).
-		try {
-			const perfRes = parseFloat(JSON.parse(localStorage.getItem("clash_perf") || "{}").resolution) || 1;
-			if (perfRes < 1) {
-				iframe.style.width = 100 * perfRes + "%";
-				iframe.style.height = 100 * perfRes + "%";
-				iframe.style.transform = "scale(" + 1 / perfRes + ")";
-				iframe.style.transformOrigin = "0 0";
-			}
-		} catch (e) {}
-		iframe.setAttribute("allow", "autoplay; fullscreen; microphone; camera; display-capture; clipboard-read; clipboard-write; encrypted-media; picture-in-picture");
-
-		let target = urlToOpen || location.href;
-		if (target.startsWith("/")) {
-			target = location.origin + target;
-		} else if (!target.includes("://")) {
-			target = location.origin + "/" + target;
-		}
-
-		iframe.src = target;
-		doc.body.appendChild(iframe);
-	} catch (err) {
-		console.error("Failed to open about:blank:", err);
-	}
-}
-
-// Nav bar controls
-if (navAboutblankBtn) {
-	navAboutblankBtn.addEventListener("click", () => {
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		const targetUrl = (activeTab ? activeTab.url : null) || navUrlInput.value;
-		if (targetUrl) openAboutBlank(targetUrl);
-	});
-}
-
-if (gameCtrlBack) {
-	gameCtrlBack.addEventListener("click", () => {
-		if (activeTabId) closeTab(activeTabId);
-		showLandingPage();
-		const gamesLink = document.getElementById("nav-games");
-		if (gamesLink) gamesLink.click();
-	});
-}
-
-if (gameCtrlFullscreen) {
-	gameCtrlFullscreen.addEventListener("click", () => {
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		if (activeTab && activeTab.iframe) {
-			if (activeTab.iframe.requestFullscreen) {
-				activeTab.iframe.requestFullscreen().catch(() => toggleFullscreen());
-			} else {
-				toggleFullscreen();
-			}
-		} else {
-			toggleFullscreen();
-		}
-	});
-}
-
-if (gameCtrlAboutblank) {
-	gameCtrlAboutblank.addEventListener("click", () => {
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		if (activeTab && activeTab.url) openAboutBlank(activeTab.url);
-	});
-}
-
-if (navBackBtn) {
-	navBackBtn.addEventListener("click", () => {
-		const tab = tabs.find((t) => t.id === activeTabId);
-		if (tab && tab.iframe && tab.iframe.contentWindow) {
-			try { tab.iframe.contentWindow.history.back(); } catch (e) {}
-		}
-	});
-}
-
-if (navForwardBtn) {
-	navForwardBtn.addEventListener("click", () => {
-		const tab = tabs.find((t) => t.id === activeTabId);
-		if (tab && tab.iframe && tab.iframe.contentWindow) {
-			try { tab.iframe.contentWindow.history.forward(); } catch (e) {}
-		}
-	});
-}
-
-if (navRefreshBtn) {
-	navRefreshBtn.addEventListener("click", () => {
-		const tab = tabs.find((t) => t.id === activeTabId);
-		if (tab && tab.iframe && tab.iframe.contentWindow) {
-			try { tab.iframe.contentWindow.location.reload(); } catch (e) {}
-		}
-	});
-}
-
-if (navHomeBtn) {
-	navHomeBtn.addEventListener("click", showLandingPage);
-}
-
-if (navUrlInput) {
-	navUrlInput.addEventListener("keydown", (e) => {
+if (omnibarInput) {
+	omnibarInput.addEventListener("keydown", (e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
-			const input = navUrlInput.value.trim();
-			if (!input) return;
-			if (activeTabId) navigateTab(activeTabId, input);
-			else createTab(input);
+			handleOmnibarSubmit();
 		}
 	});
 }
+if (omnibarGoBtn) omnibarGoBtn.addEventListener("click", handleOmnibarSubmit);
 
-if (newTabBtn) newTabBtn.addEventListener("click", () => createTab());
-if (navSidebarBtn) navSidebarBtn.addEventListener("click", openSidebar);
-
-function updateNavUrl(url) {
-	try {
-		const parsed = new URL(url);
-		navUrlInput.value = parsed.hostname + parsed.pathname + parsed.search;
-	} catch {
-		navUrlInput.value = url;
-	}
-}
-
-// Fullscreen
-if (navFullscreenBtn) navFullscreenBtn.addEventListener("click", toggleFullscreen);
-
-function toggleFullscreen() {
-	if (!document.fullscreenElement) {
-		document.documentElement.requestFullscreen().catch(() => {});
-	} else {
-		document.exitFullscreen().catch(() => {});
-	}
-}
-
-document.addEventListener("fullscreenchange", () => {
-	const isFullscreen = !!document.fullscreenElement;
-	fullscreenIconEnter.style.display = isFullscreen ? "none" : "";
-	fullscreenIconExit.style.display = isFullscreen ? "" : "none";
-});
-
-// Proxy form submit
-if (proxyInput) {
-	proxyInput.addEventListener("keydown", async (e) => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			e.stopPropagation();
-			hideError();
-			const input = proxyInput.value.trim();
-			if (!input) return;
-
-			try {
-				if (newTabPending) {
-					await navigateTab(newTabPending, input);
-					mainContent.classList.remove("new-tab-mode");
-				} else {
-					await createTab(input);
-				}
-			} catch (err) {
-				console.error("[Clash Proxy] Error:", err);
-				showError(err.message || "Failed to load. Please try again.");
-			}
-		}
-	});
-}
-
-if (proxyForm) {
-	proxyForm.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		hideError();
-		const input = proxyInput ? proxyInput.value.trim() : "";
-		if (!input) return;
-
-		try {
-			if (newTabPending) {
-				await navigateTab(newTabPending, input);
-				mainContent.classList.remove("new-tab-mode");
-			} else {
-				await createTab(input);
-			}
-		} catch (err) {
-			console.error("[Clash Proxy] Error:", err);
-			showError(err.message || "Failed to load. Please try again.");
-		}
-	});
-
-	const submitBtn = document.getElementById("proxy-submit-btn");
-	if (submitBtn) {
-		submitBtn.addEventListener("click", async (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			hideError();
-			const input = proxyInput ? proxyInput.value.trim() : "";
-			if (!input) return;
-			try {
-				if (newTabPending) {
-					await navigateTab(newTabPending, input);
-					mainContent.classList.remove("new-tab-mode");
-				} else {
-					await createTab(input);
-				}
-			} catch (err) {
-				console.error("[Clash Proxy] Error:", err);
-				showError(err.message || "Failed to load. Please try again.");
-			}
-		});
-	}
-}
-
-// ============================================================
-// User Authentication & Session System
-// ============================================================
-
-// Cross-Mirror Session Ingestion (URL hash or query param)
-try {
-	const hashMatch = window.location.hash.match(/[#&]clash_session=([A-Za-z0-9._-]+)/);
-	const queryMatch = window.location.search.match(/[?&]clash_session=([A-Za-z0-9._-]+)/);
-	const incomingToken = (hashMatch && hashMatch[1]) || (queryMatch && queryMatch[1]);
-	if (incomingToken) {
-		localStorage.setItem("clash_jwt_token", incomingToken);
-		const cleanHash = window.location.hash.replace(/[#&]clash_session=[A-Za-z0-9._-]+/, "").replace(/^#&/, "#");
-		const cleanSearch = window.location.search.replace(/[?&]clash_session=[A-Za-z0-9._-]+/, "").replace(/^&/, "?");
-		const cleanUrl = window.location.pathname + (cleanSearch && cleanSearch !== "?" ? cleanSearch : "") + (cleanHash && cleanHash !== "#" ? cleanHash : "");
-		history.replaceState(null, "", cleanUrl || "/");
-	}
-} catch (e) {}
-
-let currentUser = null;
-let authToken = localStorage.getItem("clash_jwt_token") || null;
-
-function getOrCreateGuestId() {
-	let gid = localStorage.getItem("clash_guest_id");
-	if (!gid) {
-		gid = "g_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-		try { localStorage.setItem("clash_guest_id", gid); } catch {}
-	}
-	return gid;
-}
-
-function trackActivity(type, data = {}) {
-	try {
-		const gid = getOrCreateGuestId();
-		fetch("/api/activity/track", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"X-Guest-Id": gid,
-				...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
-			},
-			body: JSON.stringify({ type, data, guestId: gid }),
-			keepalive: true
-		}).catch(() => {});
-	} catch {}
-}
-
-async function initAuth() {
-	if (!authToken) {
-		renderGuestHeader();
-		renderProfilePage();
-		connectPresenceSocket();
-		return;
-	}
-
-	try {
-		const res = await fetch("/api/auth/me", {
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		const data = await res.json();
-		if (res.ok && data.success) {
-			currentUser = data.user;
-	window.__myRankCache = null;
-			renderUserHeader();
-			renderProfilePage();
-			connectPresenceSocket();
-			applyUserSettings(currentUser.settings);
-			loadBookmarks();
-			loadUnreadCounts();
-			if (typeof loadCustomScripts === "function") loadCustomScripts();
-		} else {
-			logout();
-		}
-	} catch (err) {
-		console.error("Auth init error:", err);
-		renderGuestHeader();
-		renderProfilePage();
-	}
-}
-
-function renderUserHeader() {
-	if (!userHeaderWidget) return;
-	if (!currentUser) {
-		renderGuestHeader();
-		return;
-	}
-
-	const isTed = isUserTed(currentUser.username);
-	const frameClass = (currentUser.equippedFrame && currentUser.equippedFrame !== "none")
-		? currentUser.equippedFrame
-		: (isTed ? "frame-sovereign-gold" : "");
-	const nameThemeClass = (currentUser.equippedNameTheme && currentUser.equippedNameTheme !== "none")
-		? currentUser.equippedNameTheme
-		: (isTed ? "ted-vip-name" : "");
-
-	userHeaderWidget.innerHTML = `
-		<div id="user-header-pill" class="user-pill ${isTed ? 'ted-user-pill' : ''}" title="View Profile">
-			<div class="avatar-frame-container ${frameClass}">
-				<div class="ted-avatar-wrap">
-					<div class="user-pill-avatar ${escapeHtml(currentUser.avatar_url || currentUser.avatarUrl || 'avatar-1')}"></div>
-					${hasCrown(currentUser) ? TILTED_CROWN_SVG : ''}
-				</div>
-			</div>
-			<div class="user-pill-info">
-				<span class="user-pill-name ${nameThemeClass}">${escapeHtml(currentUser.display_name || currentUser.displayName || currentUser.username)}</span>
-				<div class="user-pill-sub">
-					<span class="user-pill-badge ${isTed ? 'admin-root-badge' : ''}">${isTed ? 'DEV' : 'Lv. ' + (currentUser.level || 1)}</span>
-					<span>${(currentUser.xp || 0).toLocaleString()} XP</span>
-				</div>
-			</div>
-		</div>
-	`;
-
-	// Reveal Owner Panel sidebar link ONLY for true Owners (Ted, Nils, Ozzy)
-	const isOwner = isTed;
-	if (navOwnerPanel) {
-		navOwnerPanel.style.display = isOwner ? "" : "none";
-	}
-	const navStaffPanelEl = document.getElementById("nav-staff-panel");
-	const retroBtnStaffEl = document.getElementById("retro-btn-staff");
-
-	// Rank chip → opens YOUR panel (Owner → control panel, Staff member → Staff Panel)
-	const rankChip = userHeaderWidget.querySelector(".user-pill-badge");
-	if (rankChip) {
-		rankChip.style.cursor = "pointer";
-		rankChip.title = "Open your panel";
-		const applyRankName = (d) => { if (d && d.rankName) rankChip.textContent = d.rankName; };
-		applyRankName(window.__myRankCache);
-		if (authToken) {
-			fetch("/api/me/ranks", { headers: { Authorization: "Bearer " + authToken } })
-				.then(async (r) => {
-					const data = await r.json().catch(() => null);
-					if (r.status === 403 && data && data.banned) {
-						showToast({
-							icon: "🚫",
-							title: "Account Suspended",
-							message: data.error || "Your account has been banned.",
-							type: "error"
-						});
-						if (typeof logout === "function") logout();
-						return null;
-					}
-					return r.ok ? data : null;
-				})
-				.then((d) => {
-					if (d) {
-						window.__myRankCache = d;
-						applyRankName(d);
-						if (navOwnerPanel) navOwnerPanel.style.display = d.isOwner ? "" : "none";
-						if (navStaffPanelEl) navStaffPanelEl.style.display = d.hasStaffPanel ? "" : "none";
-						if (retroBtnStaffEl) retroBtnStaffEl.style.display = d.hasStaffPanel ? "" : "none";
-					}
-				})
-				.catch(() => {});
-		}
-		if (!rankChip.dataset.bound) {
-			rankChip.dataset.bound = "1";
-			rankChip.addEventListener("click", async (e) => {
-				e.stopPropagation();
-				const tokenQ = "?token=" + encodeURIComponent(authToken || "");
-				const d = window.__myRankCache;
-				if (isOwner || (d && d.isOwner)) {
-					location.href = "/panel/" + tokenQ;
-					return;
-				}
-				if (d && d.hasStaffPanel) {
-					navigateToPage("staff-panel");
-					return;
-				}
-				document.getElementById("nav-profile")?.click();
-			});
-		}
-	}
-
-	const pill = document.getElementById("user-header-pill");
-	if (pill) {
-		pill.addEventListener("click", () => {
-			const profileNav = document.getElementById("nav-profile");
-			if (profileNav) profileNav.click();
-		});
-	}
-}
-
-function renderGuestHeader() {
-	if (!userHeaderWidget) return;
-	userHeaderWidget.innerHTML = `
-		<button id="header-auth-btn" class="header-login-btn">Sign In / Register</button>
-	`;
-	const navOwnerPanelEl = document.getElementById("nav-owner-panel");
-	if (navOwnerPanelEl) navOwnerPanelEl.style.display = "none";
-	const navStaffPanelEl = document.getElementById("nav-staff-panel");
-	if (navStaffPanelEl) navStaffPanelEl.style.display = "none";
-	const retroBtnStaffEl = document.getElementById("retro-btn-staff");
-	if (retroBtnStaffEl) retroBtnStaffEl.style.display = "none";
-	const btn = document.getElementById("header-auth-btn");
-	if (btn) btn.addEventListener("click", () => openAuthModal("login"));
-}
-
-async function loginUser(username, password) {
-	try {
-		if (loginErrorMsg) loginErrorMsg.classList.add("hidden");
-		const cleanUser = String(username || "").trim();
-		const cleanPass = String(password || "");
-		if (!cleanUser || !cleanPass) {
-			throw new Error("Please enter both username and password.");
-		}
-
-		const res = await fetch("/api/auth/login", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username: cleanUser, password: cleanPass })
-		});
-		const data = await res.json();
-		if (!res.ok) {
-			throw new Error(data.error || "Login failed");
-		}
-
-		authToken = data.token;
-		localStorage.setItem("clash_jwt_token", authToken);
-		currentUser = data.user;
-	window.__myRankCache = null;
-
-		closeAuthModal();
-		renderUserHeader();
-		renderProfilePage();
-		connectPresenceSocket();
-		applyUserSettings(currentUser.settings);
-		loadBookmarks();
-		loadUnreadCounts();
-		if (typeof loadCustomScripts === "function") loadCustomScripts();
-		showToast({ icon: "👋", title: "Welcome back!", message: `Logged in as ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
-	} catch (err) {
-		if (loginErrorMsg) {
-			loginErrorMsg.textContent = err.message;
-			loginErrorMsg.classList.remove("hidden");
-		}
-		showToast({ icon: "⚠️", title: "Sign In Error", message: err.message });
-	}
-}
-
-async function registerUser(username, password, displayName) {
-	try {
-		if (registerErrorMsg) registerErrorMsg.classList.add("hidden");
-		const cleanUser = String(username || "").trim();
-		const cleanPass = String(password || "");
-		const cleanDisplay = String(displayName || "").trim();
-		if (!cleanUser || !cleanPass) {
-			throw new Error("Username and password are required.");
-		}
-
-		const res = await fetch("/api/auth/register", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username: cleanUser, password: cleanPass, displayName: cleanDisplay, ownerKey: (document.getElementById("reg-ownerkey")?.value || "").trim() })
-		});
-		const data = await res.json();
-		if (!res.ok) {
-			throw new Error(data.error || "Registration failed");
-		}
-
-		authToken = data.token;
-		localStorage.setItem("clash_jwt_token", authToken);
-		currentUser = data.user;
-	window.__myRankCache = null;
-
-		closeAuthModal();
-		renderUserHeader();
-		renderProfilePage();
-		connectPresenceSocket();
-		applyUserSettings(currentUser.settings);
-		loadBookmarks();
-		loadUnreadCounts();
-		if (typeof loadCustomScripts === "function") loadCustomScripts();
-		showToast({ icon: "🎉", title: "Welcome to Clash Proxy!", message: `Account ready for ${currentUser.display_name || currentUser.displayName || currentUser.username}` });
-	} catch (err) {
-		if (registerErrorMsg) {
-			registerErrorMsg.textContent = err.message;
-			registerErrorMsg.classList.remove("hidden");
-		}
-		showToast({ icon: "⚠️", title: "Account Error", message: err.message });
-	}
-}
-
-function logout() {
-	authToken = null;
-	currentUser = null;
-	window.__myRankCache = null;
-	localStorage.removeItem("clash_jwt_token");
-	if (presenceWs) {
-		presenceWs.close();
-		presenceWs = null;
-	}
-	closeChatDrawer();
-	renderGuestHeader();
-	renderProfilePage();
-	loadBookmarks();
-	showToast({ icon: "🚪", title: "Logged out", message: "You are now in guest browsing mode." });
-}
-
-// ============================================================
-// Real-Time Presence WebSocket Engine
-// ============================================================
-
-let presenceWs = null;
-let pingInterval = null;
-let friendPresenceMap = new Map();
-
-function connectPresenceSocket() {
-	if (presenceWs) return;
-
-	const protocol = location.protocol === "https:" ? "wss:" : "ws:";
-	const wsUrl = `${protocol}//${location.host}/ws/presence`;
-
-	try {
-		presenceWs = new WebSocket(wsUrl);
-
-		presenceWs.onopen = () => {
-			if (authToken) {
-				presenceWs.send(JSON.stringify({ type: "auth", token: authToken }));
-			} else {
-				presenceWs.send(JSON.stringify({ type: "guest_ping", guestId: getOrCreateGuestId() }));
-			}
-			if (pingInterval) clearInterval(pingInterval);
-			pingInterval = setInterval(() => {
-				if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-					if (authToken) {
-						presenceWs.send(JSON.stringify({ type: "ping" }));
-					} else {
-						presenceWs.send(JSON.stringify({ type: "guest_ping", guestId: getOrCreateGuestId() }));
-					}
-				}
-			}, 25000);
-		};
-
-		presenceWs.onmessage = (e) => {
-			try {
-				const data = JSON.parse(e.data);
-				handlePresenceMessage(data);
-			} catch (err) {
-				console.error("WS message parse error:", err);
-			}
-		};
-
-		presenceWs.onclose = (e) => {
-			presenceWs = null;
-			if (pingInterval) clearInterval(pingInterval);
-			if (e && e.code === 4003) {
-				// Banned: do not auto-reconnect
-				return;
-			}
-			if (authToken) setTimeout(connectPresenceSocket, 5000);
-		};
-	} catch (err) {
-		console.error("Presence WS connection failed:", err);
-	}
-}
-
-function handlePresenceMessage(data) {
-	if (data.type === "friend_presence") {
-		const { presence } = data;
-		friendPresenceMap.set(presence.userId, presence);
-		renderFriendsLists();
-		updateChatPagePresenceUI();
-	} else if (data.type === "friends_presence_batch") {
-		for (const [id, p] of Object.entries(data.statuses)) {
-			friendPresenceMap.set(Number(id), p);
-		}
-		renderFriendsLists();
-		updateChatPagePresenceUI();
-	} else if (data.type === "friend_request") {
-		showToast({
-			icon: "👋",
-			title: "New Friend Request",
-			message: `@${data.from.username} sent you a friend request!`,
-			actionText: "View",
-			onAction: () => {
-				const fNav = document.getElementById("nav-friends");
-				if (fNav) fNav.click();
-			}
-		});
-		loadFriends();
-	} else if (data.type === "friend_accepted") {
-		showToast({
-			icon: "🤝",
-			title: "Friend Request Accepted",
-			message: `@${data.user.username} is now your friend!`,
-			type: "xp-gain"
-		});
-		loadFriends();
-	} else if (data.type === "game_invite") {
-		showToast({
-			icon: "🎮",
-			title: "Game Invitation!",
-			message: `${data.from.displayName} invited you to play ${data.gameTitle}!`,
-			actionText: "Play Now",
-			onAction: () => {
-				if (data.gameUrl) createTab(data.gameUrl, true);
-			}
-		});
-	} else if (data.type === "chat_message") {
-		const msg = data.message;
-		// If currently viewing active conversation on Chat Page
-		if (activeChatPageFriend && activeChatPageFriend.id === msg.sender_id) {
-			renderChatPageMessageItem(msg, false, activeChatPageFriend);
-			sendWsChatRead(msg.sender_id);
-			fetch(`/api/chat/${msg.sender_id}/read`, { method: "POST", headers: { Authorization: `Bearer ${authToken}` } }).catch(() => {});
-		} else if (activeChatFriend && activeChatFriend.id === msg.sender_id) {
-			appendChatMessage(msg, false);
-			sendWsChatRead(msg.sender_id);
-		} else {
-			unreadChatCounts[msg.sender_id] = (unreadChatCounts[msg.sender_id] || 0) + 1;
-			renderFriendsLists();
-			showToast({
-				icon: "💬",
-				title: `Message from ${msg.sender?.displayName || msg.sender?.username || 'Friend'}`,
-				message: msg.content.length > 45 ? msg.content.slice(0, 45) + "..." : msg.content,
-				actionText: "Reply",
-				onAction: () => {
-					navigateToChatPage(msg.sender_id);
-				}
-			});
-		}
-		updateConversationsSnippet(msg);
-		loadUnreadCounts();
-	} else if (data.type === "chat_sent") {
-		const msg = data.message;
-		if (activeChatPageFriend && activeChatPageFriend.id === msg.receiver_id) {
-			renderChatPageMessageItem(msg, true, activeChatPageFriend);
-		}
-		if (activeChatFriend && activeChatFriend.id === msg.receiver_id) {
-			appendChatMessage(msg, true);
-		}
-		updateConversationsSnippet(msg);
-	} else if (data.type === "chat_read_receipt") {
-		if (activeChatPageFriend && activeChatPageFriend.id === data.readBy) {
-			document.querySelectorAll("#chat-page-messages .chat-read-receipt").forEach((el) => {
-				el.textContent = "✓✓";
-				el.style.color = "#00f0ff";
-			});
-		}
-	} else if (data.type === "chat_typing") {
-		if (activeChatPageFriend && activeChatPageFriend.id === data.senderId) {
-			if (data.isTyping) {
-				if (chatPageTypingText) chatPageTypingText.textContent = `${activeChatPageFriend.displayName || activeChatPageFriend.username} is typing...`;
-				if (chatPageTyping) chatPageTyping.classList.remove("hidden");
-				if (chatPageMessages) chatPageMessages.scrollTop = chatPageMessages.scrollHeight;
-			} else {
-				if (chatPageTyping) chatPageTyping.classList.add("hidden");
-			}
-		}
-	} else if (data.type === "lounge_room_update") {
-		handleLoungeRoomUpdate(data.room);
-	} else if (data.type === "lounge_user_joined") {
-		handleLoungeUserJoined(data);
-	} else if (data.type === "lounge_user_left") {
-		handleLoungeUserLeft(data);
-	} else if (data.type === "lounge_message") {
-		appendLoungeChatMessage(data.message);
-	} else if (data.type === "lounge_game_changed") {
-		handleLoungeGameChanged(data);
-	} else if (data.type === "lounge_left") {
-		resetLoungeToLobby();
-	} else if (data.type === "lounge_rooms_list") {
-		renderLoungeRoomsGrid(data.rooms);
-	} else if (data.type === "system_announcement") {
-		showToast({
-			icon: "👑",
-			title: `SERVER BROADCAST — @${data.sender || 'TED'}`,
-			message: data.message,
-			type: "system-announcement-banner",
-			duration: 10000
-		});
-	} else if (data.type === "kicked") {
-		showToast({
-			icon: "🚫",
-			title: data.banned ? "Account Suspended" : "Disconnected",
-			message: data.message || "Disconnected by staff.",
-			type: "error",
-			duration: 10000
-		});
-		if (data.banned && typeof logout === "function") {
-			logout();
-		}
-	} else if (data.type === "muted_notice") {
-		showToast({
-			icon: "⏳",
-			title: "Timed Out",
-			message: `You have been muted (${data.duration || "15"}m): ${data.reason || "Staff moderation"}`,
-			type: "error",
-			duration: 8000
-		});
-	} else if (data.type === "owner_notice") {
-		showToast({
-			icon: "📢",
-			title: "Staff Notice",
-			message: data.message,
-			type: "info",
-			duration: 8000
-		});
-	} else if (data.type === "error" || data.type === "chat_error") {
-		showToast({
-			icon: "⚠️",
-			title: "Notice",
-			message: data.message || data.error || "Action not permitted.",
-			type: "error"
-		});
-	}
-}
-
-function broadcastActivity(status, activity) {
-	if (!presenceWs || presenceWs.readyState !== WebSocket.OPEN) return;
-	if (currentUser && currentUser.settings && currentUser.settings.ghostMode) return;
-	presenceWs.send(JSON.stringify({ type: "activity", status, activity }));
-}
-
-function sendGameInvite(targetUserId, gameUrl, gameTitle) {
-	if (!presenceWs || presenceWs.readyState !== WebSocket.OPEN) {
-		showToast({ icon: "⚠️", title: "Offline", message: "Must be connected to invite friends." });
-		return;
-	}
-	presenceWs.send(JSON.stringify({ type: "invite", targetUserId, gameUrl, gameTitle }));
-	showToast({ icon: "🚀", title: "Invite Sent", message: `Game invite sent to friend!` });
-}
-
-// ============================================================
-// Gamification & XP System
-// ============================================================
-
-async function awardXp(type, details) {
-	if (!authToken || (currentUser && currentUser.settings?.ghostMode)) return;
-
-	try {
-		const res = await fetch("/api/levels/xp", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${authToken}`
-			},
-			body: JSON.stringify({ type, details })
-		});
-		const data = await res.json();
-
-		if (res.ok && data.success) {
-			currentUser.xp = data.xp;
-			currentUser.level = data.level;
-			renderUserHeader();
-			renderProfilePage();
-
-			if (data.leveledUp) {
-				showToast({
-					icon: "👑",
-					title: "LEVEL UP!",
-					message: `Congratulations! You reached Level ${data.level}!`,
-					type: "level-up"
-				});
-			} else if (data.earned) {
-				showToast({
-					icon: "✨",
-					title: `+${data.earned} XP`,
-					message: data.reason,
-					type: "xp-gain",
-					duration: 3000
-				});
-			}
-		}
-	} catch (err) {
-		console.error("Award XP error:", err);
-	}
-}
-
-// Periodic XP grant for active gameplay
-setInterval(() => {
-	const activeTab = tabs.find(t => t.id === activeTabId);
-	if (activeTab && activeTab.isGame && !document.hidden) {
-		awardXp("game_play", { gameTitle: activeTab.title });
-	}
-}, 120000);
-
-// ============================================================
-// Profile View Controller
-// ============================================================
-
-function getRankTitle(level) {
-	if (level >= 10) return "Proxy Master 👑";
-	if (level >= 7) return "Shadow Runner ⚡";
-	if (level >= 5) return "Cyber Vanguard 🛡️";
-	if (level >= 3) return "Arcade Scout 🕹️";
-	return "Novice Navigator 🌐";
-}
-
-async function renderProfilePage() {
-	if (!profileDisplayName) return;
-
-	if (!currentUser) {
-		profileAvatarDisplay.className = "profile-avatar avatar-1";
-		profileDisplayName.textContent = "Guest User";
-		profileLevelBadge.textContent = "Lv. 1";
-		profileRankTitle.textContent = "Novice Navigator";
-		profileUsernameTag.textContent = "@guest";
-		profileBio.textContent = "Sign in to save your progression, connect with friends, and unlock achievements.";
-		
-		if (editProfileBtn) editProfileBtn.classList.add("hidden");
-		if (logoutBtn) logoutBtn.classList.add("hidden");
-		if (profileLoginBtn) profileLoginBtn.classList.remove("hidden");
-
-		xpCurrentDisplay.textContent = "0";
-		xpNextDisplay.textContent = "100";
-		xpBarFill.style.width = "0%";
-		
-		statGamesPlayed.textContent = "0";
-		statSitesVisited.textContent = "0";
-		statLoginStreak.textContent = "1";
-		statBadgesUnlocked.textContent = "0 / 8";
-
-		loadBadges();
-		return;
-	}
-
-	const isTed = isUserTed(currentUser.username);
-	const frameClass = (currentUser.equippedFrame && currentUser.equippedFrame !== "none")
-		? currentUser.equippedFrame
-		: (isTed ? "frame-sovereign-gold" : "");
-	const nameThemeClass = (currentUser.equippedNameTheme && currentUser.equippedNameTheme !== "none")
-		? currentUser.equippedNameTheme
-		: (isTed ? "ted-vip-name" : "");
-
-	profileAvatarDisplay.className = `profile-avatar ${escapeHtml(currentUser.avatar_url || currentUser.avatarUrl || 'avatar-1')}`;
-
-	// Add or remove tilted crown in profile avatar wrapper
-	const avatarWrapper = profileAvatarDisplay.closest(".profile-avatar-wrapper");
-	if (avatarWrapper) {
-		avatarWrapper.className = `profile-avatar-wrapper avatar-frame-container ${frameClass}`;
-		const existingCrown = avatarWrapper.querySelector(".ted-tilted-crown");
-		if (hasCrown(currentUser)) {
-			if (!existingCrown) avatarWrapper.insertAdjacentHTML("beforeend", TILTED_CROWN_SVG);
-		} else if (existingCrown) {
-			existingCrown.remove();
-		}
-	}
-
-	profileDisplayName.textContent = currentUser.display_name || currentUser.displayName || currentUser.username;
-	profileDisplayName.className = `profile-display-name ${nameThemeClass}`;
-	if (currentUser.settings && currentUser.settings.staffNameGlow) {
-		profileDisplayName.classList.add("staff-name-glow");
-	}
-
-	const titleBadgeHtml = (currentUser.equippedTitle && currentUser.equippedTitle !== "none")
-		? ` <span class="title-badge ${currentUser.equippedTitle}">🏷️ ${escapeHtml(currentUser.equippedTitle.replace('title-', '').replace(/-/g, ' '))}</span>`
-		: "";
-
-	if (isTed) {
-		profileLevelBadge.className = "level-badge admin-root-badge";
-		profileLevelBadge.textContent = "DEV";
-		profileRankTitle.innerHTML = (currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : "👑 FOUNDER") + titleBadgeHtml;
-	} else {
-		profileDisplayName.classList.remove("ted-vip-name");
-		profileLevelBadge.className = "level-badge";
-		profileLevelBadge.textContent = `Lv. ${currentUser.level || 1}`;
-		profileRankTitle.innerHTML = (currentUser.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(currentUser.custom_tag)}</span>` : escapeHtml(getRankTitle(currentUser.level || 1))) + titleBadgeHtml;
-	}
-
-	profileUsernameTag.textContent = `@${currentUser.username}`;
-	profileBio.textContent = currentUser.bio || "Cruising the web with Clash Proxy.";
-
-	if (editProfileBtn) editProfileBtn.classList.remove("hidden");
-	if (logoutBtn) logoutBtn.classList.remove("hidden");
-	if (profileLoginBtn) profileLoginBtn.classList.add("hidden");
-
-	// XP calculations
-	const currentLevelBase = Math.floor(100 * Math.pow((currentUser.level || 1) - 1, 1.5));
-	const nextLevelTarget = Math.floor(100 * Math.pow(currentUser.level || 1, 1.5));
-	const xpInLevel = (currentUser.xp || 0) - currentLevelBase;
-	const xpNeededInLevel = nextLevelTarget - currentLevelBase;
-	const percentage = Math.min(100, Math.max(0, (xpInLevel / xpNeededInLevel) * 100));
-
-	xpCurrentDisplay.textContent = currentUser.xp || 0;
-	xpNextDisplay.textContent = nextLevelTarget;
-	xpBarFill.style.width = `${percentage}%`;
-
-	// Fetch Stats
-	try {
-		const res = await fetch("/api/profile/stats", {
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		const data = await res.json();
-		if (res.ok && data.success) {
-			statGamesPlayed.textContent = data.stats.gamesPlayed;
-			statSitesVisited.textContent = data.stats.sitesVisited;
-			statLoginStreak.textContent = currentUser.streak_days || 1;
-			statBadgesUnlocked.textContent = `${data.stats.achievementsCount} / ${data.stats.totalBadgesAvailable}`;
-		}
-	} catch (e) {}
-
-	loadBadges();
-}
-
-async function loadBadges() {
-	if (!badgesGrid) return;
-	try {
-		const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
-		const res = await fetch("/api/levels/badges", { headers });
-		const data = await res.json();
-		if (res.ok && data.success) {
-			badgesGrid.innerHTML = "";
-			data.badges.forEach(b => {
-				const badgeEl = document.createElement("div");
-				badgeEl.className = `badge-item ${b.unlocked ? "unlocked" : "locked"}`;
-				badgeEl.innerHTML = `
-					<div class="badge-icon">${b.icon}</div>
-					<div class="badge-info">
-						<span class="badge-name">${escapeHtml(b.name)}</span>
-						<span class="badge-desc">${escapeHtml(b.description)}</span>
-					</div>
-				`;
-				badgesGrid.appendChild(badgeEl);
-			});
-		}
-	} catch (e) {}
-}
-
-if (editProfileBtn) editProfileBtn.addEventListener("click", openProfileModal);
-if (changeAvatarBtn) changeAvatarBtn.addEventListener("click", openProfileModal);
-if (profileLoginBtn) profileLoginBtn.addEventListener("click", () => openAuthModal("login"));
-if (logoutBtn) logoutBtn.addEventListener("click", logout);
-
-// ============================================================
-// Friends Management Controller
-// ============================================================
-
-let currentFriendsData = { friends: [], incoming: [], outgoing: [] };
-
-async function loadFriends() {
-	if (!authToken) {
-		renderFriendsLoggedOut();
-		return;
-	}
-
-	try {
-		const res = await fetch("/api/friends", {
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		const data = await res.json();
-		if (res.ok && data.success) {
-			currentFriendsData = data;
-			renderFriendsLists();
-
-			// Update badge
-			if (friendsBadge) {
-				const pendingLen = data.incoming.length;
-				if (pendingLen > 0) {
-					friendsBadge.textContent = pendingLen;
-					friendsBadge.classList.remove("hidden");
-				} else {
-					friendsBadge.classList.add("hidden");
-				}
-			}
-		}
-	} catch (err) {
-		console.error("Load friends error:", err);
-	}
-}
-
-function renderFriendsLoggedOut() {
-	if (onlineFriendsList) {
-		onlineFriendsList.innerHTML = `<div class="friends-empty-msg">Please <a href="#" id="friends-login-link" style="color:var(--accent-primary)">sign in</a> to add friends and see live presence.</div>`;
-		const link = document.getElementById("friends-login-link");
-		if (link) link.addEventListener("click", (e) => { e.preventDefault(); openAuthModal("login"); });
-	}
-	if (offlineFriendsList) offlineFriendsList.innerHTML = "";
-	if (pendingRequestsSection) pendingRequestsSection.classList.add("hidden");
-}
-
-function renderFriendsLists() {
-	if (!authToken) return;
-
-	// 1. Pending Requests
-	if (pendingRequestsSection && pendingRequestsList) {
-		if (currentFriendsData.incoming.length > 0) {
-			pendingRequestsSection.classList.remove("hidden");
-			pendingCount.textContent = currentFriendsData.incoming.length;
-			pendingRequestsList.innerHTML = "";
-			currentFriendsData.incoming.forEach(req => {
-				const card = document.createElement("div");
-				card.className = "friend-req-card";
-				card.innerHTML = `
-					<div class="friend-info">
-						<span class="friend-display-name">${escapeHtml(req.display_name || req.username)}</span>
-						<span class="friend-activity">@${escapeHtml(req.username)} • Lv. ${req.level || 1}</span>
-					</div>
-					<div class="friend-actions">
-						<button class="friend-btn btn-success" data-action="accept" data-id="${req.friendship_id}">Accept</button>
-						<button class="friend-btn btn-danger" data-action="decline" data-id="${req.friendship_id}">Decline</button>
-					</div>
-				`;
-				card.querySelectorAll("button").forEach(btn => {
-					btn.addEventListener("click", () => {
-						respondFriendRequest(btn.dataset.id, btn.dataset.action);
-					});
-				});
-				pendingRequestsList.appendChild(card);
-			});
-		} else {
-			pendingRequestsSection.classList.add("hidden");
-		}
-	}
-
-	// 2. Separate Online vs Offline
-	const online = [];
-	const offline = [];
-
-	currentFriendsData.friends.forEach(f => {
-		const presence = friendPresenceMap.get(f.id) || { status: "offline", activity: null };
-		if (presence.status === "online" || presence.status === "playing" || presence.status === "browsing") {
-			online.push({ ...f, presence });
-		} else {
-			offline.push({ ...f, presence });
-		}
-	});
-
-	if (onlineFriendsCount) onlineFriendsCount.textContent = online.length;
-	if (offlineFriendsCount) offlineFriendsCount.textContent = offline.length;
-
-	// Render Online
-	if (onlineFriendsList) {
-		onlineFriendsList.innerHTML = "";
-		if (online.length === 0) {
-			onlineFriendsList.innerHTML = `<div class="friends-empty-msg">No friends online right now.</div>`;
-		} else {
-			online.forEach(f => {
-				const isTed = isUserTed(f.username);
-				const isPlaying = f.presence.status === "playing";
-				const card = document.createElement("div");
-				card.className = `friend-card ${isTed ? 'ted-friend-card' : ''}`;
-				card.innerHTML = `
-					<div class="friend-avatar-wrap">
-						<div class="friend-avatar ${escapeHtml(f.avatar_url || 'avatar-1')}"></div>
-						${hasCrown(f) ? TILTED_CROWN_SVG : ''}
-						<span class="presence-dot ${isPlaying ? 'playing' : 'online'}"></span>
-					</div>
-					<div class="friend-info">
-						<div class="friend-name-row">
-							<span class="friend-display-name ${isTed ? 'ted-vip-name' : ''}">
-								${escapeHtml(f.display_name || f.username)}
-								${f.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(f.custom_tag)}</span>` : ''}
-							</span>
-							<span class="friend-level ${isTed ? 'admin-root-badge' : ''}">${isTed ? 'DEV' : 'Lv.' + (f.level || 1)}</span>
-						</div>
-						<div class="friend-activity ${isPlaying ? 'active-game' : ''}">${escapeHtml(f.presence.activity || 'Online')}</div>
-					</div>
-					<div class="friend-actions">
-						<button class="friend-btn btn-primary invite-btn" title="Invite to active game">🎮 Invite</button>
-						<button class="friend-chat-btn chat-btn" title="Direct Message">💬 Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
-						<button class="friend-btn btn-danger remove-btn" title="Remove Friend">&times;</button>
-					</div>
-				`;
-				card.querySelector(".invite-btn").addEventListener("click", () => {
-					const activeTab = tabs.find(t => t.id === activeTabId);
-					if (activeTab && activeTab.isGame) {
-						sendGameInvite(f.id, activeTab.url, activeTab.title);
-					} else {
-						showToast({ icon: "ℹ️", title: "Game Invite", message: "Launch an arcade game first to invite friends!" });
-					}
-				});
-				card.querySelector(".chat-btn").addEventListener("click", () => {
-					navigateToChatPage(f.id);
-				});
-				card.querySelector(".remove-btn").addEventListener("click", () => {
-					if (confirm(`Remove @${f.username} from friends?`)) removeFriend(f.friendship_id);
-				});
-				onlineFriendsList.appendChild(card);
-			});
-		}
-	}
-
-	// Render Offline
-	if (offlineFriendsList) {
-		offlineFriendsList.innerHTML = "";
-		offline.forEach(f => {
-			const isTed = isUserTed(f.username);
-			const card = document.createElement("div");
-			card.className = `friend-card ${isTed ? 'ted-friend-card' : ''}`;
-			card.innerHTML = `
-				<div class="friend-avatar-wrap">
-					<div class="friend-avatar ${escapeHtml(f.avatar_url || 'avatar-1')}"></div>
-					${hasCrown(f) ? TILTED_CROWN_SVG : ''}
-					<span class="presence-dot offline"></span>
-				</div>
-				<div class="friend-info">
-					<div class="friend-name-row">
-						<span class="friend-display-name ${isTed ? 'ted-vip-name' : ''}">
-							${escapeHtml(f.display_name || f.username)}
-							${f.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(f.custom_tag)}</span>` : ''}
-						</span>
-						<span class="friend-level ${isTed ? 'admin-root-badge' : ''}">${isTed ? 'DEV' : 'Lv.' + (f.level || 1)}</span>
-					</div>
-					<div class="friend-activity">Offline</div>
-				</div>
-				<div class="friend-actions">
-					<button class="friend-chat-btn chat-btn" title="Direct Message">💬 Chat${unreadChatCounts[f.id] ? `<span class="friend-unread-dot"></span>` : ''}</button>
-					<button class="friend-btn btn-danger remove-btn" title="Remove Friend">&times;</button>
-				</div>
-			`;
-			card.querySelector(".chat-btn").addEventListener("click", () => {
-				navigateToChatPage(f.id);
-			});
-			card.querySelector(".remove-btn").addEventListener("click", () => {
-				if (confirm(`Remove @${f.username} from friends?`)) removeFriend(f.friendship_id);
-			});
-			offlineFriendsList.appendChild(card);
-		});
-	}
-}
-
-if (addFriendForm) {
-	addFriendForm.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		if (!authToken) {
-			openAuthModal("login");
-			return;
-		}
-
-		const input = friendUsernameInput.value.trim().replace(/^@/, "");
-		if (!input) return;
-
-		try {
-			const res = await fetch("/api/friends/request", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({ username: input })
-			});
-			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Failed to send request");
-
-			friendUsernameInput.value = "";
-			showToast({ icon: "📨", title: "Friend Request Sent", message: data.message });
-			loadFriends();
-		} catch (err) {
-			showToast({ icon: "⚠️", title: "Error", message: err.message });
-		}
-	});
-}
-
-async function respondFriendRequest(friendshipId, action) {
-	try {
-		const res = await fetch("/api/friends/respond", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${authToken}`
-			},
-			body: JSON.stringify({ friendshipId, action })
-		});
-		const data = await res.json();
-		if (!res.ok) throw new Error(data.error || "Error responding");
-		showToast({ icon: "✨", title: "Friend Network", message: data.message });
-		loadFriends();
-	} catch (err) {
-		showToast({ icon: "⚠️", title: "Error", message: err.message });
-	}
-}
-
-async function removeFriend(friendshipId) {
-	try {
-		const res = await fetch(`/api/friends/${friendshipId}`, {
-			method: "DELETE",
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		if (res.ok) {
-			showToast({ icon: "🗑️", title: "Removed", message: "Friend removed." });
-			loadFriends();
-		}
-	} catch (err) {}
-}
-
-// ============================================================
-// Settings & Cloaking Controller
-// ============================================================
-
-const ALL_SITE_THEMES = [
-	"neon-purple",
-	"monochrome",
-	"sky-blue",
-	"neon-emerald",
-	"crimson-red",
-	"sunset-amber",
-	"cyber-violet",
-	"hot-pink",
-	"electric-gold",
-	"deep-sapphire",
-	"toxic-lime",
-	"arctic-cyan",
-	"blood-orange",
-	"cyber-blue",
-	"emerald-matrix",
-	"crimson-flame"
-];
-
-function applySiteTheme(themeName, notify = false) {
-	if (!themeName || !ALL_SITE_THEMES.includes(themeName)) {
-		themeName = "neon-purple";
-	}
-
-	try {
-		localStorage.setItem("clash_theme", themeName);
-		localStorage.setItem("clash_ultimate_color", themeName);
-	} catch (e) {}
-
-	ALL_SITE_THEMES.forEach((t) => {
-		document.documentElement.classList.remove(`theme-${t}`);
-		document.body.classList.remove(`theme-${t}`);
-	});
-
-	document.documentElement.classList.add(`theme-${themeName}`);
-	document.body.classList.add(`theme-${themeName}`);
-
-	if (typeof themeBtns !== "undefined" && themeBtns.length) {
-		themeBtns.forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.theme === themeName);
-		});
-	}
-
-	if (typeof ultimateColorBtns !== "undefined" && ultimateColorBtns && ultimateColorBtns.length) {
-		ultimateColorBtns.forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.color === themeName);
-		});
-	}
-
-	if (window.clashSetUltimateColor) {
-		window.clashSetUltimateColor(themeName);
-	}
-	if (window.clashUpdateParticleColor) {
-		window.clashUpdateParticleColor();
-	}
-
-	if (typeof authToken !== "undefined" && authToken) {
-		fetch("/api/profile", {
-			method: "PATCH",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${authToken}`
-			},
-			body: JSON.stringify({ settings: { theme: themeName } })
-		}).catch(() => {});
-	}
-
-	if (notify && typeof showToast === "function") {
-		const formatted = themeName
-			.split("-")
-			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-			.join(" ");
-		showToast(`Theme updated to ${formatted}`, "info");
-	}
-}
-
-function applyUserSettings(settings) {
-	if (!settings) return;
-
-	if (settingGhostMode) settingGhostMode.checked = !!settings.ghostMode;
-
-	if (settings.theme) {
-		applySiteTheme(settings.theme, false);
-	}
-
-	if (settings.cloak) {
-		applyCloak(settings.cloak);
-	}
-
-	if (settings.activeCloak) {
-		applyCloak(settings.activeCloak);
-	}
-
-	// Restore pinned quick-access tabs
-	if (Array.isArray(settings.quickAccessPins) && settings.quickAccessPins.length > 0) {
-		try {
-			localStorage.setItem(QUICK_ACCESS_STORAGE_KEY, JSON.stringify(settings.quickAccessPins));
-			if (typeof renderQuickAccessBar === "function") renderQuickAccessBar();
-		} catch (e) {}
-	}
-
-	// Restore soundboard favorites
-	if (Array.isArray(settings.soundboardFavorites)) {
-		try {
-			localStorage.setItem(soundboardFavKey, JSON.stringify(settings.soundboardFavorites));
-			if (typeof renderSoundboardGrid === "function") renderSoundboardGrid();
-		} catch (e) {}
-	}
-
-	// Restore soundboard volume
-	if (typeof settings.soundboardVolume === "number" && typeof setSoundboardVolume === "function") {
-		setSoundboardVolume(settings.soundboardVolume);
-	}
-
-	// Restore mirrors list
-	if (Array.isArray(settings.mirrors)) {
-		try {
-			localStorage.setItem("clash_mirrors_list", JSON.stringify(settings.mirrors));
-			if (typeof renderMirrorsGrid === "function") renderMirrorsGrid();
-		} catch (e) {}
-	}
-}
-
-if (settingGhostMode) {
-	settingGhostMode.addEventListener("change", async () => {
-		if (!authToken) return;
-		const isGhost = settingGhostMode.checked;
-		try {
-			await fetch("/api/profile", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({ settings: { ghostMode: isGhost } })
-			});
-			if (currentUser) {
-				currentUser.settings = currentUser.settings || {};
-				currentUser.settings.ghostMode = isGhost;
-			}
-			broadcastActivity(isGhost ? "offline" : "online", isGhost ? null : "Browsing");
-			showToast({
-				icon: isGhost ? "👻" : "👁️",
-				title: isGhost ? "Ghost Mode Active" : "Ghost Mode Disabled",
-				message: isGhost ? "Your presence and XP logging are completely paused." : "Activity and XP tracking resumed."
-			});
-		} catch (e) {}
-	});
-}
-
-// ============================================================
-// Clash Shield UI Controller & Listeners
-// ============================================================
-
-function updateShieldUI() {
-	if (typeof ClashShield === "undefined") return;
-
-	const shieldConfig = ClashShield.getConfig();
-	const shieldStats = ClashShield.getStats();
-	const activeTab = tabs.find((t) => t.id === activeTabId);
-	const count = activeTab ? ClashShield.getTabBlockedCount(activeTab.id) : 0;
-	const currentHost = activeTab && activeTab.url ? extractDomain(activeTab.url) : "";
-	const isWhitelisted = currentHost && ClashShield.isWhitelisted(currentHost);
-
-	// 1. Update Navigation Bar Badge & Active State
-	if (shieldCountBadge) {
-		shieldCountBadge.textContent = count;
-		shieldCountBadge.classList.toggle("zero", count === 0);
-	}
-	if (navShieldBtn) {
-		navShieldBtn.classList.toggle("shield-active", shieldConfig.adBlockEnabled && !isWhitelisted);
-	}
-
-	// 2. Update Quick-Settings Popover
-	if (popoverShieldCount) {
-		popoverShieldCount.textContent = count;
-	}
-
-	if (shieldStatusPill && shieldStatusText) {
-		if (!shieldConfig.adBlockEnabled || isWhitelisted) {
-			shieldStatusPill.className = "shield-status-pill paused";
-			shieldStatusText.textContent = isWhitelisted ? "Site Whitelisted" : "Shield Paused";
-		} else {
-			shieldStatusPill.className = "shield-status-pill active";
-			shieldStatusText.textContent = "Shield Active";
-		}
-	}
-
-	if (popoverToggleAdBlock) popoverToggleAdBlock.checked = shieldConfig.adBlockEnabled;
-	if (popoverTogglePopups) popoverTogglePopups.checked = shieldConfig.popupBlockEnabled;
-	if (popoverToggleDarkMode) popoverToggleDarkMode.checked = shieldConfig.forceDarkMode;
-
-	if (shieldWhitelistBtn) {
-		if (!currentHost || currentHost === "localhost" || (typeof location !== "undefined" && currentHost === location.hostname)) {
-			shieldWhitelistBtn.textContent = "No active website";
-			shieldWhitelistBtn.disabled = true;
-			shieldWhitelistBtn.classList.remove("whitelisted");
-		} else if (isWhitelisted) {
-			shieldWhitelistBtn.textContent = `Resume Shield on ${currentHost}`;
-			shieldWhitelistBtn.disabled = false;
-			shieldWhitelistBtn.classList.add("whitelisted");
-		} else {
-			shieldWhitelistBtn.textContent = `Pause on ${currentHost}`;
-			shieldWhitelistBtn.disabled = false;
-			shieldWhitelistBtn.classList.remove("whitelisted");
-		}
-	}
-
-	// 3. Update Settings Card Controls & Lifetime Stats
-	if (settingShieldAdBlock) settingShieldAdBlock.checked = shieldConfig.adBlockEnabled;
-	if (settingShieldPopups) settingShieldPopups.checked = shieldConfig.popupBlockEnabled;
-	if (settingShieldDarkMode) settingShieldDarkMode.checked = shieldConfig.forceDarkMode;
-	if (settingShieldTotalBlocked) settingShieldTotalBlocked.textContent = shieldStats.totalBlocked.toLocaleString();
-	if (settingShieldDataSaved) settingShieldDataSaved.textContent = ClashShield.formatBytes(shieldStats.bytesSaved);
-}
-
-// Reactive hook: update UI whenever Shield blocks a request or changes state
-if (typeof ClashShield !== "undefined") {
-	ClashShield.onChange(() => {
-		updateShieldUI();
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		if (activeTab && activeTab.iframe) {
-			ClashShield.applyToFrame(activeTab.iframe, activeTab.url);
-		}
-	});
-}
-
-// Nav Shield Button Toggle
-if (navShieldBtn && shieldPopover) {
-	navShieldBtn.addEventListener("click", (e) => {
-		e.stopPropagation();
-		shieldPopover.classList.toggle("hidden");
-		updateShieldUI();
-	});
-
-	document.addEventListener("click", (e) => {
-		if (!e.target.closest(".nav-shield-wrapper")) {
-			shieldPopover.classList.add("hidden");
-		}
-	});
-}
-
-// Popover Quick Toggles
-if (popoverToggleAdBlock) {
-	popoverToggleAdBlock.addEventListener("change", () => {
-		ClashShield.setAdBlockEnabled(popoverToggleAdBlock.checked);
-		showToast({
-			icon: popoverToggleAdBlock.checked ? "🛡️" : "⏸️",
-			title: "Ad & Tracker Shield",
-			message: popoverToggleAdBlock.checked ? "Ad & Tracker blocking enabled." : "Ad blocking paused."
-		});
-	});
-}
-
-if (popoverTogglePopups) {
-	popoverTogglePopups.addEventListener("change", () => {
-		ClashShield.setPopupBlockEnabled(popoverTogglePopups.checked);
-		showToast({
-			icon: popoverTogglePopups.checked ? "🚫" : "⚠️",
-			title: "Popup Blocker",
-			message: popoverTogglePopups.checked ? "Aggressive popups blocked." : "Popup blocker paused."
-		});
-	});
-}
-
-if (popoverToggleDarkMode) {
-	popoverToggleDarkMode.addEventListener("change", () => {
-		ClashShield.setForceDarkMode(popoverToggleDarkMode.checked);
-		showToast({
-			icon: popoverToggleDarkMode.checked ? "🌙" : "☀️",
-			title: "Force Dark Mode",
-			message: popoverToggleDarkMode.checked ? "Smart dark mode enabled on web tabs." : "Smart dark mode disabled."
-		});
-	});
-}
-
-if (shieldWhitelistBtn) {
-	shieldWhitelistBtn.addEventListener("click", () => {
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		if (activeTab && activeTab.url) {
-			const host = extractDomain(activeTab.url);
-			if (host) {
-				const nowWhitelisted = ClashShield.toggleWhitelist(host);
-				updateShieldUI();
-				if (activeTab.iframe) {
-					ClashShield.applyToFrame(activeTab.iframe, activeTab.url);
-				}
-				showToast({
-					icon: nowWhitelisted ? "⏸️" : "🛡️",
-					title: "Clash Shield",
-					message: nowWhitelisted ? `Shield paused for ${host}` : `Shield active for ${host}`
-				});
-			}
-		}
-	});
-}
-
-// Settings Card Listeners
-if (settingShieldAdBlock) {
-	settingShieldAdBlock.addEventListener("change", () => {
-		ClashShield.setAdBlockEnabled(settingShieldAdBlock.checked);
-	});
-}
-
-if (settingShieldPopups) {
-	settingShieldPopups.addEventListener("change", () => {
-		ClashShield.setPopupBlockEnabled(settingShieldPopups.checked);
-	});
-}
-
-if (settingShieldDarkMode) {
-	settingShieldDarkMode.addEventListener("change", () => {
-		ClashShield.setForceDarkMode(settingShieldDarkMode.checked);
-	});
-}
-
-if (settingShieldClearStats) {
-	settingShieldClearStats.addEventListener("click", () => {
-		ClashShield.clearStats();
-		showToast({
-			icon: "🧹",
-			title: "Shield Stats Reset",
-			message: "Adblock counters have been cleared."
-		});
-	});
-}
-
-// ============================================================
-// Chromebook Optimizer (Settings)
-// ============================================================
-
-let perfSettings = { staticBg: false, lightUi: false, frameBoost: false, resolution: 1 };
-
-function loadPerfSettings() {
-	try {
-		const stored = JSON.parse(localStorage.getItem("clash_perf"));
-		if (stored && typeof stored === "object") perfSettings = { ...perfSettings, ...stored };
-	} catch (e) {}
-}
-
-function savePerfSettings() {
-	try {
-		localStorage.setItem("clash_perf", JSON.stringify(perfSettings));
-	} catch (e) {}
-}
-
-function applyPerfSettings() {
-	const root = document.documentElement;
-	root.classList.toggle("static-bg", !!perfSettings.staticBg);
-	root.classList.toggle("light-ui", !!perfSettings.lightUi);
-
-	const scale = parseFloat(perfSettings.resolution);
-	const safeScale = scale > 0 && scale <= 1 ? scale : 1;
-	root.style.setProperty("--game-scale", safeScale);
-
-	if (typeof window.clashSetStaticBg === "function") {
-		window.clashSetStaticBg(!!perfSettings.staticBg);
-	}
-
-	if (settingPerfStaticBg) settingPerfStaticBg.checked = !!perfSettings.staticBg;
-	if (settingPerfLightUi) settingPerfLightUi.checked = !!perfSettings.lightUi;
-	if (settingPerfFrameBoost) settingPerfFrameBoost.checked = !!perfSettings.frameBoost;
-	if (settingPerfResolution) settingPerfResolution.value = String(safeScale);
-}
-
-function initPerfSettings() {
-	loadPerfSettings();
-	applyPerfSettings();
-
-	const toggles = [
-		[settingPerfStaticBg, "staticBg", "Background frozen to a static version."],
-		[settingPerfLightUi, "lightUi", "Blur, shadows and transitions disabled."],
-		[settingPerfFrameBoost, "frameBoost", "Games will launch in high-performance mode."]
-	];
-
-	toggles.forEach(([el, key, msg]) => {
-		if (!el) return;
-		el.addEventListener("change", () => {
-			perfSettings[key] = el.checked;
-			savePerfSettings();
-			applyPerfSettings();
-			showToast({ icon: "🖥️", title: "Optimizer Updated", message: el.checked ? msg : "Setting disabled." });
-		});
-	});
-
-	if (settingPerfResolution) {
-		settingPerfResolution.addEventListener("change", () => {
-			perfSettings.resolution = parseFloat(settingPerfResolution.value) || 1;
-			savePerfSettings();
-			applyPerfSettings();
-			showToast({
-				icon: "🖥️",
-				title: "Resolution Updated",
-				message: `Games now render at ${Math.round((parseFloat(perfSettings.resolution) || 1) * 100)}% resolution.`
-			});
-		});
-	}
-
-	// Fullscreen handling for the optimizer:
-	// - Only strip the resolution upscale when the frame itself is fullscreened
-	//   (whole-page fullscreen keeps the scaled frame so the game still fills the screen).
-	// - Tell the frame it's fullscreened so the in-game bootstrap drops devicePixelRatio
-	//   by the resolution factor — the only lever that works while the UA forces the
-	//   fullscreen element to viewport size.
-	document.addEventListener("fullscreenchange", () => {
-		const fsEl = document.fullscreenElement;
-		const frameFs = !!(fsEl && fsEl.classList && fsEl.classList.contains("proxy-frame"));
-		document.documentElement.classList.toggle("in-frame-fullscreen", frameFs);
-		document.querySelectorAll("iframe.proxy-frame").forEach((f) => {
-			try {
-				f.contentWindow.__clashPerfFs = frameFs && f === fsEl;
-			} catch (e) {}
-		});
-	});
-}
-
-initPerfSettings();
-
-// ============================================================
-// Bookmarks & Speed Dial Manager
-// ============================================================
-
-const GUEST_DEFAULT_BOOKMARKS = [
-	{ id: "g1", title: "Google", url: "https://www.google.com", icon: "🌐", is_game: 0 },
-	{ id: "g2", title: "YouTube", url: "https://www.youtube.com", icon: "▶️", is_game: 0 },
-	{ id: "g3", title: "Discord", url: "https://discord.com", icon: "💬", is_game: 0 },
-	{ id: "g4", title: "Wikipedia", url: "https://www.wikipedia.org", icon: "📚", is_game: 0 },
-	{ id: "g5", title: "Drive Mad", url: "/games/cldrivemady.html", icon: "🚗", is_game: 1 },
-	{ id: "g6", title: "Retro Bowl", url: "/games/clretrobowl.html", icon: "🏈", is_game: 1 },
-	{ id: "g7", title: "1v1.LOL", url: "/games/cl1v1lol.html", icon: "🎯", is_game: 1 },
-	{ id: "g8", title: "Slope", url: "/games/clslope.html", icon: "⚡", is_game: 1 }
-];
-
-let userBookmarks = [];
-
-async function loadBookmarks() {
-	if (authToken) {
-		try {
-			const res = await fetch("/api/bookmarks", {
-				headers: { Authorization: `Bearer ${authToken}` }
-			});
-			const data = await res.json();
-			if (data.bookmarks) {
-				userBookmarks = data.bookmarks;
-				renderSpeedDial();
-				updateBookmarkStarForActiveTab();
-				return;
-			}
-		} catch (e) {
-			console.warn("Failed to load cloud bookmarks:", e);
-		}
-	}
-
-	// Fallback to local guest storage
-	try {
-		const stored = localStorage.getItem("clash_guest_bookmarks");
-		if (stored) {
-			userBookmarks = JSON.parse(stored);
-		} else {
-			userBookmarks = [...GUEST_DEFAULT_BOOKMARKS];
-			localStorage.setItem("clash_guest_bookmarks", JSON.stringify(userBookmarks));
-		}
-	} catch (e) {
-		userBookmarks = [...GUEST_DEFAULT_BOOKMARKS];
-	}
-
-	renderSpeedDial();
-	updateBookmarkStarForActiveTab();
-}
-
-function saveGuestBookmarks() {
-	try {
-		localStorage.setItem("clash_guest_bookmarks", JSON.stringify(userBookmarks));
-	} catch (e) {}
-}
-
-function renderSpeedDial() {
-	if (!speedDialGrid) return;
-	speedDialGrid.innerHTML = "";
-
-	if (!userBookmarks || userBookmarks.length === 0) {
-		speedDialGrid.innerHTML = `<div class="speed-dial-empty" style="grid-column: 1/-1; text-align:center; color:var(--text-muted); font-size:0.8rem; padding: 12px;">No shortcuts yet. Click "+ Add Shortcut" or star pages!</div>`;
-		return;
-	}
-
-	userBookmarks.forEach((bm) => {
-		const tile = document.createElement("div");
-		tile.className = "speed-dial-tile";
-		tile.title = `${bm.title}\n${bm.url}`;
-		tile.innerHTML = `
-			<div class="speed-dial-icon">${escapeHtml(bm.icon || (bm.is_game ? "🎮" : "🌐"))}</div>
-			<span class="speed-dial-title">${escapeHtml(bm.title)}</span>
-			<button class="speed-dial-delete-btn" title="Remove bookmark">&times;</button>
-		`;
-
-		tile.addEventListener("click", (e) => {
-			if (e.target.closest(".speed-dial-delete-btn")) return;
-			const activeTab = tabs.find((t) => t.id === activeTabId);
-			if (activeTab && activeTab.isNewTab) {
-				navigateTab(activeTab.id, bm.url, !!bm.is_game);
-			} else {
-				createTab(bm.url, !!bm.is_game);
-			}
-		});
-
-		tile.querySelector(".speed-dial-delete-btn").addEventListener("click", (e) => {
-			e.stopPropagation();
-			deleteBookmark(bm.id, bm.url);
-		});
-
-		speedDialGrid.appendChild(tile);
-	});
-}
-
-async function addBookmark(title, url, icon, isGame = false) {
-	const cleanTitle = (title || url).slice(0, 50);
-	const cleanUrl = url.trim();
-	const cleanIcon = icon || (isGame ? "🎮" : "🌐");
-
-	if (authToken) {
-		try {
-			const res = await fetch("/api/bookmarks", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({
-					title: cleanTitle,
-					url: cleanUrl,
-					icon: cleanIcon,
-					is_game: isGame ? 1 : 0
-				})
-			});
-			const data = await res.json();
-			if (data.bookmark) {
-				userBookmarks.push(data.bookmark);
-				renderSpeedDial();
-				updateBookmarkStarForActiveTab();
-				showToast({ icon: "⭐", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
-				return true;
-			}
-		} catch (e) {
-			console.error("Cloud bookmark add error:", e);
-		}
-	}
-
-	// Guest mode addition
-	const newBm = {
-		id: "g_" + Date.now(),
-		title: cleanTitle,
-		url: cleanUrl,
-		icon: cleanIcon,
-		is_game: isGame ? 1 : 0
-	};
-	userBookmarks.push(newBm);
-	saveGuestBookmarks();
-	renderSpeedDial();
-	updateBookmarkStarForActiveTab();
-	showToast({ icon: "⭐", title: "Bookmark Added", message: `Saved "${cleanTitle}" to your Speed Dial!` });
-	return true;
-}
-
-async function deleteBookmark(bookmarkId, bookmarkUrl) {
-	if (authToken && typeof bookmarkId === "number") {
-		try {
-			await fetch(`/api/bookmarks/${bookmarkId}`, {
-				method: "DELETE",
-				headers: { Authorization: `Bearer ${authToken}` }
-			});
-		} catch (e) {
-			console.warn("Error deleting cloud bookmark:", e);
-		}
-	}
-
-	userBookmarks = userBookmarks.filter((b) => b.id !== bookmarkId && b.url !== bookmarkUrl);
-	if (!authToken) saveGuestBookmarks();
-	renderSpeedDial();
-	updateBookmarkStarForActiveTab();
-	showToast({ icon: "🗑️", title: "Bookmark Removed", message: "Shortcut removed from Speed Dial." });
-}
-
-function updateBookmarkStarForActiveTab() {
-	if (!navBookmarkBtn) return;
-	const activeTab = tabs.find((t) => t.id === activeTabId);
-	if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-		navBookmarkBtn.classList.remove("bookmarked");
-		return;
-	}
-
-	const isBookmarked = userBookmarks.some((b) => b.url === activeTab.url || (b.url.startsWith("/") && activeTab.url.endsWith(b.url)));
-	navBookmarkBtn.classList.toggle("bookmarked", isBookmarked);
-}
-
-// Nav Bookmark Star Button Click
-if (navBookmarkBtn) {
-	navBookmarkBtn.addEventListener("click", (e) => {
-		e.stopPropagation();
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "ℹ️", title: "Bookmark", message: "Open a website or game first to bookmark it!" });
-			return;
-		}
-
-		const existing = userBookmarks.find((b) => b.url === activeTab.url || (b.url.startsWith("/") && activeTab.url.endsWith(b.url)));
-		if (existing) {
-			deleteBookmark(existing.id, existing.url);
-		} else {
-			addBookmark(activeTab.title || extractDomain(activeTab.url), activeTab.url, activeTab.isGame ? "🎮" : "🌐", activeTab.isGame);
-		}
-	});
-}
-
-// Add Shortcut Modal Listeners
-if (addShortcutBtn && shortcutModal) {
-	addShortcutBtn.addEventListener("click", () => {
-		if (shortcutForm) shortcutForm.reset();
-		shortcutModal.classList.remove("hidden");
-	});
-}
-
-if (shortcutModalClose && shortcutModal) {
-	shortcutModalClose.addEventListener("click", () => {
-		shortcutModal.classList.add("hidden");
-	});
-	shortcutModal.addEventListener("click", (e) => {
-		if (e.target === shortcutModal) shortcutModal.classList.add("hidden");
-	});
-}
-
-if (shortcutForm) {
-	shortcutForm.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		const title = shortcutTitle.value.trim();
-		const url = shortcutUrl.value.trim();
-		const icon = shortcutIcon ? shortcutIcon.value.trim() : "";
-		if (!title || !url) return;
-
-		await addBookmark(title, url, icon);
-		if (shortcutModal) shortcutModal.classList.add("hidden");
-	});
-}
-
-// ============================================================
-// Direct Messaging & Floating Chat Drawer Manager
-// ============================================================
-
-let activeChatFriend = null;
-let unreadChatCounts = {};
-
-async function loadUnreadCounts() {
-	if (!authToken) {
-		if (chatNavUnreadBadge) chatNavUnreadBadge.classList.add("hidden");
-		return;
-	}
-	try {
-		const res = await fetch("/api/chat/unread", {
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		const data = await res.json();
-		if (data.unreadBySender) {
-			unreadChatCounts = data.unreadBySender;
-			renderFriendsLists();
-		}
-		if (chatNavUnreadBadge) {
-			const total = data.totalUnread || 0;
-			if (total > 0) {
-				chatNavUnreadBadge.textContent = total > 99 ? "99+" : total;
-				chatNavUnreadBadge.classList.remove("hidden");
-			} else {
-				chatNavUnreadBadge.classList.add("hidden");
-			}
-		}
-	} catch (e) {}
-}
-
-async function openChatDrawer(friend) {
-	if (!chatDrawer) return;
-	activeChatFriend = friend;
-	unreadChatCounts[friend.id] = 0;
-	renderFriendsLists();
-
-	// Update Header
-	const isTed = isUserTed(friend.username);
-	if (chatFriendAvatar) {
-		chatFriendAvatar.className = `chat-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${friend.avatar_url || 'avatar-1'}`;
-		chatFriendAvatar.innerHTML = hasCrown(friend) ? TILTED_CROWN_SVG : "";
-	}
-	if (chatFriendName) {
-		chatFriendName.textContent = friend.display_name || friend.username;
-		if (isTed) {
-			chatFriendName.className = "chat-friend-name ted-vip-name";
-		} else {
-			chatFriendName.className = "chat-friend-name";
-		}
-	}
-	if (chatFriendStatus) {
-		const pres = friendPresenceMap.get(friend.id);
-		const isOnline = pres && (pres.status === "online" || pres.status === "playing" || pres.status === "browsing");
-		chatFriendStatus.textContent = isOnline ? (pres.activity || "Online") : "Offline";
-		chatFriendStatus.className = `chat-friend-status ${isOnline ? '' : 'offline'}`;
-	}
-
-	chatDrawer.classList.remove("hidden", "minimized");
-
-	// Load Message History
-	if (chatMessagesContainer) {
-		chatMessagesContainer.innerHTML = `<div class="chat-empty-state">Loading messages...</div>`;
-		try {
-			const res = await fetch(`/api/chat/${friend.id}`, {
-				headers: { Authorization: `Bearer ${authToken}` }
-			});
-			const data = await res.json();
-			chatMessagesContainer.innerHTML = "";
-			if (!data.messages || data.messages.length === 0) {
-				chatMessagesContainer.innerHTML = `<div class="chat-empty-state">No messages yet. Say hello! 👋</div>`;
-			} else {
-				data.messages.forEach((msg) => {
-					appendChatMessage(msg, msg.sender_id === (currentUser ? currentUser.id : null));
-				});
-			}
-		} catch (err) {
-			chatMessagesContainer.innerHTML = `<div class="chat-empty-state">Failed to load messages.</div>`;
-		}
-	}
-
-	sendWsChatRead(friend.id);
-	if (chatMessageInput) chatMessageInput.focus();
-}
-
-function closeChatDrawer() {
-	if (!chatDrawer) return;
-	chatDrawer.classList.add("hidden");
-	activeChatFriend = null;
-}
-
-function sendWsChatRead(friendId) {
-	if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-		presenceWs.send(JSON.stringify({ type: "chat_read", friendId }));
-	}
-}
-
-function appendChatMessage(msg, isMine) {
-	if (!chatMessagesContainer) return;
-
-	const emptyState = chatMessagesContainer.querySelector(".chat-empty-state");
-	if (emptyState) emptyState.remove();
-
-	const row = document.createElement("div");
-	row.className = `chat-message-row ${isMine ? "mine" : "theirs"}`;
-
-	let meta = null;
-	if (msg.meta_json) {
-		try {
-			meta = typeof msg.meta_json === "string" ? JSON.parse(msg.meta_json) : msg.meta_json;
-		} catch (e) {}
-	}
-
-	let bubbleContent = escapeHtml(msg.content);
-	let extraHtml = "";
-
-	if (msg.type === "game_share" && meta) {
-		extraHtml = `
-			<div class="chat-share-card">
-				<span class="chat-share-title">🎮 ${escapeHtml(meta.title || "Arcade Game")}</span>
-				<button class="chat-share-btn-action play-shared-game-btn" data-url="${escapeHtml(meta.url)}">Play Game</button>
-			</div>
-		`;
-	} else if (msg.type === "url_share" && meta) {
-		extraHtml = `
-			<div class="chat-share-card">
-				<span class="chat-share-title">🌐 ${escapeHtml(meta.title || meta.url)}</span>
-				<button class="chat-share-btn-action open-shared-tab-btn" data-url="${escapeHtml(meta.url)}">Open Tab</button>
-			</div>
-		`;
-	}
-
-	const timeStr = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
-
-	row.innerHTML = `
-		<div class="chat-bubble">
-			${bubbleContent}
-			${extraHtml}
-		</div>
-		<span class="chat-time">${timeStr}</span>
-	`;
-
-	const playBtn = row.querySelector(".play-shared-game-btn");
-	if (playBtn) {
-		playBtn.addEventListener("click", () => {
-			createTab(playBtn.dataset.url, true);
-		});
-	}
-
-	const openTabBtn = row.querySelector(".open-shared-tab-btn");
-	if (openTabBtn) {
-		openTabBtn.addEventListener("click", () => {
-			createTab(openTabBtn.dataset.url, false);
-		});
-	}
-
-	chatMessagesContainer.appendChild(row);
-	chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-}
-
-// Chat Form Submit
-if (chatInputForm && chatMessageInput) {
-	chatInputForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const text = chatMessageInput.value.trim();
-		if (!text || !activeChatFriend) return;
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatFriend.id,
-				content: text,
-				messageType: "text"
-			}));
-		} else {
-			showToast({ icon: "⚠️", title: "Offline", message: "Connecting to chat network..." });
-		}
-
-		chatMessageInput.value = "";
-	});
-}
-
-// Quick Share Game & Tab in Chat
-if (chatShareGameBtn) {
-	chatShareGameBtn.addEventListener("click", () => {
-		if (!activeChatFriend) return;
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		let gameTitle = "Drive Mad";
-		let gameUrl = "/games/cldrivemady.html";
-		if (activeTab && activeTab.isGame) {
-			gameTitle = activeTab.title;
-			gameUrl = activeTab.url;
-		}
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatFriend.id,
-				content: `Check out this game: ${gameTitle}!`,
-				messageType: "game_share",
-				meta: { title: gameTitle, url: gameUrl }
-			}));
-		}
-	});
-}
-
-if (chatShareTabBtn) {
-	chatShareTabBtn.addEventListener("click", () => {
-		if (!activeChatFriend) return;
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "ℹ️", title: "Share Tab", message: "Open a website tab to share it!" });
-			return;
-		}
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatFriend.id,
-				content: `Check out this page: ${activeTab.title || extractDomain(activeTab.url)}`,
-				messageType: "url_share",
-				meta: { title: activeTab.title, url: activeTab.url }
-			}));
-		}
-	});
-}
-
-if (chatCloseBtn) {
-	chatCloseBtn.addEventListener("click", () => {
-		closeChatDrawer();
-	});
-}
-
-if (chatMinimizeBtn) {
-	chatMinimizeBtn.addEventListener("click", () => {
-		if (chatDrawer) chatDrawer.classList.toggle("minimized");
-	});
-}
-
-// ============================================================
-// 💬 Dedicated Chat Page Messenger Controller
-// ============================================================
-
-let chatConversationsData = [];
-let activeChatPageFriend = null;
-let chatIsTyping = false;
-let chatTypingTimer = null;
-
-function formatChatTime(dateStr) {
-	if (!dateStr) return "";
-	const d = new Date(dateStr);
-	return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
-function formatConvTime(dateStr) {
-	if (!dateStr) return "";
-	const d = new Date(dateStr);
-	const now = new Date();
-	if (d.toDateString() === now.toDateString()) {
-		return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-	}
-	const y = new Date();
-	y.setDate(now.getDate() - 1);
-	if (d.toDateString() === y.toDateString()) {
-		return "Yesterday";
-	}
-	return d.toLocaleDateString([], { month: "short", day: "numeric" });
-}
-
-async function loadChatConversations() {
-	if (!chatConversationsList) return;
-
-	if (!authToken) {
-		chatConversationsList.innerHTML = `
-			<div class="chat-sidebar-loading" style="padding: 30px 16px;">
-				<div style="font-size: 2rem; margin-bottom: 10px;">🔒</div>
-				<p style="margin-bottom: 14px; color: #a0aec0;">Sign in to access your messages and chat with friends.</p>
-				<button type="button" class="btn btn-primary btn-sm chat-login-btn">Sign In</button>
-			</div>
-		`;
-		const btn = chatConversationsList.querySelector(".chat-login-btn");
-		if (btn) btn.addEventListener("click", () => openAuthModal("login"));
-
-		if (chatEmptySelection) {
-			chatEmptySelection.classList.remove("hidden");
-			chatEmptySelection.innerHTML = `
-				<div class="chat-empty-icon-wrap"><span class="chat-empty-icon">💬</span></div>
-				<h3 class="chat-empty-title">Clash Messenger</h3>
-				<p class="chat-empty-desc">Sign in to start direct messaging your friends, sharing games, and sending web pages.</p>
-			`;
-		}
-		if (chatActiveFeedWrap) chatActiveFeedWrap.classList.add("hidden");
-		return;
-	}
-
-	try {
-		chatConversationsList.innerHTML = `<div class="chat-sidebar-loading">Loading conversations...</div>`;
-		const res = await fetch("/api/chat/conversations", {
-			headers: { Authorization: `Bearer ${authToken}` }
-		});
-		const data = await res.json();
-		chatConversationsData = data.conversations || [];
-		renderConversationsListUI();
-		updateChatPagePresenceUI();
-	} catch (err) {
-		chatConversationsList.innerHTML = `<div class="chat-sidebar-loading" style="color: #ff4757;">Failed to load conversations.</div>`;
-	}
-}
-
-function renderConversationsListUI() {
-	if (!chatConversationsList) return;
-	chatConversationsList.innerHTML = "";
-
-	if (chatConversationsData.length === 0) {
-		chatConversationsList.innerHTML = `
-			<div class="chat-sidebar-loading" style="padding: 30px 16px;">
-				<div style="font-size: 1.8rem; margin-bottom: 8px;">👥</div>
-				<p style="margin-bottom: 12px; color: #a0aec0;">No friends found yet.</p>
-				<button type="button" class="btn btn-secondary btn-sm chat-go-friends-btn">Find Friends</button>
-			</div>
-		`;
-		const btn = chatConversationsList.querySelector(".chat-go-friends-btn");
-		if (btn) btn.addEventListener("click", () => {
-			const fNav = document.getElementById("nav-friends");
-			if (fNav) fNav.click();
-		});
-		return;
-	}
-
-	const searchFilter = (chatSearchInput ? chatSearchInput.value : "").trim().toLowerCase();
-
-	const filtered = chatConversationsData.filter((conv) => {
-		if (!searchFilter) return true;
-		const name = (conv.friend.displayName || "").toLowerCase();
-		const handle = (conv.friend.username || "").toLowerCase();
-		return name.includes(searchFilter) || handle.includes(searchFilter);
-	});
-
-	if (filtered.length === 0) {
-		chatConversationsList.innerHTML = `<div class="chat-sidebar-loading">No matching friends found.</div>`;
-		return;
-	}
-
-	filtered.forEach((conv) => {
-		const isTed = isUserTed(conv.friend.username);
-		const pres = friendPresenceMap.get(conv.friend.id);
-		const isOnline = pres && (pres.status === "online" || pres.status === "playing" || pres.status === "browsing");
-		const isActive = activeChatPageFriend && activeChatPageFriend.id === conv.friend.id;
-
-		const item = document.createElement("div");
-		item.className = `chat-conversation-item ${isActive ? "active" : ""}`;
-		item.dataset.friendId = conv.friend.id;
-
-		let snippet = "No messages yet";
-		let timeStr = "";
-		if (conv.lastMessage) {
-			timeStr = formatConvTime(conv.lastMessage.createdAt);
-			if (conv.lastMessage.type === "game_share") {
-				snippet = "🎮 Shared an arcade game";
-			} else if (conv.lastMessage.type === "url_share") {
-				snippet = "🌐 Shared a link";
-			} else {
-				snippet = conv.lastMessage.content;
-			}
-		}
-
-		item.innerHTML = `
-			<div class="chat-conv-avatar-wrap">
-				<div class="chat-conv-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${conv.friend.avatarUrl || 'avatar-1'}">
-					${hasCrown(conv.friend) ? TILTED_CROWN_SVG : ''}
-				</div>
-				<span class="chat-status-dot ${isOnline ? 'online' : 'offline'}"></span>
-			</div>
-			<div class="chat-conv-info">
-				<div class="chat-conv-top">
-					<span class="chat-conv-name ${isTed ? 'ted-vip-name' : ''}">${escapeHtml(conv.friend.displayName || conv.friend.username)}</span>
-					<span class="chat-conv-time">${timeStr}</span>
-				</div>
-				<div class="chat-conv-bottom">
-					<span class="chat-conv-snippet">${escapeHtml(snippet)}</span>
-					${conv.unreadCount > 0 ? `<span class="chat-conv-unread">${conv.unreadCount > 99 ? '99+' : conv.unreadCount}</span>` : ''}
-				</div>
-			</div>
-		`;
-
-		item.addEventListener("click", () => {
-			selectChatPageConversation(conv.friend);
-		});
-
-		chatConversationsList.appendChild(item);
-	});
-}
-
-function updateChatPagePresenceUI() {
-	let onlineCount = 0;
-	chatConversationsData.forEach((c) => {
-		const p = friendPresenceMap.get(c.friend.id);
-		if (p && (p.status === "online" || p.status === "playing" || p.status === "browsing")) {
-			onlineCount++;
-		}
-	});
-
-	if (chatPageOnlineCount) {
-		chatPageOnlineCount.textContent = `${onlineCount} Online`;
-	}
-
-	if (chatConversationsList) {
-		document.querySelectorAll(".chat-conversation-item").forEach((item) => {
-			const fid = parseInt(item.dataset.friendId, 10);
-			const dot = item.querySelector(".chat-status-dot");
-			if (dot && fid) {
-				const p = friendPresenceMap.get(fid);
-				const isOnline = p && (p.status === "online" || p.status === "playing" || p.status === "browsing");
-				dot.className = `chat-status-dot ${isOnline ? "online" : "offline"}`;
-			}
-		});
-	}
-
-	if (activeChatPageFriend && chatActivePresence && chatActiveStatusDot) {
-		const p = friendPresenceMap.get(activeChatPageFriend.id);
-		const isOnline = p && (p.status === "online" || p.status === "playing" || p.status === "browsing");
-		chatActiveStatusDot.className = `chat-status-dot ${isOnline ? "online" : "offline"}`;
-		chatActivePresence.textContent = isOnline ? (p.activity || "Online") : "Offline";
-		chatActivePresence.style.color = isOnline ? "#00ff88" : "#a0aec0";
-	}
-}
-
-function updateConversationsSnippet(msg) {
-	const currentUid = currentUser ? currentUser.id : null;
-	const otherId = msg.sender_id === currentUid ? msg.receiver_id : msg.sender_id;
-
-	const conv = chatConversationsData.find((c) => c.friend.id === otherId);
-	if (conv) {
-		conv.lastMessage = {
-			id: msg.id,
-			senderId: msg.sender_id,
-			content: msg.content,
-			type: msg.type,
-			createdAt: msg.created_at || new Date().toISOString()
-		};
-		if (msg.sender_id !== currentUid) {
-			if (!activeChatPageFriend || activeChatPageFriend.id !== otherId) {
-				conv.unreadCount = (conv.unreadCount || 0) + 1;
-			}
-		}
-		chatConversationsData.sort((a, b) => {
-			const tA = a.lastMessage ? new Date(a.lastMessage.createdAt).getTime() : 0;
-			const tB = b.lastMessage ? new Date(b.lastMessage.createdAt).getTime() : 0;
-			return tB - tA;
-		});
-		renderConversationsListUI();
-	} else {
-		loadChatConversations();
-	}
-}
-
-async function selectChatPageConversation(friend) {
-	activeChatPageFriend = friend;
-
-	// Highlight item in sidebar
-	document.querySelectorAll(".chat-conversation-item").forEach((item) => {
-		item.classList.toggle("active", parseInt(item.dataset.friendId, 10) === friend.id);
-	});
-
-	// Reset unread count locally
-	const conv = chatConversationsData.find((c) => c.friend.id === friend.id);
-	if (conv) conv.unreadCount = 0;
-	if (unreadChatCounts[friend.id]) unreadChatCounts[friend.id] = 0;
-	renderConversationsListUI();
-	loadUnreadCounts();
-
-	// Switch panes
-	if (chatEmptySelection) chatEmptySelection.classList.add("hidden");
-	if (chatActiveFeedWrap) chatActiveFeedWrap.classList.remove("hidden");
-
-	// Update Header
-	const isTed = isUserTed(friend.username);
-	if (chatActiveAvatar) {
-		chatActiveAvatar.className = `chat-avatar ${isTed ? 'ted-avatar-wrap' : ''} ${friend.avatarUrl || 'avatar-1'}`;
-		chatActiveAvatar.innerHTML = hasCrown(friend) ? TILTED_CROWN_SVG : "";
-	}
-	if (chatActiveName) {
-		chatActiveName.textContent = friend.displayName || friend.username;
-		chatActiveName.className = `chat-active-name ${isTed ? 'ted-vip-name' : ''}`;
-	}
-	if (chatActiveUsername) {
-		chatActiveUsername.textContent = `@${friend.username}`;
-	}
-
-	const pres = friendPresenceMap.get(friend.id);
-	const isOnline = pres && (pres.status === "online" || pres.status === "playing" || pres.status === "browsing");
-	if (chatActiveStatusDot) {
-		chatActiveStatusDot.className = `chat-status-dot ${isOnline ? 'online' : 'offline'}`;
-	}
-	if (chatActivePresence) {
-		chatActivePresence.textContent = isOnline ? (pres.activity || "Online") : "Offline";
-		chatActivePresence.style.color = isOnline ? "#00ff88" : "#a0aec0";
-	}
-
-	if (chatPageInput) {
-		chatPageInput.placeholder = `Message @${friend.username}... (Press Enter to send)`;
-	}
-
-	// Load Message History
-	if (chatPageMessages) {
-		chatPageMessages.innerHTML = `<div class="chat-sidebar-loading">Loading message history...</div>`;
-		try {
-			const res = await fetch(`/api/chat/${friend.id}`, {
-				headers: { Authorization: `Bearer ${authToken}` }
-			});
-			const data = await res.json();
-			chatPageMessages.innerHTML = "";
-			if (!data.messages || data.messages.length === 0) {
-				chatPageMessages.innerHTML = `
-					<div class="chat-sidebar-loading" style="padding: 40px 16px;">
-						<div style="font-size: 2.2rem; margin-bottom: 8px;">👋</div>
-						<div style="color: #fff; font-weight: 700; margin-bottom: 4px;">Start of your conversation</div>
-						<div style="color: #a0aec0; font-size: 0.85rem;">Say hello to @${escapeHtml(friend.username)} or share an arcade game!</div>
-					</div>
-				`;
-			} else {
-				const currentUid = currentUser ? currentUser.id : null;
-				data.messages.forEach((msg) => {
-					renderChatPageMessageItem(msg, msg.sender_id === currentUid, friend);
-				});
-			}
-			chatPageMessages.scrollTop = chatPageMessages.scrollHeight;
-		} catch (err) {
-			chatPageMessages.innerHTML = `<div class="chat-sidebar-loading" style="color: #ff4757;">Failed to load messages.</div>`;
-		}
-	}
-
-	// Send read receipt
-	sendWsChatRead(friend.id);
-	fetch(`/api/chat/${friend.id}/read`, {
-		method: "POST",
-		headers: { Authorization: `Bearer ${authToken}` }
-	}).catch(() => {});
-
-	if (chatPageInput) chatPageInput.focus();
-}
-
-function renderChatPageMessageItem(msg, isMine, friend) {
-	if (!chatPageMessages) return;
-
-	const emptyState = chatPageMessages.querySelector(".chat-sidebar-loading");
-	if (emptyState) emptyState.remove();
-
-	const row = document.createElement("div");
-	row.className = `chat-bubble-row ${isMine ? "mine" : "theirs"}`;
-	row.dataset.msgId = msg.id;
-
-	let meta = null;
-	if (msg.meta_json) {
-		try {
-			meta = typeof msg.meta_json === "string" ? JSON.parse(msg.meta_json) : msg.meta_json;
-		} catch (e) {}
-	}
-
-	let extraHtml = "";
-	if (msg.type === "game_share" && meta) {
-		extraHtml = `
-			<div class="chat-rich-card">
-				<div class="chat-rich-card-title">🎮 ${escapeHtml(meta.title || "Arcade Game")}</div>
-				<button type="button" class="chat-rich-card-btn play-shared-game-btn" data-url="${escapeHtml(meta.url)}">▶ Play Game</button>
-			</div>
-		`;
-	} else if (msg.type === "url_share" && meta) {
-		extraHtml = `
-			<div class="chat-rich-card">
-				<div class="chat-rich-card-title">🌐 ${escapeHtml(meta.title || meta.url)}</div>
-				<button type="button" class="chat-rich-card-btn open-shared-tab-btn" data-url="${escapeHtml(meta.url)}">🌐 Open Tab</button>
-			</div>
-		`;
-	}
-
-	const timeStr = formatChatTime(msg.created_at || msg.createdAt);
-	const readReceipt = isMine ? `<span class="chat-read-receipt" style="color: ${msg.is_read ? '#00f0ff' : 'rgba(255,255,255,0.4)'}">${msg.is_read ? '✓✓' : '✓'}</span>` : "";
-
-	const avatarClass = friend?.avatarUrl || "avatar-1";
-
-	row.innerHTML = `
-		${!isMine ? `<div class="chat-msg-avatar ${avatarClass}"></div>` : ''}
-		<div class="chat-bubble-content">
-			<div class="chat-bubble">
-				<span>${escapeHtml(msg.content)}</span>
-				${extraHtml}
-			</div>
-			<div class="chat-bubble-meta">
-				<span>${timeStr}</span>
-				${readReceipt}
-			</div>
-		</div>
-	`;
-
-	const playBtn = row.querySelector(".play-shared-game-btn");
-	if (playBtn) {
-		playBtn.addEventListener("click", () => {
-			createTab(playBtn.dataset.url, true);
-		});
-	}
-
-	const openTabBtn = row.querySelector(".open-shared-tab-btn");
-	if (openTabBtn) {
-		openTabBtn.addEventListener("click", () => {
-			createTab(openTabBtn.dataset.url, false);
-		});
-	}
-
-	chatPageMessages.appendChild(row);
-	chatPageMessages.scrollTop = chatPageMessages.scrollHeight;
-}
-
-async function navigateToChatPage(friendId = null) {
-	closeChatDrawer();
-	const link = document.querySelector('.sidebar-link[data-page="chat"]');
-	if (link) {
-		link.click();
-	} else {
-		pages.forEach((p) => p.classList.remove("active"));
-		if (pageChat) pageChat.classList.add("active");
-		framesContainer.classList.add("hidden");
-		browserChrome.classList.add("hidden");
-		mainContent.classList.remove("hidden");
-		mainContent.classList.remove("new-tab-mode");
-		await loadChatConversations();
-	}
-
-	if (friendId) {
-		const fid = parseInt(friendId, 10);
-		const conv = chatConversationsData.find((c) => c.friend.id === fid);
-		if (conv) {
-			selectChatPageConversation(conv.friend);
-		} else {
-			const fr = (currentFriendsData.friends || []).find((f) => f.id === fid);
-			if (fr) {
-				selectChatPageConversation({
-					id: fr.id,
-					username: fr.username,
-					displayName: fr.display_name || fr.username,
-					avatarUrl: fr.avatar_url || "avatar-1",
-					role: fr.role,
-					customTag: fr.custom_tag
-				});
-			}
-		}
-	}
-}
-
-// Search Filter Input Listener
-if (chatSearchInput) {
-	chatSearchInput.addEventListener("input", () => {
-		renderConversationsListUI();
-	});
-}
-
-// Chat Page Form Submission
-if (chatPageForm && chatPageInput) {
-	chatPageForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const text = chatPageInput.value.trim();
-		if (!text || !activeChatPageFriend) return;
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatPageFriend.id,
-				content: text,
-				messageType: "text"
-			}));
-
-			// Stop typing indicator
-			presenceWs.send(JSON.stringify({
-				type: "chat_typing",
-				receiverId: activeChatPageFriend.id,
-				isTyping: false
-			}));
-		} else {
-			showToast({ icon: "⚠️", title: "Offline", message: "Connecting to chat network..." });
-		}
-
-		chatPageInput.value = "";
-		chatIsTyping = false;
-	});
-
-	// Typing indicator trigger
-	chatPageInput.addEventListener("input", () => {
-		if (!activeChatPageFriend || !presenceWs || presenceWs.readyState !== WebSocket.OPEN) return;
-		if (!chatIsTyping) {
-			chatIsTyping = true;
-			presenceWs.send(JSON.stringify({
-				type: "chat_typing",
-				receiverId: activeChatPageFriend.id,
-				isTyping: true
-			}));
-		}
-		clearTimeout(chatTypingTimer);
-		chatTypingTimer = setTimeout(() => {
-			chatIsTyping = false;
-			if (presenceWs && presenceWs.readyState === WebSocket.OPEN && activeChatPageFriend) {
-				presenceWs.send(JSON.stringify({
-					type: "chat_typing",
-					receiverId: activeChatPageFriend.id,
-					isTyping: false
-				}));
-			}
-		}, 1500);
-	});
-}
-
-// Quick Reaction Emojis
-document.querySelectorAll(".quick-emoji-btn").forEach((btn) => {
+// Speed dial clicks
+document.querySelectorAll(".speed-dial-item").forEach(btn => {
 	btn.addEventListener("click", () => {
-		const emoji = btn.dataset.emoji;
-		if (chatPageInput) {
-			chatPageInput.value += emoji;
-			chatPageInput.focus();
-		}
+		const u = btn.dataset.url;
+		if (u) navigateProxy(u);
 	});
 });
 
-// Share Game & Tab in Chat Page
-if (chatPageShareGameBtn) {
-	chatPageShareGameBtn.addEventListener("click", () => {
-		if (!activeChatPageFriend) {
-			showToast({ icon: "ℹ️", title: "Select Friend", message: "Select a conversation first to share games!" });
-			return;
-		}
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		let gameTitle = "Drive Mad";
-		let gameUrl = "/games/cldrivemady.html";
-		if (activeTab && activeTab.isGame) {
-			gameTitle = activeTab.title;
-			gameUrl = activeTab.url;
-		}
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatPageFriend.id,
-				content: `Check out this arcade game: ${gameTitle}! 🎮`,
-				messageType: "game_share",
-				meta: { title: gameTitle, url: gameUrl }
-			}));
-		}
-	});
-}
-
-if (chatPageShareTabBtn) {
-	chatPageShareTabBtn.addEventListener("click", () => {
-		if (!activeChatPageFriend) {
-			showToast({ icon: "ℹ️", title: "Select Friend", message: "Select a conversation first to share pages!" });
-			return;
-		}
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		if (!activeTab || !activeTab.url || activeTab.isNewTab) {
-			showToast({ icon: "ℹ️", title: "Share Page", message: "Open a website tab first to share it!" });
-			return;
-		}
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "chat_send",
-				receiverId: activeChatPageFriend.id,
-				content: `Check out this web page: ${activeTab.title || extractDomain(activeTab.url)} 🌐`,
-				messageType: "url_share",
-				meta: { title: activeTab.title || extractDomain(activeTab.url), url: activeTab.url }
-			}));
-		}
-	});
-}
-
-// Active Friend Header Buttons
-if (chatHeaderInviteBtn) {
-	chatHeaderInviteBtn.addEventListener("click", () => {
-		if (!activeChatPageFriend) return;
-		const activeTab = tabs.find((t) => t.id === activeTabId);
-		let gameTitle = "Drive Mad";
-		let gameUrl = "/games/cldrivemady.html";
-		if (activeTab && activeTab.isGame) {
-			gameTitle = activeTab.title;
-			gameUrl = activeTab.url;
-		}
-		sendGameInvite(activeChatPageFriend.id, gameUrl, gameTitle);
-		showToast({
-			icon: "🎮",
-			title: "Invite Sent!",
-			message: `Invited @${activeChatPageFriend.username} to play ${gameTitle}`
-		});
-	});
-}
-
-if (chatHeaderProfileBtn) {
-	chatHeaderProfileBtn.addEventListener("click", () => {
-		if (!activeChatPageFriend) return;
-		showToast({
-			icon: "👤",
-			title: `${activeChatPageFriend.displayName || activeChatPageFriend.username}`,
-			message: `@${activeChatPageFriend.username} • Role: ${activeChatPageFriend.role || 'Member'}`
-		});
-	});
-}
-
-// ============================================================
-// ============================================================
-// 🎮 Clash Lounge Controller (Multiplayer Party Rooms)
-// ============================================================
-
-let currentLoungeRoom = null;
-let loungePublicRooms = [];
-
-async function loadLoungeRooms() {
-	if (!loungeRoomsGrid) return;
-	if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-		presenceWs.send(JSON.stringify({ type: "lounge_get_rooms" }));
+// Deck Controls
+if (deckBackBtn) deckBackBtn.addEventListener("click", () => {
+	if (activeProxyIframe && activeProxyIframe.contentWindow) {
+		try { activeProxyIframe.contentWindow.history.back(); } catch (e) {}
 	}
-
-	try {
-		const res = await fetch("/api/lounge/rooms");
-		if (res.ok) {
-			const data = await res.json();
-			if (data && data.rooms) {
-				renderLoungeRoomsGrid(data.rooms);
-			}
-		}
-	} catch (e) {}
-}
-
-function renderLoungeRoomsGrid(rooms) {
-	if (!loungeRoomsGrid) return;
-	loungePublicRooms = rooms || [];
-	if (loungeActiveCount) {
-		loungeActiveCount.textContent = `${loungePublicRooms.length} active`;
-	}
-
-	if (loungePublicRooms.length === 0) {
-		loungeRoomsGrid.innerHTML = `<div class="lounge-empty-state">No public party rooms active right now. Click "+ Create Party Room" above to start one!</div>`;
-		return;
-	}
-
-	loungeRoomsGrid.innerHTML = "";
-	loungePublicRooms.forEach((r) => {
-		const card = document.createElement("div");
-		card.className = "lounge-room-card";
-		card.innerHTML = `
-			<div class="lounge-card-top">
-				<div>
-					<div class="lounge-card-name">${escapeHtml(r.name)}</div>
-					<div class="lounge-card-host">Host: <b>@${escapeHtml(r.host?.displayName || r.host?.username || 'Host')}</b></div>
-				</div>
-				<span class="lounge-card-code">${escapeHtml(r.code)}</span>
-			</div>
-			<div class="lounge-card-game">
-				<span>🎮</span> <span>${escapeHtml(r.featuredGame || 'Free Play')}</span>
-			</div>
-			<div class="lounge-card-bottom">
-				<div class="lounge-card-members">
-					<span>👥</span> <span>${r.memberCount} / ${r.maxMembers} Players</span>
-				</div>
-				<button class="btn btn-primary btn-sm lounge-card-join-btn" data-code="${r.code}">Join Party</button>
-			</div>
-		`;
-
-		card.querySelector(".lounge-card-join-btn").addEventListener("click", () => {
-			joinPartyRoom(r.code);
-		});
-
-		loungeRoomsGrid.appendChild(card);
-	});
-}
-
-function joinPartyRoom(code) {
-	if (!code || !code.trim()) {
-		showToast({ icon: "⚠️", title: "Missing Code", message: "Please enter a valid room code." });
-		return;
-	}
-	if (!authToken) {
-		showToast({ icon: "🔒", title: "Sign In Required", message: "Please sign in to join a Clash Lounge party." });
-		openAuthModal("login");
-		return;
-	}
-
-	if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-		presenceWs.send(JSON.stringify({ type: "lounge_join", code: code.trim().toUpperCase() }));
-	} else {
-		showToast({ icon: "⚠️", title: "Connecting", message: "Connecting to game server. Please try again in a moment." });
-		connectPresenceSocket();
-	}
-}
-
-function handleLoungeRoomUpdate(room) {
-	if (!room) return;
-	currentLoungeRoom = room;
-
-	if (loungeLobbyView) loungeLobbyView.classList.add("hidden");
-	if (loungeCreateDrawer) loungeCreateDrawer.classList.add("hidden");
-	if (loungeActiveRoomView) loungeActiveRoomView.classList.remove("hidden");
-
-	if (loungeRoomTitle) loungeRoomTitle.textContent = room.name;
-	if (loungeRoomCodeBadge) {
-		loungeRoomCodeBadge.textContent = `${room.code} 📋`;
-		loungeRoomCodeBadge.onclick = () => {
-			navigator.clipboard.writeText(room.code).then(() => {
-				showToast({ icon: "📋", title: "Code Copied!", message: `Room code ${room.code} copied to clipboard.` });
-			}).catch(()=>{});
-		};
-	}
-
-	if (loungeFeaturedGamePill) {
-		loungeFeaturedGamePill.textContent = `🎮 Featured: ${room.featuredGame || 'Free Play'}`;
-	}
-
-	if (loungeMembersCount) {
-		loungeMembersCount.textContent = `${room.members.length} / ${room.maxMembers}`;
-	}
-
-	// Render members list
-	if (loungeMembersList) {
-		loungeMembersList.innerHTML = "";
-		room.members.forEach((m) => {
-			const item = document.createElement("div");
-			item.className = "lounge-member-card";
-			const isHost = m.id === room.host?.id || m.isHost;
-			const isMe = currentUser && currentUser.id === m.id;
-
-			let joinBtnHtml = "";
-			if (!isMe && m.activity && m.activity.startsWith("Playing ") && room.featuredGameUrl) {
-				joinBtnHtml = `<button class="lounge-member-join-btn" data-url="${room.featuredGameUrl}">▶ Play Along</button>`;
-			}
-
-			item.innerHTML = `
-				<div class="lounge-member-left">
-					<div class="lounge-member-avatar ${escapeHtml(m.avatarUrl || 'avatar-1')}"></div>
-					<div>
-						<div class="lounge-member-name">
-							<span>${escapeHtml(m.displayName || m.username)}</span>
-							${isHost ? '<span class="lounge-host-crown" title="Party Host">👑</span>' : ''}
-							${isMe ? '<span style="font-size: 0.7rem; color: var(--text-muted); font-weight: normal;">(You)</span>' : ''}
-						</div>
-						<div class="lounge-member-activity">● ${escapeHtml(m.activity || 'In Lounge')}</div>
-					</div>
-				</div>
-				${joinBtnHtml}
-			`;
-
-			const joinBtn = item.querySelector(".lounge-member-join-btn");
-			if (joinBtn) {
-				joinBtn.addEventListener("click", () => {
-					createTab(joinBtn.dataset.url, true);
-				});
-			}
-
-			loungeMembersList.appendChild(item);
-		});
-	}
-}
-
-function handleLoungeUserJoined(data) {
-	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`👋 ${data.user?.displayName || data.user?.username || 'A player'} joined the party!`);
-}
-
-function handleLoungeUserLeft(data) {
-	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`🚪 ${data.user?.displayName || 'A player'} left the party.`);
-}
-
-function handleLoungeGameChanged(data) {
-	if (data.room) handleLoungeRoomUpdate(data.room);
-	appendLoungeChatSystem(`🎮 Party game updated to: ${data.featuredGame}`);
-}
-
-function appendLoungeChatMessage(msg) {
-	if (!loungeChatMessages || !msg) return;
-	const div = document.createElement("div");
-	div.className = "lounge-chat-msg";
-	const timeStr = new Date(msg.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-	div.innerHTML = `
-		<div class="lounge-msg-meta">
-			<span class="lounge-msg-author">${escapeHtml(msg.senderName || 'Member')}</span>
-			<span class="lounge-msg-time">${timeStr}</span>
-		</div>
-		<div class="lounge-msg-text">${escapeHtml(msg.content)}</div>
-	`;
-	loungeChatMessages.appendChild(div);
-	loungeChatMessages.scrollTop = loungeChatMessages.scrollHeight;
-}
-
-function appendLoungeChatSystem(text) {
-	if (!loungeChatMessages) return;
-	const div = document.createElement("div");
-	div.className = "lounge-chat-system";
-	div.textContent = text;
-	loungeChatMessages.appendChild(div);
-	loungeChatMessages.scrollTop = loungeChatMessages.scrollHeight;
-}
-
-function resetLoungeToLobby() {
-	currentLoungeRoom = null;
-	if (loungeActiveRoomView) loungeActiveRoomView.classList.add("hidden");
-	if (loungeLobbyView) loungeLobbyView.classList.remove("hidden");
-	if (loungeChatMessages) {
-		loungeChatMessages.innerHTML = '<div class="lounge-chat-system">Welcome to the Lounge Party! Chat here with your party members in real-time.</div>';
-	}
-	loadLoungeRooms();
-}
-
-// Lounge Event Listeners
-if (loungeOpenCreateBtn) {
-	loungeOpenCreateBtn.addEventListener("click", () => {
-		if (!authToken) {
-			showToast({ icon: "🔒", title: "Sign In Required", message: "Please sign in to create a party room." });
-			openAuthModal("login");
-			return;
-		}
-		if (loungeCreateDrawer) {
-			loungeCreateDrawer.classList.toggle("hidden");
-			if (!loungeCreateDrawer.classList.contains("hidden") && loungeInputName) {
-				loungeInputName.focus();
-			}
-		}
-	});
-}
-
-if (loungeCreateClose && loungeCreateDrawer) {
-	loungeCreateClose.addEventListener("click", () => loungeCreateDrawer.classList.add("hidden"));
-}
-if (loungeCreateCancel && loungeCreateDrawer) {
-	loungeCreateCancel.addEventListener("click", () => loungeCreateDrawer.classList.add("hidden"));
-}
-
-if (loungeCreateForm) {
-	loungeCreateForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const name = loungeInputName.value.trim();
-		const gameRaw = loungeSelectGame ? loungeSelectGame.value : "Free Play|";
-		const [featuredGame, featuredGameUrl] = gameRaw.split("|");
-		const maxMembers = parseInt(loungeSelectMax?.value, 10) || 8;
-
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({
-				type: "lounge_create",
-				name,
-				featuredGame,
-				featuredGameUrl: featuredGameUrl || null,
-				maxMembers
-			}));
-		} else {
-			showToast({ icon: "⚠️", title: "Connection Error", message: "Connecting to server..." });
-			connectPresenceSocket();
-		}
-	});
-}
-
-if (loungeJoinCodeBtn && loungeJoinCodeInput) {
-	loungeJoinCodeBtn.addEventListener("click", () => {
-		joinPartyRoom(loungeJoinCodeInput.value);
-	});
-	loungeJoinCodeInput.addEventListener("keydown", (e) => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			joinPartyRoom(loungeJoinCodeInput.value);
-		}
-	});
-}
-
-if (loungeRefreshRoomsBtn) {
-	loungeRefreshRoomsBtn.addEventListener("click", () => {
-		loadLoungeRooms();
-		showToast({ icon: "🔄", title: "Refreshed", message: "Party rooms list updated." });
-	});
-}
-
-if (loungeLeaveRoomBtn) {
-	loungeLeaveRoomBtn.addEventListener("click", () => {
-		if (confirm("Leave this party room?")) {
-			if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-				presenceWs.send(JSON.stringify({ type: "lounge_leave" }));
-			}
-			resetLoungeToLobby();
-		}
-	});
-}
-
-if (loungeLaunchGameBtn) {
-	loungeLaunchGameBtn.addEventListener("click", () => {
-		if (currentLoungeRoom && currentLoungeRoom.featuredGameUrl) {
-			createTab(currentLoungeRoom.featuredGameUrl, true);
-		} else {
-			const gamesNav = document.getElementById("nav-games");
-			if (gamesNav) gamesNav.click();
-		}
-	});
-}
-
-if (loungeChatForm && loungeChatInput) {
-	loungeChatForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const content = loungeChatInput.value.trim();
-		if (!content) return;
-		if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-			presenceWs.send(JSON.stringify({ type: "lounge_chat", content }));
-			loungeChatInput.value = "";
-		}
-	});
-}
-
-// ============================================================
-// ⚡ Game Controls Modal Controller (Streamlined)
-// ============================================================
-
-let currentGameKey = "clash_general";
-let currentGameSpeed = 1.0;
-let isFpsMonitorActive = false;
-let isAutoClickerActive = false;
-let autoClickerInterval = null;
-
-function openGameToolkit() {
-	if (!gameToolkitModal) return;
-	const activeTab = tabs.find(t => t.id === activeTabId);
-	if (toolkitActiveGamePill) {
-		toolkitActiveGamePill.textContent = activeTab ? (activeTab.title || "Active Tab") : "No Active Tab";
-	}
-	gameToolkitModal.classList.remove("hidden");
-}
-
-function closeGameToolkit() {
-	if (gameToolkitModal) gameToolkitModal.classList.add("hidden");
-}
-
-if (navToolkitBtn) navToolkitBtn.addEventListener("click", openGameToolkit);
-if (gameToolkitModalClose) gameToolkitModalClose.addEventListener("click", closeGameToolkit);
-if (gameToolkitModal) {
-	gameToolkitModal.addEventListener("click", (e) => {
-		if (e.target === gameToolkitModal) closeGameToolkit();
-	});
-}
-
-
-// Speed Controller & Game Tweaks
-// ============================================================
-function injectGameSpeedHook(iframeWin, speed = 1.0) {
-	if (!iframeWin) return;
-	try {
-		iframeWin.__clashSpeed = speed;
-		if (!iframeWin.__clashHooked) {
-			iframeWin.__clashHooked = true;
-
-			let virtualTime = 0;
-			let lastRealTime = (iframeWin.performance && iframeWin.performance.now) ? iframeWin.performance.now() : Date.now();
-			let virtualDate = Date.now();
-			let lastRealDate = Date.now();
-
-			// Hook performance.now with virtual monotonic time
-			if (iframeWin.performance && iframeWin.performance.now) {
-				const origPerfNow = iframeWin.performance.now.bind(iframeWin.performance);
-				iframeWin.performance.now = function() {
-					const now = origPerfNow();
-					const dt = Math.max(0, now - lastRealTime);
-					lastRealTime = now;
-					virtualTime += dt * (iframeWin.__clashSpeed ?? 1.0);
-					return virtualTime;
-				};
-			}
-
-			// Hook Date.now with virtual monotonic time
-			const origDateNow = iframeWin.Date.now;
-			iframeWin.Date.now = function() {
-				const now = origDateNow ? origDateNow() : new Date().getTime();
-				const dt = Math.max(0, now - lastRealDate);
-				lastRealDate = now;
-				virtualDate += dt * (iframeWin.__clashSpeed ?? 1.0);
-				return Math.round(virtualDate);
-			};
-
-			// Hook requestAnimationFrame
-			const origRAF = iframeWin.requestAnimationFrame;
-			if (origRAF) {
-				iframeWin.requestAnimationFrame = function(cb) {
-					return origRAF.call(iframeWin, function(realNow) {
-						if (iframeWin.performance && iframeWin.performance.now) {
-							cb(iframeWin.performance.now());
-						} else {
-							cb(realNow * (iframeWin.__clashSpeed ?? 1.0));
-						}
-					});
-				};
-			}
-
-			// Hook setTimeout
-			const origSetTimeout = iframeWin.setTimeout;
-			if (origSetTimeout) {
-				iframeWin.setTimeout = function(fn, delay, ...args) {
-					const sp = iframeWin.__clashSpeed ?? 1.0;
-					const scaled = sp > 0 ? Math.max(1, Math.round(delay / sp)) : delay;
-					return origSetTimeout.call(iframeWin, fn, scaled, ...args);
-				};
-			}
-
-			// Hook setInterval
-			const origSetInterval = iframeWin.setInterval;
-			if (origSetInterval) {
-				iframeWin.setInterval = function(fn, delay, ...args) {
-					const sp = iframeWin.__clashSpeed ?? 1.0;
-					const scaled = sp > 0 ? Math.max(1, Math.round(delay / sp)) : delay;
-					return origSetInterval.call(iframeWin, fn, scaled, ...args);
-				};
-			}
-
-			// Helper for userscripts to adjust speed on the fly
-			iframeWin.setClashSpeed = function(newSpeed) {
-				iframeWin.__clashSpeed = newSpeed;
-			};
-		}
-	} catch (e) {
-		console.warn("[Clash Speed Hook] Hook error:", e);
-	}
-}
-
-function injectConsentDismisser(iframe) {
-	if (!iframe || iframe.dataset.consentWatch === "1") return;
-	iframe.dataset.consentWatch = "1";
-	const consentTags = ["ytd-consent-bump-v2-lightbox", "ytd-consent-bump-v2-renderer", "ytd-consent-bump-v2-renderer-alignment", "ytd-cookie-dialog-renderer", "ytd-consent-bump-v2"];
-	const findAccept = (root) => {
-		const btns = root.querySelectorAll("button, [role=button], tp-yt-paper-button");
-		for (const b of btns) {
-			if (/^accept all$/i.test(((b.textContent || "") + "").trim())) return b;
-		}
-		return null;
-	};
-	const tick = () => {
-		try {
-			const d = iframe.contentDocument;
-			const w = iframe.contentWindow;
-			if (!d || !d.documentElement || !w) return;
-			const host = (w.location && w.location.hostname) || "";
-			if (host.includes("consent.youtube.com") || host.includes("consent.google.com")) {
-				if (!d.getElementById("clash-consent-clicked")) {
-					const btns = d.querySelectorAll("button, input[type=submit], [role=button]");
-					for (const b of btns) {
-						const label = ((b.textContent || b.value || "") + "").trim();
-						if (label === "Accept all" || label === "I agree") {
-							const marker = d.createElement("meta");
-							marker.id = "clash-consent-clicked";
-							(d.head || d.documentElement).appendChild(marker);
-							b.click();
-							break;
-						}
-					}
-				}
-				return;
-			}
-			let consentNode = null;
-			for (const tag of consentTags) {
-				const el = d.querySelector(tag);
-				if (el) { consentNode = el; break; }
-			}
-			if (!consentNode) {
-				const dialogs = d.querySelectorAll("tp-yt-paper-dialog, [role=dialog], ytd-popup-container");
-				for (const dlg of dialogs) {
-					const txt = dlg.textContent || "";
-					if (txt.includes("Before you continue to YouTube") || (txt.includes("Before you continue") && txt.includes("Reject all") && txt.includes("Accept all"))) {
-						consentNode = dlg;
-						break;
-					}
-				}
-			}
-			if (consentNode) {
-				consentNode.__clashTicks = (consentNode.__clashTicks || 0) + 1;
-				if (!consentNode.__clashDone) {
-					const acc = findAccept(consentNode);
-					if (acc) {
-						consentNode.__clashDone = true;
-						const n = parseInt(iframe.dataset.consClicks || "0", 10);
-						if (n < 5) {
-							iframe.dataset.consClicks = String(n + 1);
-							acc.click();
-						}
-						return;
-					}
-				} else if (consentNode.__clashTicks > 15) {
-					consentNode.style.setProperty("display", "none", "important");
-					const bds = d.querySelectorAll("tp-yt-iron-overlay-backdrop");
-					for (const bd of bds) bd.style.setProperty("display", "none", "important");
-				}
-			}
-			const rich = d.querySelectorAll("ytd-rich-section-renderer");
-			for (const r of rich) {
-				if ((r.textContent || "").includes("Your YouTube History is off")) r.style.setProperty("display", "none", "important");
-			}
-		} catch (e) {}
-	};
-	setInterval(tick, 400);
-	tick();
-}
-
-// Speed Button Clicks
-speedButtons.forEach(btn => {
-	btn.addEventListener("click", () => {
-		speedButtons.forEach(b => b.classList.remove("active"));
-		btn.classList.add("active");
-		currentGameSpeed = parseFloat(btn.dataset.speed) || 1.0;
-
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		if (activeTab && activeTab.iframe && activeTab.iframe.contentWindow) {
-			injectGameSpeedHook(activeTab.iframe.contentWindow, currentGameSpeed);
-			showToast({ icon: "⚡", title: "Speed Changed", message: `Game engine running at ${currentGameSpeed}x speed!` });
-		}
-	});
 });
-
-// Force Dark Mode Tweak
-if (tweakToggleDarkmode) {
-	tweakToggleDarkmode.addEventListener("change", () => {
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		if (!activeTab || !activeTab.iframe) return;
-		try {
-			const doc = activeTab.iframe.contentDocument;
-			if (tweakToggleDarkmode.checked) {
-				const style = doc.createElement("style");
-				style.id = "clash-tamper-darkmode";
-				style.textContent = `html, body { background: #0c0b14 !important; color: #e2e8f0 !important; } * { border-color: rgba(255,255,255,0.1) !important; }`;
-				doc.head.appendChild(style);
-			} else {
-				const s = doc.getElementById("clash-tamper-darkmode");
-				if (s) s.remove();
-			}
-		} catch (e) {}
-	});
-}
-
-// Rapid Auto-Clicker Tweak
-if (tweakToggleAutoclick) {
-	tweakToggleAutoclick.addEventListener("change", () => {
-		const activeTab = tabs.find(t => t.id === activeTabId);
-		if (!activeTab || !activeTab.iframe) return;
-		try {
-			const doc = activeTab.iframe.contentDocument;
-			if (tweakToggleAutoclick.checked) {
-				let mouseX = 100, mouseY = 100;
-				doc.addEventListener("mousemove", (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-				autoClickerInterval = activeTab.iframe.contentWindow.setInterval(() => {
-					const el = doc.elementFromPoint(mouseX, mouseY);
-					if (el) el.click();
-				}, 50);
-				showToast({ icon: "🤖", title: "Auto-Clicker Active", message: "Auto-clicking enabled (50ms interval)!" });
-			} else {
-				if (autoClickerInterval) {
-					activeTab.iframe.contentWindow.clearInterval(autoClickerInterval);
-					autoClickerInterval = null;
-				}
-				showToast({ icon: "🛑", title: "Auto-Clicker Stopped", message: "Auto-clicking disabled." });
-			}
-		} catch (e) {}
-	});
-}
-
-// Cloak Presets
-const CLOAK_CONFIGS = {
-	default: { title: "Clash Proxy — Unrestricted Web & Arcade", icon: "/logo.png" },
-	google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
-	drive: { title: "Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
-	classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
-	canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico" }
-};
-
-function applyCloak(cloakKey) {
-	const conf = CLOAK_CONFIGS[cloakKey] || CLOAK_CONFIGS.default;
-	document.title = conf.title;
-	let favicon = document.querySelector("link[rel*='icon']");
-	if (favicon) favicon.href = conf.icon;
-
-	cloakBtns.forEach(btn => {
-		btn.classList.toggle("active", btn.dataset.cloak === cloakKey);
-	});
-	trackActivity("stealth_cloak", { cloak: cloakKey });
-}
-
-// ============================================================
-// 👻 About:Blank Cloaking Controller
-// ============================================================
-
-function launchAboutBlankCloak(customDecoy) {
-	const decoy = customDecoy || 
-		(settingAboutBlankDecoyUrl ? settingAboutBlankDecoyUrl.value.trim() : null) || 
-		localStorage.getItem("clash_aboutblank_decoy") || 
-		"https://classroom.google.com";
-
-	try {
-		localStorage.setItem("clash_aboutblank_decoy", decoy);
-	} catch(e) {}
-
-	const win = window.open("about:blank", "_blank");
-	if (!win) {
-		showToast({
-			icon: "⚠️",
-			title: "Popup Blocked",
-			message: "Please allow popups so Clash Proxy can launch in an about:blank window.",
-			type: "error"
-		});
-		return;
+if (deckForwardBtn) deckForwardBtn.addEventListener("click", () => {
+	if (activeProxyIframe && activeProxyIframe.contentWindow) {
+		try { activeProxyIframe.contentWindow.history.forward(); } catch (e) {}
 	}
-
-	const doc = win.document;
-	const activeCloakKey = localStorage.getItem("clash_active_cloak") || "default";
-	const conf = CLOAK_CONFIGS[activeCloakKey] || CLOAK_CONFIGS.default;
-	doc.title = conf.title;
-
-	let link = doc.createElement("link");
-	link.rel = "shortcut icon";
-	link.href = conf.icon;
-	doc.head.appendChild(link);
-
-	const iframe = doc.createElement("iframe");
-	iframe.src = window.location.origin + window.location.pathname + "?embedded=1";
-	iframe.style.position = "fixed";
-	iframe.style.top = "0";
-	iframe.style.left = "0";
-	iframe.style.width = "100vw";
-	iframe.style.height = "100vh";
-	iframe.style.border = "none";
-	iframe.style.margin = "0";
-	iframe.style.padding = "0";
-	iframe.style.overflow = "hidden";
-	iframe.style.zIndex = "999999";
-	iframe.allow = "autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; microphone; camera; encrypted-media";
-	iframe.allowFullscreen = true;
-
-	doc.body.style.margin = "0";
-	doc.body.style.padding = "0";
-	doc.body.style.overflow = "hidden";
-	doc.body.style.background = "#0b0d14";
-	doc.body.appendChild(iframe);
-
-	// Black out original screen before replacing with decoy (Noblocc style)
-	document.documentElement.style.background = "#000000";
-	document.documentElement.style.color = "#000000";
-	if (document.body) {
-		document.body.style.background = "#000000";
-		document.body.style.color = "#000000";
-		document.body.innerHTML = "";
-	}
-
-	// Immediately replace the original tab with the decoy site!
-	window.location.replace(decoy);
-}
-
-function initAboutBlankCloakSettings() {
-	const savedDecoy = localStorage.getItem("clash_aboutblank_decoy") || "https://classroom.google.com";
-	if (settingAboutBlankDecoyUrl) {
-		settingAboutBlankDecoyUrl.value = savedDecoy;
-	}
-
-	if (settingAboutBlankAuto) {
-		settingAboutBlankAuto.checked = localStorage.getItem("clash_aboutblank_auto") !== "false";
-		settingAboutBlankAuto.addEventListener("change", (e) => {
-			localStorage.setItem("clash_aboutblank_auto", e.target.checked ? "true" : "false");
-			showToast({
-				icon: "⚡",
-				title: "Auto-Cloak",
-				message: e.target.checked ? "Auto About:Blank enabled. On next open, original tab blackouts and launches cloaked tab." : "Auto About:Blank disabled."
-			});
-		});
-	}
-
-	if (settingAboutBlankLaunchBtn) {
-		settingAboutBlankLaunchBtn.addEventListener("click", () => launchAboutBlankCloak());
-	}
-
-	if (navAboutBlankBtn) {
-		navAboutBlankBtn.addEventListener("click", () => launchAboutBlankCloak());
-	}
-
-	aboutBlankPresetBtns.forEach(btn => {
-		btn.addEventListener("click", () => {
-			aboutBlankPresetBtns.forEach(b => b.classList.remove("active"));
-			btn.classList.add("active");
-			const url = btn.dataset.url;
-			if (settingAboutBlankDecoyUrl) {
-				settingAboutBlankDecoyUrl.value = url;
-			}
-			localStorage.setItem("clash_aboutblank_decoy", url);
-		});
-	});
-}
-
-initAboutBlankCloakSettings();
-
-
-
-cloakBtns.forEach(btn => {
-	btn.addEventListener("click", () => {
-		const cloak = btn.dataset.cloak;
-		applyCloak(cloak);
-		if (authToken) {
-			fetch("/api/profile", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({ settings: { cloak } })
-			}).catch(()=>{});
-		}
-	});
 });
-
-themeBtns.forEach(btn => {
-	btn.addEventListener("click", () => {
-		const theme = btn.dataset.theme;
-		if (theme) {
-			applySiteTheme(theme, true);
-		}
-	});
+if (deckReloadBtn) deckReloadBtn.addEventListener("click", () => {
+	if (activeProxyIframe) {
+		const src = activeProxyIframe.src;
+		activeProxyIframe.src = src;
+	}
+});
+if (deckCloseBtn) deckCloseBtn.addEventListener("click", () => {
+	if (proxyDeck) proxyDeck.classList.add("hidden");
+	if (proxyHost) proxyHost.innerHTML = "";
+	activeProxyIframe = null;
+});
+if (deckAboutblankBtn) deckAboutblankBtn.addEventListener("click", () => {
+	if (currentNavigatedUrl) openInAboutBlank(currentNavigatedUrl);
 });
 
 // ============================================================
-// Modals (Auth & Edit Profile)
+// 5. Arcade Matrix (3,958 Games Catalog)
 // ============================================================
+let allGamesList = [];
+let filteredGamesList = [];
+let renderedGameCount = 0;
+const BATCH_SIZE = 60;
+let activeCategory = "all";
 
-function openAuthModal(tab = "login") {
-	if (!authModal) return;
-	authModal.classList.remove("hidden");
-	switchAuthTab(tab);
-}
+const arcadeGrid = document.getElementById("arcade-games-grid");
+const arcadeSearchInput = document.getElementById("arcade-search-input");
+const arcadeCountPill = document.getElementById("arcade-count-pill");
+const topbarStats = document.getElementById("topbar-stats");
+const catChips = document.querySelectorAll("#arcade-cat-chips .cat-chip");
 
-function closeAuthModal() {
-	if (authModal) authModal.classList.add("hidden");
-}
+const playerModal = document.getElementById("arcade-player-modal");
+const playerContainer = document.getElementById("player-frame-container");
+const playerTitle = document.getElementById("player-game-title");
+const playerCloseBtn = document.getElementById("player-close-btn");
+const playerFullscreenBtn = document.getElementById("player-fullscreen-btn");
+const playerAboutblankBtn = document.getElementById("player-aboutblank-btn");
+let activeGameUrl = "";
 
-function switchAuthTab(tab) {
-	const tabSyncBtn = document.getElementById("tab-sync-btn");
-	const syncForm = document.getElementById("sync-form");
-
-	tabLoginBtn.classList.toggle("active", tab === "login");
-	tabRegisterBtn.classList.toggle("active", tab === "register");
-	if (tabSyncBtn) tabSyncBtn.classList.toggle("active", tab === "sync");
-
-	loginForm.classList.toggle("hidden", tab !== "login");
-	registerForm.classList.toggle("hidden", tab !== "register");
-	if (syncForm) syncForm.classList.toggle("hidden", tab !== "sync");
-
-	if (tab === "login" && loginUsernameInput) setTimeout(() => loginUsernameInput.focus(), 50);
-	if (tab === "register" && regUsernameInput) setTimeout(() => regUsernameInput.focus(), 50);
-	if (tab === "sync") {
-		const syncInput = document.getElementById("sync-code-input");
-		if (syncInput) setTimeout(() => syncInput.focus(), 50);
-	}
-}
-
-if (tabLoginBtn) tabLoginBtn.addEventListener("click", () => switchAuthTab("login"));
-if (tabRegisterBtn) tabRegisterBtn.addEventListener("click", () => switchAuthTab("register"));
-const tabSyncBtn = document.getElementById("tab-sync-btn");
-if (tabSyncBtn) tabSyncBtn.addEventListener("click", () => switchAuthTab("sync"));
-if (authModalClose) authModalClose.addEventListener("click", closeAuthModal);
-
-if (loginForm) {
-	loginForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		loginUser(loginUsernameInput.value, loginPasswordInput.value);
-	});
-}
-
-if (registerForm) {
-	registerForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		registerUser(regUsernameInput.value, regPasswordInput.value, regDisplayNameInput.value);
-	});
-}
-
-const syncForm = document.getElementById("sync-form");
-if (syncForm) {
-	syncForm.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const raw = (document.getElementById("sync-code-input")?.value || "").trim();
-		if (!raw) return;
-		let token = raw;
-		const hashMatch = raw.match(/[#&]clash_session=([A-Za-z0-9._-]+)/);
-		const queryMatch = raw.match(/[?&]clash_session=([A-Za-z0-9._-]+)/);
-		if (hashMatch && hashMatch[1]) token = hashMatch[1];
-		else if (queryMatch && queryMatch[1]) token = queryMatch[1];
-
-		authToken = token;
-		localStorage.setItem("clash_jwt_token", authToken);
-		closeAuthModal();
-		initAuth().then(() => {
-			showToast("Session synced successfully across mirrors!", "success");
-		});
-	});
-}
-
-// Edit Profile Modal
-let selectedAvatar = "avatar-1";
-
-function openProfileModal() {
-	if (!profileModal || !currentUser) return;
-	selectedAvatar = currentUser.avatar_url || "avatar-1";
-	if (editUsernameInput) editUsernameInput.value = currentUser.username || "";
-	if (editDisplayNameInput) editDisplayNameInput.value = currentUser.display_name || currentUser.username;
-	if (editBioInput) editBioInput.value = currentUser.bio || "";
-
-	avatarOptions.forEach(opt => {
-		opt.classList.toggle("selected", opt.dataset.avatar === selectedAvatar);
-	});
-
-	profileModal.classList.remove("hidden");
-}
-
-function closeProfileModal() {
-	if (profileModal) profileModal.classList.add("hidden");
-}
-
-if (profileModalClose) profileModalClose.addEventListener("click", closeProfileModal);
-
-if (quickEditUsernameBtn) {
-	quickEditUsernameBtn.addEventListener("click", () => {
-		if (!currentUser || !authToken) {
-			openAuthModal("login");
-			return;
-		}
-		openProfileModal();
-		setTimeout(() => { if (editUsernameInput) editUsernameInput.focus(); }, 120);
-	});
-}
-
-avatarOptions.forEach(opt => {
-	opt.addEventListener("click", () => {
-		avatarOptions.forEach(o => o.classList.remove("selected"));
-		opt.classList.add("selected");
-		selectedAvatar = opt.dataset.avatar;
-	});
-});
-
-if (editProfileForm) {
-	editProfileForm.addEventListener("submit", async (e) => {
-		e.preventDefault();
-		if (!authToken) return;
-
-		const username = editUsernameInput ? editUsernameInput.value.trim().toLowerCase() : "";
-		const displayName = editDisplayNameInput ? editDisplayNameInput.value.trim() : "";
-		const bio = editBioInput ? editBioInput.value.trim() : "";
-
-		try {
-			const res = await fetch("/api/profile", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({
-					username: username,
-					display_name: displayName,
-					avatar_url: selectedAvatar,
-					bio: bio
-				})
-			});
-			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Save failed");
-
-			if (data.token) {
-				authToken = data.token;
-				localStorage.setItem("clash_token", authToken);
-			}
-
-			currentUser = data.user;
-			localStorage.setItem("clash_user", JSON.stringify(currentUser));
-			window.__myRankCache = null;
-			closeProfileModal();
-			renderUserHeader();
-			renderProfilePage();
-			showToast({ icon: "💾", title: "Saved", message: "Profile updated successfully!" });
-		} catch (err) {
-			showToast({ icon: "⚠️", title: "Error", message: err.message });
-		}
-	});
-}
-
-// ============================================================
-// Toast Notification Engine
-// ============================================================
-
-function showToast({ icon = "🔔", title = "Notification", message = "", type = "", actionText = "", onAction = null, duration = 4500 }) {
-	if (!toastContainer) return;
-
-	const toast = document.createElement("div");
-	toast.className = `toast ${type}`;
-	toast.innerHTML = `
-		<div class="toast-icon">${icon}</div>
-		<div class="toast-body">
-			<div class="toast-title">${escapeHtml(title)}</div>
-			${message ? `<div class="toast-msg">${escapeHtml(message)}</div>` : ''}
-		</div>
-		${actionText ? `<button class="toast-action-btn">${escapeHtml(actionText)}</button>` : ''}
-	`;
-
-	if (actionText && onAction) {
-		const actBtn = toast.querySelector(".toast-action-btn");
-		if (actBtn) {
-			actBtn.addEventListener("click", () => {
-				onAction();
-				toast.remove();
-			});
-		}
-	}
-
-	toastContainer.appendChild(toast);
-
-	setTimeout(() => {
-		toast.style.transition = "opacity 0.4s, transform 0.4s";
-		toast.style.opacity = "0";
-		toast.style.transform = "translateX(50px)";
-		setTimeout(() => toast.remove(), 400);
-	}, duration);
-}
-
-// ============================================================
-// Arcade Games Library Logic (Popular Top Sort, Game of the Week, Daily Suggestions)
-// ============================================================
-
-const gowContainer = document.getElementById("game-of-the-week-container");
-const suggestedContainer = document.getElementById("suggested-games-container");
-const filterChipsContainer = document.getElementById("games-filter-chips");
-const gamesLibraryTitle = document.getElementById("games-library-title");
-const gamesLibraryCount = document.getElementById("games-library-count");
-
-let allGames = [];
-let currentDisplayList = [];
-let renderedCount = 0;
-const BATCH_SIZE = 150;
-let activeFilter = "all";
-
-// Top Popular Game Keywords (Ordered by Prominence)
-const POPULAR_KEYWORDS = [
-	"eaglercraft", "minecraft", "1v1.lol", "retro bowl", "subway surfers", 
-	"slope", "bitlife", "cookie clicker", "geometry dash", "smash karts", 
-	"basketball stars", "super mario", "tetris", "crossy road", "fnaf", 
-	"five nights", "paper.io", "the oregon trail", "doom", "moto x3m", 
-	"monkey mart", "sonic", "pac-man", "flappy bird", "run 3", "happy wheels", 
-	"drift hunters", "drive mad", "ovo", "tunnel rush", "space invaders", 
-	"street fighter", "mortal kombat", "galaga", "out run", "zelda", 
-	"pokemon", "roblox", "prince of persia", "wolfenstein 3d", "simcity", 
-	"aladdin", "metal gear", "bad ice cream", "fireboy and watergirl"
-];
-
-function getPopularRank(game) {
-	if (!game || !game.title) return 999999;
-	const t = game.title.toLowerCase();
-	for (let i = 0; i < POPULAR_KEYWORDS.length; i++) {
-		if (t.includes(POPULAR_KEYWORDS[i])) {
-			return i;
-		}
-	}
-	return 999999;
-}
-
-function isPopularGame(game) {
-	return getPopularRank(game) < 999999;
-}
-
-function sortGamesWithPopularFirst(list) {
-	return [...list].sort((a, b) => {
-		const rankA = getPopularRank(a);
-		const rankB = getPopularRank(b);
-		if (rankA !== rankB) return rankA - rankB;
-		return (a.title || "").localeCompare(b.title || "");
-	});
-}
-
-// ------------------------------------------------------------
-// Game of the Week (Hero Feature Showcase)
-// ------------------------------------------------------------
-const GAME_OF_THE_WEEK_POOL = [
-	{
-		keyword: "eaglercraft",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "🔥 2X XP BOOST",
-		tagline: "Full in-browser Minecraft multiplayer, survival, and custom servers. Pure 60FPS unblocked gameplay."
-	},
-	{
-		keyword: "retro bowl",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "🏈 TOP SPORTS HIT",
-		tagline: "Call audibles, manage your franchise, and dominate retro gridiron football right in your browser."
-	},
-	{
-		keyword: "subway surfers",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "🏃 TOP RUNNER",
-		tagline: "Dodge trains, surf the tracks, and collect high scores in the legendary fast-paced arcade runner."
-	},
-	{
-		keyword: "the oregon trail",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "🤠 RETRO LEGEND",
-		tagline: "Ford the river, hunt buffalo, and survive the historic trek across America in this classic DOS adventure."
-	},
-	{
-		keyword: "geometry dash",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "⚡ RHYTHM HIT",
-		tagline: "Jump, fly, and flip through pulse-pounding rhythm obstacles synced to electronic soundtracks."
-	},
-	{
-		keyword: "doom",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "💀 CLASSIC FPS",
-		tagline: "Rip and tear across the Martian moons in the father of all first-person shooters running in pure DOSBox."
-	},
-	{
-		keyword: "cookie clicker",
-		badge: "👑 GAME OF THE WEEK",
-		tag: "🍪 ADDICTIVE IDLE",
-		tagline: "Bake quadrillions of cookies, recruit grandmas, and manipulate the confectionery cosmos."
-	}
-];
-
-function renderGameOfTheWeek(list) {
-	if (!gowContainer || !list || list.length === 0) return;
-	
-	const now = new Date();
-	const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
-	const weekNum = Math.floor((now - startOfYear) / (7 * 24 * 60 * 60 * 1000));
-	const featuredConfig = GAME_OF_THE_WEEK_POOL[weekNum % GAME_OF_THE_WEEK_POOL.length];
-
-	let featuredGame = list.find(g => (g.title || "").toLowerCase().includes(featuredConfig.keyword));
-	if (!featuredGame) featuredGame = list[0];
-	if (!featuredGame) return;
-
-	gowContainer.innerHTML = `
-		<div class="gow-hero">
-			<div class="gow-left">
-				<div class="gow-badge-row">
-					<span class="gow-badge-crown">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-							<path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-						</svg>
-						${featuredConfig.badge}
-					</span>
-					<span class="gow-badge-tag">${featuredConfig.tag}</span>
-				</div>
-				<h2 class="gow-title">${escapeHtml(featuredGame.title)}</h2>
-				<p class="gow-desc">${escapeHtml(featuredConfig.tagline)}</p>
-			</div>
-			<div class="gow-right">
-				<button class="gow-play-btn" id="gow-play-now-btn">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-						<polygon points="5 3 19 12 5 21 5 3"></polygon>
-					</svg>
-					Play Now
-				</button>
-				<button class="gow-stealth-btn" id="gow-stealth-btn" title="Open stealthily in about:blank">
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-						<polyline points="15 3 21 3 21 9"></polyline>
-						<line x1="10" y1="14" x2="21" y2="3"></line>
-					</svg>
-					about:blank
-				</button>
-			</div>
-		</div>
-	`;
-
-	const playBtn = document.getElementById("gow-play-now-btn");
-	const stealthBtn = document.getElementById("gow-stealth-btn");
-	if (playBtn) playBtn.addEventListener("click", () => createTab(featuredGame.url, true));
-	if (stealthBtn) stealthBtn.addEventListener("click", () => openAboutBlank(featuredGame.url));
-}
-
-// ------------------------------------------------------------
-// Suggested Games (Daily Picks that change every day)
-// ------------------------------------------------------------
-function getDailySuggestedGames(list, count = 5) {
-	if (!list || list.length === 0) return [];
-	
-	const now = new Date();
-	const seedStr = `${now.getUTCFullYear()}-${now.getUTCMonth() + 1}-${now.getUTCDate()}`;
-	let hash = 0;
-	for (let i = 0; i < seedStr.length; i++) {
-		hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
-		hash |= 0;
-	}
-	hash = Math.abs(hash);
-
-	const picked = [];
-	const usedUrls = new Set();
-	let cur = hash;
-
-	for (let attempt = 0; attempt < 120 && picked.length < count; attempt++) {
-		cur = (cur * 9301 + 49297) % 233280;
-		const idx = Math.floor((cur / 233280) * list.length);
-		const game = list[idx];
-		if (game && !usedUrls.has(game.url) && (game.title || "").length > 2) {
-			usedUrls.add(game.url);
-			picked.push(game);
-		}
-	}
-	return picked;
-}
-
-function renderSuggestedGames(list) {
-	if (!suggestedContainer || !list || list.length === 0) return;
-	const dailyGames = getDailySuggestedGames(list, 5);
-	if (dailyGames.length === 0) return;
-
-	suggestedContainer.innerHTML = `
-		<div class="suggested-header-row">
-			<div class="suggested-title-group">
-				<h3 class="suggested-title">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
-						<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-					</svg>
-					Suggested For You
-				</h3>
-				<span class="suggested-badge">Daily Picks</span>
-			</div>
-			<span class="suggested-timer-badge">✨ Rotates every 24h</span>
-		</div>
-		<div class="suggested-games-grid" id="suggested-games-grid"></div>
-	`;
-
-	const grid = document.getElementById("suggested-games-grid");
-	if (!grid) return;
-
-	dailyGames.forEach(game => {
-		const card = document.createElement("div");
-		card.className = "suggested-card";
-		card.innerHTML = `
-			<span class="suggested-card-tag">Daily Pick</span>
-			<div class="game-card-icon">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<line x1="6" y1="12" x2="10" y2="12"></line>
-					<line x1="8" y1="10" x2="8" y2="14"></line>
-					<circle cx="15" cy="13" r="1"></circle>
-					<circle cx="17.5" cy="10.5" r="1"></circle>
-					<path d="M18.7 18.7a8.5 8.5 0 0 0 2.3-5.7v-2a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v2a8.5 8.5 0 0 0 2.3 5.7L7 21h10l1.7-2.3z"></path>
-				</svg>
-			</div>
-			<span class="game-card-title">${escapeHtml(game.title)}</span>
-			<button class="game-card-aboutblank-btn" title="Open in about:blank">
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-					<polyline points="15 3 21 3 21 9"></polyline>
-					<line x1="10" y1="14" x2="21" y2="3"></line>
-				</svg>
-				about:blank
-			</button>
-		`;
-		card.addEventListener("click", (e) => {
-			if (e.target.closest(".game-card-aboutblank-btn")) {
-				e.stopPropagation();
-				if (game.url) openAboutBlank(game.url);
-			} else {
-				if (game.url) createTab(game.url, true);
-			}
-		});
-		grid.appendChild(card);
-	});
-}
-
-function applyCurrentFilterAndSearch() {
-	const query = (gamesSearchInput ? gamesSearchInput.value : "").toLowerCase().trim();
-	let filtered = allGames;
-
-	if (activeFilter === "popular") {
-		filtered = filtered.filter(g => isPopularGame(g));
-		if (gamesLibraryTitle) gamesLibraryTitle.textContent = "🔥 Top Popular Games";
-	} else if (activeFilter !== "all") {
-		filtered = filtered.filter(g => (g.cat || "").toLowerCase() === activeFilter.toLowerCase());
-		if (gamesLibraryTitle) gamesLibraryTitle.textContent = `${activeFilter} Games`;
-	} else {
-		if (gamesLibraryTitle) gamesLibraryTitle.textContent = "All Games";
-	}
-
-	if (query) {
-		filtered = filtered.filter(g => 
-			(g.title || "").toLowerCase().includes(query) || 
-			(g.filename || "").toLowerCase().includes(query)
-		);
-	}
-
-	if (gamesLibraryCount) {
-		gamesLibraryCount.textContent = `${filtered.length.toLocaleString()} Games`;
-	}
-
-	renderGames(filtered);
-}
-
-async function loadGamesLibrary() {
+async function loadArcadeCatalog() {
 	try {
 		const res = await fetch("/api/games");
-		if (!res.ok) throw new Error("Failed to load games list");
+		if (!res.ok) throw new Error("Catalog fetch failed");
 		const data = await res.json();
-		const rawGames = Array.isArray(data) ? data : (data.games || []);
-		
-		// Sort with popular games prioritized at the top
-		allGames = sortGamesWithPopularFirst(rawGames);
-		
-		if (gamesCountBadge) {
-			gamesCountBadge.textContent = `${allGames.length.toLocaleString()}`;
-		}
-		if (gamesLibraryCount) {
-			gamesLibraryCount.textContent = `${allGames.length.toLocaleString()} Games`;
-		}
-		
-		// Render Game of the Week & Suggested Daily Games
-		renderGameOfTheWeek(allGames);
-		renderSuggestedGames(allGames);
+		allGamesList = Array.isArray(data) ? data : (data.games || []);
 
-		// Render main games grid
-		applyCurrentFilterAndSearch();
+		const totalCount = allGamesList.length;
+		if (arcadeCountPill) arcadeCountPill.textContent = `${totalCount.toLocaleString()} Games`;
+		if (topbarStats) topbarStats.textContent = `${totalCount.toLocaleString()} Games Ready`;
+
+		applyFilterAndSearch();
 	} catch (err) {
-		console.error("Games fetch error:", err);
-		if (gamesGrid) {
-			gamesGrid.innerHTML = `<div class="games-loading">Failed to load games list. Make sure the server is running.</div>`;
+		console.error("[Aura] Games load failed:", err);
+		if (arcadeGrid) {
+			arcadeGrid.innerHTML = `<div class="loading-state">Failed to load games catalog. Server reconnecting...</div>`;
 		}
 	}
 }
 
-function renderGames(gamesList, reset = true) {
-	if (!gamesGrid) return;
-	if (reset) {
-		currentDisplayList = gamesList;
-		renderedCount = 0;
-		gamesGrid.innerHTML = "";
+function applyFilterAndSearch() {
+	const query = arcadeSearchInput ? arcadeSearchInput.value.trim().toLowerCase() : "";
+
+	filteredGamesList = allGamesList.filter(game => {
+		const title = (game.title || "").toLowerCase();
+		const cat = (game.category || "").toLowerCase();
+
+		const matchesQuery = !query || title.includes(query) || cat.includes(query);
+		if (!matchesQuery) return false;
+
+		if (activeCategory === "all") return true;
+		if (activeCategory === "popular") return game.popular || title.includes("mad") || title.includes("slope") || title.includes("minecraft") || title.includes("geometry") || title.includes("retro bowl");
+		return cat.includes(activeCategory) || title.includes(activeCategory);
+	});
+
+	if (arcadeCountPill) {
+		arcadeCountPill.textContent = `${filteredGamesList.length.toLocaleString()} Games`;
 	}
-	if (currentDisplayList.length === 0) {
-		gamesGrid.innerHTML = `<div class="games-loading">No games found matching your search.</div>`;
+
+	renderedGameCount = 0;
+	if (arcadeGrid) arcadeGrid.innerHTML = "";
+	renderNextGamesBatch();
+}
+
+function renderNextGamesBatch() {
+	if (!arcadeGrid) return;
+	if (filteredGamesList.length === 0) {
+		arcadeGrid.innerHTML = `<div class="loading-state">No games match your search query.</div>`;
 		return;
 	}
 
-	const batch = currentDisplayList.slice(renderedCount, renderedCount + BATCH_SIZE);
+	const batch = filteredGamesList.slice(renderedGameCount, renderedGameCount + BATCH_SIZE);
 	if (batch.length === 0) return;
 
-	const fragment = document.createDocumentFragment();
+	const frag = document.createDocumentFragment();
+
 	batch.forEach(game => {
 		const card = document.createElement("div");
 		card.className = "game-card";
-		card.dataset.gameUrl = game.url;
-		card.dataset.gameTitle = game.title;
-		const isHot = isPopularGame(game);
+		card.dataset.url = game.url;
+		card.dataset.title = game.title;
+
+		const iconChar = game.icon || "🕹️";
 		card.innerHTML = `
-			${isHot ? `<span class="game-popular-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Hot</span>` : ""}
-			<div class="game-card-icon">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<line x1="6" y1="12" x2="10" y2="12"></line>
-					<line x1="8" y1="10" x2="8" y2="14"></line>
-					<circle cx="15" cy="13" r="1"></circle>
-					<circle cx="17.5" cy="10.5" r="1"></circle>
-					<path d="M18.7 18.7a8.5 8.5 0 0 0 2.3-5.7v-2a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v2a8.5 8.5 0 0 0 2.3 5.7L7 21h10l1.7-2.3z"></path>
-				</svg>
+			<div class="game-thumb">
+				<span class="game-thumb-icon">${iconChar}</span>
 			</div>
-			<span class="game-card-title">${escapeHtml(game.title)}</span>
-			<button class="game-card-aboutblank-btn" title="Open in about:blank">
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-					<polyline points="15 3 21 3 21 9"></polyline>
-					<line x1="10" y1="14" x2="21" y2="3"></line>
-				</svg>
-				about:blank
-			</button>
+			<div class="game-meta">
+				<span class="game-title" title="${escapeHtml(game.title)}">${escapeHtml(game.title)}</span>
+				<span class="game-cat">${escapeHtml(game.category || "Arcade")}</span>
+			</div>
 		`;
-		card.addEventListener("click", (e) => {
-			if (e.target.closest(".game-card-aboutblank-btn")) {
-				e.stopPropagation();
-				if (game.url) openAboutBlank(game.url);
-			} else {
-				if (game.url) createTab(game.url, true);
-			}
+
+		card.addEventListener("click", () => {
+			launchGame(game);
 		});
-		fragment.appendChild(card);
+
+		frag.appendChild(card);
 	});
 
-	gamesGrid.appendChild(fragment);
-	renderedCount += batch.length;
+	arcadeGrid.appendChild(frag);
+	renderedGameCount += batch.length;
 }
 
+// Infinite scroll on games grid
 window.addEventListener("scroll", () => {
-	if (renderedCount < currentDisplayList.length) {
-		if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-			renderGames(currentDisplayList, false);
+	const arcadeView = document.getElementById("view-arcade");
+	if (!arcadeView || !arcadeView.classList.contains("active")) return;
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+		if (renderedGameCount < filteredGamesList.length) {
+			renderNextGamesBatch();
 		}
 	}
 });
 
-if (gamesSearchInput) {
-	gamesSearchInput.addEventListener("input", () => {
-		applyCurrentFilterAndSearch();
-	});
-}
-
-if (filterChipsContainer) {
-	filterChipsContainer.addEventListener("click", (e) => {
-		const btn = e.target.closest(".game-filter-chip");
-		if (!btn) return;
-		filterChipsContainer.querySelectorAll(".game-filter-chip").forEach(c => c.classList.remove("active"));
-		btn.classList.add("active");
-		activeFilter = btn.dataset.filter || "all";
-		applyCurrentFilterAndSearch();
-	});
-}
-
-// Load games library
-loadGamesLibrary();
-
-// ============================================================
-// Error & Status Display
-// ============================================================
-
-function setStatus(state, msg) {
-	if (!statusDot || !statusText) return;
-	statusDot.className = "status-dot " + state;
-	statusText.textContent = msg;
-}
-
-function showError(msg) {
-	if (proxyErrorMessage) proxyErrorMessage.textContent = msg;
-	if (proxyError) proxyError.classList.remove("hidden");
-}
-
-function hideError() {
-	if (proxyError) proxyError.classList.add("hidden");
-}
-
-// ============================================================
-// Sidebar Navigation
-// ============================================================
-
-function openSidebar() {
-	if (sidebar) sidebar.classList.add("open");
-	if (sidebarOverlay) sidebarOverlay.classList.add("active");
-}
-
-function closeSidebar() {
-	if (sidebar) sidebar.classList.remove("open");
-	if (sidebarOverlay) sidebarOverlay.classList.remove("active");
-}
-
-if (sidebarToggleBtn) {
-	sidebarToggleBtn.onclick = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-		openSidebar();
-	};
-	sidebarToggleBtn.addEventListener("click", openSidebar);
-}
-if (sidebarCloseBtn) {
-	sidebarCloseBtn.onclick = (e) => {
-		e.preventDefault();
-		closeSidebar();
-	};
-	sidebarCloseBtn.addEventListener("click", closeSidebar);
-}
-if (sidebarOverlay) {
-	sidebarOverlay.onclick = (e) => {
-		e.preventDefault();
-		closeSidebar();
-	};
-	sidebarOverlay.addEventListener("click", closeSidebar);
-}
-
-document.addEventListener("keydown", (e) => {
-	if (e.key === "Escape") {
-		closeSidebar();
-		closeAuthModal();
-		closeProfileModal();
-	}
-});
-
-function navigateToPage(targetPage) {
-	if (!targetPage) return;
-
-	// Owner Panel opens INSIDE the site (server proxies it, owner-gated)
-	if (targetPage === "owner-panel") {
-		closeSidebar();
-		location.href = "/panel/?token=" + encodeURIComponent(authToken || "");
-		return;
-	}
-
-	if (targetPage === "mirrors") {
-		closeSidebar();
-		if (typeof openMirrorsHubModal === "function") openMirrorsHubModal();
-		return;
-	}
-
-	// In Barebones mode, strictly guard non-essential pages
-	const isBarebones = document.documentElement.classList.contains("barebones-mode");
-	if (isBarebones && targetPage !== "proxy" && targetPage !== "games" && targetPage !== "settings") {
-		if (typeof showToast === "function") {
-			showToast("Barebones Mode active: Only Proxy, Games, and Settings are enabled to save RAM.", "info");
-		}
-		return;
-	}
-
-	document.querySelectorAll(".sidebar-link").forEach((l) => {
-		l.classList.toggle("active", l.dataset.page === targetPage);
-	});
-
-	// Sync active state to retro controller dock buttons
-	document.querySelectorAll("#retro-controller-dock [data-page]").forEach((btn) => {
-		btn.classList.toggle("active", btn.dataset.page === targetPage);
-	});
-
-	// Sync active state to top quick-access pin bar pills
-	document.querySelectorAll("#quick-access-pins-list .quick-access-pin-pill").forEach((pill) => {
-		pill.classList.toggle("active", pill.dataset.page === targetPage);
-	});
-
-	pages.forEach((p) => p.classList.remove("active"));
-	const page = document.getElementById(`page-${targetPage}`);
-	if (page) page.classList.add("active");
-
-	if (targetPage === "proxy" || targetPage === "games" || targetPage === "settings" || targetPage === "soundboard" || targetPage === "profile" || targetPage === "friends" || targetPage === "lounge" || targetPage === "chat" || targetPage === "bazaar" || targetPage === "staff-panel") {
-		framesContainer.classList.add("hidden");
-		browserChrome.classList.add("hidden");
-		mainContent.classList.remove("hidden");
-		mainContent.classList.remove("new-tab-mode");
-	}
-
-	if (targetPage === "profile") renderProfilePage();
-	if (targetPage === "friends") loadFriends();
-	if (targetPage === "lounge") loadLoungeRooms();
-	if (targetPage === "chat") {
-		closeChatDrawer();
-		loadChatConversations();
-	}
-	if (targetPage === "bazaar") loadBazaarShop();
-	if (targetPage === "soundboard") initSoundboard();
-	if (targetPage === "staff-panel") loadStaffPanel();
-
-	closeSidebar();
-}
-
-sidebarLinks.forEach((link) => {
-	link.addEventListener("click", (e) => {
-		if (link.id === "nav-owner-panel") {
-			e.preventDefault();
-			const tokenQ = "?token=" + encodeURIComponent(authToken || "");
-			location.href = "/panel/" + tokenQ;
-			return;
-		}
-		e.preventDefault();
-		navigateToPage(link.dataset.page);
+// Category filtering
+catChips.forEach(chip => {
+	chip.addEventListener("click", () => {
+		catChips.forEach(c => c.classList.remove("active"));
+		chip.classList.add("active");
+		activeCategory = chip.dataset.cat || "all";
+		applyFilterAndSearch();
 	});
 });
 
-function handleHashNavigation() {
-	if (location.hash) {
-		const target = location.hash.replace("#", "").trim();
-		if (target) {
-			navigateToPage(target);
-		}
-	}
-}
-window.addEventListener("hashchange", handleHashNavigation);
-if (document.readyState === "complete" || document.readyState === "interactive") {
-	setTimeout(handleHashNavigation, 100);
-} else {
-	window.addEventListener("DOMContentLoaded", () => setTimeout(handleHashNavigation, 100));
-}
-
-// ============================================================
-// Keyboard Shortcuts
-// ============================================================
-
-document.addEventListener("keydown", (e) => {
-	if (!e || !e.key) return;
-	const onSearchPage = !mainContent.classList.contains("hidden");
-	if (
-		onSearchPage &&
-		e.key.length === 1 &&
-		!e.ctrlKey && !e.metaKey && !e.altKey &&
-		document.activeElement !== proxyInput &&
-		document.activeElement !== navUrlInput &&
-		document.activeElement !== gamesSearchInput &&
-		document.activeElement !== friendUsernameInput &&
-		document.activeElement.tagName !== "INPUT" &&
-		document.activeElement.tagName !== "TEXTAREA"
-	) {
-		if (proxyInput) proxyInput.focus();
-	}
-
-	if (e.ctrlKey && e.key === "l" && !browserChrome.classList.contains("hidden")) {
-		e.preventDefault();
-		navUrlInput.focus();
-		navUrlInput.select();
-	}
-
-	if (e.ctrlKey && e.key === "t") {
-		e.preventDefault();
-		createTab();
-	}
-
-	if (e.ctrlKey && e.key === "w" && activeTabId) {
-		e.preventDefault();
-		closeTab(activeTabId);
-	}
-
-	if (e.key === "F11") {
-		e.preventDefault();
-		toggleFullscreen();
-	}
-});
-
-// ============================================================
-// Utility Functions
-// ============================================================
-
-function extractDomain(url) {
-	try {
-		return new URL(url).hostname;
-	} catch {
-		return url.substring(0, 30);
-	}
-}
-
-function escapeHtml(str) {
-	if (!str) return "";
-	const div = document.createElement("div");
-	div.textContent = str;
-	return div.innerHTML;
-}
-
-// Initialize Auth on startup
-initAuth();
-
-// Initialize Clash Shield UI
-updateShieldUI();
-
-// Initialize Bookmarks & Speed Dial
-loadBookmarks();
-
-// ============================================================
-// Barebones Mode & Ultimate Minimalist Layout Engine
-// ============================================================
-
-const ULTIMATE_THEMES = [
-	"monochrome",
-	"sky-blue",
-	"neon-emerald",
-	"crimson-red",
-	"sunset-amber",
-	"cyber-violet",
-	"hot-pink",
-	"electric-gold",
-	"deep-sapphire",
-	"toxic-lime",
-	"arctic-cyan",
-	"blood-orange"
-];
-
-function isBarebonesActive() {
-	try {
-		return localStorage.getItem("clash_barebones") === "true";
-	} catch (e) {
-		return false;
-	}
-}
-
-function isUltimateLayoutActive() {
-	try {
-		return localStorage.getItem("clash_ultimate_layout") === "true";
-	} catch (e) {
-		return false;
-	}
-}
-
-function getUltimateColor() {
-	try {
-		return localStorage.getItem("clash_ultimate_color") || "monochrome";
-	} catch (e) {
-		return "monochrome";
-	}
-}
-
-function applyBarebonesMode(enabled, notify = false) {
-	try {
-		localStorage.setItem("clash_barebones", enabled ? "true" : "false");
-	} catch (e) {}
-
-	if (enabled) {
-		document.documentElement.classList.add("barebones-mode");
-		document.body.classList.add("barebones-mode");
-	} else {
-		document.documentElement.classList.remove("barebones-mode");
-		document.body.classList.remove("barebones-mode");
-	}
-
-	if (settingBarebonesMode) {
-		settingBarebonesMode.checked = !!enabled;
-	}
-
-	// In Barebones mode, redirect away from heavy pages if user is currently on one
-	if (enabled) {
-		const activePage = document.querySelector(".page.active");
-		const activePageId = activePage ? activePage.id.replace("page-", "") : "proxy";
-		if (activePageId !== "proxy" && activePageId !== "games" && activePageId !== "settings") {
-			navigateToPage("proxy");
-		}
-	}
-
-	// Update background renderers (freeze/unfreeze canvas animations)
-	const isUlt = isUltimateLayoutActive();
-	if (window.clashSetUltimateBg) {
-		window.clashSetUltimateBg(isUlt);
-	}
-	if (window.clashSetParticlesDisabled) {
-		window.clashSetParticlesDisabled(enabled || isUlt);
-	}
-
-	if (notify && typeof showToast === "function") {
-		showToast(
-			enabled
-				? "Barebones Mode active: RAM usage minimized (Proxy, Games & Settings only)"
-				: "Barebones Mode disabled: All features restored",
-			"info"
-		);
-	}
-}
-
-function applyUltimateLayout(enabled, notify = false) {
-	try {
-		localStorage.setItem("clash_ultimate_layout", enabled ? "true" : "false");
-	} catch (e) {}
-
-	if (enabled) {
-		document.documentElement.classList.add("ultimate-layout");
-		document.body.classList.add("ultimate-layout");
-		const color = getUltimateColor();
-		applySiteTheme(color, false);
-	} else {
-		document.documentElement.classList.remove("ultimate-layout");
-		document.body.classList.remove("ultimate-layout");
-		const color = localStorage.getItem("clash_theme") || "neon-purple";
-		applySiteTheme(color, false);
-	}
-
-	if (settingUltimateLayout) {
-		settingUltimateLayout.checked = !!enabled;
-	}
-
-	// Update canvas and particle backgrounds
-	const isBare = isBarebonesActive();
-	if (window.clashSetUltimateBg) {
-		window.clashSetUltimateBg(enabled);
-	}
-	if (window.clashSetParticlesDisabled) {
-		window.clashSetParticlesDisabled(enabled || isBare);
-	}
-
-	if (notify && typeof showToast === "function") {
-		showToast(
-			enabled
-				? "Ultimate Minimalist Layout enabled with Retro Controller Dock"
-				: "Ultimate Layout disabled: Standard layout restored",
-			"success"
-		);
-	}
-}
-
-function setUltimateColor(colorKey, notify = false) {
-	applySiteTheme(colorKey, notify);
-}
-
-function cycleUltimateColor() {
-	const current = getUltimateColor();
-	const idx = ULTIMATE_THEMES.indexOf(current);
-	const nextIdx = idx >= 0 ? (idx + 1) % ULTIMATE_THEMES.length : 0;
-	const nextColor = ULTIMATE_THEMES[nextIdx];
-	setUltimateColor(nextColor, true);
-}
-
-function initBarebonesAndUltimate() {
-	const barebones = isBarebonesActive();
-	const ultimate = isUltimateLayoutActive();
-	const color = localStorage.getItem("clash_theme") || localStorage.getItem("clash_ultimate_color") || "neon-purple";
-
-	// Apply stored preferences on boot
-	applyBarebonesMode(barebones, false);
-	applyUltimateLayout(ultimate, false);
-	applySiteTheme(color, false);
-
-	// Settings switch events
-	if (settingBarebonesMode) {
-		settingBarebonesMode.addEventListener("change", () => {
-			applyBarebonesMode(settingBarebonesMode.checked, true);
-		});
-	}
-
-	if (settingUltimateLayout) {
-		settingUltimateLayout.addEventListener("change", () => {
-			applyUltimateLayout(settingUltimateLayout.checked, true);
-		});
-	}
-
-	// 12-Color swatch events
-	if (ultimateColorBtns) {
-		ultimateColorBtns.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				const c = btn.dataset.color;
-				if (c) setUltimateColor(c, true);
-			});
-		});
-	}
-
-	// Retro Controller Dock pill buttons
-	if (retroBtnSelect) {
-		retroBtnSelect.addEventListener("click", (e) => {
-			e.preventDefault();
-			cycleUltimateColor();
-		});
-	}
-
-	if (retroBtnStart) {
-		retroBtnStart.addEventListener("click", (e) => {
-			e.preventDefault();
-			applyBarebonesMode(!isBarebonesActive(), true);
-		});
-	}
-
-	// Retro Controller Dock navigation buttons
-	const retroNavButtons = document.querySelectorAll("#retro-controller-dock [data-page]");
-	retroNavButtons.forEach((btn) => {
-		btn.addEventListener("click", (e) => {
-			e.preventDefault();
-			const target = btn.dataset.page;
-			if (target) navigateToPage(target);
-		});
-	});
-
-	// Sync initial active page highlight to retro controller dock
-	const initialPage = document.querySelector(".page.active");
-	const initialPageId = initialPage ? initialPage.id.replace("page-", "") : "proxy";
-	retroNavButtons.forEach((btn) => {
-		btn.classList.toggle("active", btn.dataset.page === initialPageId);
+// Search input debounce
+let searchDebounce = null;
+if (arcadeSearchInput) {
+	arcadeSearchInput.addEventListener("input", () => {
+		clearTimeout(searchDebounce);
+		searchDebounce = setTimeout(applyFilterAndSearch, 250);
 	});
 }
 
-// Initialize Barebones & Ultimate Layout
-initBarebonesAndUltimate();
+// Game Launcher
+function launchGame(game) {
+	if (!game || !game.url) return;
+	activeGameUrl = game.url.startsWith("/") ? game.url : "/" + game.url;
 
-// ============================================================
-// 🛍️ Clash Bazaar Shop Controller
-// ============================================================
-let bazaarCatalogData = null;
-let currentBazaarFilter = "all";
+	if (playerTitle) playerTitle.textContent = game.title || "Game Player";
+	if (playerContainer) {
+		playerContainer.innerHTML = "";
+		const iframe = document.createElement("iframe");
+		iframe.className = "player-iframe";
+		iframe.allow = "autoplay; fullscreen; camera; microphone; gamepad";
+		iframe.setAttribute("allowfullscreen", "true");
+		iframe.src = activeGameUrl;
 
-async function loadBazaarShop() {
-	const grid = document.getElementById("bazaar-items-grid");
-	const coinsDisplay = document.getElementById("bazaar-coins-display");
-	if (!grid) return;
+		// Apply resolution scale if set
+		const resScale = parseFloat(localStorage.getItem("aura_perf_resolution") || "1");
+		if (resScale < 1) {
+			iframe.style.transform = `scale(${resScale})`;
+			iframe.style.transformOrigin = "top left";
+			iframe.style.width = `${100 / resScale}%`;
+			iframe.style.height = `${100 / resScale}%`;
+		}
 
-	if (!authToken) {
-		grid.innerHTML = `
-			<div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: rgba(16,22,40,0.6); border-radius: 16px;">
-				<div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
-				<h3 style="color: #fff; margin-bottom: 8px;">Sign In to Enter Clash Bazaar</h3>
-				<p style="color: #94a3b8; max-width: 420px; margin: 0 auto 18px;">Create an account or sign in to earn Clash Coins and unlock custom frames, name effects, and titles.</p>
-				<button class="btn btn-primary" onclick="openAuthModal('login')">Sign In / Register</button>
-			</div>
-		`;
-		if (coinsDisplay) coinsDisplay.textContent = "0";
-		return;
+		playerContainer.appendChild(iframe);
 	}
 
-	grid.innerHTML = `
-		<div style="grid-column: 1 / -1; text-align: center; padding: 36px; color: #94a3b8;">
-			<div class="spinner" style="margin: 0 auto 12px;"></div>
-			Loading cosmetic catalog...
-		</div>
-	`;
-
-	try {
-		const res = await fetch("/api/bazaar/catalog", {
-			headers: { Authorization: "Bearer " + authToken }
-		});
-		const data = await res.json();
-		if (!res.ok) throw new Error(data.error || "Failed to load catalog");
-
-		bazaarCatalogData = data;
-		if (coinsDisplay) coinsDisplay.textContent = (data.coins || 0).toLocaleString();
-		if (currentUser) currentUser.coins = data.coins;
-
-		renderBazaarItems();
-	} catch (err) {
-		grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #f87171; padding: 24px;">${escapeHtml(err.message)}</div>`;
-	}
+	if (playerModal) playerModal.classList.remove("hidden");
+	trackActivity("game_play", { title: game.title, url: activeGameUrl });
 }
 
-function renderBazaarItems() {
-	const grid = document.getElementById("bazaar-items-grid");
-	if (!grid || !bazaarCatalogData) return;
+function closeGamePlayer() {
+	if (playerModal) playerModal.classList.add("hidden");
+	if (playerContainer) playerContainer.innerHTML = "";
+	activeGameUrl = "";
+}
 
-	const items = bazaarCatalogData.catalog || [];
-	const filtered = currentBazaarFilter === "all" 
-		? items 
-		: items.filter((i) => i.type === currentBazaarFilter);
+if (playerCloseBtn) playerCloseBtn.addEventListener("click", closeGamePlayer);
 
-	if (filtered.length === 0) {
-		grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 36px;">No cosmetics found in this category.</div>`;
-		return;
-	}
-
-	grid.innerHTML = filtered.map((item) => {
-		let previewHtml = "";
-		if (item.type === "frame") {
-			previewHtml = `
-				<div class="avatar-frame-container ${item.id}" style="width: 64px; height: 64px;">
-					<div class="user-pill-avatar avatar-1" style="width: 56px; height: 56px;"></div>
-				</div>
-			`;
-		} else if (item.type === "name_theme") {
-			previewHtml = `
-				<div style="font-size: 1.15rem; font-weight: 800;" class="${item.id}">
-					${escapeHtml(currentUser?.username || "Player")}
-				</div>
-			`;
-		} else if (item.type === "chat_theme") {
-			previewHtml = `
-				<div class="${item.id}" style="width: 85%;">
-					<div class="chat-bubble mine" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 10px; text-align: center;">
-						💬 Sample Bubble
-					</div>
-				</div>
-			`;
-		} else if (item.type === "title") {
-			previewHtml = `
-				<span class="title-badge ${item.id}" style="font-size: 0.85rem; padding: 4px 12px;">
-					${escapeHtml(item.name)}
-				</span>
-			`;
+if (playerFullscreenBtn) {
+	playerFullscreenBtn.addEventListener("click", () => {
+		const iframe = playerContainer ? playerContainer.querySelector("iframe") : null;
+		if (iframe && iframe.requestFullscreen) {
+			iframe.requestFullscreen().catch(() => {});
 		}
-
-		let actionBtn = "";
-		if (!item.owned) {
-			actionBtn = `
-				<button class="bazaar-action-btn bazaar-btn-buy" data-buy-id="${item.id}">
-					Buy ${item.cost} 💎
-				</button>
-			`;
-		} else if (item.isEquipped) {
-			actionBtn = `
-				<button class="bazaar-action-btn bazaar-btn-equipped" data-equip-id="${item.id}" data-item-type="${item.type}" data-unequip="true">
-					✓ Equipped
-				</button>
-			`;
-		} else {
-			actionBtn = `
-				<button class="bazaar-action-btn bazaar-btn-equip" data-equip-id="${item.id}" data-item-type="${item.type}">
-					Equip
-				</button>
-			`;
-		}
-
-		const typeLabels = { frame: "Avatar Frame", name_theme: "Name Effect", chat_theme: "Chat Bubble", title: "Title Badge" };
-
-		return `
-			<div class="bazaar-card">
-				<div class="bazaar-card-preview">
-					${previewHtml}
-				</div>
-				<div class="bazaar-card-header">
-					<div>
-						<h4 class="bazaar-card-title">${item.icon} ${escapeHtml(item.name)}</h4>
-						<span class="bazaar-card-type-chip">${typeLabels[item.type] || item.type}</span>
-					</div>
-				</div>
-				<p class="bazaar-card-desc">${escapeHtml(item.description)}</p>
-				<div class="bazaar-card-footer">
-					<div class="bazaar-price">
-						${item.owned ? '<span style="color:#10b981;font-size:0.85rem">Owned</span>' : `<span>${item.cost}</span> 💎`}
-						${item.discountApplied && !item.owned ? '<span class="bazaar-discount-tag">25% OFF</span>' : ''}
-					</div>
-					<div>
-						${actionBtn}
-					</div>
-				</div>
-			</div>
-		`;
-	}).join("");
-
-	// Attach buy buttons
-	grid.querySelectorAll("[data-buy-id]").forEach((btn) => {
-		btn.addEventListener("click", async () => {
-			const itemId = btn.dataset.buyId;
-			btn.disabled = true;
-			btn.textContent = "Unlocking...";
-			try {
-				const res = await fetch("/api/bazaar/buy", {
-					method: "POST",
-					headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-					body: JSON.stringify({ itemId })
-				});
-				const d = await res.json();
-				if (!res.ok) throw new Error(d.error || "Purchase failed");
-				if (typeof showToast === "function") showToast(d.message || "Item unlocked!", "success");
-				await loadBazaarShop();
-			} catch (err) {
-				if (typeof showToast === "function") showToast(err.message, "error");
-				btn.disabled = false;
-				btn.textContent = "Buy";
-			}
-		});
-	});
-
-	// Attach equip buttons
-	grid.querySelectorAll("[data-equip-id]").forEach((btn) => {
-		btn.addEventListener("click", async () => {
-			const itemId = btn.dataset.equipId;
-			const itemType = btn.dataset.itemType;
-			const unequip = btn.dataset.unequip === "true";
-			btn.disabled = true;
-			try {
-				const res = await fetch("/api/bazaar/equip", {
-					method: "POST",
-					headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-					body: JSON.stringify({ itemId, itemType, unequip })
-				});
-				const d = await res.json();
-				if (!res.ok) throw new Error(d.error || "Equip failed");
-				if (typeof showToast === "function") showToast(d.message || "Equipped!", "success");
-
-				// Update currentUser locally
-				if (currentUser) {
-					if (itemType === "frame") currentUser.equippedFrame = unequip ? "none" : itemId;
-					if (itemType === "name_theme") currentUser.equippedNameTheme = unequip ? "none" : itemId;
-					if (itemType === "chat_theme") currentUser.equippedChatTheme = unequip ? "none" : itemId;
-					if (itemType === "title") currentUser.equippedTitle = unequip ? "none" : itemId;
-				}
-				renderUserHeader();
-				renderProfilePage();
-				await loadBazaarShop();
-			} catch (err) {
-				if (typeof showToast === "function") showToast(err.message, "error");
-				btn.disabled = false;
-			}
-		});
 	});
 }
 
-// Bazaar Filter Tabs Listeners
-document.querySelectorAll("[data-bazaar-filter]").forEach((btn) => {
-	btn.addEventListener("click", () => {
-		document.querySelectorAll("[data-bazaar-filter]").forEach((b) => b.classList.remove("active"));
-		btn.classList.add("active");
-		currentBazaarFilter = btn.dataset.bazaarFilter;
-		renderBazaarItems();
-	});
-});
-
-// Bazaar Daily Claim Button Listener
-const bazaarClaimBtn = document.getElementById("bazaar-daily-claim-btn");
-if (bazaarClaimBtn) {
-	bazaarClaimBtn.addEventListener("click", async () => {
-		if (!authToken) {
-			openAuthModal("login");
-			return;
-		}
-		bazaarClaimBtn.disabled = true;
-		bazaarClaimBtn.textContent = "Claiming...";
-		try {
-			const res = await fetch("/api/bazaar/daily-reward", {
-				method: "POST",
-				headers: { Authorization: "Bearer " + authToken }
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Claim failed");
-			if (typeof showToast === "function") showToast(d.message || "+50 Coins Claimed!", "success");
-			await loadBazaarShop();
-		} catch (err) {
-			if (typeof showToast === "function") showToast(err.message, "info");
-			bazaarClaimBtn.disabled = false;
-			bazaarClaimBtn.textContent = "🎁 Claim Daily +50 Coins";
+if (playerAboutblankBtn) {
+	playerAboutblankBtn.addEventListener("click", () => {
+		if (activeGameUrl) {
+			openInAboutBlank(window.location.origin + activeGameUrl);
 		}
 	});
 }
 
 // ============================================================
-// 🛡️ Staff Member Console Controller
+// 6. Aura Intelligence (AI Chat Assistant)
 // ============================================================
-let staffMeData = null;
+const aiMsgBox = document.getElementById("ai-messages-box");
+const aiInput = document.getElementById("ai-chat-input");
+const aiSendBtn = document.getElementById("ai-send-btn");
+const aiHistory = [];
 
-async function loadStaffPanel() {
-	const container = document.getElementById("staff-panel-container");
-	if (!container) return;
+async function sendAiMessage() {
+	if (!aiInput) return;
+	const text = aiInput.value.trim();
+	if (!text) return;
+	aiInput.value = "";
 
-	// Load stored theme preference
-	const savedTheme = localStorage.getItem("clash_staff_panel_theme") || "midnight";
-	container.dataset.staffTheme = savedTheme;
-	document.querySelectorAll("[data-staff-theme-set]").forEach((btn) => {
-		btn.classList.toggle("active", btn.dataset.staffThemeSet === savedTheme);
-	});
+	// Render User message
+	appendAiBubble("user", text);
+	aiHistory.push({ role: "user", content: text });
 
-	if (!authToken) {
-		if (typeof showToast === "function") showToast("Please sign in to access the Staff Console.", "info");
-		navigateToPage("proxy");
-		return;
-	}
-
-	try {
-		const res = await fetch("/api/staff/me", {
-			headers: { Authorization: "Bearer " + authToken }
-		});
-		const data = await res.json();
-		if (!res.ok) {
-			if (typeof showToast === "function") showToast(data.error || "Staff access denied.", "error");
-			navigateToPage("proxy");
-			return;
-		}
-
-		staffMeData = data;
-		renderStaffPanelHeader(data);
-		applyStaffPermissionGates(data.privileges || [], data.isOwner);
-		loadStaffAuditLog();
-		loadStaffReports();
-	} catch (err) {
-		console.error("Staff panel error:", err);
-	}
-}
-
-function renderStaffPanelHeader(data) {
-	const userNameEl = document.getElementById("staff-user-name");
-	const rankChipEl = document.getElementById("staff-rank-chip");
-	const privsCountEl = document.getElementById("staff-privs-count");
-	const customTagInput = document.getElementById("staff-custom-tag-input");
-	const glowStatusEl = document.getElementById("staff-glow-status-text");
-
-	if (userNameEl) userNameEl.textContent = data.user?.displayName || data.user?.username || "Staff";
-	if (rankChipEl) rankChipEl.textContent = data.rankName || "STAFF";
-	if (privsCountEl) privsCountEl.textContent = data.isOwner ? "All (Owner Access)" : (data.privileges?.length || 0);
-	if (customTagInput && data.user?.customTag) customTagInput.value = data.user.customTag;
-	if (glowStatusEl) glowStatusEl.textContent = data.user?.nameGlow ? "Active ✨" : "Disabled";
-}
-
-function applyStaffPermissionGates(privileges, isOwner) {
-	const privSet = new Set(privileges);
-
-	// Map card IDs to required permission
-	const gateMap = {
-		"card-mod-kick": "mod-kick",
-		"card-mod-mute": "mod-mute",
-		"card-mod-warn": "mod-warn",
-		"card-mod-chat-clear": "mod-chat-clear",
-		"card-mod-reports": "mod-reports",
-		"card-chat-broadcast": "chat-broadcast",
-		"card-server-motd": "server-motd-edit",
-		"card-game-testing": "game-testing",
-		"card-game-feature": "game-feature",
-		"card-game-bug-reports": "game-bug-reports",
-		"card-cosmetic-custom-tag": "cosmetic-custom-tag",
-		"card-cosmetic-name-glow": "cosmetic-name-glow",
-		"card-bazaar-badge": "bazaar-exclusive-badge"
-	};
-
-	Object.entries(gateMap).forEach(([cardId, requiredPriv]) => {
-		const card = document.getElementById(cardId);
-		if (!card) return;
-
-		const hasAccess = isOwner || privSet.has(requiredPriv);
-		let existingLock = card.querySelector(".staff-tool-locked");
-
-		if (hasAccess) {
-			if (existingLock) existingLock.remove();
-			card.querySelectorAll("input, button, select, textarea").forEach((el) => {
-				el.disabled = false;
-			});
-		} else {
-			if (!existingLock) {
-				const lockDiv = document.createElement("div");
-				lockDiv.className = "staff-tool-locked";
-				lockDiv.innerHTML = `
-					<div class="staff-tool-locked-icon">🔒</div>
-					<div class="staff-tool-locked-title">Requires '${requiredPriv}'</div>
-					<div class="staff-tool-locked-sub">You do not have permission to execute this staff tool. Contact the Owner to request access.</div>
-				`;
-				card.appendChild(lockDiv);
-			}
-			card.querySelectorAll("input, button, select, textarea").forEach((el) => {
-				el.disabled = true;
-			});
-		}
-	});
-}
-
-async function loadStaffReports() {
-	const list = document.getElementById("staff-reports-list");
-	if (!list) return;
+	// Typing indicator
+	const typingBubble = appendAiBubble("bot", "Thinking...");
 
 	try {
-		const res = await fetch("/api/staff/reports", {
-			headers: { Authorization: "Bearer " + authToken }
-		});
-		if (!res.ok) {
-			list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Reports locked (requires 'mod-reports' permission).</div>`;
-			return;
-		}
-		const data = await res.json();
-		const reports = data.reports || [];
-		if (reports.length === 0) {
-			list.innerHTML = `<div style="color:#10b981; font-size:0.88rem; padding: 12px; text-align: center;">✓ No open community reports in queue.</div>`;
-			return;
-		}
-
-		list.innerHTML = reports.map((r) => `
-			<div style="background:rgba(0,0,0,0.35);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;gap:10px;">
-				<div>
-					<div style="color:#fff;font-weight:700;font-size:0.88rem">Report on @${escapeHtml(r.reported_username)}</div>
-					<div style="color:#94a3b8;font-size:0.8rem">${escapeHtml(r.category)}: ${escapeHtml(r.details || "No details")}</div>
-				</div>
-				<button class="staff-btn staff-btn-danger" style="padding:4px 10px;font-size:0.75rem" onclick="resolveStaffReport(${r.id})">Resolve</button>
-			</div>
-		`).join("");
-	} catch (e) {
-		list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Unable to load reports.</div>`;
-	}
-}
-
-async function resolveStaffReport(reportId) {
-	try {
-		const res = await fetch("/api/staff/reports/resolve", {
+		trackActivity("ai_query", { promptSnippet: text.slice(0, 100) });
+		const res = await fetch("/api/ai/chat", {
 			method: "POST",
-			headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-			body: JSON.stringify({ reportId })
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ messages: aiHistory.slice(-8) })
 		});
-		const d = await res.json();
-		if (res.ok) {
-			if (typeof showToast === "function") showToast("Report resolved.", "success");
-			loadStaffReports();
-		}
-	} catch (e) {}
-}
 
-async function loadStaffAuditLog() {
-	const list = document.getElementById("staff-audit-log-list");
-	if (!list) return;
-
-	try {
-		const res = await fetch("/api/staff/audit", {
-			headers: { Authorization: "Bearer " + authToken }
-		});
-		if (!res.ok) {
-			list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Audit log locked (requires 'mod-audit-view' permission).</div>`;
-			return;
-		}
 		const data = await res.json();
-		const logs = data.logs || [];
-		if (logs.length === 0) {
-			list.innerHTML = `<div style="color:#94a3b8; font-size:0.88rem; padding: 12px; text-align: center;">No audit log entries recorded yet.</div>`;
-			return;
-		}
-
-		list.innerHTML = logs.map((l) => `
-			<div style="background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;font-family:monospace;font-size:0.8rem;color:#cbd5e1;display:flex;justify-content:space-between;gap:8px;">
-				<span><b>[${escapeHtml(l.action)}]</b> ${escapeHtml(l.detail)}</span>
-				<span style="color:#64748b;font-size:0.75rem">${new Date(l.created_at).toLocaleTimeString()}</span>
-			</div>
-		`).join("");
-	} catch (e) {
-		list.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem; padding: 12px; text-align: center;">Unable to load audit log.</div>`;
+		const reply = data.reply || "I didn't quite catch that. Could you rephrase?";
+		typingBubble.querySelector(".msg-bubble").innerHTML = escapeHtml(reply).replace(/\n/g, "<br>");
+		aiHistory.push({ role: "assistant", content: reply });
+	} catch (err) {
+		typingBubble.querySelector(".msg-bubble").textContent = "Service temporarily unavailable. Please try again in a moment.";
 	}
 }
 
-// Staff Panel Appearance Customizer Listeners
-document.querySelectorAll("[data-staff-theme-set]").forEach((btn) => {
-	btn.addEventListener("click", () => {
-		const theme = btn.dataset.staffThemeSet;
-		const container = document.getElementById("staff-panel-container");
-		if (container) container.dataset.staffTheme = theme;
-		localStorage.setItem("clash_staff_panel_theme", theme);
-		document.querySelectorAll("[data-staff-theme-set]").forEach((b) => b.classList.remove("active"));
-		btn.classList.add("active");
-	});
-});
-
-// Staff Panel Tab Switching Listeners
-document.querySelectorAll("[data-staff-tab]").forEach((btn) => {
-	btn.addEventListener("click", () => {
-		const tabKey = btn.dataset.staffTab;
-		document.querySelectorAll("[data-staff-tab]").forEach((b) => b.classList.remove("active"));
-		btn.classList.add("active");
-
-		document.querySelectorAll(".staff-tab-content").forEach((c) => c.classList.remove("active"));
-		const targetContent = document.getElementById(`staff-tab-${tabKey}`);
-		if (targetContent) targetContent.classList.add("active");
-	});
-});
-
-// Staff Panel Tool Action Buttons
-const staffKickBtn = document.getElementById("staff-btn-kick");
-if (staffKickBtn) {
-	staffKickBtn.addEventListener("click", async () => {
-		const targetUsername = document.getElementById("staff-kick-user")?.value?.trim();
-		const reason = document.getElementById("staff-kick-reason")?.value?.trim() || "Kicked by staff";
-		if (!targetUsername) return showToast("Enter player username to kick.", "warning");
-
-		try {
-			const res = await fetch("/api/staff/kick", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ targetUsername, reason })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Kick failed");
-			showToast(d.message || "Player disconnected.", "success");
-			document.getElementById("staff-kick-user").value = "";
-			document.getElementById("staff-kick-reason").value = "";
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
+function appendAiBubble(sender, text) {
+	const row = document.createElement("div");
+	row.className = `ai-msg ${sender}`;
+	const bubble = document.createElement("div");
+	bubble.className = "msg-bubble";
+	bubble.textContent = text;
+	row.appendChild(bubble);
+	if (aiMsgBox) {
+		aiMsgBox.appendChild(row);
+		aiMsgBox.scrollTop = aiMsgBox.scrollHeight;
+	}
+	return row;
 }
 
-const staffMuteBtn = document.getElementById("staff-btn-mute");
-if (staffMuteBtn) {
-	staffMuteBtn.addEventListener("click", async () => {
-		const targetUsername = document.getElementById("staff-mute-user")?.value?.trim();
-		const durationMinutes = document.getElementById("staff-mute-duration")?.value || 15;
-		const reason = document.getElementById("staff-mute-reason")?.value?.trim() || "Muted by staff";
-		if (!targetUsername) return showToast("Enter player username to mute.", "warning");
-
-		try {
-			const res = await fetch("/api/staff/mute", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ targetUsername, durationMinutes, reason })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Mute failed");
-			showToast(d.message || "Player timed out.", "success");
-			document.getElementById("staff-mute-user").value = "";
-			document.getElementById("staff-mute-reason").value = "";
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffWarnBtn = document.getElementById("staff-btn-warn");
-if (staffWarnBtn) {
-	staffWarnBtn.addEventListener("click", async () => {
-		const targetUsername = document.getElementById("staff-warn-user")?.value?.trim();
-		const reason = document.getElementById("staff-warn-reason")?.value?.trim();
-		if (!targetUsername || !reason) return showToast("Enter both username and warning notice.", "warning");
-
-		try {
-			const res = await fetch("/api/staff/warn", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ targetUsername, reason })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Warning failed");
-			showToast(d.message || "Warning issued.", "success");
-			document.getElementById("staff-warn-user").value = "";
-			document.getElementById("staff-warn-reason").value = "";
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffClearChatBtn = document.getElementById("staff-btn-clear-chat");
-if (staffClearChatBtn) {
-	staffClearChatBtn.addEventListener("click", async () => {
-		if (!confirm("Are you sure you want to purge recent global chat messages?")) return;
-		try {
-			const res = await fetch("/api/staff/clear-chat", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken }
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Failed to clear chat");
-			showToast(d.message || "Chat cleared.", "success");
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffBroadcastBtn = document.getElementById("staff-btn-broadcast");
-if (staffBroadcastBtn) {
-	staffBroadcastBtn.addEventListener("click", async () => {
-		const message = document.getElementById("staff-broadcast-msg")?.value?.trim();
-		if (!message) return showToast("Enter announcement text to broadcast.", "warning");
-
-		try {
-			const res = await fetch("/api/staff/broadcast", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ message })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Broadcast failed");
-			showToast("Announcement broadcasted!", "success");
-			document.getElementById("staff-broadcast-msg").value = "";
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffMotdBtn = document.getElementById("staff-btn-motd");
-if (staffMotdBtn) {
-	staffMotdBtn.addEventListener("click", async () => {
-		const motd = document.getElementById("staff-motd-text")?.value?.trim();
-		if (!motd) return showToast("Enter MOTD text.", "warning");
-
-		try {
-			const res = await fetch("/api/staff/motd", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ motd })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Failed to update MOTD");
-			showToast(d.message || "MOTD updated.", "success");
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffSaveTagBtn = document.getElementById("staff-btn-save-tag");
-if (staffSaveTagBtn) {
-	staffSaveTagBtn.addEventListener("click", async () => {
-		const customTag = document.getElementById("staff-custom-tag-input")?.value?.trim();
-		try {
-			const res = await fetch("/api/staff/custom-tag", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken },
-				body: JSON.stringify({ customTag })
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Failed to update tag");
-			showToast("Custom tag updated!", "success");
-			if (currentUser) currentUser.custom_tag = d.customTag;
-			renderUserHeader();
-			renderProfilePage();
-			loadStaffAuditLog();
-		} catch (err) {
-			showToast(err.message, "error");
-		}
-	});
-}
-
-const staffToggleGlowBtn = document.getElementById("staff-btn-toggle-glow");
-if (staffToggleGlowBtn) {
-	staffToggleGlowBtn.addEventListener("click", async () => {
-		try {
-			const res = await fetch("/api/staff/name-glow", {
-				method: "POST",
-				headers: { "Content-Type": "application/json", Authorization: "Bearer " + authToken }
-			});
-			const d = await res.json();
-			if (!res.ok) throw new Error(d.error || "Failed to toggle glow");
-			const active = !!d.staffNameGlow;
-			document.getElementById("staff-glow-status-text").textContent = active ? "Active ✨" : "Disabled";
-			showToast(`Staff name glow ${active ? 'activated' : 'disabled'}.`, "success");
-			if (currentUser) {
-				currentUser.settings = currentUser.settings || {};
-				currentUser.settings.staffNameGlow = active;
-			}
-			renderUserHeader();
-			renderProfilePage();
-		} catch (err) {
-			showToast(err.message, "error");
+if (aiSendBtn) aiSendBtn.addEventListener("click", sendAiMessage);
+if (aiInput) {
+	aiInput.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			sendAiMessage();
 		}
 	});
 }
 
 // ============================================================
-// 📌 Horizontal Top Quick-Access Pin Bar (Minimalist Aesthetic)
+// 7. Sound FX Deck
 // ============================================================
-const QUICK_ACCESS_STORAGE_KEY = "clash_quick_access_pins";
-const DEFAULT_PINNED_TABS = ["proxy", "games", "soundboard", "settings", "chat", "bazaar"];
+const soundGrid = document.getElementById("soundboard-grid");
+const sbStopBtn = document.getElementById("sb-stop-btn");
+let activeAudio = null;
 
-const ALL_NAV_TABS = [
-	{ id: "proxy", title: "Proxy", icon: "🌐" },
-	{ id: "games", title: "Games", icon: "🎮" },
-	{ id: "soundboard", title: "Soundboard", icon: "🔊" },
-	{ id: "settings", title: "Settings", icon: "⚙️" },
-	{ id: "mirrors", title: "Mirrors", icon: "🔗" },
-	{ id: "chat", title: "Chat", icon: "💬" },
-	{ id: "bazaar", title: "Bazaar", icon: "🛍️" },
-	{ id: "lounge", title: "Lounge", icon: "🕹️" },
-	{ id: "profile", title: "Profile", icon: "👤" },
-	{ id: "friends", title: "Friends", icon: "👥" },
-	{ id: "staff-panel", title: "Staff", icon: "🛡️", staffOnly: true }
-];
-
-function currentUserHasStaffAccess() {
-	return !!(window.__myRankCache && window.__myRankCache.hasStaffPanel);
-}
-
-function getPinnedTabs() {
-	try {
-		const raw = localStorage.getItem(QUICK_ACCESS_STORAGE_KEY);
-		if (raw) {
-			const parsed = JSON.parse(raw);
-			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-		}
-	} catch {}
-	return [...DEFAULT_PINNED_TABS];
-}
-
-function savePinnedTabs(tabs) {
-	try {
-		localStorage.setItem(QUICK_ACCESS_STORAGE_KEY, JSON.stringify(tabs));
-	} catch {}
-	renderQuickAccessBar();
-	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
-}
-
-function togglePinTab(tabId) {
-	let current = getPinnedTabs();
-	if (current.includes(tabId)) {
-		current = current.filter(id => id !== tabId);
-		if (current.length === 0) current = ["proxy"]; // keep at least 1
-	} else {
-		current.push(tabId);
-	}
-	savePinnedTabs(current);
-}
-
-function renderQuickAccessBar() {
-	const pinsContainer = document.getElementById("quick-access-pins-list");
-	if (!pinsContainer) return;
-	pinsContainer.innerHTML = "";
-
-	const pinned = getPinnedTabs();
-	const activePage = document.querySelector(".page.active")?.id?.replace("page-", "") || "proxy";
-	const isStaff = currentUserHasStaffAccess();
-
-	pinned.forEach(id => {
-		const tab = ALL_NAV_TABS.find(t => t.id === id);
-		if (!tab) return;
-		if (tab.staffOnly && !isStaff) return;
-
-		const pill = document.createElement("button");
-		pill.className = "quick-access-pin-pill" + (activePage === id ? " active" : "");
-		pill.dataset.page = id;
-		pill.title = `Switch to ${tab.title}`;
-		pill.innerHTML = `
-			<span class="quick-access-pin-icon">${tab.icon}</span>
-			<span class="quick-access-pin-label">${tab.title}</span>
-			<span class="unpin-cross" title="Unpin ${tab.title}">&times;</span>
-		`;
-
-		pill.addEventListener("click", (e) => {
-			if (e.target.classList.contains("unpin-cross")) {
-				e.stopPropagation();
-				togglePinTab(id);
-				return;
-			}
-			navigateToPage(id);
-		});
-
-		pinsContainer.appendChild(pill);
-	});
-
-	renderQuickAccessPopoverList();
-}
-
-function renderQuickAccessPopoverList() {
-	const listEl = document.getElementById("quick-access-items-toggle");
-	if (!listEl) return;
-	listEl.innerHTML = "";
-
-	const pinned = getPinnedTabs();
-	const isStaff = currentUserHasStaffAccess();
-
-	ALL_NAV_TABS.forEach(tab => {
-		if (tab.staffOnly && !isStaff) return;
-		const isPinned = pinned.includes(tab.id);
-
-		const row = document.createElement("div");
-		row.className = "quick-access-item-row";
-		row.innerHTML = `
-			<div class="quick-access-item-info">
-				<span>${tab.icon}</span>
-				<span>${tab.title}</span>
-			</div>
-			<input type="checkbox" class="quick-access-item-checkbox" ${isPinned ? "checked" : ""} />
-		`;
-
-		const cb = row.querySelector(".quick-access-item-checkbox");
-		row.addEventListener("click", (e) => {
-			if (e.target !== cb) cb.checked = !cb.checked;
-			togglePinTab(tab.id);
-		});
-
-		listEl.appendChild(row);
-	});
-}
-
-function initQuickAccessBar() {
-	const manageBtn = document.getElementById("quick-access-manage-btn");
-	const popover = document.getElementById("quick-access-popover");
-	const closeBtn = document.getElementById("quick-access-popover-close");
-
-	if (manageBtn && popover) {
-		manageBtn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			popover.classList.toggle("hidden");
-			if (!popover.classList.contains("hidden")) {
-				renderQuickAccessPopoverList();
-			}
-		});
-
-		if (closeBtn) {
-			closeBtn.addEventListener("click", (e) => {
-				e.stopPropagation();
-				popover.classList.add("hidden");
-			});
-		}
-
-		document.addEventListener("click", (e) => {
-			if (!popover.contains(e.target) && !manageBtn.contains(e.target)) {
-				popover.classList.add("hidden");
-			}
-		});
-	}
-
-	renderQuickAccessBar();
-}
-
-// ============================================================
-// 🔊 Meme & Gaming Soundboard (MyInstants Powered)
-// ============================================================
-let soundboardCatalog = [];
-let soundboardCategories = [];
-let currentSoundboardCategory = "all";
-let soundboardSearchTerm = "";
-const soundboardActiveAudios = new Map();
-const soundboardFavKey = "clash_soundboard_favorites";
-const soundboardVolKey = "clash_soundboard_volume";
-
-function getSoundboardFavorites() {
-	try {
-		return new Set(JSON.parse(localStorage.getItem(soundboardFavKey) || "[]"));
-	} catch {
-		return new Set();
-	}
-}
-
-function toggleSoundboardFavorite(soundId) {
-	const favs = getSoundboardFavorites();
-	if (favs.has(soundId)) favs.delete(soundId);
-	else favs.add(soundId);
-	try {
-		localStorage.setItem(soundboardFavKey, JSON.stringify([...favs]));
-	} catch {}
-	renderSoundboardGrid();
-	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
-}
-
-function getSoundboardVolume() {
-	try {
-		const saved = localStorage.getItem(soundboardVolKey);
-		if (saved !== null) return Math.max(0, Math.min(1, parseFloat(saved)));
-	} catch {}
-	return 0.85;
-}
-
-function setSoundboardVolume(vol) {
-	vol = Math.max(0, Math.min(1, vol));
-	try {
-		localStorage.setItem(soundboardVolKey, vol.toString());
-	} catch {}
-	soundboardActiveAudios.forEach(audio => {
-		try { audio.volume = vol; } catch {}
-	});
-	const label = document.getElementById("soundboard-volume-label");
-	if (label) label.textContent = `${Math.round(vol * 100)}%`;
-	const icon = document.getElementById("soundboard-vol-icon");
-	if (icon) {
-		icon.textContent = vol === 0 ? "🔇" : vol < 0.4 ? "🔉" : "🔊";
-	}
-	if (typeof syncUserPreferencesToServer === "function") syncUserPreferencesToServer();
-}
-
-function stopAllSoundboardAudios() {
-	soundboardActiveAudios.forEach((audio, id) => {
-		try {
-			audio.pause();
-			audio.currentTime = 0;
-		} catch {}
-	});
-	soundboardActiveAudios.clear();
-	document.querySelectorAll(".sound-pad.playing").forEach(pad => pad.classList.remove("playing"));
-}
-
-function playSoundboardAudio(soundId, customUrl) {
-	if (!soundId && !customUrl) return;
-
-	// Reset if already playing this sound
-	const existing = soundboardActiveAudios.get(soundId);
-	if (existing) {
-		try {
-			existing.pause();
-			existing.currentTime = 0;
-		} catch {}
-		soundboardActiveAudios.delete(soundId);
-	}
-
-	const audioSrc = customUrl || `/api/soundboard/audio/${encodeURIComponent(soundId)}`;
-	const audio = new Audio(audioSrc);
-	audio.volume = getSoundboardVolume();
-	trackActivity("soundboard_play", { soundId });
-
-	const pad = document.querySelector(`.sound-pad[data-sound-id="${soundId}"]`);
-	if (pad) pad.classList.add("playing");
-
-	soundboardActiveAudios.set(soundId, audio);
-
-	audio.onended = () => {
-		if (pad) pad.classList.remove("playing");
-		soundboardActiveAudios.delete(soundId);
-	};
-
-	audio.onerror = () => {
-		if (pad) pad.classList.remove("playing");
-		soundboardActiveAudios.delete(soundId);
-		if (typeof showToast === "function") {
-			showToast(`Failed to load audio for '${soundId}'`, "error");
-		}
-	};
-
-	audio.play().catch(err => {
-		if (pad) pad.classList.remove("playing");
-		soundboardActiveAudios.delete(soundId);
-		console.warn("Audio playback prevented:", err);
-	});
-}
-
-async function loadSoundboardCatalog() {
+async function loadSoundboard() {
 	try {
 		const res = await fetch("/api/soundboard/sounds");
-		if (!res.ok) throw new Error("Could not load soundboard");
+		if (!res.ok) throw new Error("Soundboard fetch failed");
 		const data = await res.json();
-		soundboardCatalog = data.sounds || [];
-		soundboardCategories = data.categories || [];
-		renderSoundboardGrid();
-	} catch (err) {
-		console.error("Soundboard load error:", err);
-	}
-}
+		const sounds = data.sounds || [];
 
-function renderSoundboardGrid() {
-	const grid = document.getElementById("soundboard-grid");
-	const emptyState = document.getElementById("soundboard-empty-state");
-	if (!grid) return;
-
-	grid.innerHTML = "";
-	const favs = getSoundboardFavorites();
-	const q = soundboardSearchTerm.trim().toLowerCase();
-
-	const filtered = soundboardCatalog.filter(sound => {
-		if (currentSoundboardCategory === "favorites") {
-			if (!favs.has(sound.id)) return false;
-		} else if (currentSoundboardCategory !== "all") {
-			if (sound.category !== currentSoundboardCategory) return false;
-		}
-		if (q) {
-			const inTitle = sound.title.toLowerCase().includes(q);
-			const inId = sound.id.toLowerCase().includes(q);
-			const inCat = sound.category.toLowerCase().includes(q);
-			if (!inTitle && !inId && !inCat) return false;
-		}
-		return true;
-	});
-
-	if (filtered.length === 0) {
-		grid.classList.add("hidden");
-		if (emptyState) emptyState.classList.remove("hidden");
-		return;
-	}
-
-	grid.classList.remove("hidden");
-	if (emptyState) emptyState.classList.add("hidden");
-
-	filtered.forEach(sound => {
-		const isFav = favs.has(sound.id);
-		const isPlaying = soundboardActiveAudios.has(sound.id);
-
-		const pad = document.createElement("div");
-		pad.className = "sound-pad" + (isPlaying ? " playing" : "");
-		pad.dataset.soundId = sound.id;
-		pad.title = `Click to play: ${sound.title}`;
-
-		pad.innerHTML = `
-			<button class="sound-pad-fav ${isFav ? "active" : ""}" title="${isFav ? "Remove from Favorites" : "Add to Favorites"}">★</button>
-			<div class="sound-pad-icon">${sound.icon || "🔊"}</div>
-			<div class="sound-pad-title">${sound.title}</div>
-			<div class="sound-pad-cat">${sound.category}</div>
-			<div class="sound-pad-play-indicator"></div>
-		`;
-
-		pad.querySelector(".sound-pad-fav").addEventListener("click", (e) => {
-			e.stopPropagation();
-			toggleSoundboardFavorite(sound.id);
-		});
-
-		pad.addEventListener("click", () => {
-			playSoundboardAudio(sound.id);
-		});
-
-		grid.appendChild(pad);
-	});
-}
-
-let soundboardInitialized = false;
-function initSoundboard() {
-	if (soundboardInitialized) return;
-	soundboardInitialized = true;
-
-	const searchInput = document.getElementById("soundboard-search-input");
-	const clearBtn = document.getElementById("soundboard-search-clear");
-	const stopAllBtn = document.getElementById("soundboard-stop-all-btn");
-	const volSlider = document.getElementById("soundboard-volume-slider");
-	const customInput = document.getElementById("soundboard-custom-input");
-	const customPlayBtn = document.getElementById("soundboard-custom-play-btn");
-
-	// Master volume
-	const vol = getSoundboardVolume();
-	if (volSlider) {
-		volSlider.value = Math.round(vol * 100);
-		setSoundboardVolume(vol);
-		volSlider.addEventListener("input", (e) => {
-			setSoundboardVolume(parseFloat(e.target.value) / 100);
-		});
-	}
-
-	if (stopAllBtn) {
-		stopAllBtn.addEventListener("click", stopAllSoundboardAudios);
-	}
-
-	if (searchInput) {
-		searchInput.addEventListener("input", (e) => {
-			soundboardSearchTerm = e.target.value;
-			if (clearBtn) clearBtn.classList.toggle("hidden", !e.target.value);
-			renderSoundboardGrid();
-		});
-	}
-
-	if (clearBtn) {
-		clearBtn.addEventListener("click", () => {
-			if (searchInput) {
-				searchInput.value = "";
-				soundboardSearchTerm = "";
-				clearBtn.classList.add("hidden");
-				renderSoundboardGrid();
-				searchInput.focus();
-			}
-		});
-	}
-
-	// Categories
-	const catBtns = document.querySelectorAll(".soundboard-cat-btn");
-	catBtns.forEach(btn => {
-		btn.addEventListener("click", () => {
-			catBtns.forEach(b => b.classList.remove("active"));
-			btn.classList.add("active");
-			currentSoundboardCategory = btn.dataset.cat || "all";
-			renderSoundboardGrid();
-		});
-	});
-
-	// Custom sound fetcher
-	if (customPlayBtn && customInput) {
-		const triggerCustom = () => {
-			let val = customInput.value.trim();
-			if (!val) return;
-			val = val.replace(/^https?:\/\/www\.myinstants\.com\/en\/instant\//i, "");
-			val = val.replace(/^https?:\/\/www\.myinstants\.com\/media\/sounds\//i, "");
-			val = val.replace(/\.mp3$/i, "").replace(/\/$/, "");
-			val = val.toLowerCase().replace(/[^a-z0-9_-]/g, "");
-			if (val) {
-				playSoundboardAudio(val);
-				if (typeof showToast === "function") {
-					showToast(`Playing '${val}' from MyInstants...`, "info");
-				}
-			}
-		};
-		customPlayBtn.addEventListener("click", triggerCustom);
-		customInput.addEventListener("keydown", (e) => {
-			if (e.key === "Enter") {
-				e.preventDefault();
-				triggerCustom();
-			}
-		});
-	}
-
-	loadSoundboardCatalog();
-}
-
-// Automatically initialize Top Quick-Access Bar on startup
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", initQuickAccessBar);
-} else {
-	initQuickAccessBar();
-}
-
-// ============================================================
-// 🔄 Cloud Preference Sync & Database Auto-Save Engine
-// ============================================================
-let userPrefSyncTimeout = null;
-function syncUserPreferencesToServer() {
-	if (!authToken || !currentUser) return;
-	clearTimeout(userPrefSyncTimeout);
-	userPrefSyncTimeout = setTimeout(async () => {
-		try {
-			const currentSettings = currentUser.settings || {};
-			const quickAccessPins = typeof getPinnedTabs === "function" ? getPinnedTabs() : [];
-			const soundboardFavorites = typeof getSoundboardFavorites === "function" ? [...getSoundboardFavorites()] : [];
-			const soundboardVolume = typeof getSoundboardVolume === "function" ? getSoundboardVolume() : 0.85;
-			const activeCloak = localStorage.getItem("clash_active_cloak") || "default";
-			const theme = localStorage.getItem("clash_theme") || "neon-purple";
-			const barebones = localStorage.getItem("clash_barebones") === "true";
-			const ultimateLayout = localStorage.getItem("clash_ultimate_layout") === "true";
-			const ultimateColor = localStorage.getItem("clash_ultimate_color") || "monochrome";
-			const mirrors = typeof getSavedMirrorsList === "function" ? getSavedMirrorsList() : [];
-
-			const merged = {
-				...currentSettings,
-				quickAccessPins,
-				soundboardFavorites,
-				soundboardVolume,
-				activeCloak,
-				theme,
-				barebones,
-				ultimateLayout,
-				ultimateColor,
-				mirrors
-			};
-
-			const res = await fetch("/api/profile", {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${authToken}`
-				},
-				body: JSON.stringify({ settings: merged })
+		if (soundGrid) {
+			soundGrid.innerHTML = "";
+			sounds.forEach(snd => {
+				const card = document.createElement("button");
+				card.className = "sound-btn";
+				card.innerHTML = `
+					<span class="sb-icon">${snd.icon || "🔊"}</span>
+					<span class="sb-title">${escapeHtml(snd.title)}</span>
+				`;
+				card.addEventListener("click", () => {
+					playSound(snd.id);
+				});
+				soundGrid.appendChild(card);
 			});
-			if (res.ok) {
-				const data = await res.json();
-				if (data.user?.settings) currentUser.settings = data.user.settings;
-			}
-		} catch (e) {}
-	}, 800);
-}
-
-// ============================================================
-// 🌐 26 Cloudflare Mirrors & Cross-Domain Auto-Sync Hub
-// ============================================================
-const DEFAULT_MIRRORS_STORAGE_KEY = "clash_mirrors_list";
-const DEFAULT_MIRRORS = [
-	"https://clash-proxy-9045.bot.nu"
-];
-
-function getSavedMirrorsList() {
-	try {
-		const raw = localStorage.getItem(DEFAULT_MIRRORS_STORAGE_KEY);
-		if (raw) {
-			const parsed = JSON.parse(raw);
-			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
 		}
-	} catch (e) {}
-	return [...DEFAULT_MIRRORS];
+	} catch (e) {
+		if (soundGrid) soundGrid.innerHTML = `<div class="loading-state">Sounds offline.</div>`;
+	}
 }
 
-function saveMirrorsList(list) {
-	try {
-		localStorage.setItem(DEFAULT_MIRRORS_STORAGE_KEY, JSON.stringify(list));
-	} catch (e) {}
-	renderMirrorsGrid();
-	syncUserPreferencesToServer();
+function playSound(soundId) {
+	if (activeAudio) {
+		activeAudio.pause();
+		activeAudio = null;
+	}
+	const audio = new Audio(`/api/soundboard/audio/${soundId}`);
+	activeAudio = audio;
+	audio.play().catch(() => {});
+	trackActivity("soundboard_play", { soundId });
 }
 
-function openMirrorsHubModal() {
-	const modal = document.getElementById("mirrors-hub-modal");
-	if (!modal) return;
-	modal.classList.remove("hidden");
-	renderMirrorsGrid();
-
-	const userStatus = document.getElementById("mirrors-user-status");
-	if (userStatus) {
-		if (currentUser) {
-			userStatus.textContent = `Signed in as ${currentUser.display_name || currentUser.username}`;
-		} else {
-			userStatus.textContent = "Guest Mode • Sign in to save your settings across all 26 links!";
+if (sbStopBtn) {
+	sbStopBtn.addEventListener("click", () => {
+		if (activeAudio) {
+			activeAudio.pause();
+			activeAudio = null;
 		}
-	}
-}
-
-function closeMirrorsHubModal() {
-	const modal = document.getElementById("mirrors-hub-modal");
-	if (modal) modal.classList.add("hidden");
-}
-
-function getAuthenticatedMirrorUrl(mirrorUrl) {
-	let clean = String(mirrorUrl || "").trim();
-	if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
-		clean = "https://" + clean;
-	}
-	clean = clean.replace(/\/$/, "");
-	if (authToken) {
-		return `${clean}/#clash_session=${encodeURIComponent(authToken)}`;
-	}
-	return clean;
-}
-
-function renderMirrorsGrid() {
-	const grid = document.getElementById("mirrors-grid");
-	const countTag = document.getElementById("mirrors-count-tag");
-	if (!grid) return;
-	grid.innerHTML = "";
-
-	const mirrors = getSavedMirrorsList();
-	if (countTag) countTag.textContent = `${mirrors.length} Available`;
-
-	if (mirrors.length === 0) {
-		grid.innerHTML = `<div style="text-align:center;color:#94a3b8;padding:20px;font-size:0.85rem;">No mirror links added yet. Click 'Manage 26 Links' to paste your worker links!</div>`;
-		return;
-	}
-
-	mirrors.forEach((url, idx) => {
-		let domainName = url.replace(/^https?:\/\//i, "").replace(/\/.*$/, "");
-		const row = document.createElement("div");
-		row.className = "mirror-item-row";
-		row.innerHTML = `
-			<div class="mirror-info">
-				<span class="mirror-dot"></span>
-				<span class="mirror-name" title="${url}">#${idx + 1} ${domainName}</span>
-			</div>
-			<div class="mirror-actions">
-				<button class="mirror-btn-open" title="Open this mirror in a new tab with your login & data synced">⚡ Open</button>
-				<button class="mirror-btn-copy" title="Copy auto-login link to clipboard">📋 Copy</button>
-			</div>
-		`;
-
-		const openBtn = row.querySelector(".mirror-btn-open");
-		const copyBtn = row.querySelector(".mirror-btn-copy");
-
-		openBtn.addEventListener("click", () => {
-			const target = getAuthenticatedMirrorUrl(url);
-			window.open(target, "_blank");
-		});
-
-		copyBtn.addEventListener("click", () => {
-			const target = getAuthenticatedMirrorUrl(url);
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				navigator.clipboard.writeText(target).then(() => {
-					showToast(`Copied auto-login link for #${idx + 1}!`, "success");
-				}).catch(() => {
-					prompt("Copy your mirror link:", target);
-				});
-			} else {
-				prompt("Copy your mirror link:", target);
-			}
-		});
-
-		grid.appendChild(row);
 	});
 }
 
-function initMirrorsHub() {
-	const topBtn = document.getElementById("top-mirrors-hub-btn");
-	const closeBtn = document.getElementById("mirrors-modal-close");
-	const copyAutoLoginBtn = document.getElementById("mirrors-copy-autologin-btn");
-	const toggleManageBtn = document.getElementById("mirrors-toggle-manage-btn");
-	const manageBox = document.getElementById("mirrors-manage-box");
-	const bulkInput = document.getElementById("mirrors-bulk-input");
-	const saveBulkBtn = document.getElementById("mirrors-save-bulk-btn");
-	const cancelBulkBtn = document.getElementById("mirrors-cancel-bulk-btn");
+// ============================================================
+// 8. Stealth Cloaking, About:Blank & Panic Key
+// ============================================================
+const PRESETS = {
+	classroom: { title: "Classes", icon: "https://ssl.gstatic.com/classroom/favicon.png" },
+	drive: { title: "My Drive - Google Drive", icon: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" },
+	canvas: { title: "Dashboard", icon: "https://du11hjcvx0uqb.cloudfront.net/br/dist/images/favicon-e10d657a73.ico" },
+	khan: { title: "Dashboard | Khan Academy", icon: "https://www.khanacademy.org/favicon.ico" },
+	google: { title: "Google", icon: "https://www.google.com/favicon.ico" },
+	reset: { title: "Aura — Autonomous Web & Arcade", icon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>◈</text></svg>" }
+};
 
-	if (topBtn) topBtn.addEventListener("click", openMirrorsHubModal);
-	if (closeBtn) closeBtn.addEventListener("click", closeMirrorsHubModal);
+function applyCloak(presetKey) {
+	const p = PRESETS[presetKey];
+	if (!p) return;
+	document.title = p.title;
+	const fav = document.getElementById("aura-favicon");
+	if (fav) fav.href = p.icon;
 
-	if (copyAutoLoginBtn) {
-		copyAutoLoginBtn.addEventListener("click", () => {
-			const currentOrigin = window.location.origin;
-			const target = getAuthenticatedMirrorUrl(currentOrigin);
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				navigator.clipboard.writeText(target).then(() => {
-					showToast("Auto-login link copied! Bookmark it or open anywhere to stay logged in.", "success");
-				}).catch(() => {
-					prompt("Copy your auto-login link:", target);
-				});
-			} else {
-				prompt("Copy your auto-login link:", target);
+	if (presetKey === "reset") {
+		localStorage.removeItem("aura_cloak_preset");
+		showToast("Tab restored to Aura default");
+	} else {
+		localStorage.setItem("aura_cloak_preset", presetKey);
+		showToast(`✓ Tab disguised as ${p.title}`);
+	}
+	trackActivity("stealth_cloak", { preset: presetKey });
+}
+
+document.querySelectorAll(".cloak-preset-btn").forEach(btn => {
+	btn.addEventListener("click", () => {
+		const k = btn.dataset.cloak;
+		if (k) applyCloak(k);
+	});
+});
+
+const quickCloakBtn = document.getElementById("quick-cloak-btn");
+if (quickCloakBtn) {
+	quickCloakBtn.addEventListener("click", () => {
+		applyCloak("drive");
+	});
+}
+
+// Custom Cloak
+const customCloakTitle = document.getElementById("custom-cloak-title");
+const customCloakIcon = document.getElementById("custom-cloak-icon");
+const customCloakBtn = document.getElementById("custom-cloak-btn");
+if (customCloakBtn) {
+	customCloakBtn.addEventListener("click", () => {
+		const title = customCloakTitle ? customCloakTitle.value.trim() : "";
+		const icon = customCloakIcon ? customCloakIcon.value.trim() : "";
+		if (title) document.title = title;
+		if (icon) {
+			const fav = document.getElementById("aura-favicon");
+			if (fav) fav.href = icon;
+		}
+		showToast("✓ Custom tab disguise applied!");
+	});
+}
+
+// Emergency Panic Key
+const panicKeyInput = document.getElementById("panic-key-input");
+const panicRedirectInput = document.getElementById("panic-redirect-input");
+let currentPanicKey = localStorage.getItem("aura_panic_key") || "`";
+let currentPanicUrl = localStorage.getItem("aura_panic_url") || "https://classroom.google.com";
+
+if (panicKeyInput) {
+	panicKeyInput.value = currentPanicKey;
+	panicKeyInput.addEventListener("input", (e) => {
+		currentPanicKey = e.target.value || "`";
+		localStorage.setItem("aura_panic_key", currentPanicKey);
+		showToast(`Panic key set to: "${currentPanicKey}"`);
+	});
+}
+if (panicRedirectInput) {
+	panicRedirectInput.value = currentPanicUrl;
+	panicRedirectInput.addEventListener("change", (e) => {
+		currentPanicUrl = e.target.value.trim() || "https://classroom.google.com";
+		localStorage.setItem("aura_panic_url", currentPanicUrl);
+		showToast("Panic redirect destination saved");
+	});
+}
+
+window.addEventListener("keydown", (e) => {
+	if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+	if (e.key === currentPanicKey) {
+		e.preventDefault();
+		window.location.replace(currentPanicUrl);
+	}
+});
+
+// about:blank cloak utility
+function openInAboutBlank(url = window.location.href, decoy = null) {
+	const win = window.open("about:blank", "_blank");
+	if (!win) {
+		alert("Pop-up blocked! Please allow popups for about:blank cloaking.");
+		return;
+	}
+	win.document.write(`
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>My Drive - Google Drive</title>
+			<link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
+			<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}iframe{border:none;width:100%;height:100%;}</style>
+		</head>
+		<body>
+			<iframe src="${url}"></iframe>
+		</body>
+		</html>
+	`);
+	win.document.close();
+
+	if (decoy) {
+		window.location.replace(decoy);
+	}
+}
+
+const topbarAboutBlank = document.getElementById("topbar-aboutblank-btn");
+if (topbarAboutBlank) {
+	topbarAboutBlank.addEventListener("click", () => openInAboutBlank(window.location.href));
+}
+
+const settingAboutBlankLaunchBtn = document.getElementById("setting-aboutblank-launch-btn");
+const settingAboutBlankDecoyUrl = document.getElementById("setting-aboutblank-decoy-url");
+const settingAboutBlankAutoCloak = document.getElementById("setting-aboutblank-autocloak");
+
+if (settingAboutBlankLaunchBtn) {
+	settingAboutBlankLaunchBtn.addEventListener("click", () => {
+		const decoy = settingAboutBlankDecoyUrl ? settingAboutBlankDecoyUrl.value.trim() : "https://classroom.google.com";
+		openInAboutBlank(window.location.href, decoy);
+	});
+}
+
+if (settingAboutBlankAutoCloak) {
+	settingAboutBlankAutoCloak.checked = localStorage.getItem("aura_autocloak") === "true";
+	settingAboutBlankAutoCloak.addEventListener("change", (e) => {
+		localStorage.setItem("aura_autocloak", e.target.checked ? "true" : "false");
+		showToast(e.target.checked ? "Auto-launch enabled" : "Auto-launch disabled");
+	});
+}
+
+// Auto-cloak on startup if configured and not already inside an iframe or about:blank
+if (localStorage.getItem("aura_autocloak") === "true" && window.top === window.self && !window.location.href.includes("about:blank")) {
+	const decoy = localStorage.getItem("aura_decoy_url") || "https://classroom.google.com";
+	openInAboutBlank(window.location.href, decoy);
+}
+
+// ============================================================
+// 9. All Core Settings Wiring (Proxy Engine, Shield, Optimizer)
+// ============================================================
+// Proxy Mode Dropdown (Auto, SW, Classic)
+const settingProxyMode = document.getElementById("setting-proxy-mode");
+if (settingProxyMode) {
+	settingProxyMode.value = getProxyMode();
+	settingProxyMode.addEventListener("change", (e) => {
+		localStorage.setItem(PROXY_MODE_KEY, e.target.value);
+		showToast(`Proxy mode set to ${e.target.value.toUpperCase()}. Reloading...`);
+		setTimeout(() => location.reload(), 600);
+	});
+}
+
+// Search Engine Dropdown
+const settingSearchEngine = document.getElementById("setting-search-engine");
+if (settingSearchEngine) {
+	settingSearchEngine.value = localStorage.getItem("aura_search_engine") || "google";
+	settingSearchEngine.addEventListener("change", (e) => {
+		localStorage.setItem("aura_search_engine", e.target.value);
+		updateOmnibarEngineBadge();
+		showToast(`Search engine set to ${e.target.options[e.target.selectedIndex].text}`);
+	});
+}
+
+// Ghost Mode Toggle
+const settingGhostMode = document.getElementById("setting-ghost-mode");
+if (settingGhostMode) {
+	settingGhostMode.checked = isGhostMode();
+	settingGhostMode.addEventListener("change", (e) => {
+		localStorage.setItem("aura_ghost_mode", e.target.checked ? "true" : "false");
+		showToast(e.target.checked ? "Ghost Mode ON (Zero history & telemetry)" : "Ghost Mode OFF");
+	});
+}
+
+// Aura Shield Toggles & Stats
+const settingShieldAdblock = document.getElementById("setting-shield-adblock");
+const settingShieldPopups = document.getElementById("setting-shield-popups");
+const settingShieldDarkmode = document.getElementById("setting-shield-darkmode");
+const settingShieldTotalBlocked = document.getElementById("setting-shield-total-blocked");
+const settingShieldDataSaved = document.getElementById("setting-shield-data-saved");
+const settingShieldClearStats = document.getElementById("setting-shield-clear-stats");
+
+function updateShieldDisplay() {
+	if (typeof ClashShield !== "undefined") {
+		const stats = ClashShield.getStats();
+		if (settingShieldTotalBlocked) settingShieldTotalBlocked.textContent = (stats.totalBlocked || 0).toLocaleString();
+		if (settingShieldDataSaved) {
+			const kb = (stats.totalBlocked || 0) * 45;
+			settingShieldDataSaved.textContent = kb > 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`;
+		}
+		if (settingShieldAdblock) settingShieldAdblock.checked = ClashShield.isEnabled();
+		if (settingShieldPopups) settingShieldPopups.checked = ClashShield.isBlockPopups();
+		if (settingShieldDarkmode) settingShieldDarkmode.checked = ClashShield.isDarkMode();
+	}
+}
+
+if (settingShieldAdblock) {
+	settingShieldAdblock.addEventListener("change", (e) => {
+		if (typeof ClashShield !== "undefined") ClashShield.setEnabled(e.target.checked);
+		showToast(e.target.checked ? "Aura AdBlocker Enabled" : "Aura AdBlocker Disabled");
+	});
+}
+if (settingShieldPopups) {
+	settingShieldPopups.addEventListener("change", (e) => {
+		if (typeof ClashShield !== "undefined") ClashShield.setBlockPopups(e.target.checked);
+		showToast(e.target.checked ? "Popup Blocker Enabled" : "Popup Blocker Disabled");
+	});
+}
+if (settingShieldDarkmode) {
+	settingShieldDarkmode.addEventListener("change", (e) => {
+		if (typeof ClashShield !== "undefined") ClashShield.setDarkMode(e.target.checked);
+		showToast(e.target.checked ? "Force Dark Mode Enabled" : "Force Dark Mode Disabled");
+	});
+}
+if (settingShieldClearStats) {
+	settingShieldClearStats.addEventListener("click", () => {
+		if (typeof ClashShield !== "undefined") ClashShield.clearStats();
+		updateShieldDisplay();
+		showToast("Aura Shield statistics reset");
+	});
+}
+
+// Chromebook Optimizer Toggles
+const settingPerfStaticBg = document.getElementById("setting-perf-staticbg");
+const settingPerfLightUi = document.getElementById("setting-perf-lightui");
+const settingPerfFrameBoost = document.getElementById("setting-perf-frameboost");
+const settingPerfResolution = document.getElementById("setting-perf-resolution");
+
+if (settingPerfStaticBg) {
+	settingPerfStaticBg.checked = localStorage.getItem("aura_perf_staticbg") === "true";
+	const applyStaticBg = (on) => {
+		document.querySelectorAll(".ambient-glow").forEach(el => {
+			el.style.display = on ? "none" : "";
+		});
+	};
+	applyStaticBg(settingPerfStaticBg.checked);
+	settingPerfStaticBg.addEventListener("change", (e) => {
+		localStorage.setItem("aura_perf_staticbg", e.target.checked ? "true" : "false");
+		applyStaticBg(e.target.checked);
+		showToast(e.target.checked ? "Static background enabled (GPU saved)" : "Dynamic background restored");
+	});
+}
+
+if (settingPerfLightUi) {
+	settingPerfLightUi.checked = localStorage.getItem("aura_perf_lightui") === "true";
+	if (settingPerfLightUi.checked) document.body.classList.add("perf-light-ui");
+	settingPerfLightUi.addEventListener("change", (e) => {
+		localStorage.setItem("aura_perf_lightui", e.target.checked ? "true" : "false");
+		if (e.target.checked) document.body.classList.add("perf-light-ui");
+		else document.body.classList.remove("perf-light-ui");
+		showToast(e.target.checked ? "Light Interface active (Blur removed)" : "Glassmorphism restored");
+	});
+}
+
+if (settingPerfFrameBoost) {
+	settingPerfFrameBoost.checked = localStorage.getItem("aura_perf_frameboost") === "true";
+	settingPerfFrameBoost.addEventListener("change", (e) => {
+		localStorage.setItem("aura_perf_frameboost", e.target.checked ? "true" : "false");
+		showToast(e.target.checked ? "Smooth Frame Boost ON" : "Smooth Frame Boost OFF");
+	});
+}
+
+if (settingPerfResolution) {
+	settingPerfResolution.value = localStorage.getItem("aura_perf_resolution") || "1";
+	settingPerfResolution.addEventListener("change", (e) => {
+		localStorage.setItem("aura_perf_resolution", e.target.value);
+		showToast(`Arcade resolution scale set to ${Math.round(parseFloat(e.target.value) * 100)}%`);
+	});
+}
+
+// ============================================================
+// 10. Operator Telemetry & Owner Access Portal (Nils, Ted, Ozzy)
+// ============================================================
+const ownerModal = document.getElementById("owner-bridge-modal");
+const ownerCloseBtn = document.getElementById("owner-bridge-close");
+const ownerRefreshBtn = document.getElementById("owner-refresh-stats");
+
+const kpiLive = document.getElementById("kpi-live-online");
+const kpiHour = document.getElementById("kpi-hour-online");
+const kpiDay = document.getElementById("kpi-day-online");
+const kpiWeek = document.getElementById("kpi-week-online");
+
+const ownerUsernameInput = document.getElementById("owner-login-username");
+const ownerPasswordInput = document.getElementById("owner-login-password");
+const ownerSubmitBtn = document.getElementById("owner-login-submit");
+const ownerMsg = document.getElementById("owner-login-msg");
+
+async function fetchOwnerTelemetry() {
+	try {
+		const res = await fetch("/api/telemetry/stats");
+		if (!res.ok) throw new Error("Stats offline");
+		const data = await res.json();
+
+		if (kpiLive) kpiLive.textContent = data.nowTotal.toLocaleString();
+		if (kpiHour) kpiHour.textContent = data.lastHrTotal.toLocaleString();
+		if (kpiDay) kpiDay.textContent = data.lastDayTotal.toLocaleString();
+		if (kpiWeek) kpiWeek.textContent = data.thisWeekTotal.toLocaleString();
+	} catch (err) {
+		console.warn("[Aura] Telemetry fetch:", err);
+	}
+}
+
+function openOwnerModal() {
+	if (ownerModal) {
+		ownerModal.classList.remove("hidden");
+		fetchOwnerTelemetry();
+	}
+}
+
+function closeOwnerModal() {
+	if (ownerModal) ownerModal.classList.add("hidden");
+}
+
+if (ownerCloseBtn) ownerCloseBtn.addEventListener("click", closeOwnerModal);
+if (ownerRefreshBtn) ownerRefreshBtn.addEventListener("click", fetchOwnerTelemetry);
+
+// Secret shortcut: Ctrl + Shift + O opens Owner telemetry
+window.addEventListener("keydown", (e) => {
+	if (e.ctrlKey && e.shiftKey && (e.key === "O" || e.key === "o")) {
+		e.preventDefault();
+		openOwnerModal();
+	}
+});
+
+// Secret triple-click on brand glyph
+let brandClicks = 0;
+let brandTimer = null;
+const brandGlyph = document.querySelector(".brand-glyph");
+if (brandGlyph) {
+	brandGlyph.addEventListener("click", (e) => {
+		e.stopPropagation();
+		brandClicks++;
+		clearTimeout(brandTimer);
+		brandTimer = setTimeout(() => { brandClicks = 0; }, 600);
+		if (brandClicks >= 3) {
+			brandClicks = 0;
+			openOwnerModal();
+		}
+	});
+}
+
+// Owner Authentication into /panel
+if (ownerSubmitBtn) {
+	ownerSubmitBtn.addEventListener("click", async () => {
+		const u = ownerUsernameInput ? ownerUsernameInput.value.trim() : "";
+		const p = ownerPasswordInput ? ownerPasswordInput.value : "";
+		if (!u || !p) {
+			if (ownerMsg) {
+				ownerMsg.style.color = "#ef4444";
+				ownerMsg.textContent = "Please enter both username and password.";
 			}
-		});
-	}
+			return;
+		}
 
-	if (toggleManageBtn && manageBox) {
-		toggleManageBtn.addEventListener("click", () => {
-			manageBox.classList.toggle("hidden");
-			if (!manageBox.classList.contains("hidden") && bulkInput) {
-				const current = getSavedMirrorsList();
-				bulkInput.value = current.join("\n");
-				bulkInput.focus();
-			}
-		});
-	}
+		if (ownerMsg) {
+			ownerMsg.style.color = "#94a3b8";
+			ownerMsg.textContent = "Verifying owner credentials...";
+		}
 
-	if (cancelBulkBtn && manageBox) {
-		cancelBulkBtn.addEventListener("click", () => {
-			manageBox.classList.add("hidden");
-		});
-	}
-
-	if (saveBulkBtn && bulkInput && manageBox) {
-		saveBulkBtn.addEventListener("click", () => {
-			const lines = bulkInput.value
-				.split("\n")
-				.map(l => l.trim())
-				.filter(l => l.length > 0 && !l.startsWith("#"));
-
-			if (lines.length === 0) {
-				showToast("Please enter at least one mirror URL.", "error");
+		try {
+			const res = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username: u, password: p })
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				if (ownerMsg) {
+					ownerMsg.style.color = "#ef4444";
+					ownerMsg.textContent = data.error || "Invalid owner credentials.";
+				}
 				return;
 			}
 
-			saveMirrorsList(lines);
-			manageBox.classList.add("hidden");
-			showToast(`Saved ${lines.length} mirror links to your account!`, "success");
-		});
-	}
+			if (ownerMsg) {
+				ownerMsg.style.color = "#10b981";
+				ownerMsg.textContent = `✓ Access granted as @${data.user.username}! Opening Owner Panel...`;
+			}
 
-	// Cross-window session listener (BroadcastChannel and window.opener)
-	window.addEventListener("message", (ev) => {
-		if (ev.data?.type === "CLASH_REQUEST_AUTH" && authToken) {
-			try {
-				ev.source?.postMessage({ type: "CLASH_AUTH_PAYLOAD", token: authToken }, "*");
-			} catch (e) {}
-		} else if (ev.data?.type === "CLASH_AUTH_PAYLOAD" && ev.data.token && !authToken) {
-			authToken = ev.data.token;
-			localStorage.setItem("clash_jwt_token", authToken);
-			initAuth();
-			showToast("Session synced automatically across your mirror tabs!", "success");
+			// Store token and redirect directly to /panel
+			if (data.token) {
+				localStorage.setItem("clash_jwt_token", data.token);
+				setTimeout(() => {
+					window.location.href = `/panel/?token=${encodeURIComponent(data.token)}`;
+				}, 600);
+			}
+		} catch (err) {
+			if (ownerMsg) {
+				ownerMsg.style.color = "#ef4444";
+				ownerMsg.textContent = "Connection failed: " + err.message;
+			}
 		}
 	});
-
-	if (!authToken && window.opener) {
-		try {
-			window.opener.postMessage({ type: "CLASH_REQUEST_AUTH" }, "*");
-		} catch (e) {}
-	}
 }
 
-// Initialize Mirrors Hub
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", initMirrorsHub);
-} else {
-	initMirrorsHub();
+// Utility: HTML escape
+function escapeHtml(str) {
+	if (!str) return "";
+	return String(str)
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 }
 
-
-
+// ============================================================
+// 11. Initialization
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+	loadArcadeCatalog();
+	loadSoundboard();
+	updateShieldDisplay();
+});

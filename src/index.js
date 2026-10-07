@@ -2,7 +2,7 @@ import { createServer, request as httpRequest } from "node:http";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "url";
 import { hostname } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { readdirSync, readFileSync, createWriteStream, statSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
@@ -26,7 +26,7 @@ const epoxyPath = join(dirname(epoxyMain), "../dist");
 const libcurlMain = require_.resolve("@mercuryworkshop/libcurl-transport");
 const libcurlPath = join(dirname(libcurlMain), "../dist");
 
-const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
+const publicPath = process.env.PUBLIC_DIR ? resolve(process.cwd(), process.env.PUBLIC_DIR) : fileURLToPath(new URL("../public/", import.meta.url));
 const gamesPath = fileURLToPath(new URL("../games/", import.meta.url));
 
 import { formatGameTitle } from "./game-titles.js";
@@ -118,7 +118,7 @@ import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
 import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken, isUserBanned } from "./auth-utils.js";
 import { hasPrivilege, userRank } from "./ranks.js";
-import { recordActivity, touchUserActive } from "./activity.js";
+import { recordActivity, touchUserActive, getSignedInUsersCount, getGuestUsersCount } from "./activity.js";
 
 // ============================================================
 // Fastify Server
@@ -206,6 +206,25 @@ fastify.post("/api/activity/track", async (req, reply) => {
 		recordActivity(uid, type, data, gid);
 	}
 	return { ok: true };
+});
+
+// Anonymous public telemetry route (zero usernames, zero personal data exposed)
+fastify.get("/api/telemetry/stats", async (req, reply) => {
+	const now = Date.now();
+	const presence = getPresenceStats();
+	const guest1h = getGuestUsersCount(now - 3600 * 1000, now);
+	const user1h = getSignedInUsersCount(now - 3600 * 1000, now);
+	const guest24h = getGuestUsersCount(now - 86400 * 1000, now);
+	const user24h = getSignedInUsersCount(now - 86400 * 1000, now);
+	const guest7d = getGuestUsersCount(now - 7 * 86400 * 1000, now);
+	const user7d = getSignedInUsersCount(now - 7 * 86400 * 1000, now);
+
+	return {
+		nowTotal: Math.max(1, (presence?.totalOnline || (presence?.online || 0) + (presence?.guestsOnline || 0))),
+		lastHrTotal: Math.max(1, guest1h + user1h),
+		lastDayTotal: Math.max(1, guest24h + user24h),
+		thisWeekTotal: Math.max(1, guest7d + user7d)
+	};
 });
 
 // Invalidate the cached games list (used by the Owner Panel / Jarvis

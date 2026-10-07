@@ -28,3 +28,6 @@ scratch_*
 snap_*.png
 
 games_archive_backup/
+public_og_backup/
+aura/
+start-preview.js
