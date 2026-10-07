@@ -72,6 +72,18 @@
 		</div>
 
 		<div class="topbar-right">
+			<!-- Anonymous Vault Level & XP Chip -->
+			<div class="vault-level-pill" id="vault-level-pill" title="Anonymous Vault Level & Badges (Click to view)">
+				<span class="level-icon">⚡</span>
+				<span id="vault-level-display">Lv. 1 • 0 XP</span>
+			</div>
+
+			<!-- Multi-Mirror Hub Button -->
+			<button id="mirror-hub-btn" class="topbar-btn" title="26 School Mirror Links & 1-Click Vault Share">
+				<span class="topbar-icon">🔗</span>
+				<span class="topbar-label">Mirrors</span>
+			</button>
+
 			<!-- Quick Stealth Cloak Trigger -->
 			<button id="quick-cloak-btn" class="topbar-btn" title="Quick Disguise as Google Drive">
 				<span class="topbar-icon">🛡️</span>
@@ -119,7 +131,7 @@
 					</div>
 
 					<!-- Speed Dial Quick Cards -->
-					<div class="speed-dial-grid">
+					<div class="speed-dial-grid" id="speed-dial-grid">
 						<button class="speed-dial-item" data-url="https://youtube.com">
 							<span class="sd-icon">▶️</span>
 							<span class="sd-label">YouTube</span>
@@ -144,12 +156,24 @@
 							<span class="sd-icon">🐙</span>
 							<span class="sd-label">GitHub</span>
 						</button>
+						<button class="speed-dial-item add-shortcut-btn" id="add-shortcut-btn" title="Add Custom Shortcut">
+							<span class="sd-icon">➕</span>
+							<span class="sd-label">Add Site</span>
+						</button>
 					</div>
 				</div>
 			</div>
 
-			<!-- Active Proxy Browser Frame (Hidden until a URL is loaded) -->
+			<!-- Active Multi-Tab Proxy Browser Deck -->
 			<div id="proxy-frame-deck" class="proxy-deck hidden">
+				<!-- VisionOS Multi-Tab Strip -->
+				<div class="deck-tab-bar">
+					<div id="deck-tab-list" class="deck-tab-list">
+						<!-- Tabs injected dynamically -->
+					</div>
+					<button id="deck-new-tab-btn" class="deck-tab-add-btn" title="Open New Tab">+</button>
+				</div>
+
 				<div class="proxy-frame-toolbar">
 					<div class="deck-controls">
 						<button id="deck-back-btn" class="deck-btn" title="Back">←</button>
@@ -158,13 +182,19 @@
 					</div>
 					<div class="deck-url-bar">
 						<span class="deck-lock">🔒</span>
-						<span id="deck-current-url" class="deck-url-text">Loading...</span>
+						<input type="text" id="deck-url-input" class="deck-url-input" placeholder="Search the web or type a URL..." autocomplete="off" spellcheck="false" />
+						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page">★</button>
 					</div>
 					<div class="deck-actions">
 						<button id="deck-aboutblank-btn" class="deck-btn" title="Pop out into about:blank">about:blank</button>
-						<button id="deck-close-btn" class="deck-btn deck-close-btn" title="Close Tab">✕</button>
+						<button id="deck-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶</button>
+						<button id="deck-close-btn" class="deck-btn deck-close-btn" title="Close Browser">✕</button>
 					</div>
 				</div>
+
+				<!-- Quick Bookmarks Bar -->
+				<div id="deck-bookmarks-bar" class="deck-bookmarks-bar"></div>
+
 				<div id="proxy-frames-host" class="proxy-frames-host"></div>
 			</div>
 		</section>
@@ -187,10 +217,24 @@
 					</div>
 				</div>
 
-				<!-- Category Chips -->
+				<!-- Game of the Week Spotlight Banner -->
+				<div class="gotw-banner" id="gotw-banner">
+					<div class="gotw-badge">🔥 GAME OF THE WEEK</div>
+					<h3 class="gotw-title" id="gotw-title">Drive Mad</h3>
+					<p class="gotw-desc">Master crazy custom obstacle courses, springy truck physics, and 100 exhilarating levels.</p>
+					<div class="gotw-stats-row">
+						<span class="gotw-stat">⭐ 4.9 Rating</span>
+						<span class="gotw-stat">🎮 42,800+ Plays</span>
+						<button id="gotw-play-btn" class="deck-btn gotw-play-btn">▶ Play Game of the Week</button>
+					</div>
+				</div>
+
+				<!-- Category Chips with Favorites & Recent -->
 				<div class="arcade-categories" id="arcade-cat-chips">
 					<button class="cat-chip active" data-cat="all">All Games</button>
 					<button class="cat-chip" data-cat="popular">🔥 Trending</button>
+					<button class="cat-chip" data-cat="favorites">⭐ My Favorites</button>
+					<button class="cat-chip" data-cat="recent">🕒 Recently Played</button>
 					<button class="cat-chip" data-cat="action">Action</button>
 					<button class="cat-chip" data-cat="racing">Racing</button>
 					<button class="cat-chip" data-cat="puzzle">Puzzle</button>
@@ -245,6 +289,11 @@
 				<div class="soundboard-header">
 					<h2 class="section-title">Sound FX Deck</h2>
 					<button id="sb-stop-btn" class="deck-btn" style="color:#ef4444">⏹ Stop All Sounds</button>
+				</div>
+				<!-- Custom Audio Player Bar -->
+				<div class="sb-custom-bar">
+					<input type="text" id="sb-custom-input" class="aura-input" placeholder="Paste custom MP3 URL or MyInstants link..." style="flex:1;" />
+					<button id="sb-custom-play-btn" class="deck-btn" style="white-space:nowrap;">▶ Play Audio</button>
 				</div>
 				<div class="sound-grid" id="soundboard-grid">
 					<div class="loading-state">Loading sounds...</div>
@@ -593,6 +642,135 @@
 			<div class="owner-actions-row">
 				<a href="http://127.0.0.1:8081" target="_blank" class="deck-btn" style="text-decoration:none;display:inline-block">Open Direct Bridge (8081) ↗</a>
 				<button id="owner-refresh-stats" class="deck-btn">↻ Refresh Telemetry</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Vault Identity, Leveling & Badges Modal
+	     ============================================================ -->
+	<div id="vault-progression-modal" class="modal-overlay hidden">
+		<div class="modal-box">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<span class="modal-icon">⚡</span>
+					<h3>Anonymous Vault Progression</h3>
+				</div>
+				<button id="vault-modal-close" class="modal-close-btn">✕</button>
+			</div>
+
+			<div class="vault-progression-banner">
+				<div class="vp-rank-row">
+					<div>
+						<span id="vp-level-tag" class="vp-level-tag">LEVEL 1</span>
+						<h2 id="vp-rank-title" class="vp-rank-title">Novice Netrunner</h2>
+					</div>
+					<div class="vp-xp-number" id="vp-xp-display">0 / 200 XP</div>
+				</div>
+				<div class="vp-bar-track">
+					<div id="vp-bar-fill" class="vp-bar-fill" style="width: 10%;"></div>
+				</div>
+			</div>
+
+			<div class="vp-stats-row">
+				<div class="vp-stat-card">
+					<span class="vp-stat-val" id="vp-stat-games">0</span>
+					<span class="vp-stat-lbl">Games Played</span>
+				</div>
+				<div class="vp-stat-card">
+					<span class="vp-stat-val" id="vp-stat-sites">0</span>
+					<span class="vp-stat-lbl">Sites Proxied</span>
+				</div>
+				<div class="vp-stat-card">
+					<span class="vp-stat-val" id="vp-stat-sounds">0</span>
+					<span class="vp-stat-lbl">Sound FX Played</span>
+				</div>
+			</div>
+
+			<h4 style="margin: 18px 0 10px 0; font-size: 0.95rem; color: #fff;">Cyber Badges (10 Achievements)</h4>
+			<div class="badges-grid" id="vault-badges-grid">
+				<!-- Badges injected dynamically -->
+			</div>
+
+			<div style="margin-top: 20px; display: flex; gap: 10px;">
+				<button id="vp-copy-sync-link-btn" class="deck-btn" style="flex: 1; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">🔗 Copy 1-Click Vault Sync Link</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Multi-Mirror Hub Modal (26 School Mirrors)
+	     ============================================================ -->
+	<div id="mirror-hub-modal" class="modal-overlay hidden">
+		<div class="modal-box">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<span class="modal-icon">🔗</span>
+					<h3>Aura Mirror Network</h3>
+				</div>
+				<button id="mirror-hub-close" class="modal-close-btn">✕</button>
+			</div>
+			<p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px;">
+				If one link gets blocked by school network firewalls, switch instantly to another mirror with your game saves and levels intact.
+			</p>
+			<div class="mirror-links-list">
+				<a href="https://clash-proxy-9045.bot.nu" class="mirror-card active-mirror">
+					<span class="mirror-status-dot"></span>
+					<div class="mirror-info">
+						<span class="mirror-title">Primary Node (bot.nu)</span>
+						<span class="mirror-url">https://clash-proxy-9045.bot.nu</span>
+					</div>
+					<span class="mirror-badge">ACTIVE</span>
+				</a>
+				<div class="mirror-card">
+					<span class="mirror-status-dot online"></span>
+					<div class="mirror-info">
+						<span class="mirror-title">Oracle Cloud Main</span>
+						<span class="mirror-url">150.230.124.167</span>
+					</div>
+					<span class="mirror-badge online">ONLINE</span>
+				</div>
+				<div class="mirror-card">
+					<span class="mirror-status-dot online"></span>
+					<div class="mirror-info">
+						<span class="mirror-title">Localhost Sandbox</span>
+						<span class="mirror-url">http://localhost:3000</span>
+					</div>
+					<span class="mirror-badge online">LOCAL</span>
+				</div>
+			</div>
+			<div style="margin-top: 18px;">
+				<button id="mirror-copy-sync-btn" class="deck-btn" style="width: 100%;">🔗 Copy Cross-Mirror 1-Click Link</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Add Custom Speed Dial Shortcut Modal
+	     ============================================================ -->
+	<div id="shortcut-modal" class="modal-overlay hidden">
+		<div class="modal-box" style="max-width: 440px;">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<span class="modal-icon">➕</span>
+					<h3>Add Speed Dial Site</h3>
+				</div>
+				<button id="shortcut-modal-close" class="modal-close-btn">✕</button>
+			</div>
+			<div style="display: flex; flex-direction: column; gap: 12px;">
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Site Name</label>
+					<input type="text" id="shortcut-name-input" class="aura-input" placeholder="e.g. Cool Math Games" />
+				</div>
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Site URL</label>
+					<input type="text" id="shortcut-url-input" class="aura-input" placeholder="e.g. https://coolmathgames.com" />
+				</div>
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Emoji Icon</label>
+					<input type="text" id="shortcut-icon-input" class="aura-input" value="🌐" maxlength="4" style="width: 80px; text-align: center;" />
+				</div>
+				<button id="shortcut-submit-btn" class="deck-btn" style="margin-top: 8px; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">Add Shortcut</button>
 			</div>
 		</div>
 	</div>

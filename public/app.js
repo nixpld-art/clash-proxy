@@ -56,6 +56,27 @@ if (importedVault) {
 	localStorage.setItem("aura_vault_id", vaultId);
 }
 
+// Support cross-mirror progression sync via URL hash or params
+const hashXp = window.location.hash.match(/[#&]xp=([0-9]+)/);
+const paramXp = urlParams.get("xp") || (hashXp && hashXp[1]);
+if (paramXp) {
+	const currentXp = parseInt(localStorage.getItem("aura_vault_xp") || "0", 10);
+	const importedXp = parseInt(paramXp, 10);
+	if (importedXp > currentXp) {
+		localStorage.setItem("aura_vault_xp", importedXp.toString());
+	}
+}
+
+const hashStats = window.location.hash.match(/[#&]stats=([^&]+)/);
+const paramStats = urlParams.get("stats") || (hashStats && decodeURIComponent(hashStats[1]));
+if (paramStats) {
+	try {
+		const importedStats = JSON.parse(paramStats);
+		const currentStats = JSON.parse(localStorage.getItem("aura_vault_stats") || "{}");
+		localStorage.setItem("aura_vault_stats", JSON.stringify({ ...currentStats, ...importedStats }));
+	} catch (e) {}
+}
+
 const vaultDisplay = document.getElementById("vault-key-display");
 const vaultFull = document.getElementById("vault-key-full");
 const vaultPill = document.getElementById("vault-key-pill");
@@ -85,6 +106,200 @@ if (importVaultBtn) {
 			showToast("✓ Vault Key updated! Reloading...");
 			setTimeout(() => location.reload(), 600);
 		}
+	});
+}
+
+// ============================================================
+// 2b. Vault Gamification & Cyber Badges Engine
+// ============================================================
+const VAULT_BADGES = [
+	{ id: "first_game", title: "First Spark", desc: "Launch your first arcade game", icon: "🕹️", test: (s) => (s.games || 0) >= 1 },
+	{ id: "game_10", title: "Arcade Veteran", desc: "Play 10 arcade games", icon: "🎮", test: (s) => (s.games || 0) >= 10 },
+	{ id: "game_50", title: "Master of Grid", desc: "Play 50 arcade games", icon: "👑", test: (s) => (s.games || 0) >= 50 },
+	{ id: "first_browse", title: "Ghost Gateway", desc: "Proxy your first web destination", icon: "🌐", test: (s) => (s.sites || 0) >= 1 },
+	{ id: "browse_20", title: "Net Voyager", desc: "Proxy 20 web sessions", icon: "🚀", test: (s) => (s.sites || 0) >= 20 },
+	{ id: "sound_expert", title: "Sonic Disruptor", desc: "Play 5 sound effects", icon: "🔊", test: (s) => (s.sounds || 0) >= 5 },
+	{ id: "ai_convo", title: "Neural Symbiosis", desc: "Converse with Aura Intelligence", icon: "🤖", test: (s) => (s.ai || 0) >= 1 },
+	{ id: "stealth_cloak", title: "Ghost Chameleon", desc: "Activate a Stealth Cloak disguise", icon: "🛡️", test: (s) => (s.cloaks || 0) >= 1 },
+	{ id: "about_blank", title: "Null Void", desc: "Launch in about:blank mode", icon: "↗", test: (s) => (s.blank || 0) >= 1 },
+	{ id: "speed_dial", title: "Grid Customizer", desc: "Add a custom speed dial shortcut", icon: "⭐", test: (s) => (s.shortcuts || 0) >= 1 }
+];
+
+function getVaultStats() {
+	try {
+		return JSON.parse(localStorage.getItem("aura_vault_stats")) || { games: 0, sites: 0, sounds: 0, ai: 0, cloaks: 0, blank: 0, shortcuts: 0 };
+	} catch (e) {
+		return { games: 0, sites: 0, sounds: 0, ai: 0, cloaks: 0, blank: 0, shortcuts: 0 };
+	}
+}
+
+function saveVaultStats(stats) {
+	localStorage.setItem("aura_vault_stats", JSON.stringify(stats));
+}
+
+function getVaultProgression() {
+	const xp = parseInt(localStorage.getItem("aura_vault_xp") || "0", 10);
+	const level = Math.floor(xp / 150) + 1;
+	const currentLevelXp = xp % 150;
+	const xpToNext = 150;
+	const percent = Math.min(100, Math.round((currentLevelXp / 150) * 100));
+
+	let rank = "Novice Netrunner";
+	if (level >= 40) rank = "Transcendent Operator";
+	else if (level >= 25) rank = "Singularity Architect";
+	else if (level >= 15) rank = "Apex Vanguard";
+	else if (level >= 10) rank = "Protocol Infiltrator";
+	else if (level >= 7) rank = "Matrix Phantom";
+	else if (level >= 4) rank = "Aura Operative";
+	else if (level >= 2) rank = "Cyber Drift";
+
+	return { xp, level, currentLevelXp, xpToNext, percent, rank };
+}
+
+function updateVaultPillDisplay(prog = getVaultProgression()) {
+	const disp = document.getElementById("vault-level-display");
+	if (disp) {
+		disp.textContent = `Lv. ${prog.level} • ${prog.xp} XP`;
+	}
+}
+
+function checkBadgeUnlocks() {
+	const stats = getVaultStats();
+	let unlocked = JSON.parse(localStorage.getItem("aura_unlocked_badges") || "[]");
+	let changed = false;
+
+	VAULT_BADGES.forEach(b => {
+		if (!unlocked.includes(b.id) && b.test(stats)) {
+			unlocked.push(b.id);
+			changed = true;
+			showToast(`🏆 Badge Unlocked: ${b.title}! (${b.desc})`, 4000);
+		}
+	});
+
+	if (changed) {
+		localStorage.setItem("aura_unlocked_badges", JSON.stringify(unlocked));
+	}
+}
+
+function awardXp(amount, statKey = null) {
+	const prevProg = getVaultProgression();
+	const prevLevel = prevProg.level;
+	const prevXp = prevProg.xp;
+	const newXp = prevXp + amount;
+	localStorage.setItem("aura_vault_xp", newXp.toString());
+
+	if (statKey) {
+		const stats = getVaultStats();
+		stats[statKey] = (stats[statKey] || 0) + 1;
+		saveVaultStats(stats);
+	}
+
+	const newProg = getVaultProgression();
+	updateVaultPillDisplay(newProg);
+
+	if (newProg.level > prevLevel) {
+		showToast(`🎉 LEVEL UP! You reached Level ${newProg.level}: ${newProg.rank}!`, 4500);
+	}
+
+	checkBadgeUnlocks();
+}
+
+const vaultModal = document.getElementById("vault-progression-modal");
+const vaultLevelPill = document.getElementById("vault-level-pill");
+const vaultModalClose = document.getElementById("vault-modal-close");
+const vpCopySyncLinkBtn = document.getElementById("vp-copy-sync-link-btn");
+
+function renderVaultModal() {
+	const prog = getVaultProgression();
+	const stats = getVaultStats();
+	const unlocked = JSON.parse(localStorage.getItem("aura_unlocked_badges") || "[]");
+
+	const lvlTag = document.getElementById("vp-level-tag");
+	const rankTitle = document.getElementById("vp-rank-title");
+	const xpDisp = document.getElementById("vp-xp-display");
+	const barFill = document.getElementById("vp-bar-fill");
+	const statGames = document.getElementById("vp-stat-games");
+	const statSites = document.getElementById("vp-stat-sites");
+	const statSounds = document.getElementById("vp-stat-sounds");
+	const badgesGrid = document.getElementById("vault-badges-grid");
+
+	if (lvlTag) lvlTag.textContent = `LEVEL ${prog.level}`;
+	if (rankTitle) rankTitle.textContent = prog.rank;
+	if (xpDisp) xpDisp.textContent = `${prog.currentLevelXp} / ${prog.xpToNext} XP (Total: ${prog.xp})`;
+	if (barFill) barFill.style.width = `${prog.percent}%`;
+	if (statGames) statGames.textContent = (stats.games || 0).toLocaleString();
+	if (statSites) statSites.textContent = (stats.sites || 0).toLocaleString();
+	if (statSounds) statSounds.textContent = (stats.sounds || 0).toLocaleString();
+
+	if (badgesGrid) {
+		badgesGrid.innerHTML = "";
+		VAULT_BADGES.forEach(b => {
+			const isUnlocked = unlocked.includes(b.id) || b.test(stats);
+			const card = document.createElement("div");
+			card.className = `badge-card ${isUnlocked ? "unlocked" : ""}`;
+			card.innerHTML = `
+				<span class="badge-icon">${b.icon}</span>
+				<span class="badge-title">${escapeHtml(b.title)}</span>
+				<span class="badge-desc">${escapeHtml(b.desc)}</span>
+			`;
+			badgesGrid.appendChild(card);
+		});
+	}
+}
+
+if (vaultLevelPill) {
+	vaultLevelPill.addEventListener("click", () => {
+		renderVaultModal();
+		if (vaultModal) vaultModal.classList.remove("hidden");
+	});
+}
+if (vaultModalClose) {
+	vaultModalClose.addEventListener("click", () => {
+		if (vaultModal) vaultModal.classList.add("hidden");
+	});
+}
+
+function getVaultSyncUrl() {
+	const xp = localStorage.getItem("aura_vault_xp") || "0";
+	const stats = encodeURIComponent(localStorage.getItem("aura_vault_stats") || "{}");
+	return `${window.location.origin}/#vault=${vaultId}&xp=${xp}&stats=${stats}`;
+}
+
+if (vpCopySyncLinkBtn) {
+	vpCopySyncLinkBtn.addEventListener("click", () => {
+		const syncUrl = getVaultSyncUrl();
+		navigator.clipboard.writeText(syncUrl).then(() => {
+			showToast("✓ 1-Click Vault Sync link copied! Open on any mirror to transfer progress.");
+		}).catch(() => {
+			prompt("Copy your Vault Sync link:", syncUrl);
+		});
+	});
+}
+
+// Multi-Mirror Hub
+const mirrorHubBtn = document.getElementById("mirror-hub-btn");
+const mirrorHubModal = document.getElementById("mirror-hub-modal");
+const mirrorHubClose = document.getElementById("mirror-hub-close");
+const mirrorCopySyncBtn = document.getElementById("mirror-copy-sync-btn");
+
+if (mirrorHubBtn) {
+	mirrorHubBtn.addEventListener("click", () => {
+		if (mirrorHubModal) mirrorHubModal.classList.remove("hidden");
+	});
+}
+if (mirrorHubClose) {
+	mirrorHubClose.addEventListener("click", () => {
+		if (mirrorHubModal) mirrorHubModal.classList.add("hidden");
+	});
+}
+if (mirrorCopySyncBtn) {
+	mirrorCopySyncBtn.addEventListener("click", () => {
+		const syncUrl = getVaultSyncUrl();
+		navigator.clipboard.writeText(syncUrl).then(() => {
+			showToast("✓ Cross-Mirror 1-Click Sync Link copied!");
+		}).catch(() => {
+			prompt("Copy your mirror sync link:", syncUrl);
+		});
 	});
 }
 
@@ -292,11 +507,17 @@ const omnibarGoBtn = document.getElementById("omnibar-go-btn");
 const omnibarEngineBadge = document.getElementById("omnibar-engine-badge");
 const proxyDeck = document.getElementById("proxy-frame-deck");
 const proxyHost = document.getElementById("proxy-frames-host");
-const deckUrl = document.getElementById("deck-current-url");
+
+const deckTabList = document.getElementById("deck-tab-list");
+const deckNewTabBtn = document.getElementById("deck-new-tab-btn");
+const deckUrlInput = document.getElementById("deck-url-input");
+const deckBookmarkBtn = document.getElementById("deck-bookmark-btn");
+const deckBookmarksBar = document.getElementById("deck-bookmarks-bar");
 const deckBackBtn = document.getElementById("deck-back-btn");
 const deckForwardBtn = document.getElementById("deck-forward-btn");
 const deckReloadBtn = document.getElementById("deck-reload-btn");
 const deckAboutblankBtn = document.getElementById("deck-aboutblank-btn");
+const deckFullscreenBtn = document.getElementById("deck-fullscreen-btn");
 const deckCloseBtn = document.getElementById("deck-close-btn");
 
 function updateOmnibarEngineBadge() {
@@ -307,27 +528,177 @@ function updateOmnibarEngineBadge() {
 }
 updateOmnibarEngineBadge();
 
-let currentNavigatedUrl = "";
+// ============================================================
+// 4b. VisionOS Multi-Tab Browser Engine & Bookmarks
+// ============================================================
+let browserTabs = [];
+let activeTabId = null;
+let browserBookmarks = JSON.parse(localStorage.getItem("aura_browser_bookmarks") || "[]");
 
-async function navigateProxy(rawInput) {
-	if (!rawInput) return;
-	const targetUrl = resolveSearchUrl(rawInput);
-	currentNavigatedUrl = targetUrl;
+function extractTitleFromUrl(url) {
+	try {
+		const u = new URL(url);
+		return u.hostname.replace(/^www\./, "");
+	} catch (e) {
+		return url && url.length > 20 ? url.substring(0, 18) + "..." : (url || "New Tab");
+	}
+}
 
-	if (deckUrl) deckUrl.textContent = targetUrl;
-	if (proxyDeck) proxyDeck.classList.remove("hidden");
-	switchView("browse");
+function updateBookmarkBtnState(url) {
+	if (!deckBookmarkBtn) return;
+	const isBookmarked = browserBookmarks.some(b => b.url === url);
+	if (isBookmarked) {
+		deckBookmarkBtn.classList.add("favorited");
+		deckBookmarkBtn.style.color = "#eab308";
+	} else {
+		deckBookmarkBtn.classList.remove("favorited");
+		deckBookmarkBtn.style.color = "";
+	}
+}
 
-	// Clean out previous frame
-	if (proxyHost) proxyHost.innerHTML = "";
+function toggleBookmark() {
+	const currentTab = browserTabs.find(t => t.id === activeTabId);
+	if (!currentTab || !currentTab.url) return;
+	const existingIdx = browserBookmarks.findIndex(b => b.url === currentTab.url);
+	if (existingIdx !== -1) {
+		browserBookmarks.splice(existingIdx, 1);
+		showToast("Bookmark removed");
+	} else {
+		browserBookmarks.push({ title: currentTab.title || currentTab.url, url: currentTab.url });
+		showToast("★ Saved to Bookmarks");
+	}
+	localStorage.setItem("aura_browser_bookmarks", JSON.stringify(browserBookmarks));
+	updateBookmarkBtnState(currentTab.url);
+	renderBookmarksBar();
+}
+
+if (deckBookmarkBtn) deckBookmarkBtn.addEventListener("click", toggleBookmark);
+
+function renderBookmarksBar() {
+	if (!deckBookmarksBar) return;
+	deckBookmarksBar.innerHTML = "";
+	if (browserBookmarks.length === 0) {
+		deckBookmarksBar.style.display = "none";
+		return;
+	}
+	deckBookmarksBar.style.display = "flex";
+	browserBookmarks.forEach(bm => {
+		const chip = document.createElement("button");
+		chip.className = "bookmark-chip";
+		chip.textContent = "★ " + bm.title;
+		chip.title = bm.url;
+		chip.addEventListener("click", () => {
+			const currentTab = browserTabs.find(t => t.id === activeTabId);
+			if (currentTab) {
+				loadTabUrl(currentTab, bm.url);
+			} else {
+				createTab(bm.url);
+			}
+		});
+		deckBookmarksBar.appendChild(chip);
+	});
+}
+
+function renderTabs() {
+	if (!deckTabList) return;
+	deckTabList.innerHTML = "";
+	browserTabs.forEach(tab => {
+		const tabBtn = document.createElement("div");
+		tabBtn.className = "deck-tab" + (tab.id === activeTabId ? " active" : "");
+		tabBtn.innerHTML = `
+			<span class="deck-tab-title" title="${escapeHtml(tab.title)}">${escapeHtml(tab.title)}</span>
+			<button class="deck-tab-close" title="Close Tab">✕</button>
+		`;
+		tabBtn.addEventListener("click", () => switchTab(tab.id));
+		const closeBtn = tabBtn.querySelector(".deck-tab-close");
+		if (closeBtn) closeBtn.addEventListener("click", (e) => closeTab(tab.id, e));
+		deckTabList.appendChild(tabBtn);
+	});
+}
+
+function switchTab(tabId) {
+	activeTabId = tabId;
+	browserTabs.forEach(t => {
+		if (t.id === tabId) {
+			t.iframe.style.display = "block";
+			activeProxyIframe = t.iframe;
+			if (deckUrlInput) deckUrlInput.value = t.url || "";
+			updateBookmarkBtnState(t.url);
+		} else {
+			t.iframe.style.display = "none";
+		}
+	});
+	renderTabs();
+}
+
+function closeTab(tabId, e) {
+	if (e) e.stopPropagation();
+	const idx = browserTabs.findIndex(t => t.id === tabId);
+	if (idx === -1) return;
+
+	const [closedTab] = browserTabs.splice(idx, 1);
+	if (closedTab && closedTab.iframe) {
+		closedTab.iframe.remove();
+	}
+
+	if (browserTabs.length === 0) {
+		activeTabId = null;
+		activeProxyIframe = null;
+		if (proxyDeck) proxyDeck.classList.add("hidden");
+	} else if (activeTabId === tabId) {
+		const nextTab = browserTabs[Math.max(0, idx - 1)];
+		switchTab(nextTab.id);
+	} else {
+		renderTabs();
+	}
+}
+
+function createTab(initialUrl = "") {
+	const tabId = "tab_" + Math.random().toString(36).substring(2, 9);
 	const iframe = document.createElement("iframe");
 	iframe.className = "proxy-frame";
+	iframe.id = "frame_" + tabId;
 	iframe.allow = "camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen";
 	iframe.setAttribute("allowfullscreen", "true");
-	activeProxyIframe = iframe;
+	iframe.style.width = "100%";
+	iframe.style.height = "100%";
+	iframe.style.border = "none";
+	iframe.style.display = "none";
 	if (proxyHost) proxyHost.appendChild(iframe);
 
+	const tab = {
+		id: tabId,
+		url: initialUrl,
+		title: initialUrl ? extractTitleFromUrl(initialUrl) : "New Tab",
+		iframe: iframe
+	};
+	browserTabs.push(tab);
+
+	if (proxyDeck) proxyDeck.classList.remove("hidden");
+	switchView("browse");
+	switchTab(tabId);
+
+	if (initialUrl) {
+		loadTabUrl(tab, initialUrl);
+	}
+	renderTabs();
+	return tab;
+}
+
+async function loadTabUrl(tab, rawInput) {
+	if (!tab || !rawInput) return;
+	const targetUrl = resolveSearchUrl(rawInput);
+	tab.url = targetUrl;
+	tab.title = extractTitleFromUrl(targetUrl);
+
+	if (tab.id === activeTabId) {
+		if (deckUrlInput) deckUrlInput.value = targetUrl;
+		updateBookmarkBtnState(targetUrl);
+	}
+	renderTabs();
+
 	trackActivity("proxy_browse", { target: targetUrl });
+	awardXp(5, "sites");
 
 	await initSWPromise;
 
@@ -337,14 +708,14 @@ async function navigateProxy(rawInput) {
 
 	if (mode !== "classic" && !classicMode && !isYouTube && sjController) {
 		try {
-			const frame = sjController.createFrame(iframe);
+			const frame = sjController.createFrame(tab.iframe);
 			frame.go(targetUrl);
 			routed = true;
 		} catch (e) {
 			console.warn("[Aura] Scramjet route retry:", e);
 			try {
 				if (typeof sjController.wait === "function") await sjController.wait();
-				const frame = sjController.createFrame(iframe);
+				const frame = sjController.createFrame(tab.iframe);
 				frame.go(targetUrl);
 				routed = true;
 			} catch (e2) {}
@@ -352,10 +723,21 @@ async function navigateProxy(rawInput) {
 	}
 
 	if (!routed) {
-		// Classic server-side fallback
-		iframe.src = (mode === "classic" || classicMode || isYouTube)
+		tab.iframe.src = (mode === "classic" || classicMode || isYouTube)
 			? "/classic/" + targetUrl
 			: "/scram/service/" + encodeURIComponent(targetUrl);
+	}
+}
+
+async function navigateProxy(rawInput) {
+	if (!rawInput) return;
+	const targetUrl = resolveSearchUrl(rawInput);
+
+	let currentTab = browserTabs.find(t => t.id === activeTabId);
+	if (currentTab && (!currentTab.url || currentTab.url === "about:blank")) {
+		await loadTabUrl(currentTab, targetUrl);
+	} else {
+		createTab(targetUrl);
 	}
 }
 
@@ -374,15 +756,33 @@ if (omnibarInput) {
 }
 if (omnibarGoBtn) omnibarGoBtn.addEventListener("click", handleOmnibarSubmit);
 
-// Speed dial clicks
-document.querySelectorAll(".speed-dial-item").forEach(btn => {
-	btn.addEventListener("click", () => {
-		const u = btn.dataset.url;
-		if (u) navigateProxy(u);
+// In-Deck URL Bar navigation
+if (deckUrlInput) {
+	deckUrlInput.addEventListener("keydown", (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			const val = deckUrlInput.value.trim();
+			if (!val) return;
+			const currentTab = browserTabs.find(t => t.id === activeTabId);
+			if (currentTab) {
+				loadTabUrl(currentTab, val);
+			} else {
+				createTab(val);
+			}
+		}
 	});
-});
+}
 
-// Deck Controls
+// In-Deck Controls
+if (deckNewTabBtn) {
+	deckNewTabBtn.addEventListener("click", () => {
+		createTab("");
+		if (deckUrlInput) {
+			deckUrlInput.value = "";
+			deckUrlInput.focus();
+		}
+	});
+}
 if (deckBackBtn) deckBackBtn.addEventListener("click", () => {
 	if (activeProxyIframe && activeProxyIframe.contentWindow) {
 		try { activeProxyIframe.contentWindow.history.back(); } catch (e) {}
@@ -399,14 +799,141 @@ if (deckReloadBtn) deckReloadBtn.addEventListener("click", () => {
 		activeProxyIframe.src = src;
 	}
 });
-if (deckCloseBtn) deckCloseBtn.addEventListener("click", () => {
-	if (proxyDeck) proxyDeck.classList.add("hidden");
-	if (proxyHost) proxyHost.innerHTML = "";
-	activeProxyIframe = null;
-});
-if (deckAboutblankBtn) deckAboutblankBtn.addEventListener("click", () => {
-	if (currentNavigatedUrl) openInAboutBlank(currentNavigatedUrl);
-});
+if (deckFullscreenBtn) {
+	deckFullscreenBtn.addEventListener("click", () => {
+		if (!document.fullscreenElement) {
+			if (proxyDeck) proxyDeck.requestFullscreen().catch(() => {});
+		} else {
+			document.exitFullscreen().catch(() => {});
+		}
+	});
+}
+if (deckCloseBtn) {
+	deckCloseBtn.addEventListener("click", () => {
+		browserTabs.forEach(t => t.iframe && t.iframe.remove());
+		browserTabs = [];
+		activeTabId = null;
+		activeProxyIframe = null;
+		if (proxyDeck) proxyDeck.classList.add("hidden");
+	});
+}
+if (deckAboutblankBtn) {
+	deckAboutblankBtn.addEventListener("click", () => {
+		const currentTab = browserTabs.find(t => t.id === activeTabId);
+		if (currentTab && currentTab.url) {
+			openInAboutBlank(currentTab.url);
+		}
+	});
+}
+
+// ============================================================
+// 4c. Speed Dial & Custom Shortcuts Adder
+// ============================================================
+const speedDialGrid = document.getElementById("speed-dial-grid");
+const shortcutModal = document.getElementById("shortcut-modal");
+const shortcutModalClose = document.getElementById("shortcut-modal-close");
+const shortcutSubmitBtn = document.getElementById("shortcut-submit-btn");
+const shortcutNameInput = document.getElementById("shortcut-name-input");
+const shortcutUrlInput = document.getElementById("shortcut-url-input");
+const shortcutIconInput = document.getElementById("shortcut-icon-input");
+
+const DEFAULT_SHORTCUTS = [
+	{ name: "YouTube", url: "https://youtube.com", icon: "▶️" },
+	{ name: "Discord", url: "https://discord.com", icon: "💬" },
+	{ name: "Reddit", url: "https://reddit.com", icon: "🤖" },
+	{ name: "Twitch", url: "https://twitch.tv", icon: "🟣" },
+	{ name: "Wikipedia", url: "https://wikipedia.org", icon: "📖" },
+	{ name: "GitHub", url: "https://github.com", icon: "🐙" }
+];
+
+function getCustomShortcuts() {
+	try {
+		return JSON.parse(localStorage.getItem("aura_custom_shortcuts")) || [];
+	} catch (e) {
+		return [];
+	}
+}
+
+function saveCustomShortcuts(list) {
+	localStorage.setItem("aura_custom_shortcuts", JSON.stringify(list));
+}
+
+function renderSpeedDials() {
+	if (!speedDialGrid) return;
+	speedDialGrid.innerHTML = "";
+
+	const custom = getCustomShortcuts();
+	const allShortcuts = [
+		...DEFAULT_SHORTCUTS.map(s => ({ ...s, isCustom: false })),
+		...custom.map((s, idx) => ({ ...s, isCustom: true, idx }))
+	];
+
+	allShortcuts.forEach(s => {
+		const btn = document.createElement("button");
+		btn.className = "speed-dial-item";
+		btn.dataset.url = s.url;
+		btn.innerHTML = `
+			<span class="sd-icon">${s.icon || "🌐"}</span>
+			<span class="sd-label">${escapeHtml(s.name)}</span>
+			${s.isCustom ? `<span class="sd-del-btn" title="Remove Shortcut" style="position:absolute;top:4px;right:6px;font-size:0.7rem;color:#ef4444;cursor:pointer;">✕</span>` : ""}
+		`;
+
+		btn.addEventListener("click", (e) => {
+			if (e.target.classList.contains("sd-del-btn")) {
+				e.stopPropagation();
+				const updated = getCustomShortcuts();
+				updated.splice(s.idx, 1);
+				saveCustomShortcuts(updated);
+				renderSpeedDials();
+				showToast("Shortcut removed");
+				return;
+			}
+			navigateProxy(s.url);
+		});
+
+		speedDialGrid.appendChild(btn);
+	});
+
+	// Append "+ Add Site" button
+	const addBtn = document.createElement("button");
+	addBtn.className = "speed-dial-item add-shortcut-btn";
+	addBtn.id = "add-shortcut-btn";
+	addBtn.title = "Add Custom Shortcut";
+	addBtn.innerHTML = `
+		<span class="sd-icon">➕</span>
+		<span class="sd-label">Add Site</span>
+	`;
+	addBtn.addEventListener("click", () => {
+		if (shortcutModal) shortcutModal.classList.remove("hidden");
+	});
+	speedDialGrid.appendChild(addBtn);
+}
+
+if (shortcutModalClose) {
+	shortcutModalClose.addEventListener("click", () => {
+		if (shortcutModal) shortcutModal.classList.add("hidden");
+	});
+}
+if (shortcutSubmitBtn) {
+	shortcutSubmitBtn.addEventListener("click", () => {
+		const name = shortcutNameInput ? shortcutNameInput.value.trim() : "";
+		const url = shortcutUrlInput ? shortcutUrlInput.value.trim() : "";
+		const icon = (shortcutIconInput && shortcutIconInput.value.trim()) || "🌐";
+		if (!name || !url) {
+			showToast("Please provide both site name and URL");
+			return;
+		}
+		const custom = getCustomShortcuts();
+		custom.push({ name, url, icon });
+		saveCustomShortcuts(custom);
+		renderSpeedDials();
+		if (shortcutNameInput) shortcutNameInput.value = "";
+		if (shortcutUrlInput) shortcutUrlInput.value = "";
+		if (shortcutModal) shortcutModal.classList.add("hidden");
+		awardXp(20, "shortcuts");
+		showToast(`✓ Added shortcut for ${name}!`);
+	});
+}
 
 // ============================================================
 // 5. Arcade Matrix (3,958 Games Catalog)
@@ -451,10 +978,86 @@ async function loadArcadeCatalog() {
 	}
 }
 
+// ============================================================
+// 5b. Game of the Week, Favorites & Recently Played
+// ============================================================
+const gotwPlayBtn = document.getElementById("gotw-play-btn");
+
+function getFavoriteGames() {
+	try {
+		return JSON.parse(localStorage.getItem("aura_fav_games")) || [];
+	} catch (e) {
+		return [];
+	}
+}
+
+function saveFavoriteGames(list) {
+	localStorage.setItem("aura_fav_games", JSON.stringify(list));
+}
+
+function isGameFavorited(title) {
+	return getFavoriteGames().includes(title);
+}
+
+function toggleGameFavorite(title, e) {
+	if (e) e.stopPropagation();
+	const favs = getFavoriteGames();
+	const idx = favs.indexOf(title);
+	if (idx !== -1) {
+		favs.splice(idx, 1);
+		saveFavoriteGames(favs);
+		showToast(`Removed "${title}" from favorites`);
+	} else {
+		favs.push(title);
+		saveFavoriteGames(favs);
+		showToast(`⭐ Added "${title}" to favorites!`);
+	}
+	if (activeCategory === "favorites") {
+		applyFilterAndSearch();
+	}
+}
+
+function getRecentGames() {
+	try {
+		return JSON.parse(localStorage.getItem("aura_recent_games")) || [];
+	} catch (e) {
+		return [];
+	}
+}
+
+function pushRecentGame(game) {
+	if (!game || !game.title) return;
+	let recents = getRecentGames();
+	recents = recents.filter(g => g.title !== game.title);
+	recents.unshift({ title: game.title, url: game.url, icon: game.icon || "🕹️", category: game.category || "Arcade" });
+	if (recents.length > 30) recents = recents.slice(0, 30);
+	localStorage.setItem("aura_recent_games", JSON.stringify(recents));
+}
+
+if (gotwPlayBtn) {
+	gotwPlayBtn.addEventListener("click", () => {
+		const found = allGamesList.find(g => (g.title || "").toLowerCase().includes("drive mad"));
+		if (found) {
+			launchGame(found);
+		} else {
+			launchGame({ title: "Drive Mad", url: "/games/drivemad/index.html", icon: "🚙", category: "Racing" });
+		}
+	});
+}
+
 function applyFilterAndSearch() {
 	const query = arcadeSearchInput ? arcadeSearchInput.value.trim().toLowerCase() : "";
+	const favs = getFavoriteGames();
+	const recents = getRecentGames();
 
-	filteredGamesList = allGamesList.filter(game => {
+	let baseList = allGamesList;
+	if (activeCategory === "recent") {
+		baseList = recents.map(r => {
+			return allGamesList.find(g => g.title === r.title) || r;
+		});
+	}
+
+	filteredGamesList = baseList.filter(game => {
 		const title = (game.title || "").toLowerCase();
 		const cat = (game.category || "").toLowerCase();
 
@@ -462,6 +1065,8 @@ function applyFilterAndSearch() {
 		if (!matchesQuery) return false;
 
 		if (activeCategory === "all") return true;
+		if (activeCategory === "favorites") return favs.includes(game.title);
+		if (activeCategory === "recent") return true;
 		if (activeCategory === "popular") return game.popular || title.includes("mad") || title.includes("slope") || title.includes("minecraft") || title.includes("geometry") || title.includes("retro bowl");
 		return cat.includes(activeCategory) || title.includes(activeCategory);
 	});
@@ -494,7 +1099,10 @@ function renderNextGamesBatch() {
 		card.dataset.title = game.title;
 
 		const iconChar = game.icon || "🕹️";
+		const isFav = isGameFavorited(game.title);
+
 		card.innerHTML = `
+			<button class="game-star-btn ${isFav ? "favorited" : ""}" title="${isFav ? "Remove Favorite" : "Add to Favorites"}">★</button>
 			<div class="game-thumb">
 				<span class="game-thumb-icon">${iconChar}</span>
 			</div>
@@ -503,6 +1111,16 @@ function renderNextGamesBatch() {
 				<span class="game-cat">${escapeHtml(game.category || "Arcade")}</span>
 			</div>
 		`;
+
+		const starBtn = card.querySelector(".game-star-btn");
+		if (starBtn) {
+			starBtn.addEventListener("click", (e) => {
+				toggleGameFavorite(game.title, e);
+				const updatedFav = isGameFavorited(game.title);
+				starBtn.classList.toggle("favorited", updatedFav);
+				starBtn.title = updatedFav ? "Remove Favorite" : "Add to Favorites";
+			});
+		}
 
 		card.addEventListener("click", () => {
 			launchGame(game);
@@ -553,6 +1171,9 @@ if (arcadeSearchInput) {
 function launchGame(game) {
 	if (!game || !game.url) return;
 	activeGameUrl = game.url.startsWith("/") ? game.url : "/" + game.url;
+
+	pushRecentGame(game);
+	awardXp(15, "games");
 
 	if (playerTitle) playerTitle.textContent = game.title || "Game Player";
 	if (playerContainer) {
@@ -649,6 +1270,7 @@ async function sendAiMessage() {
 
 	try {
 		trackActivity("ai_query", { promptSnippet: text.slice(0, 100) });
+		awardXp(10, "ai");
 		const res = await fetch("/api/ai/chat", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -689,10 +1311,12 @@ if (aiInput) {
 }
 
 // ============================================================
-// 7. Sound FX Deck
+// 7. Sound FX Deck & Custom Audio Player
 // ============================================================
 const soundGrid = document.getElementById("soundboard-grid");
 const sbStopBtn = document.getElementById("sb-stop-btn");
+const sbCustomInput = document.getElementById("sb-custom-input");
+const sbCustomPlayBtn = document.getElementById("sb-custom-play-btn");
 let activeAudio = null;
 
 async function loadSoundboard() {
@@ -730,7 +1354,34 @@ function playSound(soundId) {
 	const audio = new Audio(`/api/soundboard/audio/${soundId}`);
 	activeAudio = audio;
 	audio.play().catch(() => {});
+	awardXp(5, "sounds");
 	trackActivity("soundboard_play", { soundId });
+}
+
+if (sbCustomPlayBtn) {
+	sbCustomPlayBtn.addEventListener("click", () => {
+		const url = sbCustomInput ? sbCustomInput.value.trim() : "";
+		if (!url) {
+			showToast("Please paste an MP3 or audio link");
+			return;
+		}
+		if (activeAudio) {
+			activeAudio.pause();
+			activeAudio = null;
+		}
+		try {
+			const audio = new Audio(url);
+			activeAudio = audio;
+			audio.play().then(() => {
+				showToast("▶ Playing custom audio track");
+				awardXp(5, "sounds");
+			}).catch(err => {
+				showToast("Could not play audio: " + err.message);
+			});
+		} catch (err) {
+			showToast("Invalid audio link");
+		}
+	});
 }
 
 if (sbStopBtn) {
@@ -767,6 +1418,7 @@ function applyCloak(presetKey) {
 	} else {
 		localStorage.setItem("aura_cloak_preset", presetKey);
 		showToast(`✓ Tab disguised as ${p.title}`);
+		awardXp(10, "cloaks");
 	}
 	trackActivity("stealth_cloak", { preset: presetKey });
 }
@@ -858,6 +1510,7 @@ function openInAboutBlank(url = window.location.href, decoy = null) {
 	if (decoy) {
 		window.location.replace(decoy);
 	}
+	awardXp(10, "blank");
 }
 
 const topbarAboutBlank = document.getElementById("topbar-aboutblank-btn");
@@ -1161,6 +1814,9 @@ function escapeHtml(str) {
 // 11. Initialization
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
+	updateVaultPillDisplay();
+	renderSpeedDials();
+	renderBookmarksBar();
 	loadArcadeCatalog();
 	loadSoundboard();
 	updateShieldDisplay();
