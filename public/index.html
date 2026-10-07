@@ -205,24 +205,6 @@
 					<div class="loading-state">Loading arcade catalog...</div>
 				</div>
 			</div>
-
-			<!-- Full-Screen Game Modal Player -->
-			<div id="arcade-player-modal" class="arcade-player-overlay hidden">
-				<div class="player-topbar">
-					<div class="player-info">
-						<span class="player-status-dot"></span>
-						<span id="player-game-title" class="player-title">Playing Game</span>
-					</div>
-					<div class="player-actions">
-						<button id="player-aboutblank-btn" class="deck-btn" title="Open in about:blank">about:blank</button>
-						<button id="player-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶</button>
-						<button id="player-close-btn" class="deck-btn deck-close-btn" title="Close Game">✕</button>
-					</div>
-				</div>
-				<div class="player-frame-container" id="player-frame-container">
-					<!-- Active Game iframe injected dynamically -->
-				</div>
-			</div>
 		</section>
 
 		<!-- ============================================================
@@ -612,6 +594,27 @@
 				<a href="http://127.0.0.1:8081" target="_blank" class="deck-btn" style="text-decoration:none;display:inline-block">Open Direct Bridge (8081) ↗</a>
 				<button id="owner-refresh-stats" class="deck-btn">↻ Refresh Telemetry</button>
 			</div>
+		</div>
+	</div>
+
+	<!-- Full-Screen Cinema Game Modal Player (Root Level) -->
+	<div id="arcade-player-modal" class="arcade-player-overlay hidden">
+		<div class="player-topbar">
+			<div class="player-info">
+				<span class="player-status-dot"></span>
+				<span id="player-game-title" class="player-title">Playing Game</span>
+				<span class="player-esc-badge"><kbd>ESC</kbd> to exit</span>
+			</div>
+			<div class="player-actions">
+				<button id="player-aboutblank-btn" class="deck-btn" title="Open in about:blank">about:blank</button>
+				<button id="player-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶ Fullscreen</button>
+				<button id="player-close-btn" class="deck-btn player-exit-btn" title="Exit Game (ESC)">✕ Exit Game</button>
+			</div>
+		</div>
+		<!-- Emergency Floating Exit Pill (Always visible on hover/top) -->
+		<button id="player-float-exit-btn" class="player-float-exit-btn" title="Exit Game (ESC)">✕ Exit Game</button>
+		<div class="player-frame-container" id="player-frame-container">
+			<!-- Active Game iframe injected dynamically -->
 		</div>
 	</div>
 

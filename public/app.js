@@ -576,22 +576,44 @@ function launchGame(game) {
 	}
 
 	if (playerModal) playerModal.classList.remove("hidden");
+	showToast("Playing " + (game.title || "Game") + " — Press ESC or '✕ Exit' anytime to return");
 	trackActivity("game_play", { title: game.title, url: activeGameUrl });
 }
 
 function closeGamePlayer() {
+	if (document.fullscreenElement) {
+		document.exitFullscreen().catch(() => {});
+	}
 	if (playerModal) playerModal.classList.add("hidden");
 	if (playerContainer) playerContainer.innerHTML = "";
 	activeGameUrl = "";
+	showToast("Exited game");
 }
 
+const playerFloatExitBtn = document.getElementById("player-float-exit-btn");
 if (playerCloseBtn) playerCloseBtn.addEventListener("click", closeGamePlayer);
+if (playerFloatExitBtn) playerFloatExitBtn.addEventListener("click", closeGamePlayer);
+
+// Global Escape key listener to exit game from anywhere
+window.addEventListener("keydown", (e) => {
+	if (e.key === "Escape" || e.code === "Escape") {
+		if (playerModal && !playerModal.classList.contains("hidden")) {
+			e.preventDefault();
+			e.stopPropagation();
+			closeGamePlayer();
+		}
+	}
+}, true);
 
 if (playerFullscreenBtn) {
 	playerFullscreenBtn.addEventListener("click", () => {
-		const iframe = playerContainer ? playerContainer.querySelector("iframe") : null;
-		if (iframe && iframe.requestFullscreen) {
-			iframe.requestFullscreen().catch(() => {});
+		if (document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		} else if (playerModal && playerModal.requestFullscreen) {
+			playerModal.requestFullscreen().catch(() => {
+				const iframe = playerContainer ? playerContainer.querySelector("iframe") : null;
+				if (iframe && iframe.requestFullscreen) iframe.requestFullscreen().catch(() => {});
+			});
 		}
 	});
 }
