@@ -2,12 +2,37 @@ import { WebSocketServer } from "ws";
 import { readFileSync } from "node:fs";
 import db from "./db.js";
 import { verifyToken } from "./auth-utils.js";
-import { touchUserActive, recordActivity } from "./activity.js";
+import { touchUserActive, touchGuestActive, recordActivity } from "./activity.js";
 
 // Active user sockets: userId -> Set<WebSocket>
 const activeSockets = new Map();
 // Active user activity state: userId -> { status, activity, lastSeen, ghostMode }
 const userPresence = new Map();
+// Anonymous guest presence: guestId -> { lastSeen, ip }
+const guestPresence = new Map();
+
+export function touchGuestPresence(guestId, ip = "") {
+	const gid = String(guestId || "").trim();
+	if (!gid) return;
+	guestPresence.set(gid, { lastSeen: Date.now(), ip });
+	touchGuestActive(gid, ip);
+}
+
+export function getGuestPresenceStats() {
+	const now = Date.now();
+	let online = 0;
+	for (const g of guestPresence.values()) {
+		if (now - g.lastSeen <= 120_000) online++;
+	}
+	return online;
+}
+
+setInterval(() => {
+	const now = Date.now();
+	for (const [gid, g] of guestPresence.entries()) {
+		if (now - g.lastSeen > 120_000) guestPresence.delete(gid);
+	}
+}, 30_000).unref?.();
 
 // ============================================================
 // Clash Lounge Party Rooms State
@@ -515,7 +540,11 @@ presenceWss.on("connection", (ws, req) => {
 				}));
 			} else if (data.type === "ping") {
 				if (currentUserId) touchUserActive(currentUserId);
+				else if (data.guestId) touchGuestPresence(data.guestId, req.socket?.remoteAddress);
 				ws.send(JSON.stringify({ type: "pong" }));
+			} else if (data.type === "guest_ping" && data.guestId) {
+				touchGuestPresence(data.guestId, req.socket?.remoteAddress);
+				ws.send(JSON.stringify({ type: "pong", guest: true }));
 			}
 		} catch (err) {
 			console.error("Presence WS message error:", err);
@@ -611,7 +640,16 @@ export function getPresenceStats() {
 		if (p.status !== "offline") online++;
 		users.push({ userId: p.userId, username: p.username, status: p.status, activity: p.activity || null });
 	}
-	return { online, users, history: presenceHistory.slice(-144), rooms: getLoungeRooms() };
+	const guestsOnline = getGuestPresenceStats();
+	return { 
+		online, 
+		signedInOnline: online, 
+		guestsOnline, 
+		totalOnline: online + guestsOnline, 
+		users, 
+		history: presenceHistory.slice(-144), 
+		rooms: getLoungeRooms() 
+	};
 }
 
 export function isUserOnline(userId) {

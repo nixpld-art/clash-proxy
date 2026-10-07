@@ -1,7 +1,7 @@
 import db from "./db.js";
 
 // ============================================================
-// Safe Migrations for activity_log and users tables
+// Safe Migrations for activity_log, users, and guest_visitors
 // ============================================================
 try {
 	const userCols = db.prepare("PRAGMA table_info(users)").all().map(c => c.name);
@@ -19,20 +19,38 @@ try {
 		db.exec("ALTER TABLE activity_log ADD COLUMN timestamp INTEGER DEFAULT 0");
 		db.exec("CREATE INDEX IF NOT EXISTS idx_activity_log_ts ON activity_log(timestamp)");
 		db.exec("CREATE INDEX IF NOT EXISTS idx_activity_log_type_ts ON activity_log(type, timestamp)");
-		// Backfill timestamp for any existing rows using created_at
 		try {
 			db.exec("UPDATE activity_log SET timestamp = CAST(strftime('%s', created_at) AS INTEGER) * 1000 WHERE timestamp = 0 OR timestamp IS NULL");
 		} catch {}
 	}
+	if (!actCols.includes("guest_id")) {
+		db.exec("ALTER TABLE activity_log ADD COLUMN guest_id TEXT DEFAULT NULL");
+		db.exec("CREATE INDEX IF NOT EXISTS idx_activity_log_guest ON activity_log(guest_id)");
+	}
 } catch (e) {
-	console.warn("[DB] activity_log timestamp migration notice:", e.message);
+	console.warn("[DB] activity_log migration notice:", e.message);
 }
 
-// In-memory throttle for updating user last_active_at in SQLite
+try {
+	db.exec(`
+		CREATE TABLE IF NOT EXISTS guest_visitors (
+			guest_id TEXT PRIMARY KEY,
+			first_seen_at INTEGER,
+			last_active_at INTEGER,
+			ip TEXT
+		);
+		CREATE INDEX IF NOT EXISTS idx_guest_last_active ON guest_visitors(last_active_at);
+	`);
+} catch (e) {
+	console.warn("[DB] guest_visitors migration notice:", e.message);
+}
+
+// In-memory throttles for SQLite updates
 const lastActiveDbTouch = new Map();
+const lastGuestDbTouch = new Map();
 
 /**
- * Touch a user's active timestamp in memory & database (throttled to at most once per 30s)
+ * Touch a signed-in user's active timestamp in memory & database (throttled to at most once per 30s)
  */
 export function touchUserActive(userId) {
 	const id = Number(userId);
@@ -48,18 +66,42 @@ export function touchUserActive(userId) {
 }
 
 /**
+ * Touch an anonymous guest visitor's active timestamp in memory & database (throttled to at most once per 30s)
+ */
+export function touchGuestActive(guestId, ip = "") {
+	const gid = String(guestId || "").trim();
+	if (!gid) return;
+	const now = Date.now();
+	const last = lastGuestDbTouch.get(gid) || 0;
+	if (now - last > 30_000) {
+		lastGuestDbTouch.set(gid, now);
+		try {
+			db.prepare(`
+				INSERT INTO guest_visitors (guest_id, first_seen_at, last_active_at, ip)
+				VALUES (?, ?, ?, ?)
+				ON CONFLICT(guest_id) DO UPDATE SET last_active_at = excluded.last_active_at
+			`).run(gid, now, now, ip || null);
+		} catch {}
+	}
+}
+
+/**
  * Record a feature usage or activity event in activity_log
  */
-export function recordActivity(userId, type, data = {}) {
+export function recordActivity(userId, type, data = {}, guestId = null) {
 	try {
 		const uid = Number(userId) || 0;
 		const now = Date.now();
+		const gid = guestId ? String(guestId).trim() : null;
 		if (uid > 0) touchUserActive(uid);
-		db.prepare("INSERT INTO activity_log (user_id, type, data_json, timestamp) VALUES (?, ?, ?, ?)").run(
+		else if (gid) touchGuestActive(gid);
+
+		db.prepare("INSERT INTO activity_log (user_id, type, data_json, timestamp, guest_id) VALUES (?, ?, ?, ?, ?)").run(
 			uid,
 			String(type),
 			typeof data === "string" ? data : JSON.stringify(data || {}),
-			now
+			now,
+			gid
 		);
 	} catch (e) {
 		// Non-fatal
@@ -83,7 +125,6 @@ export function getActivityTimeWindows() {
 	const lastDayStart = now - (24 * 60 * 60 * 1000); // 24 hours
 
 	// Mon - Sun calculation
-	// getDay(): 0 is Sunday, 1 is Monday ... 6 is Saturday
 	const dayOfWeek = nowDate.getDay();
 	const daysSinceMonday = (dayOfWeek + 6) % 7; // Monday = 0, Sunday = 6
 
@@ -121,13 +162,29 @@ export function getActivityTimeWindows() {
 }
 
 /**
- * Get count of unique signed in users active within a time range
+ * Get count of unique signed-in users active within a time range
  */
 export function getSignedInUsersCount(startTime, endTime = Date.now()) {
 	try {
 		const row = db.prepare(`
 			SELECT COUNT(DISTINCT id) as cnt
 			FROM users
+			WHERE last_active_at >= ? AND last_active_at <= ?
+		`).get(startTime, endTime);
+		return row?.cnt || 0;
+	} catch {
+		return 0;
+	}
+}
+
+/**
+ * Get count of unique anonymous guest users active within a time range
+ */
+export function getGuestUsersCount(startTime, endTime = Date.now()) {
+	try {
+		const row = db.prepare(`
+			SELECT COUNT(DISTINCT guest_id) as cnt
+			FROM guest_visitors
 			WHERE last_active_at >= ? AND last_active_at <= ?
 		`).get(startTime, endTime);
 		return row?.cnt || 0;
@@ -154,7 +211,7 @@ export const FEATURE_INFO = {
 };
 
 /**
- * Get feature usage breakdown across a time range
+ * Get feature usage breakdown across a time range with signed-in vs guest user counts
  */
 export function getFeatureUsageStats(startTime, endTime = Date.now()) {
 	try {
@@ -163,7 +220,7 @@ export function getFeatureUsageStats(startTime, endTime = Date.now()) {
 				type,
 				COUNT(*) as total_uses,
 				COUNT(DISTINCT CASE WHEN user_id > 0 THEN user_id ELSE NULL END) as signed_in_users,
-				COUNT(DISTINCT user_id) as total_users
+				COUNT(DISTINCT CASE WHEN user_id = 0 AND guest_id IS NOT NULL THEN guest_id ELSE NULL END) as guest_users
 			FROM activity_log
 			WHERE (timestamp >= ? AND timestamp <= ?)
 			   OR (timestamp = 0 AND datetime(created_at) >= datetime(?, 'unixepoch') AND datetime(created_at) <= datetime(?, 'unixepoch'))
@@ -173,14 +230,18 @@ export function getFeatureUsageStats(startTime, endTime = Date.now()) {
 		const featureMap = {};
 		for (const r of rows) {
 			const info = FEATURE_INFO[r.type] || { name: r.type, icon: "⚡", category: "Other" };
+			const signedIn = r.signed_in_users || 0;
+			const guests = r.guest_users || 0;
+			const totalUnique = signedIn + guests;
 			featureMap[r.type] = {
 				type: r.type,
 				name: info.name,
 				icon: info.icon,
 				category: info.category,
 				totalUses: r.total_uses,
-				signedInUsers: r.signed_in_users,
-				totalUsers: r.total_users
+				signedInUsers: signedIn,
+				guestUsers: guests,
+				totalUsers: totalUnique
 			};
 		}
 		return featureMap;

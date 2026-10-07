@@ -12,7 +12,7 @@ import { BADGES, isPrivilegedUsername } from "../src/auth-utils.js";
 import { askAIReply, validateOpenRouterKey } from "../src/routes/ai.js";
 import { BAZAAR_CATALOG } from "../src/routes/bazaar.js";
 import { PRIVILEGES, ALL_PRIVILEGE_IDS } from "../src/ranks.js";
-import { getActivityTimeWindows, getSignedInUsersCount, getFeatureUsageStats } from "../src/activity.js";
+import { getActivityTimeWindows, getSignedInUsersCount, getGuestUsersCount, getFeatureUsageStats } from "../src/activity.js";
 import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -510,12 +510,30 @@ const server = http.createServer(async (req, res) => {
 
 			const windows = getActivityTimeWindows();
 			const liveWsCount = (stats.presence?.users || []).filter((u) => u.status !== "offline").length;
+			const liveGuests = stats.presence?.guestsOnline || 0;
+			const liveTotal = liveWsCount + liveGuests;
+
 			const onlineStats = {
 				now: Math.max(liveWsCount, getSignedInUsersCount(nowTs - 120_000, nowTs)),
+				nowGuests: Math.max(liveGuests, getGuestUsersCount(nowTs - 120_000, nowTs)),
+				nowTotal: Math.max(liveTotal, getSignedInUsersCount(nowTs - 120_000, nowTs) + getGuestUsersCount(nowTs - 120_000, nowTs)),
+
 				lastHr: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastHrGuests: getGuestUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastHrTotal: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end) + getGuestUsersCount(windows.lastHr.start, windows.lastHr.end),
+
 				lastDay: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastDayGuests: getGuestUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastDayTotal: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end) + getGuestUsersCount(windows.lastDay.start, windows.lastDay.end),
+
 				lastWeek: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+				lastWeekGuests: getGuestUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+				lastWeekTotal: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end) + getGuestUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+
 				thisWeek: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+				thisWeekGuests: getGuestUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+				thisWeekTotal: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end) + getGuestUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+
 				windows
 			};
 
@@ -544,13 +562,30 @@ const server = http.createServer(async (req, res) => {
 			const windows = getActivityTimeWindows();
 			const stats = await bridge("/api/panel/stats", null);
 			const liveWsCount = (stats.presence?.users || []).filter((u) => u.status !== "offline").length;
+			const liveGuests = stats.presence?.guestsOnline || 0;
+			const liveTotal = liveWsCount + liveGuests;
 			const nowTs = Date.now();
+
 			const onlineStats = {
 				now: Math.max(liveWsCount, getSignedInUsersCount(nowTs - 120_000, nowTs)),
+				nowGuests: Math.max(liveGuests, getGuestUsersCount(nowTs - 120_000, nowTs)),
+				nowTotal: Math.max(liveTotal, getSignedInUsersCount(nowTs - 120_000, nowTs) + getGuestUsersCount(nowTs - 120_000, nowTs)),
+
 				lastHr: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastHrGuests: getGuestUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastHrTotal: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end) + getGuestUsersCount(windows.lastHr.start, windows.lastHr.end),
+
 				lastDay: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastDayGuests: getGuestUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastDayTotal: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end) + getGuestUsersCount(windows.lastDay.start, windows.lastDay.end),
+
 				lastWeek: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end),
-				thisWeek: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end)
+				lastWeekGuests: getGuestUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+				lastWeekTotal: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end) + getGuestUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+
+				thisWeek: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+				thisWeekGuests: getGuestUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+				thisWeekTotal: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end) + getGuestUsersCount(windows.thisWeek.start, windows.thisWeek.end)
 			};
 
 			const usage = {

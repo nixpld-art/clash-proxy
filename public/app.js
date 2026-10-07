@@ -1289,15 +1289,26 @@ try {
 let currentUser = null;
 let authToken = localStorage.getItem("clash_jwt_token") || null;
 
+function getOrCreateGuestId() {
+	let gid = localStorage.getItem("clash_guest_id");
+	if (!gid) {
+		gid = "g_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+		try { localStorage.setItem("clash_guest_id", gid); } catch {}
+	}
+	return gid;
+}
+
 function trackActivity(type, data = {}) {
 	try {
+		const gid = getOrCreateGuestId();
 		fetch("/api/activity/track", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"X-Guest-Id": gid,
 				...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
 			},
-			body: JSON.stringify({ type, data }),
+			body: JSON.stringify({ type, data, guestId: gid }),
 			keepalive: true
 		}).catch(() => {});
 	} catch {}
@@ -1307,6 +1318,7 @@ async function initAuth() {
 	if (!authToken) {
 		renderGuestHeader();
 		renderProfilePage();
+		connectPresenceSocket();
 		return;
 	}
 
@@ -1563,7 +1575,7 @@ let pingInterval = null;
 let friendPresenceMap = new Map();
 
 function connectPresenceSocket() {
-	if (!authToken || presenceWs) return;
+	if (presenceWs) return;
 
 	const protocol = location.protocol === "https:" ? "wss:" : "ws:";
 	const wsUrl = `${protocol}//${location.host}/ws/presence`;
@@ -1572,13 +1584,21 @@ function connectPresenceSocket() {
 		presenceWs = new WebSocket(wsUrl);
 
 		presenceWs.onopen = () => {
-			presenceWs.send(JSON.stringify({ type: "auth", token: authToken }));
+			if (authToken) {
+				presenceWs.send(JSON.stringify({ type: "auth", token: authToken }));
+			} else {
+				presenceWs.send(JSON.stringify({ type: "guest_ping", guestId: getOrCreateGuestId() }));
+			}
 			if (pingInterval) clearInterval(pingInterval);
 			pingInterval = setInterval(() => {
 				if (presenceWs && presenceWs.readyState === WebSocket.OPEN) {
-					presenceWs.send(JSON.stringify({ type: "ping" }));
+					if (authToken) {
+						presenceWs.send(JSON.stringify({ type: "ping" }));
+					} else {
+						presenceWs.send(JSON.stringify({ type: "guest_ping", guestId: getOrCreateGuestId() }));
+					}
 				}
-			}, 30000);
+			}, 25000);
 		};
 
 		presenceWs.onmessage = (e) => {

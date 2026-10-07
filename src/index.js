@@ -195,9 +195,10 @@ fastify.get("/api/games", async (request, reply) => {
 fastify.post("/api/activity/track", async (req, reply) => {
 	const auth = extractAuthUser(req);
 	const uid = auth?.id || 0;
-	const { type, data } = req.body || {};
+	const { type, data, guestId } = req.body || {};
+	const gid = guestId || req.headers["x-guest-id"] || null;
 	if (type) {
-		recordActivity(uid, type, data);
+		recordActivity(uid, type, data, gid);
 	}
 	return { ok: true };
 });

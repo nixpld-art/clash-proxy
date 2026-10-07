@@ -189,10 +189,26 @@
 <div class="tab-pane active" id="tab-ranks">
 	<div class="kpis" style="margin-bottom:16px">
 		<div class="kpi"><b id="stat-users">0</b><span>total players</span></div>
-		<div class="kpi" style="border-left:2px solid #00ff88;"><b id="stat-online-now" style="color:#00ff88;">0</b><span style="color:#00ff88;">online now</span></div>
-		<div class="kpi"><b id="stat-online-1h">0</b><span>active last hr</span></div>
-		<div class="kpi"><b id="stat-online-24h">0</b><span>active last day</span></div>
-		<div class="kpi"><b id="stat-online-week">0</b><span>active last week</span></div>
+		<div class="kpi" style="border-left:2px solid #00ff88;">
+			<b id="stat-online-now" style="color:#00ff88;">0</b>
+			<span style="color:#00ff88;">online now</span>
+			<div class="muted" id="stat-online-sub" style="font-size:10px;margin-top:2px;">0 signed in · 0 guests</div>
+		</div>
+		<div class="kpi">
+			<b id="stat-online-1h">0</b>
+			<span>active last hr</span>
+			<div class="muted" id="stat-online-1h-sub" style="font-size:10px;margin-top:2px;">0 signed in · 0 guests</div>
+		</div>
+		<div class="kpi">
+			<b id="stat-online-24h">0</b>
+			<span>active last day</span>
+			<div class="muted" id="stat-online-24h-sub" style="font-size:10px;margin-top:2px;">0 signed in · 0 guests</div>
+		</div>
+		<div class="kpi">
+			<b id="stat-online-week">0</b>
+			<span>active last week</span>
+			<div class="muted" id="stat-online-week-sub" style="font-size:10px;margin-top:2px;">0 signed in · 0 guests</div>
+		</div>
 		<div class="kpi"><b id="stat-presets">0</b><span>rank presets</span></div>
 		<div class="kpi"><b id="stat-ranked">0</b><span>players ranked</span></div>
 	</div>
@@ -363,32 +379,34 @@
 <div class="tab-pane" id="tab-socials">
 	<div class="sect-title">💬 Socials &amp; User Activity Analytics</div>
 
-	<!-- Signed-In Online Users Metric Cards -->
+	<!-- Online Users (Signed In & Guests) Metric Cards -->
 	<div class="kpis" style="margin-bottom:18px">
 		<div class="kpi" style="border-left: 3px solid #00ff88;">
 			<b id="soc-online-now" style="color:#00ff88;">0</b>
-			<span>Online Signed-In Now</span>
-			<div class="muted" style="font-size:11px;margin-top:3px;">Active right now (last 2m)</div>
+			<span>People Online Now</span>
+			<div class="muted" id="soc-online-now-sub" style="font-size:11px;margin-top:3px;">0 signed in · 0 guests</div>
 		</div>
 		<div class="kpi" style="border-left: 3px solid #00f0ff;">
 			<b id="soc-online-1h" style="color:#00f0ff;">0</b>
-			<span>Signed-In (Last Hr)</span>
-			<div class="muted" style="font-size:11px;margin-top:3px;">Past 60 minutes</div>
+			<span>Active (Last Hr)</span>
+			<div class="muted" id="soc-online-1h-sub" style="font-size:11px;margin-top:3px;">0 signed in · 0 guests</div>
 		</div>
 		<div class="kpi" style="border-left: 3px solid #a855f7;">
 			<b id="soc-online-24h" style="color:#a855f7;">0</b>
-			<span>Signed-In (Last Day)</span>
-			<div class="muted" style="font-size:11px;margin-top:3px;">Past 24 hours</div>
+			<span>Active (Last Day)</span>
+			<div class="muted" id="soc-online-24h-sub" style="font-size:11px;margin-top:3px;">0 signed in · 0 guests</div>
 		</div>
 		<div class="kpi" style="border-left: 3px solid #f59e0b;">
 			<b id="soc-online-lastweek" style="color:#f59e0b;">0</b>
 			<span>Last Week (Mon – Sun)</span>
-			<div class="muted" id="soc-lastweek-range" style="font-size:11px;margin-top:3px;">Previous Mon – Sun</div>
+			<div class="muted" id="soc-online-lastweek-sub" style="font-size:11px;margin-top:3px;">0 signed in · 0 guests</div>
+			<div class="muted" id="soc-lastweek-range" style="font-size:10px;margin-top:1px;color:#94a3b8;">Previous Mon – Sun</div>
 		</div>
 		<div class="kpi" style="border-left: 3px solid #38bdf8;">
 			<b id="soc-online-thisweek" style="color:#38bdf8;">0</b>
 			<span>This Week (Mon – Sun)</span>
-			<div class="muted" id="soc-thisweek-range" style="font-size:11px;margin-top:3px;">Current Mon – Today</div>
+			<div class="muted" id="soc-online-thisweek-sub" style="font-size:11px;margin-top:3px;">0 signed in · 0 guests</div>
+			<div class="muted" id="soc-thisweek-range" style="font-size:10px;margin-top:1px;color:#94a3b8;">Current Mon – Today</div>
 		</div>
 	</div>
 
@@ -397,7 +415,7 @@
 		<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
 			<div>
 				<h2 style="margin:0;">🔥 Feature Usage: Who Used What &amp; How Many Times</h2>
-				<p class="sec-hint" style="margin:4px 0 0;">Total uses, unique users, and signed-in accounts across Clash Proxy features.</p>
+				<p class="sec-hint" style="margin:4px 0 0;">Total uses, unique users, and breakdown between signed-in accounts and guest visitors.</p>
 			</div>
 			<div class="row" style="gap:7px;">
 				<button class="btn small" id="soc-btn-now" data-window="now">⚡ Right Now</button>
@@ -415,13 +433,14 @@
 					<tr>
 						<th>Feature / Category</th>
 						<th>Total Times Used</th>
-						<th>Unique People Who Used It</th>
+						<th>Total People</th>
 						<th>Signed-In Users</th>
-						<th>Status / Activity Level</th>
+						<th>Guest Visitors</th>
+						<th>Status / Traffic</th>
 					</tr>
 				</thead>
 				<tbody id="soc-features-tbody">
-					<tr><td colspan="5" class="empty">Loading feature analytics…</td></tr>
+					<tr><td colspan="6" class="empty">Loading feature analytics…</td></tr>
 				</tbody>
 			</table>
 		</div>
@@ -902,10 +921,22 @@ function renderRanks() {
 	$("stat-presets").textContent = state.presets.length;
 	$("stat-ranked").textContent = Object.keys(state.assignments).length;
 	if (state.onlineStats) {
-		if ($("stat-online-now")) $("stat-online-now").textContent = state.onlineStats.now ?? 0;
-		if ($("stat-online-1h")) $("stat-online-1h").textContent = state.onlineStats.lastHr ?? 0;
-		if ($("stat-online-24h")) $("stat-online-24h").textContent = state.onlineStats.lastDay ?? 0;
-		if ($("stat-online-week")) $("stat-online-week").textContent = state.onlineStats.lastWeek ?? 0;
+		const s = state.onlineStats;
+		const nowTotal = s.nowTotal ?? ((s.now || 0) + (s.nowGuests || 0));
+		if ($("stat-online-now")) $("stat-online-now").textContent = nowTotal;
+		if ($("stat-online-sub")) $("stat-online-sub").textContent = `${s.now || 0} signed in · ${s.nowGuests || 0} guests`;
+
+		const hTotal = s.lastHrTotal ?? ((s.lastHr || 0) + (s.lastHrGuests || 0));
+		if ($("stat-online-1h")) $("stat-online-1h").textContent = hTotal;
+		if ($("stat-online-1h-sub")) $("stat-online-1h-sub").textContent = `${s.lastHr || 0} signed in · ${s.lastHrGuests || 0} guests`;
+
+		const dTotal = s.lastDayTotal ?? ((s.lastDay || 0) + (s.lastDayGuests || 0));
+		if ($("stat-online-24h")) $("stat-online-24h").textContent = dTotal;
+		if ($("stat-online-24h-sub")) $("stat-online-24h-sub").textContent = `${s.lastDay || 0} signed in · ${s.lastDayGuests || 0} guests`;
+
+		const wTotal = s.lastWeekTotal ?? ((s.lastWeek || 0) + (s.lastWeekGuests || 0));
+		if ($("stat-online-week")) $("stat-online-week").textContent = wTotal;
+		if ($("stat-online-week-sub")) $("stat-online-week-sub").textContent = `${s.lastWeek || 0} signed in · ${s.lastWeekGuests || 0} guests`;
 	}
 	renderPresets(); renderPeople();
 }
@@ -1308,11 +1339,21 @@ function renderSocialsKPIs() {
 	if (!socialsData) return;
 	const s = socialsData.onlineStats || {};
 	const w = socialsData.windows || {};
-	if ($("soc-online-now")) $("soc-online-now").textContent = s.now ?? 0;
-	if ($("soc-online-1h")) $("soc-online-1h").textContent = s.lastHr ?? 0;
-	if ($("soc-online-24h")) $("soc-online-24h").textContent = s.lastDay ?? 0;
-	if ($("soc-online-lastweek")) $("soc-online-lastweek").textContent = s.lastWeek ?? 0;
-	if ($("soc-online-thisweek")) $("soc-online-thisweek").textContent = s.thisWeek ?? 0;
+
+	if ($("soc-online-now")) $("soc-online-now").textContent = s.nowTotal ?? ((s.now || 0) + (s.nowGuests || 0));
+	if ($("soc-online-now-sub")) $("soc-online-now-sub").textContent = `${s.now || 0} signed in · ${s.nowGuests || 0} guests`;
+
+	if ($("soc-online-1h")) $("soc-online-1h").textContent = s.lastHrTotal ?? ((s.lastHr || 0) + (s.lastHrGuests || 0));
+	if ($("soc-online-1h-sub")) $("soc-online-1h-sub").textContent = `${s.lastHr || 0} signed in · ${s.lastHrGuests || 0} guests`;
+
+	if ($("soc-online-24h")) $("soc-online-24h").textContent = s.lastDayTotal ?? ((s.lastDay || 0) + (s.lastDayGuests || 0));
+	if ($("soc-online-24h-sub")) $("soc-online-24h-sub").textContent = `${s.lastDay || 0} signed in · ${s.lastDayGuests || 0} guests`;
+
+	if ($("soc-online-lastweek")) $("soc-online-lastweek").textContent = s.lastWeekTotal ?? ((s.lastWeek || 0) + (s.lastWeekGuests || 0));
+	if ($("soc-online-lastweek-sub")) $("soc-online-lastweek-sub").textContent = `${s.lastWeek || 0} signed in · ${s.lastWeekGuests || 0} guests`;
+
+	if ($("soc-online-thisweek")) $("soc-online-thisweek").textContent = s.thisWeekTotal ?? ((s.thisWeek || 0) + (s.thisWeekGuests || 0));
+	if ($("soc-online-thisweek-sub")) $("soc-online-thisweek-sub").textContent = `${s.thisWeek || 0} signed in · ${s.thisWeekGuests || 0} guests`;
 
 	if ($("soc-lastweek-range") && w.lastWeek?.rangeText) {
 		$("soc-lastweek-range").textContent = w.lastWeek.rangeText;
@@ -1339,10 +1380,11 @@ function renderSocialsFeatures() {
 	});
 
 	tbody.innerHTML = ALL_FEATURES_LIST.map((f) => {
-		const st = usageMap[f.type] || { totalUses: 0, uniqueUsers: 0, signedInUsers: 0 };
+		const st = usageMap[f.type] || { totalUses: 0, uniqueUsers: 0, signedInUsers: 0, guestUsers: 0 };
 		const total = st.totalUses || 0;
-		const users = st.uniqueUsers || 0;
 		const signedIn = st.signedInUsers || 0;
+		const guests = st.guestUsers || 0;
+		const users = st.totalUsers || (signedIn + guests);
 		
 		let statusBadge = '<span class="chip plain">Quiet</span>';
 		if (total > 50) statusBadge = '<span class="chip" style="background:rgba(0,255,136,0.15);color:#00ff88;border-color:#00ff88;">🔥 High Traffic</span>';
@@ -1359,9 +1401,10 @@ function renderSocialsFeatures() {
 					</div>
 				</div>
 			</td>
-			<td><b style="font-size:14px;color:#f1f2f8;">${total.toLocaleString()}</b> <span class="muted" style="font-size:11px;">times used</span></td>
-			<td><b style="font-size:14px;color:#00f0ff;">${users.toLocaleString()}</b> <span class="muted" style="font-size:11px;">people</span></td>
+			<td><b style="font-size:14px;color:#f1f2f8;">${total.toLocaleString()}</b> <span class="muted" style="font-size:11px;">uses</span></td>
+			<td><b style="font-size:14px;color:#00f0ff;">${users.toLocaleString()}</b> <span class="muted" style="font-size:11px;">total people</span></td>
 			<td><b style="font-size:14px;color:#a855f7;">${signedIn.toLocaleString()}</b> <span class="muted" style="font-size:11px;">signed in</span></td>
+			<td><b style="font-size:14px;color:#f59e0b;">${guests.toLocaleString()}</b> <span class="muted" style="font-size:11px;">guests</span></td>
 			<td>${statusBadge}</td>
 		</tr>`;
 	}).join("");
