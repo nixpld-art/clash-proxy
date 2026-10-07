@@ -5,6 +5,8 @@
 // ============================================================
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "url";
+import { extractAuthUser } from "../auth-utils.js";
+import { recordActivity } from "../activity.js";
 
 const PANEL_KEY_FILE = fileURLToPath(new URL("../../clash owner pannel/jarvis-key.txt", import.meta.url));
 
@@ -291,6 +293,10 @@ export default async function aiRoutes(fastify) {
 		const messages = sanitizeMessages(req.body?.messages);
 		if (!messages.length) return reply.code(400).send({ error: "messages required" });
 		messages.unshift({ role: "system", content: SYS_PROMPT });
+
+		const auth = extractAuthUser(req);
+		const lastMsg = messages[messages.length - 1]?.content || "";
+		recordActivity(auth?.id || 0, "ai_query", { promptSnippet: lastMsg.slice(0, 100) });
 
 		const text = await askAIReply(messages);
 		if (text) return { reply: text };

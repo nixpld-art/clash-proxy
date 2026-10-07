@@ -113,6 +113,7 @@ import db from "./db.js";
 import { presenceWss, kickUser, notifyUser, broadcastSystemAnnouncement, getPresenceStats } from "./presence.js";
 import { isPrivilegedUsername, extractAuthUser, isAdminUser, isOwnerMode, freshDbUser, verifyToken, isUserBanned } from "./auth-utils.js";
 import { hasPrivilege, userRank } from "./ranks.js";
+import { recordActivity, touchUserActive } from "./activity.js";
 
 // ============================================================
 // Fastify Server
@@ -188,6 +189,17 @@ fastify.register(classicRoutes);
 // API endpoint for games list
 fastify.get("/api/games", async (request, reply) => {
 	return getGamesList();
+});
+
+// Feature and activity tracking endpoint
+fastify.post("/api/activity/track", async (req, reply) => {
+	const auth = extractAuthUser(req);
+	const uid = auth?.id || 0;
+	const { type, data } = req.body || {};
+	if (type) {
+		recordActivity(uid, type, data);
+	}
+	return { ok: true };
 });
 
 // Invalidate the cached games list (used by the Owner Panel / Jarvis
@@ -980,6 +992,11 @@ function spawnPanelBackend() {
 	try {
 		const child = spawn(process.execPath, [fileURLToPath(new URL("../clash owner pannel/server.js", import.meta.url))], {
 			cwd: fileURLToPath(new URL("../", import.meta.url)),
+			env: {
+				...process.env,
+				PORT: String(PORT),
+				MAIN_URL: `http://127.0.0.1:${PORT}`
+			},
 			stdio: "ignore",
 			detached: false,
 		});

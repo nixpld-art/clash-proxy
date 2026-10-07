@@ -736,6 +736,8 @@ async function navigateTab(tabId, rawInput, isGame = false) {
 	tab.title = tab.isGame ? "Playing Game" : (extractDomain(targetUrl) || "Loading...");
 	renderTabs();
 
+	trackActivity(tab.isGame ? "game_play" : "proxy_browse", { url: targetUrl });
+
 	if (typeof ClashShield !== "undefined") {
 		ClashShield.resetTabCount(tabId);
 		updateShieldUI();
@@ -1286,6 +1288,20 @@ try {
 
 let currentUser = null;
 let authToken = localStorage.getItem("clash_jwt_token") || null;
+
+function trackActivity(type, data = {}) {
+	try {
+		fetch("/api/activity/track", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
+			},
+			body: JSON.stringify({ type, data }),
+			keepalive: true
+		}).catch(() => {});
+	} catch {}
+}
 
 async function initAuth() {
 	if (!authToken) {
@@ -2238,6 +2254,7 @@ async function loadLeaderboard() {
 						</div>
 						<div>
 							<div class="leaderboard-user-name ${isTed ? 'ted-vip-name' : ''}">
+								<span class="leaderboard-status-dot ${u.online ? 'online' : 'offline'}" title="${u.online ? 'Online' : 'Offline'}"></span>
 								${escapeHtml(u.display_name || u.username)}
 								${u.custom_tag ? `<span class="ted-crown-tag">${escapeHtml(u.custom_tag)}</span>` : ''}
 							</div>
@@ -4279,6 +4296,7 @@ function applyCloak(cloakKey) {
 	cloakBtns.forEach(btn => {
 		btn.classList.toggle("active", btn.dataset.cloak === cloakKey);
 	});
+	trackActivity("stealth_cloak", { cloak: cloakKey });
 }
 
 // ============================================================
@@ -6298,6 +6316,7 @@ function playSoundboardAudio(soundId, customUrl) {
 	const audioSrc = customUrl || `/api/soundboard/audio/${encodeURIComponent(soundId)}`;
 	const audio = new Audio(audioSrc);
 	audio.volume = getSoundboardVolume();
+	trackActivity("soundboard_play", { soundId });
 
 	const pad = document.querySelector(`.sound-pad[data-sound-id="${soundId}"]`);
 	if (pad) pad.classList.add("playing");

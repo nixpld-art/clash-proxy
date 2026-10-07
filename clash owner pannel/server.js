@@ -12,6 +12,7 @@ import { BADGES, isPrivilegedUsername } from "../src/auth-utils.js";
 import { askAIReply, validateOpenRouterKey } from "../src/routes/ai.js";
 import { BAZAAR_CATALOG } from "../src/routes/bazaar.js";
 import { PRIVILEGES, ALL_PRIVILEGE_IDS } from "../src/ranks.js";
+import { getActivityTimeWindows, getSignedInUsersCount, getFeatureUsageStats } from "../src/activity.js";
 import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,7 +33,7 @@ const BACKUP_DIR = path.join(__dirname, "backups");
 // Custom rank privileges: granted to staff/rank members for use in the Staff Panel.
 // True site ownership (Founder level) is reserved for Ted, Nils, and Ozzy.
 const PRIV_IDS = new Set(PRIVILEGES.map((p) => p.id));
-const USER_COLS = "id, username, display_name, avatar_url, role, custom_tag, level, xp, coins, banned, banned_until, muted, muted_until, last_ip, streak_days, games_played_override, sites_visited_override";
+const USER_COLS = "id, username, display_name, avatar_url, role, custom_tag, level, xp, coins, banned, banned_until, muted, muted_until, last_ip, streak_days, games_played_override, sites_visited_override, last_active_at";
 
 // ============================================================
 // Storage helpers
@@ -490,6 +491,34 @@ const server = http.createServer(async (req, res) => {
 		if (req.method === "GET" && pathname === "/api/state") {
 			sweepExpired();
 			const store = loadStore();
+			const stats = await bridge("/api/panel/stats", null);
+			const onlineSet = new Set((stats.presence?.users || []).filter((u) => u.status !== "offline").map((u) => u.userId));
+			const nowTs = Date.now();
+			const rawUsers = db.prepare(`SELECT ${USER_COLS} FROM users`).all();
+			const users = rawUsers.map((u) => {
+				const isOnline = onlineSet.has(u.id) || (u.last_active_at && (nowTs - u.last_active_at < 120_000));
+				return {
+					...u,
+					online: !!isOnline
+				};
+			});
+			// Online people at the top, offline people at the bottom, then alphabetical
+			users.sort((a, b) => {
+				if (b.online !== a.online) return (b.online ? 1 : 0) - (a.online ? 1 : 0);
+				return (a.username || "").localeCompare(b.username || "");
+			});
+
+			const windows = getActivityTimeWindows();
+			const liveWsCount = (stats.presence?.users || []).filter((u) => u.status !== "offline").length;
+			const onlineStats = {
+				now: Math.max(liveWsCount, getSignedInUsersCount(nowTs - 120_000, nowTs)),
+				lastHr: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastDay: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastWeek: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+				thisWeek: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end),
+				windows
+			};
+
 			const counts = {
 				reportsOpen: panelDb.prepare("SELECT COUNT(*) c FROM reports WHERE status = 'open'").get().c,
 				punishments: panelDb.prepare("SELECT COUNT(*) c FROM punishments").get().c,
@@ -497,7 +526,8 @@ const server = http.createServer(async (req, res) => {
 			};
 			return json(res, 200, {
 				privileges: PRIVILEGES,
-				users: db.prepare(`SELECT ${USER_COLS} FROM users ORDER BY LOWER(username)`).all(),
+				users,
+				onlineStats,
 				presets: store.presets,
 				assignments: store.assignments,
 				config: loadConfig(),
@@ -506,6 +536,36 @@ const server = http.createServer(async (req, res) => {
 				xpEvent: readDataFile("xp-event.json"),
 				counts,
 				dbOk: true
+			});
+		}
+
+		// ---------- SOCIALS & ACTIVITY ANALYTICS ----------
+		if (req.method === "GET" && pathname === "/api/socials/stats") {
+			const windows = getActivityTimeWindows();
+			const stats = await bridge("/api/panel/stats", null);
+			const liveWsCount = (stats.presence?.users || []).filter((u) => u.status !== "offline").length;
+			const nowTs = Date.now();
+			const onlineStats = {
+				now: Math.max(liveWsCount, getSignedInUsersCount(nowTs - 120_000, nowTs)),
+				lastHr: getSignedInUsersCount(windows.lastHr.start, windows.lastHr.end),
+				lastDay: getSignedInUsersCount(windows.lastDay.start, windows.lastDay.end),
+				lastWeek: getSignedInUsersCount(windows.lastWeek.start, windows.lastWeek.end),
+				thisWeek: getSignedInUsersCount(windows.thisWeek.start, windows.thisWeek.end)
+			};
+
+			const usage = {
+				now: getFeatureUsageStats(windows.now.start, windows.now.end),
+				lastHr: getFeatureUsageStats(windows.lastHr.start, windows.lastHr.end),
+				lastDay: getFeatureUsageStats(windows.lastDay.start, windows.lastDay.end),
+				lastWeek: getFeatureUsageStats(windows.lastWeek.start, windows.lastWeek.end),
+				thisWeek: getFeatureUsageStats(windows.thisWeek.start, windows.thisWeek.end)
+			};
+
+			return json(res, 200, {
+				ok: true,
+				windows,
+				onlineStats,
+				usage
 			});
 		}
 

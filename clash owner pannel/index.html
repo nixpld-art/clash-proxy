@@ -73,6 +73,9 @@
 	tr:hover td { background: color-mix(in srgb, var(--text) 3%, transparent); }
 	.empty { color: var(--muted); font-size: 13px; padding: 14px; text-align: center; }
 	.player { display: flex; align-items: center; gap: 9px; }
+	.panel-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; vertical-align: middle; transition: all .2s; }
+	.panel-status-dot.online { background: #00ff88; box-shadow: 0 0 7px #00ff88; }
+	.panel-status-dot.offline { background: #64748b; }
 	.avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: #0b0b14; background: linear-gradient(135deg, var(--purple), var(--gold)); flex-shrink: 0; }
 	.preset-card, .note-card, .inst-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
 	.preset-card .info, .inst-card .info { flex: 1; min-width: 0; }
@@ -169,12 +172,13 @@
 </div>
 
 <div class="tabs" id="tabs-bar">
-	<button class="tab active" data-tab="ranks">🏅 Ranks &amp; People</button>
+	<button class="tab active" data-tab="ranks">👥 Ranks &amp; People</button>
 	<button class="tab" data-tab="games">🎮 Game Ops</button>
 	<button class="tab" data-tab="toolkit">🧰 Player Toolkit</button>
+	<button class="tab" data-tab="socials">💬 Socials</button>
 	<button class="tab" data-tab="moderation">🛡️ Moderation <span class="cnt" id="cnt-reports" style="display:none"></span></button>
 	<button class="tab" data-tab="system">⚙️ System</button>
-	<button class="tab" data-tab="comms">💬 Comms</button>
+	<button class="tab" data-tab="comms">📢 Comms</button>
 	<button class="tab" data-tab="analytics">📊 Analytics</button>
 	<button class="tab" data-tab="jarvis">🤖 Jarvis</button>
 </div>
@@ -184,7 +188,11 @@
 <!-- ============ TAB: RANKS & PEOPLE ============ -->
 <div class="tab-pane active" id="tab-ranks">
 	<div class="kpis" style="margin-bottom:16px">
-		<div class="kpi"><b id="stat-users">0</b><span>players</span></div>
+		<div class="kpi"><b id="stat-users">0</b><span>total players</span></div>
+		<div class="kpi" style="border-left:2px solid #00ff88;"><b id="stat-online-now" style="color:#00ff88;">0</b><span style="color:#00ff88;">online now</span></div>
+		<div class="kpi"><b id="stat-online-1h">0</b><span>active last hr</span></div>
+		<div class="kpi"><b id="stat-online-24h">0</b><span>active last day</span></div>
+		<div class="kpi"><b id="stat-online-week">0</b><span>active last week</span></div>
 		<div class="kpi"><b id="stat-presets">0</b><span>rank presets</span></div>
 		<div class="kpi"><b id="stat-ranked">0</b><span>players ranked</span></div>
 	</div>
@@ -347,6 +355,98 @@
 		<div class="card">
 			<h2>💾 Game Saves <span class="pill" id="tk-saves-count">0</span></h2>
 			<div id="tk-saves" class="grid" style="gap:8px"></div>
+		</div>
+	</div>
+</div>
+
+<!-- ============ TAB: SOCIALS ============ -->
+<div class="tab-pane" id="tab-socials">
+	<div class="sect-title">💬 Socials &amp; User Activity Analytics</div>
+
+	<!-- Signed-In Online Users Metric Cards -->
+	<div class="kpis" style="margin-bottom:18px">
+		<div class="kpi" style="border-left: 3px solid #00ff88;">
+			<b id="soc-online-now" style="color:#00ff88;">0</b>
+			<span>Online Signed-In Now</span>
+			<div class="muted" style="font-size:11px;margin-top:3px;">Active right now (last 2m)</div>
+		</div>
+		<div class="kpi" style="border-left: 3px solid #00f0ff;">
+			<b id="soc-online-1h" style="color:#00f0ff;">0</b>
+			<span>Signed-In (Last Hr)</span>
+			<div class="muted" style="font-size:11px;margin-top:3px;">Past 60 minutes</div>
+		</div>
+		<div class="kpi" style="border-left: 3px solid #a855f7;">
+			<b id="soc-online-24h" style="color:#a855f7;">0</b>
+			<span>Signed-In (Last Day)</span>
+			<div class="muted" style="font-size:11px;margin-top:3px;">Past 24 hours</div>
+		</div>
+		<div class="kpi" style="border-left: 3px solid #f59e0b;">
+			<b id="soc-online-lastweek" style="color:#f59e0b;">0</b>
+			<span>Last Week (Mon – Sun)</span>
+			<div class="muted" id="soc-lastweek-range" style="font-size:11px;margin-top:3px;">Previous Mon – Sun</div>
+		</div>
+		<div class="kpi" style="border-left: 3px solid #38bdf8;">
+			<b id="soc-online-thisweek" style="color:#38bdf8;">0</b>
+			<span>This Week (Mon – Sun)</span>
+			<div class="muted" id="soc-thisweek-range" style="font-size:11px;margin-top:3px;">Current Mon – Today</div>
+		</div>
+	</div>
+
+	<!-- Feature Usage Breakdown Card -->
+	<div class="card" style="margin-bottom:18px">
+		<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+			<div>
+				<h2 style="margin:0;">🔥 Feature Usage: Who Used What &amp; How Many Times</h2>
+				<p class="sec-hint" style="margin:4px 0 0;">Total uses, unique users, and signed-in accounts across Clash Proxy features.</p>
+			</div>
+			<div class="row" style="gap:7px;">
+				<button class="btn small" id="soc-btn-now" data-window="now">⚡ Right Now</button>
+				<button class="btn small" id="soc-btn-1h" data-window="lastHr">⏱️ Last Hr</button>
+				<button class="btn small" id="soc-btn-24h" data-window="lastDay">📅 Last Day</button>
+				<button class="btn small gold" id="soc-btn-lastweek" data-window="lastWeek">🗓️ Last Week (Mon–Sun)</button>
+				<button class="btn small" id="soc-btn-thisweek" data-window="thisWeek">📆 This Week (Mon–Sun)</button>
+				<button class="btn small ghost" id="soc-refresh-btn">🔄 Refresh</button>
+			</div>
+		</div>
+
+		<div style="overflow-x:auto;">
+			<table>
+				<thead>
+					<tr>
+						<th>Feature / Category</th>
+						<th>Total Times Used</th>
+						<th>Unique People Who Used It</th>
+						<th>Signed-In Users</th>
+						<th>Status / Activity Level</th>
+					</tr>
+				</thead>
+				<tbody id="soc-features-tbody">
+					<tr><td colspan="5" class="empty">Loading feature analytics…</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Multi-Timeframe Matrix Comparison Card -->
+	<div class="card">
+		<h2>📊 Full Timeframe Comparison (Now · Last Hr · Last Day · Last Week Mon–Sun)</h2>
+		<p class="sec-hint">Direct cross-comparison showing how many times everything was used in each timeframe.</p>
+		<div style="overflow-x:auto;">
+			<table>
+				<thead>
+					<tr>
+						<th>Feature</th>
+						<th style="color:#00ff88;">⚡ Right Now</th>
+						<th style="color:#00f0ff;">⏱️ Last Hr</th>
+						<th style="color:#a855f7;">📅 Last Day</th>
+						<th style="color:#f59e0b;">🗓️ Last Week (Mon–Sun)</th>
+						<th style="color:#38bdf8;">📆 This Week</th>
+					</tr>
+				</thead>
+				<tbody id="soc-matrix-tbody">
+					<tr><td colspan="6" class="empty">Loading matrix comparison…</td></tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
@@ -775,7 +875,7 @@ function syncTabBadges() {
 }
 
 /* ---------- Tabs ---------- */
-	const loaders = { games: loadGamesTab, toolkit: loadToolkitTab, moderation: loadModerationTab, system: loadSystemTab, comms: loadCommsTab, analytics: loadAnalyticsTab, jarvis: loadJarvisTab };
+	const loaders = { games: loadGamesTab, toolkit: loadToolkitTab, socials: loadSocialsTab, moderation: loadModerationTab, system: loadSystemTab, comms: loadCommsTab, analytics: loadAnalyticsTab, jarvis: loadJarvisTab };
 let healthTimer = null, logTimer = null;
 document.querySelectorAll(".tab").forEach((tb) => tb.addEventListener("click", () => showTab(tb.dataset.tab)));
 function showTab(name) {
@@ -801,6 +901,12 @@ function renderRanks() {
 	$("stat-users").textContent = state.users.length;
 	$("stat-presets").textContent = state.presets.length;
 	$("stat-ranked").textContent = Object.keys(state.assignments).length;
+	if (state.onlineStats) {
+		if ($("stat-online-now")) $("stat-online-now").textContent = state.onlineStats.now ?? 0;
+		if ($("stat-online-1h")) $("stat-online-1h").textContent = state.onlineStats.lastHr ?? 0;
+		if ($("stat-online-24h")) $("stat-online-24h").textContent = state.onlineStats.lastDay ?? 0;
+		if ($("stat-online-week")) $("stat-online-week").textContent = state.onlineStats.lastWeek ?? 0;
+	}
 	renderPresets(); renderPeople();
 }
 function renderPresets() {
@@ -845,6 +951,11 @@ $("save-preset-btn").addEventListener("click", async () => {
 function renderPeople() {
 	const q = $("people-search").value.trim().toLowerCase();
 	const rows = state.users.filter((u) => !q || u.username.toLowerCase().includes(q) || (u.display_name || "").toLowerCase().includes(q));
+	// Online people at the top, offline at the bottom:
+	rows.sort((a, b) => {
+		if (b.online !== a.online) return (b.online ? 1 : 0) - (a.online ? 1 : 0);
+		return (a.username || "").localeCompare(b.username || "");
+	});
 	const tbody = $("people-tbody");
 	if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">No players found.</td></tr>'; return; }
 	tbody.innerHTML = rows.map((u) => {
@@ -858,8 +969,9 @@ function renderPeople() {
 		const actions = a
 			? `<button class="btn small" data-edit-assign="${u.id}">✏️ Edit</button><button class="btn small danger" data-unassign="${u.id}">Unassign</button>`
 			: `<button class="btn small gold" data-assign="${u.id}">+ Assign Rank</button>`;
+		const statusDot = `<span class="panel-status-dot ${u.online ? 'online' : 'offline'}" title="${u.online ? 'Online' : 'Offline'}"></span>`;
 		return `<tr><td><div class="player"><div class="avatar">${esc(initial)}</div>
-			<div><div style="font-weight:700">${esc(u.display_name || u.username)}${banChip}</div><div class="muted" style="font-size:11px">@${esc(u.username)}</div></div></div></td>
+			<div><div style="font-weight:700;display:flex;align-items:center;">${statusDot}<span>${esc(u.display_name || u.username)}</span>${banChip}</div><div class="muted" style="font-size:11px">@${esc(u.username)}</div></div></div></td>
 			<td>${rankCell}</td><td>${roleChip}</td><td>${privCell}</td><td><div class="row">${actions}</div></td></tr>`;
 	}).join("");
 	tbody.querySelectorAll("[data-assign]").forEach((b) => b.addEventListener("click", () => openAssignModal(parseInt(b.dataset.assign, 10), null)));
@@ -1162,6 +1274,155 @@ $("tk-god").addEventListener("click", async () => {
 	try { await api("api/tools/action", { action: "godmode", username: tkCurrentUser.user.username }); toast("⚡ God Mode activated!"); $("tk-go").click(); } catch (e) { toast(e.message, true); }
 });
 
+/* ============================================================
+   TAB: SOCIALS & ACTIVITY ANALYTICS
+   ============================================================ */
+let socialsData = null;
+let activeSocialsWindow = "lastWeek";
+
+const ALL_FEATURES_LIST = [
+	{ type: "ai_query", name: "Clash AI Assistant", icon: "🤖", cat: "AI & Chat" },
+	{ type: "proxy_browse", name: "Web Proxy & Search", icon: "🌐", cat: "Core Proxy" },
+	{ type: "game_play", name: "Arcade & Web Games", icon: "🎮", cat: "Gaming" },
+	{ type: "soundboard_play", name: "Soundboard Effects", icon: "🔊", cat: "Audio" },
+	{ type: "chat_message", name: "Direct Messages & Chat", icon: "💬", cat: "Social" },
+	{ type: "lounge_party", name: "Lounge Multiplayer Parties", icon: "🛋️", cat: "Social" },
+	{ type: "stealth_cloak", name: "Tab Cloaking & Stealth", icon: "🕵️", cat: "Privacy" },
+	{ type: "mirror_switch", name: "26 Mirrors Hub", icon: "🔗", cat: "Connectivity" },
+	{ type: "bazaar_shop", name: "Bazaar & Cosmetics", icon: "🏪", cat: "Economy" },
+	{ type: "soundboard_favorite", name: "Soundboard Favorites", icon: "⭐", cat: "Audio" }
+];
+
+async function loadSocialsTab() {
+	try {
+		socialsData = await api("api/socials/stats");
+		renderSocialsKPIs();
+		renderSocialsFeatures();
+		renderSocialsMatrix();
+	} catch (e) {
+		toast("Failed to load socials analytics: " + e.message, true);
+	}
+}
+
+function renderSocialsKPIs() {
+	if (!socialsData) return;
+	const s = socialsData.onlineStats || {};
+	const w = socialsData.windows || {};
+	if ($("soc-online-now")) $("soc-online-now").textContent = s.now ?? 0;
+	if ($("soc-online-1h")) $("soc-online-1h").textContent = s.lastHr ?? 0;
+	if ($("soc-online-24h")) $("soc-online-24h").textContent = s.lastDay ?? 0;
+	if ($("soc-online-lastweek")) $("soc-online-lastweek").textContent = s.lastWeek ?? 0;
+	if ($("soc-online-thisweek")) $("soc-online-thisweek").textContent = s.thisWeek ?? 0;
+
+	if ($("soc-lastweek-range") && w.lastWeek?.rangeText) {
+		$("soc-lastweek-range").textContent = w.lastWeek.rangeText;
+	}
+	if ($("soc-thisweek-range") && w.thisWeek?.rangeText) {
+		$("soc-thisweek-range").textContent = w.thisWeek.rangeText;
+	}
+}
+
+function renderSocialsFeatures() {
+	if (!socialsData) return;
+	const tbody = $("soc-features-tbody");
+	if (!tbody) return;
+
+	const usageMap = (socialsData.usage && socialsData.usage[activeSocialsWindow]) || {};
+	
+	// Highlight active window filter button
+	["now", "1h", "24h", "lastweek", "thisweek"].forEach((key) => {
+		const btn = $("soc-btn-" + key);
+		if (btn) {
+			const wKey = btn.dataset.window;
+			btn.classList.toggle("gold", wKey === activeSocialsWindow);
+		}
+	});
+
+	tbody.innerHTML = ALL_FEATURES_LIST.map((f) => {
+		const st = usageMap[f.type] || { totalUses: 0, uniqueUsers: 0, signedInUsers: 0 };
+		const total = st.totalUses || 0;
+		const users = st.uniqueUsers || 0;
+		const signedIn = st.signedInUsers || 0;
+		
+		let statusBadge = '<span class="chip plain">Quiet</span>';
+		if (total > 50) statusBadge = '<span class="chip" style="background:rgba(0,255,136,0.15);color:#00ff88;border-color:#00ff88;">🔥 High Traffic</span>';
+		else if (total > 10) statusBadge = '<span class="chip purple">Active</span>';
+		else if (total > 0) statusBadge = '<span class="chip plain">Light</span>';
+
+		return `<tr>
+			<td>
+				<div class="row" style="gap:9px;">
+					<span style="font-size:1.3rem;">${f.icon}</span>
+					<div>
+						<div style="font-weight:700;">${esc(f.name)}</div>
+						<div class="muted" style="font-size:11px;">${esc(f.cat)}</div>
+					</div>
+				</div>
+			</td>
+			<td><b style="font-size:14px;color:#f1f2f8;">${total.toLocaleString()}</b> <span class="muted" style="font-size:11px;">times used</span></td>
+			<td><b style="font-size:14px;color:#00f0ff;">${users.toLocaleString()}</b> <span class="muted" style="font-size:11px;">people</span></td>
+			<td><b style="font-size:14px;color:#a855f7;">${signedIn.toLocaleString()}</b> <span class="muted" style="font-size:11px;">signed in</span></td>
+			<td>${statusBadge}</td>
+		</tr>`;
+	}).join("");
+}
+
+function renderSocialsMatrix() {
+	if (!socialsData) return;
+	const tbody = $("soc-matrix-tbody");
+	if (!tbody) return;
+
+	const u = socialsData.usage || {};
+	tbody.innerHTML = ALL_FEATURES_LIST.map((f) => {
+		const n = u.now?.[f.type]?.totalUses || 0;
+		const nUsers = u.now?.[f.type]?.uniqueUsers || 0;
+
+		const h = u.lastHr?.[f.type]?.totalUses || 0;
+		const hUsers = u.lastHr?.[f.type]?.uniqueUsers || 0;
+
+		const d = u.lastDay?.[f.type]?.totalUses || 0;
+		const dUsers = u.lastDay?.[f.type]?.uniqueUsers || 0;
+
+		const lw = u.lastWeek?.[f.type]?.totalUses || 0;
+		const lwUsers = u.lastWeek?.[f.type]?.uniqueUsers || 0;
+
+		const tw = u.thisWeek?.[f.type]?.totalUses || 0;
+		const twUsers = u.thisWeek?.[f.type]?.uniqueUsers || 0;
+
+		return `<tr>
+			<td>
+				<div class="row" style="gap:8px;">
+					<span>${f.icon}</span>
+					<span style="font-weight:700;">${esc(f.name)}</span>
+				</div>
+			</td>
+			<td><b style="color:#00ff88;">${n}</b> <span class="muted" style="font-size:11px;">(${nUsers} ppl)</span></td>
+			<td><b style="color:#00f0ff;">${h}</b> <span class="muted" style="font-size:11px;">(${hUsers} ppl)</span></td>
+			<td><b style="color:#a855f7;">${d}</b> <span class="muted" style="font-size:11px;">(${dUsers} ppl)</span></td>
+			<td><b style="color:#f59e0b;">${lw}</b> <span class="muted" style="font-size:11px;">(${lwUsers} ppl)</span></td>
+			<td><b style="color:#38bdf8;">${tw}</b> <span class="muted" style="font-size:11px;">(${twUsers} ppl)</span></td>
+		</tr>`;
+	}).join("");
+}
+
+// Socials tab event listeners
+["now", "1h", "24h", "lastweek", "thisweek"].forEach((key) => {
+	const btn = $("soc-btn-" + key);
+	if (btn) {
+		btn.addEventListener("click", () => {
+			activeSocialsWindow = btn.dataset.window;
+			renderSocialsFeatures();
+		});
+	}
+});
+
+const socRefreshBtn = $("soc-refresh-btn");
+if (socRefreshBtn) {
+	socRefreshBtn.addEventListener("click", () => {
+		loadSocialsTab();
+		toast("Socials analytics refreshed.");
+	});
+}
 
 /* ============================================================
    TAB 3: MODERATION

@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws";
 import { readFileSync } from "node:fs";
 import db from "./db.js";
 import { verifyToken } from "./auth-utils.js";
+import { touchUserActive, recordActivity } from "./activity.js";
 
 // Active user sockets: userId -> Set<WebSocket>
 const activeSockets = new Map();
@@ -289,6 +290,7 @@ presenceWss.on("connection", (ws, req) => {
 					lastSeen: Date.now(),
 					ghostMode
 				});
+				touchUserActive(currentUserId);
 
 				ws.send(JSON.stringify({
 					type: "auth_success",
@@ -377,6 +379,7 @@ presenceWss.on("connection", (ws, req) => {
 					INSERT INTO messages (sender_id, receiver_id, content, type, meta_json, is_read)
 					VALUES (?, ?, ?, ?, ?, 0)
 				`).run(currentUserId, targetId, String(content).slice(0, 1000), messageType, metaJson);
+				recordActivity(currentUserId, "chat_message", { receiverId: targetId });
 
 				const messageObj = {
 					id: insertResult.lastInsertRowid,
@@ -511,6 +514,7 @@ presenceWss.on("connection", (ws, req) => {
 					rooms: getLoungeRooms()
 				}));
 			} else if (data.type === "ping") {
+				if (currentUserId) touchUserActive(currentUserId);
 				ws.send(JSON.stringify({ type: "pong" }));
 			}
 		} catch (err) {
@@ -608,6 +612,19 @@ export function getPresenceStats() {
 		users.push({ userId: p.userId, username: p.username, status: p.status, activity: p.activity || null });
 	}
 	return { online, users, history: presenceHistory.slice(-144), rooms: getLoungeRooms() };
+}
+
+export function isUserOnline(userId) {
+	const p = userPresence.get(Number(userId));
+	return !!p && p.status !== "offline";
+}
+
+export function getOnlineUserIds() {
+	const ids = new Set();
+	for (const p of userPresence.values()) {
+		if (p.status !== "offline") ids.add(Number(p.userId));
+	}
+	return ids;
 }
 
 function broadcastPresenceToFriends(userId) {

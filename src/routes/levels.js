@@ -1,5 +1,7 @@
 import db from "../db.js";
 import { extractAuthUser, addXp, awardAchievement, BADGES } from "../auth-utils.js";
+import { isUserOnline, getOnlineUserIds } from "../presence.js";
+import { recordActivity } from "../activity.js";
 
 // Rate limiting cache for XP requests to prevent spam
 const xpRateLimits = new Map();
@@ -28,11 +30,7 @@ export default async function levelsRoutes(fastify) {
 			awardAchievement(auth.id, "first_voyage");
 
 			// Log site visit
-			db.prepare("INSERT INTO activity_log (user_id, type, data_json) VALUES (?, ?, ?)").run(
-				auth.id,
-				"site_visit",
-				JSON.stringify({ domain: details?.domain || "unknown", timestamp: now })
-			);
+			recordActivity(auth.id, "site_visit", { domain: details?.domain || "unknown" });
 		} else if (type === "game_play") {
 			// Rate limit: max 1 gameplay award per 2 minutes
 			if (now - lastAwardTime < 120000) {
@@ -43,11 +41,7 @@ export default async function levelsRoutes(fastify) {
 			awardAchievement(auth.id, "arcade_rookie");
 
 			// Log game play
-			db.prepare("INSERT INTO activity_log (user_id, type, data_json) VALUES (?, ?, ?)").run(
-				auth.id,
-				"game_play",
-				JSON.stringify({ gameTitle: details?.gameTitle || "Arcade Game", timestamp: now })
-			);
+			recordActivity(auth.id, "game_play", { gameTitle: details?.gameTitle || "Arcade Game" });
 
 			// Count unique games played
 			const uniqueGames = db.prepare(`
@@ -76,15 +70,18 @@ export default async function levelsRoutes(fastify) {
 	// Global Leaderboard
 	fastify.get("/api/levels/leaderboard", async (req, reply) => {
 		const topUsers = db.prepare(`
-			SELECT id, username, display_name, avatar_url, level, xp, role, custom_tag
+			SELECT id, username, display_name, avatar_url, level, xp, role, custom_tag, last_active_at
 			FROM users
 			ORDER BY xp DESC, level DESC
 			LIMIT 50
 		`).all();
 
+		const onlineSet = getOnlineUserIds();
+		const nowTs = Date.now();
 		const leaderboard = topUsers.map((u, index) => ({
 			rank: index + 1,
-			...u
+			...u,
+			online: onlineSet.has(u.id) || (u.last_active_at && (nowTs - u.last_active_at < 120_000))
 		}));
 
 		return {
