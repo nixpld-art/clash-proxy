@@ -1,40 +1,37 @@
 <!DOCTYPE html>
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html><head><style type="text/css">#button {
-  display:none;
-}
-.imgb_vis {
-  animation: imgb-animation 7s linear;
-}
-@keyframes imgb-animation {
-  10% {
-    transform: translateX(0);
-  }
-  20% {
-    transform: translateX(100px);
-  }
-  90% {
-    transform: translateX(100px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}</style></head><body><module>
-<moduleprefs title="Ping Pong Chaos">
-<content type="html"><!--[CDATA[
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/greggman/webgl-helpers@06e3d45373af0f3ce8f58b472b61835d9678d23a/examples/unity/TemplateData/style.css"-->
-<script src="https://cdn.jsdelivr.net/gh/greggman/webgl-helpers@06e3d45373af0f3ce8f58b472b61835d9678d23a/examples/unity/TemplateData/UnityProgress.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/Susorodni/swfgalaxy@a8aa0dc864c6e9b964ab966bc49f9b077401b8fb/games/pingpongchaos/Build/UnityLoader.js"></script>
-    <script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "https://cdn.jsdelivr.net/gh/Susorodni/swfgalaxy@a8aa0dc864c6e9b964ab966bc49f9b077401b8fb/games/pingpongchaos/Build/PingPongChaosTwoPlayerGamesOrg.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}});
-    </script>
-    <div class="webgl-content">
-        <div id="gameContainer" style="width: 100vw; height: 100vh; padding: 0px; margin: 0px; border: 0px; position: relative; background: rgb(95, 116, 137);"><canvas id="#canvas" width="806" height="484" style="cursor: default;"></canvas><div class="logo Dark" style="display: none;"></div><div class="progress Dark" style="display: none;"><div class="empty" style="width: 0%;"></div><div class="full" style="width: 100%;"></div></div></div>
-        </div>
-
-
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ping Pong Chaos — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mab13b90.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

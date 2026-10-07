@@ -1,77 +1,22 @@
-<!-- Ultimate Game Stash file-->
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-<!-- Made by genizy -->
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <base href="https://cdn.jsdelivr.net/gh/bubblfan/fnaf@latest/3/" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta
-      name="viewport"
-      content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"
-    />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="HandheldFriendly" content="true" />
-    <title>Five Nights at Freddy's 3</title>
-  </head>
-
-  <body>
-    <div
-      style="display: inline-block; -webkit-user-select: none; text-align: left"
-    >
-      <canvas id="MMFCanvas" width="1280" height="720">
-        Your browser does not support Canvas, Please try again.
-      </canvas>
-    </div>
-    <div id="progress-container">
-      <div style="margin-bottom: 6px">
-        Downloading... <span id="download-text">0%</span>
-      </div>
-      <div
-        style="
-          width: 100%;
-          background: #444;
-          border-radius: 6px;
-          overflow: hidden;
-        "
-      >
-        <div
-          id="download-bar"
-          style="
-            height: 10px;
-            background: #3b82f6;
-            width: 0%;
-            transition: width 0.2s;
-          "
-        ></div>
-      </div>
-      <div style="margin: 12px 0 6px">
-        Extracting... <span id="extract-text">0%</span>
-      </div>
-      <div
-        style="
-          width: 100%;
-          background: #444;
-          border-radius: 6px;
-          overflow: hidden;
-        "
-      >
-        <div
-          id="extract-bar"
-          style="
-            height: 10px;
-            background: #10b981;
-            width: 0%;
-            transition: width 0.2s;
-          "
-        ></div>
-      </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="main.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>fnaf 3 — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" src="https://tungtung-school.lavachamber.com/study/m181832d/index.html" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    const frame = document.getElementById('game-frame');
+    frame.addEventListener('error', function() {
+      frame.src = '/classic/' + "https://tungtung-school.lavachamber.com/study/m181832d/index.html";
+    });
+  </script>
+</body>
 </html>

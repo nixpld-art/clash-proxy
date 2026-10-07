@@ -1,1 +1,37 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/paigerodeghero/academicwebsite@897c910c65e6c68b04c44a6b6eba0b99d0f2f2cf/TemplateData/style.css"> <script src="https://cdn.jsdelivr.net/gh/lee2sman/everyday@d45d601d2c4d60adf809a0b677c00b7d12aba7e9/96/TemplateData/UnityProgress.js"></script> <script src="https://cdn.jsdelivr.net/gh/gertdoro/UnityExplorer@3c92f983073739a8afc2dab20af78e92f1f54f3a/UI/Panels/card/UnityLoader.js"></script> <script> var gameInstance = UnityLoader.instantiate("gameContainer", "https://cdn.jsdelivr.net/gh/gertdoro/UnityExplorer@3c92f983073739a8afc2dab20af78e92f1f54f3a/UI/Panels/card/WebGL.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}}); </script> <script src="https://s3.amazonaws.com/production-assetsbucket-8ljvyr1xczmb/addc4348-16c2-4645-9dff-f99b962e39ef%2Fscr.js"></script> <div class="webgl-content"> <div id="gameContainer" style="width: 100vw; height: 100vh"></div> </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Drawing — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m929f7fc.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

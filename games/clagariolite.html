@@ -1,34 +1,37 @@
 <!DOCTYPE html>
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html>
- <head>
- <script src='https://cdn.jsdelivr.net/gh/234sd4w5w45wers5tr-645758574456456/436874@80f8732e80020f5e1985fc807267ed0637e230a7/jquery-latest.min.js'></script> 
-
- <script src='https://cdn.jsdelivr.net/gh/234sd4w5w45wers5tr-645758574456456/436874@80f8732e80020f5e1985fc807267ed0637e230a7/etc.js'></script> 
- <script src="https://cdn.jsdelivr.net/gh/234sd4w5w45wers5tr-645758574456456/436874@80f8732e80020f5e1985fc807267ed0637e230a7/circle-game.js"></script> 
- <script type='text/javascript'>
-  $(document).ready(function() {
-    if(isCanvasSupported())
-      cg.init()
-    else
-      $(document.body).html("<style type='text/css'>p {text-align: center} body {padding: 10px}</style><p>You browser does not support HTML5, which is required to run this game.</p><p>I recommend Google Chrome <br /><a href='http://www.google.com/chrome'><img src='' /></a></p>")
-  })
-</script> 
- <style type='text/css'>
-body {
-  margin: 0;
-  padding: 0;
-}
-canvas {
-  background-color: black;
-}
-</style> 
-  
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agario Lite — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
-   <body>
-<canvas></canvas>
-
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m4915dd1.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

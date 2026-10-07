@@ -1,1 +1,37 @@
-   <div id="fr" data='<iframe width="100%" height="100%" src="/classic/https://scratch.mit.edu/projects/323149378/embed" frameborder="0" allowfullscreen></iframe>'></div><button class="c-button" type="button" onclick="PlayTo(this)">CLICK TO PLAY</button><style>.c-button{min-width:100%;font-family:fantasy;appearance:auto;border:0;border-color:#fff;border-radius:5px;background:#000;color:#fff;font-size:30px;cursor:pointer}.c-button:hover{background:#320d90}.c-button:focus{outline:0;box-shadow:0 0 0 4px #cbd6ee}.c-button{display:flex;align-items:center;justify-content:center;height:100%}</style><script>function PlayTo(i){var n=i.previousSibling;n.innerHTML=n.getAttribute("data"),i.style.display="none"}</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gachalife — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/3kh@aba902390fff20765e8e11e4b631b6e5664e17c3/m9276c1a/index.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

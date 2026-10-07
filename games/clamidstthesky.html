@@ -1,98 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ --> 
-
-
 <html lang="en">
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@de4ee4bb507b4e35d98ec9eac6794b018cfb9789/amidst%20the%20sky/">
 <head>
-  <!-- GameMaker Settings -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta http-equiv="pragma" content="no-cache" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta charset="utf-8" />
-  <title>Amidst the Clouds</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amidst the Sky — Clash Games</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background-color: black;
-    }
-
-    div.gm4html5_div_class {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Fullscreen styles (optional if you use fullscreen mode) */
-    :-webkit-full-screen canvas,
-    :-moz-full-screen canvas,
-    :-ms-fullscreen canvas,
-    :fullscreen canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
 </head>
-
 <body>
-  <div class="gm4html5_div_class" id="gm4html5_div_id">
-    <img src="Clouds/splash.png" id="GM4HTML5_loadingscreen" alt="GameMaker:HTML5 loading screen" style="display:none;" />
-    <canvas id="canvas" width="800" height="600">
-      <p>Your browser doesn't support HTML5 canvas.</p>
-    </canvas>
-  </div>
-
-  <!-- Game script -->
-  <script type="text/javascript" src="Clouds/Clouds.js?EWYAC=887725966"></script>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
   <script>
-    function resizeCanvas() {
-      const canvas = document.getElementById("canvas");
-      const aspect = 800 / 600;
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-
-      if (width / height > aspect) {
-        width = height * aspect;
-      } else {
-        height = width / aspect;
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mbf085d9.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
       }
-
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-    }
-
-    window.addEventListener("resize", resizeCanvas);
-    window.onload = () => {
-      GameMaker_Init();
-      resizeCanvas();
-    };
+    })();
   </script>
 </body>
-
 </html>

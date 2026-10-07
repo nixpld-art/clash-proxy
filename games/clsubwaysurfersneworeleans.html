@@ -1,141 +1,37 @@
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<base href="https://cdn.jsdelivr.net/gh/bubbls/subwaysurfersmerge/">
-<html>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    <title>Subway Surfers</title>  
-    <link rel="icon" href="img/FirstAvatar.png">  
-  <script src="4399.js"></script>
-    <script>
-        window.config = {
-            loader: "unity",
-            debug: false,
-            maxRatio: 16 / 9,
-            minRatio: 9 / 16,
-            title: 'Subway Surfers: New Orleans',
-            unityVersion: '2019.2.0f1',
-            unityWebglBuildUrl: 'NewOrleans.json',
-            fileSize: 36,
-            cachedDecompressedFileSizes: {
-                'NewOrleans.asm.code.unityweb': 9057300,
-                'NewOrleans.asm.framework.unityweb': 89458,
-                'NewOrleans.asm.memory.unityweb': 1004429,
-                'NewOrleans.data.unityweb': 18836524,
-                'NewOrleans.wasm.code.unityweb': 7336727,
-                'NewOrleans.wasm.framework.unityweb': 93789,
-            },
-        };
-        window.mergedBlobUrls = {};
-        window.assetsReady = false;
-
-        async function mergeSplitFile(fileUrlBase, numParts = 2) {
-            const partUrls = Array.from({ length: numParts }, (_, i) => 
-                `${fileUrlBase}.part${i + 1}`
-            );
-
-            try {
-                const responses = await Promise.all(
-                    partUrls.map(url => fetch(url))
-                );
-
-                if (responses.some(r => !r.ok)) {
-                    return null;
-                }
-
-                const parts = await Promise.all(
-                    responses.map(r => r.arrayBuffer())
-                );
-
-                const combinedBlob = new Blob(parts, {
-                    type: 'application/octet-stream'
-                });
-
-                return URL.createObjectURL(combinedBlob);
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function setupXHRInterceptor() {
-            if (window.xhrInterceptorInstalled) {
-                return;
-            }
-            
-            const originalOpen = XMLHttpRequest.prototype.open;
-            const originalSend = XMLHttpRequest.prototype.send;
-
-            XMLHttpRequest.prototype.open = function(method, url, ...args) {
-                this._url = url;
-                this._method = method;
-                this._args = args;
-                
-                let finalUrl = url;
-                for (const [filename, blobUrl] of Object.entries(window.mergedBlobUrls)) {
-                    if (url.includes(filename)) {
-                        finalUrl = blobUrl;
-                        break;
-                    }
-                }
-                
-                return originalOpen.call(this, method, finalUrl, ...args);
-            };
-
-            XMLHttpRequest.prototype.send = function(...args) {
-                const xhr = this;
-                
-                if (!window.assetsReady) {
-                    const checkReady = setInterval(() => { 
-                        if (window.assetsReady) {
-                            clearInterval(checkReady);
-                            originalSend.apply(xhr, args);
-                        }
-                    }, 50);
-                    return;
-                }
-                
-                return originalSend.apply(this, args);
-            };
-            
-            window.xhrInterceptorInstalled = true;
-        }
-
-        async function prepareGameAssets() {
-            try {
-                window.assetsReady = false;
-                delete window.xhrInterceptorInstalled;
-                window.mergedBlobUrls = {};
-                
-                setupXHRInterceptor();
-                
-                const filesToMerge = [
-                    'NewOrleans.data.unityweb',
-                    'NewOrleans.wasm.code.unityweb'
-                ];
-                 
-                for (const filename of filesToMerge) {
-                    const blobUrl = await mergeSplitFile(filename, 2);
-                    if (blobUrl) {
-                        window.mergedBlobUrls[filename] = blobUrl;
-                    } 
-                }
-                
-                window.assetsPrepared = true;
-                window.assetsReady = true;
-                
-            } catch (error) {
-                window.assetsPrepared = false;
-                window.assetsReady = true;
-            }
-        }
-
-        prepareGameAssets();
-
-    </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Subway Surfers New Orleans — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
 <body>
-    <script src="master-loader.js"></script>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m44310ac.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
 </html>

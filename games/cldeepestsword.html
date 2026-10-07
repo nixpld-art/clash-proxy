@@ -1,88 +1,37 @@
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-<html lang="en-us">
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@8b3b8522e7e0c3f94588a5d2364f49e7829f993e/deepest%20sword/">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Deepest Sword</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Deepest Sword — Clash Games</title>
   <style>
-    html,
-    body {
-      background: #000;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-      padding: 0;
-      margin: 0;
-    }
-
-    div#gameContainer {
-      background: transparent !important;
-      position: absolute;
-    }
-
-    div#gameContainer canvas {
-      position: absolute;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
 </head>
-
 <body>
-  <div id="gameContainer">
-    <canvas id="unity-canvas"></canvas>
-    <script src="Build/WebBuilds.loader.js"></script>
-    <script>
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/WebBuilds.data",
-        frameworkUrl: "Build/WebBuilds.framework.js",
-        codeUrl: "Build/WebBuilds.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Cosmic Adventure Squad",
-        productName: "Deepest Sword",
-        productVersion: "0.1.5c",
-      }).then(function(instance) {
-        var canvas = instance.Module.canvas;
-        var container = canvas.parentElement;
-
-        function onResize() {
-          var w;
-          var h;
-
-          if (scaleToFit) {
-            w = window.innerWidth;
-            h = window.innerHeight;
-
-            var r = 540 / 960;
-
-            if (w * r > window.innerHeight) {
-              w = Math.min(w, Math.ceil(h / r));
-            }
-            h = Math.floor(w * r);
-          } else {
-            w = 960;
-            h = 540;
-          }
-
-          container.style.width = canvas.style.width = w + "px";
-          container.style.height = canvas.style.height = h + "px";
-          container.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
-          container.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
-        }
-
-        var scaleToFit;
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mecdde6a.html";
+      try {
+        let res;
         try {
-          scaleToFit = !!JSON.parse("");
+          res = await fetch(target);
         } catch (e) {
-          scaleToFit = true;
+          res = await fetch('/classic/' + target);
         }
-        window.addEventListener('resize', onResize);
-        onResize();
-      });
-    </script>
-  </div>
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>

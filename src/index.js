@@ -35,22 +35,26 @@ import { formatGameTitle } from "./game-titles.js";
 // reload so Jarvis-added games show their real titles immediately)
 const gameTitleDataPath = fileURLToPath(new URL("../games-data.js", import.meta.url));
 let gameTitleMap = new Map();
+let gameCategoryMap = new Map();
 function loadGameTitles() {
 	try {
 		const raw = readFileSync(gameTitleDataPath, "utf8");
 		const jsonStr = raw.replace(/^\s*var\s+CLASH_GAMES\s*=\s*/, "").replace(/;\s*$/, "");
 		const arr = JSON.parse(jsonStr);
 		const map = new Map();
+		const catMap = new Map();
 		for (const g of arr) {
 			if (g && g.title && g.url) {
 				const filename = decodeURIComponent(g.url.replace(/^\/games\//, ""));
 				const t = g.title.trim();
 				if (t && !/[<>]/.test(t) && t.length < 150) {
 					map.set(filename, t);
+					if (g.cat) catMap.set(filename, g.cat);
 				}
 			}
 		}
 		gameTitleMap = map;
+		gameCategoryMap = catMap;
 		console.log(`Loaded ${gameTitleMap.size} actual game titles`);
 	} catch (err) {
 		console.error("Could not load games-data.js titles:", err.message);
@@ -77,7 +81,8 @@ function getGamesList() {
 				id: `game-${index + 1}`,
 				title: gameTitleMap.get(filename) || formatGameTitle(filename),
 				filename: filename,
-				url: `/games/${encodeURIComponent(filename)}`
+				url: `/games/${encodeURIComponent(filename)}`,
+				cat: gameCategoryMap.get(filename) || "Arcade"
 			}))
 			.sort((a, b) => a.title.localeCompare(b.title));
 	} catch (err) {

@@ -1,78 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-
-
-<html lang="en-us">
-  <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@79091a3feb921044b3597bd32cea7357b43e2d9c/masekd%20for/">
-  <html lang="en-us">
-
-<html lang="en-us">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Unity WebGL Player | Masked Forces Unlimited</title>
-
-  <link rel="shortcut icon" href="TemplateData/favicon.ico">
-  <link rel="stylesheet" href="TemplateData/style.css">
-  <script src="TemplateData/UnityProgress.js"></script>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Masked Forces Unlimited — Clash Games</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-    }
-
-    #gameContainer {
-      width: 100vw !important;
-      height: 100vh !important;
-      position: fixed;
-      top: 0;
-      left: 0;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
-
-  <script>
-    window.fileMergerConfig = {
-      files: [
-        { name: 'masked-forces-unlimited.data.unityweb', parts: 2 },
-        { name: 'masked-forces-unlimited.asm.code.unityweb', parts: 1 },
-        { name: 'masked-forces-unlimited.asm.framework.unityweb', parts: 1 },
-      ],
-      basePath: 'Build/',
-      debug: true
-    };
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ac5cdfc0042aca584e72619375b4aca948a9243c/merge.js"></script>
-  <script src="Build/UnityLoader.js"></script>
-
-  <script>
-    var gameInstance = UnityLoader.instantiate(
-      "gameContainer",
-      "Build/masked-forces-unlimited.json",
-      { onProgress: UnityProgress }
-    );
-
-    // auto fullscreen on load
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        if (gameInstance && gameInstance.SetFullscreen)
-          gameInstance.SetFullscreen(1);
-      }, 1500);
-    });
-  </script>
 </head>
-
 <body>
-  <div id="gameContainer"></div>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m3239859.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
 </html>

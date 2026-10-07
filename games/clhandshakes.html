@@ -1,29 +1,37 @@
 <!DOCTYPE html>
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-<!--this is a fun puzzle game. Uses jsdelivr and raw.githubusercontent--!>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Handshakes</title>
-  </head>
-  <body style="text-align: center">
-    <canvas id="unity-canvas" width=1200 height=800 style="width: 1200px; height: 800px; background: #FECC80"></canvas>
-    <script src="https://cdn.jsdelivr.net/gh/Stinkalistic/junk@main/handshakes/Build/WebGL.loader.js"></script>
-    <script>
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "https://raw.githubusercontent.com/Stinkalistic/junk/refs/heads/main/handshakes/Build/WebGL.data",
-        frameworkUrl: "https://cdn.jsdelivr.net/gh/Stinkalistic/junk@main/handshakes/Build/WebGL.framework.js",
-        codeUrl: "https://raw.githubusercontent.com/Stinkalistic/junk/refs/heads/main/handshakes/Build/WebGL.wasm",
-        symbolsUrl: "https://cdn.jsdelivr.net/gh/Stinkalistic/junk@main/handshakes/Build/WebGL.framework.js",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Pet Pumpkin, Damaskino, Trumpetguy",
-        productName: "Handshakes",
-        productVersion: "1.1.3",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      });
-    </script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Handshakes — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m8cc604f.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
 </html>

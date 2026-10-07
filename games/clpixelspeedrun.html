@@ -1,8 +1,37 @@
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-
-<!DOCTYPE html> <html> <head> <meta charset="UTF-8"> <title>Pixel Speedrun</title> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bubbls/ruffle@3d38aac19b0b44b1f3327561b05949b8a023d5c2/stylep.css" type="text/css"> </head> <body> <div id="fb-root"></div> <noscript> <div id="notSupportedWrap"> <h2 id="notSupportedTitle">This content requires JavaScript</h2> <p class="notSupportedMessage">JavaScript appears to be disabled. Please enable it to view this content.</p> </div> </noscript> <script> window.addEventListener("keydown", function(e) { // space and arrow keys if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { e.preventDefault(); } }, false); </script> <!-- Construct 2 exported games require jQuery. --> <script src="https://cdn.jsdelivr.net/gh/bubbls/ruffle@3d38aac19b0b44b1f3327561b05949b8a023d5c2/sup.js"></script> <script src="https://cdn.jsdelivr.net/gh/bubbls/ruffle@3d38aac19b0b44b1f3327561b05949b8a023d5c2/offp.js" type="module"></script> <script src="https://cdn.jsdelivr.net/gh/bubbls/ruffle@3d38aac19b0b44b1f3327561b05949b8a023d5c2/mainb.js" type="module"></script> <script src="https://cdn.jsdelivr.net/gh/bubbls/ruffle@3d38aac19b0b44b1f3327561b05949b8a023d5c2/regis.js" type="module"></script> <script src=""></script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pixels Peed Run — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m004cc20.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

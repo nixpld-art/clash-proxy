@@ -1,101 +1,37 @@
-<html>
-  <!-- Ultimate Game Stash file-->
-  <!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-  <head>
-    <script src="//www.google.com/jsapi"></script>
-    <script>
-      window.parent.maeExportApis_();
-    </script>
-
-    <style>
-      body {
-        overflow: hidden;
-        background: #000000;
-        margin-top: 0;
-        margin-left: 0;
-        color: #000000;
-      }
-
-      #startButton {
-        display: block;
-        width: 160px;
-        height: 40px;
-        background-color: #4caf50;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-        font-size: 16px;
-        margin: 20px auto;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-family: "Press Start 2P", cursive;
-        box-shadow: 0px 0px 10px 2px #000000;
-      }
-    </style>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap"
-      rel="stylesheet"
-    />
-    <style type="text/css">
-      #button {
-        display: none;
-      }
-
-      .imgb_vis {
-        animation: imgb-animation 7s linear;
-      }
-
-      @keyframes imgb-animation {
-        10% {
-          transform: translateX(0);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One Piece — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m71998c1.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
         }
-
-        20% {
-          transform: translateX(100px);
-        }
-
-        90% {
-          transform: translateX(100px);
-        }
-
-        100% {
-          transform: translateX(0);
-        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
       }
-    </style>
-  </head>
-
-  <body>
-    <div style="width: 100vw; height: 100vh; max-width: 100%">
-      <div id="game" style="display: none"></div>
-      <button id="startButton">PLAY</button>
-    </div>
-    <script>
-      document.getElementById("game").style.display = "none";
-      function startGame() {
-        document.getElementById("game").style.display = "block";
-        document.getElementById("startButton").style.display = "none";
-        EJS_player = "#game";
-        EJS_core = "gba";
-        EJS_color = "#000000";
-        EJS_startOnLoaded = true;
-        EJS_pathtodata = "https://cdn.jsdelivr.net/gh/lort3453s/emu@master/";
-        EJS_gameUrl =
-          "https://cdn.jsdelivr.net/gh/vbaemulator/GBA-Roms@83fce514f0e75f92e594509ba96987bf57f14058/One%20Piece%20(USA).zip";
-        loadGame();
-      }
-      document
-        .getElementById("startButton")
-        .addEventListener("click", startGame);
-      function loadGame() {
-        var script = document.createElement("script");
-        script.src =
-          "https://cdn.jsdelivr.net/gh/lort3453s/emu@master/loader.js";
-        document.body.appendChild(script);
-      }
-    </script>
-  </body>
+    })();
+  </script>
+</body>
 </html>

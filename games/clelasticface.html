@@ -1,34 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html>
-  <head>
-    <meta charset="utf-8">
-    <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@9defddfd6a5653144cd8c423f6fb83d532dc9967/elasticman/">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
-    <title>Elastic Face</title>
-    <link rel="stylesheet" href="face.css" type="text/css"></head>
-  <body>
-    <script type="text/template" id="loading-template"><div id="loading-bar" class="loading-bar-visible">
-                <div id="loading-fill"></div>
-            </div>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elastic Face — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m369d270.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
   </script>
-  <script type="text/template" id="no-support-template"><div id="error">Your browser does not support the required features. Try another browser and/or device!</div></script>
-  <script type="text/template" id="main-template"><div id="quality-container">
-                <div id="quality-label">Quality</div>
-                <div class="quality" id="quality-medium">Medium</div>
-                <div class="quality" id="quality-high">High</div>
-            </div>
-
-            <div id="credits">
-                <div>Created by <a href="http://david.li" target="_blank">David Li</a></div>
-                <div>Audio by <a href="http://dolphinclub.website/audio" target="_blank">Dolphin Club Audio</a></div>
-            </div></script>
-  <div id="placeholder"></div>
-  <script src="face.js"></script>
-  </body>
+</body>
 </html>

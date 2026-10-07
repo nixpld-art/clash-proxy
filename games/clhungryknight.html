@@ -1,46 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html>
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ec2486bf603128e5b13e27b5f66470b851230c8e/hungry%20knight/">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="css/style.css" />
-  <title>Hungry Knight</title>
-  <meta name="author" content="acer" />
-  <style type="text/css">
-    body {
-      background-color: #undefined;
-    }
+  <title>Hungry Knight — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
-
 </head>
-
 <body>
-  <div id="game">
-    <canvas id="mainCanvas" width="256" height="224">No Canvas Support</canvas>
-  </div>
-  <div id="controller">
-    <div id="controller_dpad">
-      <div id="controller_left"></div>
-      <div id="controller_right"></div>
-      <div id="controller_up"></div>
-      <div id="controller_down"></div>
-    </div>
-    <div id="controller_select" class="capsuleBtn">Select</div>
-    <div id="controller_start" class="capsuleBtn">Start</div>
-    <div id="controller_b" class="roundBtn">B</div>
-    <div id="controller_a" class="roundBtn">A</div>
-  </div>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
   <script>
-    const customControls = {}
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/me79bc28.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
   </script>
-  <script src="binjgb.js"></script>
-  <script src="js/script.js"></script>
 </body>
+</html>

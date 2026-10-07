@@ -122,7 +122,7 @@ var CLASH_GAMES = [
   {
     "title": "Precision Client (Eaglercraft)",
     "url": "/games/clprecisionclienteaglercraft.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_21"
   },
   {
@@ -132,9 +132,9 @@ var CLASH_GAMES = [
     "id": "clash_22"
   },
   {
-    "title": "Minecraft Classic",
+    "title": "minecraft classic",
     "url": "/games/clminecraftclassic.html",
-    "cat": "Action",
+    "cat": "Retro",
     "id": "clash_23"
   },
   {
@@ -146,7 +146,7 @@ var CLASH_GAMES = [
   {
     "title": "Minecraft Pocket Edition",
     "url": "/games/clminecraftpocketedition.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_25"
   },
   {
@@ -168,9 +168,9 @@ var CLASH_GAMES = [
     "id": "clash_28"
   },
   {
-    "title": "1v1.lol",
+    "title": "1v1.LoL",
     "url": "/games/cl1v1maybeidk.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_29"
   },
   {
@@ -186,45 +186,45 @@ var CLASH_GAMES = [
     "id": "clash_31"
   },
   {
-    "title": "Subway Surfers: New orleans",
+    "title": "Subway Surfers New Orleans",
     "url": "/games/clsubwaysurfersneworeleans.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_32"
   },
   {
-    "title": "Subway surfers: San francisco",
+    "title": "Subway Surfers San Francisco",
     "url": "/games/clsubwaysurferssanfrancisco%20(1).html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_33"
   },
   {
     "title": "Slope",
     "url": "/games/clslopeplus.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_34"
   },
   {
-    "title": "Slope 2 player",
+    "title": "Slope 2 Player",
     "url": "/games/clslope2player.html",
-    "cat": "Racing",
+    "cat": "Action",
     "id": "clash_35"
   },
   {
     "title": "Slope 3",
     "url": "/games/clslope3.html",
-    "cat": "Racing",
+    "cat": "Action",
     "id": "clash_36"
   },
   {
-    "title": "Bitlife",
+    "title": "BitLife",
     "url": "/games/clbitlife.html",
-    "cat": "Retro",
+    "cat": "Puzzle",
     "id": "clash_37"
   },
   {
     "title": "Cookie Clicker",
     "url": "/games/clcookieclicker.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_38"
   },
   {
@@ -234,15 +234,15 @@ var CLASH_GAMES = [
     "id": "clash_39"
   },
   {
-    "title": "Geometry Dash Lite",
+    "title": "geometry dash lite",
     "url": "/games/clgdlite.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_40"
   },
   {
-    "title": "Geometry Dash Scratch",
+    "title": "Geometry Dash (Scratch)",
     "url": "/games/clgeometrydashscratch.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_41"
   },
   {
@@ -266,13 +266,13 @@ var CLASH_GAMES = [
   {
     "title": "Smash Karts",
     "url": "/games/clsmashkartsworking.html",
-    "cat": "Creative",
+    "cat": "Racing",
     "id": "clash_45"
   },
   {
     "title": "Basketball Stars",
     "url": "/games/clbasketballstars.html",
-    "cat": "Action",
+    "cat": "Sports",
     "id": "clash_46"
   },
   {
@@ -282,9 +282,9 @@ var CLASH_GAMES = [
     "id": "clash_47"
   },
   {
-    "title": "New Super Mario Bros",
+    "title": "new super mario bros",
     "url": "/games/clnewsupermariobros.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_48"
   },
   {
@@ -332,7 +332,7 @@ var CLASH_GAMES = [
   {
     "title": "Super Mario 63",
     "url": "/games/clsupermario63.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_56"
   },
   {
@@ -344,7 +344,7 @@ var CLASH_GAMES = [
   {
     "title": "Super Mario 64",
     "url": "/games/clsupermario64.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_58"
   },
   {
@@ -366,9 +366,9 @@ var CLASH_GAMES = [
     "id": "clash_61"
   },
   {
-    "title": "Super Mario 64 DS",
+    "title": "super mario 64 ds",
     "url": "/games/clsupermario64ds.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_62"
   },
   {
@@ -440,7 +440,7 @@ var CLASH_GAMES = [
   {
     "title": "Super Mario Bros",
     "url": "/games/clsupermario.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_74"
   },
   {
@@ -456,9 +456,9 @@ var CLASH_GAMES = [
     "id": "clash_76"
   },
   {
-    "title": "Super Mario Bros. 2",
+    "title": "super mario bros 2",
     "url": "/games/clsupermariobros2us.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_77"
   },
   {
@@ -468,9 +468,9 @@ var CLASH_GAMES = [
     "id": "clash_78"
   },
   {
-    "title": "Super Mario Bros. 3",
+    "title": "super mario bros 3",
     "url": "/games/clmario3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_79"
   },
   {
@@ -482,13 +482,13 @@ var CLASH_GAMES = [
   {
     "title": "Super Mario Bros. Remastered",
     "url": "/games/clsmbremastered.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_81"
   },
   {
-    "title": "Super Mario Construct",
+    "title": "Supermarioconstruct",
     "url": "/games/clsmc.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_82"
   },
   {
@@ -500,19 +500,19 @@ var CLASH_GAMES = [
   {
     "title": "Super Mario Galaxy DS",
     "url": "/games/clsmgds.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_84"
   },
   {
-    "title": "Super Mario Kart",
+    "title": "super mario kart",
     "url": "/games/clsupermariokart.html",
-    "cat": "Creative",
+    "cat": "Racing",
     "id": "clash_85"
   },
   {
-    "title": "Super Mario Land",
+    "title": "super mario land",
     "url": "/games/clsupermarioland.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_86"
   },
   {
@@ -522,9 +522,9 @@ var CLASH_GAMES = [
     "id": "clash_87"
   },
   {
-    "title": "Super Mario Land 2",
+    "title": "super mario land 2",
     "url": "/games/clsupermarioland2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_88"
   },
   {
@@ -534,9 +534,9 @@ var CLASH_GAMES = [
     "id": "clash_89"
   },
   {
-    "title": "Super Mario Rpg",
+    "title": "super mario rpg",
     "url": "/games/clsupermariorpg.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_90"
   },
   {
@@ -552,9 +552,9 @@ var CLASH_GAMES = [
     "id": "clash_92"
   },
   {
-    "title": "Super Mario World",
+    "title": "super mario world",
     "url": "/games/clsupermarioworld.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_93"
   },
   {
@@ -576,9 +576,9 @@ var CLASH_GAMES = [
     "id": "clash_96"
   },
   {
-    "title": "Super Mariomon",
+    "title": "Super Mario Mon",
     "url": "/games/clsupermariomon.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_97"
   },
   {
@@ -596,7 +596,7 @@ var CLASH_GAMES = [
   {
     "title": "Flash Tetris",
     "url": "/games/clflashtetris.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_100"
   },
   {
@@ -612,7 +612,7 @@ var CLASH_GAMES = [
     "id": "clash_102"
   },
   {
-    "title": "Tetris (GBA)",
+    "title": "Tetris GBA",
     "url": "/games/cltetrisgba.html",
     "cat": "Puzzle",
     "id": "clash_103"
@@ -626,25 +626,25 @@ var CLASH_GAMES = [
   {
     "title": "Crossy Road",
     "url": "/games/clcrossyroad.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_105"
   },
   {
     "title": "FNAF",
     "url": "/games/clFNAF.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_106"
   },
   {
-    "title": "FNAF 2",
+    "title": "fnaf 2",
     "url": "/games/clFNAF2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_107"
   },
   {
-    "title": "FNAF 3",
+    "title": "fnaf 3",
     "url": "/games/clFNAF3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_108"
   },
   {
@@ -654,15 +654,15 @@ var CLASH_GAMES = [
     "id": "clash_109"
   },
   {
-    "title": "FNAF 4",
+    "title": "fnaf 4",
     "url": "/games/clFNAF4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_110"
   },
   {
-    "title": "FNAF 4 Halloween",
+    "title": "FNAF4 Halloween",
     "url": "/games/clfnaf4halloween.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_111"
   },
   {
@@ -686,13 +686,13 @@ var CLASH_GAMES = [
   {
     "title": "FNAF Ultimate Custom Night",
     "url": "/games/clfnafucn.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_115"
   },
   {
     "title": "FNAF World",
     "url": "/games/clfnafworldd.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_116"
   },
   {
@@ -716,25 +716,25 @@ var CLASH_GAMES = [
   {
     "title": "Five Nights at Candy's 2",
     "url": "/games/clfnac2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_120"
   },
   {
     "title": "Five Nights at Epstein's",
     "url": "/games/clfivenightsatepsteins.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_121"
   },
   {
-    "title": "Five Nights At Shrek's Hotel",
+    "title": "Five Night's at Shrek's Hotel",
     "url": "/games/clfivenightsatshreks.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_122"
   },
   {
     "title": "Five Nights at Winston's",
     "url": "/games/clfnaw.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_123"
   },
   {
@@ -746,25 +746,25 @@ var CLASH_GAMES = [
   {
     "title": "Paper.io 2",
     "url": "/games/clpaperio2.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_125"
   },
   {
-    "title": "Paper.io 3D",
+    "title": "paper io 3d",
     "url": "/games/clpaperio3d.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_126"
   },
   {
-    "title": "Paper.io Mania",
+    "title": "Paper IO Mania",
     "url": "/games/clpaperiomania.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_127"
   },
   {
     "title": "The Oregon Trail",
     "url": "/games/cloregontrail.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_128"
   },
   {
@@ -780,9 +780,9 @@ var CLASH_GAMES = [
     "id": "clash_130"
   },
   {
-    "title": "Doom",
+    "title": "DOOM",
     "url": "/games/cldoomdos.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_131"
   },
   {
@@ -794,7 +794,7 @@ var CLASH_GAMES = [
   {
     "title": "Doom 2",
     "url": "/games/cldoom2.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_133"
   },
   {
@@ -816,7 +816,7 @@ var CLASH_GAMES = [
     "id": "clash_136"
   },
   {
-    "title": "Doom 64",
+    "title": "doom 64",
     "url": "/games/cldoom64.html",
     "cat": "Action",
     "id": "clash_137"
@@ -840,9 +840,9 @@ var CLASH_GAMES = [
     "id": "clash_140"
   },
   {
-    "title": "Doomori",
+    "title": "DOOMORI",
     "url": "/games/cldoomori.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_141"
   },
   {
@@ -864,9 +864,9 @@ var CLASH_GAMES = [
     "id": "clash_144"
   },
   {
-    "title": "Monkey Mart",
+    "title": "monkey mart",
     "url": "/games/clmonkeymart.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_145"
   },
   {
@@ -992,7 +992,7 @@ var CLASH_GAMES = [
   {
     "title": "Sonic 1 Contemporary",
     "url": "/games/clsonic1contemporary.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_166"
   },
   {
@@ -1002,9 +1002,9 @@ var CLASH_GAMES = [
     "id": "clash_167"
   },
   {
-    "title": "Sonic 1 Score Rush",
+    "title": "Sonic 1 Scorer Ush",
     "url": "/games/clSonic1ScoreRush.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_168"
   },
   {
@@ -1026,9 +1026,9 @@ var CLASH_GAMES = [
     "id": "clash_171"
   },
   {
-    "title": "Sonic 2 Score Rush",
+    "title": "Sonic 2 Scorer Ush",
     "url": "/games/clSonic2ScoreRush.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_172"
   },
   {
@@ -1038,9 +1038,9 @@ var CLASH_GAMES = [
     "id": "clash_173"
   },
   {
-    "title": "Sonic 3 And Knuckles",
+    "title": "Sonic 3 and Knuckles",
     "url": "/games/clsonic3andknuckles.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_174"
   },
   {
@@ -1052,7 +1052,7 @@ var CLASH_GAMES = [
   {
     "title": "Sonic 3 Complete",
     "url": "/games/clsonic3complete.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_176"
   },
   {
@@ -1068,15 +1068,15 @@ var CLASH_GAMES = [
     "id": "clash_178"
   },
   {
-    "title": "Sonic Advance",
+    "title": "sonic advance",
     "url": "/games/clsonicadvance.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_179"
   },
   {
-    "title": "Sonic Advance 2",
+    "title": "sonic advance 2",
     "url": "/games/clsonicadvance2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_180"
   },
   {
@@ -1098,15 +1098,15 @@ var CLASH_GAMES = [
     "id": "clash_183"
   },
   {
-    "title": "Sonic and Knuckles",
+    "title": "sonic and knuckles",
     "url": "/games/clsonicandknuckles.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_184"
   },
   {
     "title": "Sonic Battle",
     "url": "/games/clsonicbattle.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_185"
   },
   {
@@ -1118,7 +1118,7 @@ var CLASH_GAMES = [
   {
     "title": "Sonic CD",
     "url": "/games/clsoniccd.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_187"
   },
   {
@@ -1154,13 +1154,13 @@ var CLASH_GAMES = [
   {
     "title": "Sonic Colors",
     "url": "/games/clsoniccolors.html",
-    "cat": "Creative",
+    "cat": "Retro",
     "id": "clash_193"
   },
   {
     "title": "Sonic Delta Origins",
     "url": "/games/clsonicdeltaorigins.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_194"
   },
   {
@@ -1182,9 +1182,9 @@ var CLASH_GAMES = [
     "id": "clash_197"
   },
   {
-    "title": "Sonic Hellfire Saga",
+    "title": "Sonic Hellfires Aga",
     "url": "/games/clSonicHellfireSaga.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_198"
   },
   {
@@ -1196,7 +1196,7 @@ var CLASH_GAMES = [
   {
     "title": "Sonic Jam",
     "url": "/games/clsonicjam.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_200"
   },
   {
@@ -1232,31 +1232,31 @@ var CLASH_GAMES = [
   {
     "title": "Sonic R",
     "url": "/games/clsonicr.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_206"
   },
   {
     "title": "Sonic Revert",
     "url": "/games/clsonicrevert.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_207"
   },
   {
     "title": "Sonic Robo Blast 2",
     "url": "/games/clsonicroboblast2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_208"
   },
   {
     "title": "Sonic Rush",
     "url": "/games/clsonicrush.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_209"
   },
   {
     "title": "Sonic Rush Adventure",
     "url": "/games/clsonicrushadventure.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_210"
   },
   {
@@ -1266,9 +1266,9 @@ var CLASH_GAMES = [
     "id": "clash_211"
   },
   {
-    "title": "Sonic Spinball",
+    "title": "sonic spinball",
     "url": "/games/clsonicspinball.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_212"
   },
   {
@@ -1290,9 +1290,9 @@ var CLASH_GAMES = [
     "id": "clash_215"
   },
   {
-    "title": "Sonic the Hedgehog 2",
+    "title": "sonic the hedgehog 2",
     "url": "/games/clsonicthehedgehog2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_216"
   },
   {
@@ -1302,9 +1302,9 @@ var CLASH_GAMES = [
     "id": "clash_217"
   },
   {
-    "title": "Sonic the Hedgehog 3",
+    "title": "sonic the hedgehog 3",
     "url": "/games/clsonicthehedgehog3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_218"
   },
   {
@@ -1314,15 +1314,15 @@ var CLASH_GAMES = [
     "id": "clash_219"
   },
   {
-    "title": "Sonic.EXE Original",
+    "title": "Sonic.EXE (ORIGINAL)",
     "url": "/games/clsoniceexeog.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_220"
   },
   {
-    "title": "Ultimate Flash Sonic",
+    "title": "ultimate flash sonic",
     "url": "/games/clflashsonic.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_221"
   },
   {
@@ -1332,9 +1332,9 @@ var CLASH_GAMES = [
     "id": "clash_222"
   },
   {
-    "title": "Pac-man",
+    "title": "pacman",
     "url": "/games/clpacman.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_223"
   },
   {
@@ -1358,13 +1358,13 @@ var CLASH_GAMES = [
   {
     "title": "Flappy Bird",
     "url": "/games/clflappybird.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_227"
   },
   {
     "title": "Death Run 3D",
     "url": "/games/cldeathrun3d.html",
-    "cat": "Action",
+    "cat": "Racing",
     "id": "clash_228"
   },
   {
@@ -1382,13 +1382,13 @@ var CLASH_GAMES = [
   {
     "title": "Happy Wheels",
     "url": "/games/clhappywheels.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_231"
   },
   {
     "title": "Drift Hunters",
     "url": "/games/cldrifthuntersmerge.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_232"
   },
   {
@@ -1398,21 +1398,21 @@ var CLASH_GAMES = [
     "id": "clash_233"
   },
   {
-    "title": "OVO",
+    "title": "OvO",
     "url": "/games/clovofixed.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_234"
   },
   {
     "title": "OvO 2",
     "url": "/games/clovo2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_235"
   },
   {
-    "title": "OVO 3 Dimensions",
+    "title": "OvO 3 Dimensions",
     "url": "/games/clovodimensions.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_236"
   },
   {
@@ -1429,9 +1429,9 @@ var CLASH_GAMES = [
     "thumb": "https://galxy.it.com/books/thumbs/tunnel-rush.webp"
   },
   {
-    "title": "Space Invaders",
+    "title": "space invaders",
     "url": "/games/clspaceinvaders.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_239"
   },
   {
@@ -1477,15 +1477,15 @@ var CLASH_GAMES = [
     "id": "clash_246"
   },
   {
-    "title": "Street Fighter 2 Turbo",
+    "title": "Streetfighter 2 Turbo",
     "url": "/games/clstreetfighter2turbo.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_247"
   },
   {
-    "title": "Street Fighter Alpha 3",
+    "title": "Streetfighter Alpha 3",
     "url": "/games/clstreetfighteralpha3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_248"
   },
   {
@@ -1531,9 +1531,9 @@ var CLASH_GAMES = [
     "id": "clash_255"
   },
   {
-    "title": "Mortal Kombat 4",
+    "title": "mortal kombat 4",
     "url": "/games/clmortalkombat4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_256"
   },
   {
@@ -1545,7 +1545,7 @@ var CLASH_GAMES = [
   {
     "title": "Mortal Kombat Advance",
     "url": "/games/clmortalkombatadvance.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_258"
   },
   {
@@ -1609,9 +1609,9 @@ var CLASH_GAMES = [
     "id": "clash_268"
   },
   {
-    "title": "The Legend of Zelda",
+    "title": "the legend of zelda",
     "url": "/games/clloz1.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_269"
   },
   {
@@ -1629,13 +1629,13 @@ var CLASH_GAMES = [
   {
     "title": "The Legend of Zelda Majora's Mask",
     "url": "/games/clmajorasmask.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_272"
   },
   {
     "title": "The Legend of Zelda Ocarina of Time",
     "url": "/games/clocarinaoftime.html",
-    "cat": "Racing",
+    "cat": "Retro",
     "id": "clash_273"
   },
   {
@@ -1647,7 +1647,7 @@ var CLASH_GAMES = [
   {
     "title": "Zelda 2 the Legend of Link",
     "url": "/games/clzelda2thelegendoflink.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_275"
   },
   {
@@ -1755,7 +1755,7 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Blaze Black 2 Redux",
     "url": "/games/clpokeblazeblack2redux.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_293"
   },
   {
@@ -1779,7 +1779,7 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Crystal",
     "url": "/games/clpokemoncrystal.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_297"
   },
   {
@@ -1827,7 +1827,7 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Emerald",
     "url": "/games/clpokemonemerald.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_305"
   },
   {
@@ -1941,7 +1941,7 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Firered",
     "url": "/games/clpokemonfirered.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_324"
   },
   {
@@ -1983,13 +1983,13 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Gaia",
     "url": "/games/clpokegaia.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_331"
   },
   {
     "title": "Pokemon Gold",
     "url": "/games/clpokemongold.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_332"
   },
   {
@@ -2047,15 +2047,15 @@ var CLASH_GAMES = [
     "id": "clash_341"
   },
   {
-    "title": "Pokemon Leaf Green",
+    "title": "pokemon leaf green",
     "url": "/games/clpokemonleafgreen.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_342"
   },
   {
     "title": "Pokemon Light Platinum",
     "url": "/games/clpokelightplatinum.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_343"
   },
   {
@@ -2263,13 +2263,13 @@ var CLASH_GAMES = [
     "id": "clash_377"
   },
   {
-    "title": "Pokemon Ruby",
+    "title": "pokemon ruby",
     "url": "/games/clpokeruby.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_378"
   },
   {
-    "title": "Pokemon Run and Bun",
+    "title": "Pokemon Runa Ndb Un",
     "url": "/games/clpokerunandbun.html",
     "cat": "Racing",
     "id": "clash_379"
@@ -2287,9 +2287,9 @@ var CLASH_GAMES = [
     "id": "clash_381"
   },
   {
-    "title": "Pokemon Sapphire",
+    "title": "pokemon sapphire",
     "url": "/games/clpokemonsapphire.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_382"
   },
   {
@@ -2323,9 +2323,9 @@ var CLASH_GAMES = [
     "id": "clash_387"
   },
   {
-    "title": "Pokemon Snap",
+    "title": "pokemon snap",
     "url": "/games/clpokemonsnap.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_388"
   },
   {
@@ -2353,21 +2353,21 @@ var CLASH_GAMES = [
     "id": "clash_392"
   },
   {
-    "title": "Pokemon Stadium",
+    "title": "pokemon stadium",
     "url": "/games/clpokemonstadium.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_393"
   },
   {
     "title": "Pokemon Stadium 2",
     "url": "/games/clpokemonstadium2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_394"
   },
   {
-    "title": "Pokemon stunningsteel",
+    "title": "Pokemons Tunning Steel",
     "url": "/games/clpokemonstunningsteel.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_395"
   },
   {
@@ -2461,9 +2461,9 @@ var CLASH_GAMES = [
     "id": "clash_410"
   },
   {
-    "title": "Pokemon Unbound",
+    "title": "pokemon unbound",
     "url": "/games/clpokemonunbound.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_411"
   },
   {
@@ -2487,13 +2487,13 @@ var CLASH_GAMES = [
   {
     "title": "Pokemon Volt White 2 Redux",
     "url": "/games/clpokevoltwhite2redux.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_415"
   },
   {
     "title": "Pokemon Voyager",
     "url": "/games/clpokevoyager.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_416"
   },
   {
@@ -2529,7 +2529,7 @@ var CLASH_GAMES = [
   {
     "title": "Wolfenstein 3D",
     "url": "/games/clwolfenstein3d.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_422"
   },
   {
@@ -2553,49 +2553,49 @@ var CLASH_GAMES = [
   {
     "title": "Metal Gear",
     "url": "/games/clmetalgear.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_426"
   },
   {
     "title": "Metal Gear Solid",
     "url": "/games/clmetalgearsolidps.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_427"
   },
   {
     "title": "Bad Ice Cream",
     "url": "/games/clbadicecream.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_428"
   },
   {
     "title": "Bad Ice Cream 2",
     "url": "/games/clbadicecream2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_429"
   },
   {
     "title": "Bad Ice Cream 3",
     "url": "/games/clbadicecream3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_430"
   },
   {
-    "title": "Fireboy and Watergirl",
+    "title": "fireboy and watergirl",
     "url": "/games/clfireboyandwatergirl.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_431"
   },
   {
     "title": "Fireboy and Watergirl 2",
     "url": "/games/clfireboyandwatergirl2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_432"
   },
   {
     "title": "Fireboy and Watergirl 3",
     "url": "/games/clfireboyandwatergirl3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_433"
   },
   {
@@ -2607,7 +2607,7 @@ var CLASH_GAMES = [
   {
     "title": "1",
     "url": "/games/cl1.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_435"
   },
   {
@@ -2617,7 +2617,7 @@ var CLASH_GAMES = [
     "id": "clash_436"
   },
   {
-    "title": "1 On 1 Soccer",
+    "title": "1 on 1 soccer",
     "url": "/games/cl1on1soccer.html",
     "cat": "Sports",
     "id": "clash_437"
@@ -2637,7 +2637,7 @@ var CLASH_GAMES = [
   {
     "title": "10 Minutes Till Dawn",
     "url": "/games/cl10minutestildawn.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_440"
   },
   {
@@ -2673,7 +2673,7 @@ var CLASH_GAMES = [
   {
     "title": "12 Mini Battles",
     "url": "/games/cl12minibattles.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_446"
   },
   {
@@ -2685,7 +2685,7 @@ var CLASH_GAMES = [
   {
     "title": "1v1.space",
     "url": "/games/cl1v1space.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_448"
   },
   {
@@ -2823,13 +2823,13 @@ var CLASH_GAMES = [
   {
     "title": "60 Seconds Burger Run",
     "url": "/games/cl60secondsburgerrun.html",
-    "cat": "Food",
+    "cat": "Racing",
     "id": "clash_471"
   },
   {
     "title": "60 Seconds Santa Run",
     "url": "/games/clsantarun.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_472"
   },
   {
@@ -2839,15 +2839,15 @@ var CLASH_GAMES = [
     "id": "clash_473"
   },
   {
-    "title": "8 Ball Class ic",
+    "title": "8 Ball Classic",
     "url": "/games/cl8ballclassic.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_474"
   },
   {
     "title": "8 Ball Pool",
     "url": "/games/cl8ballpool.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_475"
   },
   {
@@ -2859,7 +2859,7 @@ var CLASH_GAMES = [
   {
     "title": "99 Balls",
     "url": "/games/cl99balls.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_477"
   },
   {
@@ -2871,13 +2871,13 @@ var CLASH_GAMES = [
   {
     "title": "A Dance of Fire and Ice",
     "url": "/games/clADOFAI.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_479"
   },
   {
     "title": "A Dark Room",
     "url": "/games/clADarkRoom.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_480"
   },
   {
@@ -2907,19 +2907,19 @@ var CLASH_GAMES = [
   {
     "title": "A Small World Cup",
     "url": "/games/clasmallworldcup.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_485"
   },
   {
     "title": "Abandoned",
     "url": "/games/clthanksforremindingmeihadtofixthis.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_486"
   },
   {
     "title": "Abandoned 3",
     "url": "/games/clabandoned32.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_487"
   },
   {
@@ -2949,25 +2949,25 @@ var CLASH_GAMES = [
   {
     "title": "Ace Gangster Taxi",
     "url": "/games/clacegangstertaxi.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_492"
   },
   {
     "title": "Achievement Unlocked",
     "url": "/games/clachievementunlocked.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_493"
   },
   {
     "title": "Achievement Unlocked 2",
     "url": "/games/clachievmentunlocked2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_494"
   },
   {
     "title": "Achievement Unlocked 3",
     "url": "/games/clachievmentunlocked3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_495"
   },
   {
@@ -2997,17 +2997,17 @@ var CLASH_GAMES = [
   {
     "title": "Adrenaline Challenge",
     "url": "/games/cladrenalinechallenge.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_500"
   },
   {
-    "title": "Advance Wars",
+    "title": "advance wars",
     "url": "/games/cladvancewars.html",
     "cat": "Action",
     "id": "clash_501"
   },
   {
-    "title": "Advance Wars 2",
+    "title": "advance wars 2",
     "url": "/games/cladvancewars2.html",
     "cat": "Action",
     "id": "clash_502"
@@ -3021,7 +3021,7 @@ var CLASH_GAMES = [
   {
     "title": "Advent Neon",
     "url": "/games/cladventneon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_504"
   },
   {
@@ -3031,15 +3031,15 @@ var CLASH_GAMES = [
     "id": "clash_505"
   },
   {
-    "title": "AdVenture Capitalist!",
+    "title": "Adventure Capitalist",
     "url": "/games/cladventurecapitalist.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_506"
   },
   {
-    "title": "Agar.io Lite",
+    "title": "Agario Lite",
     "url": "/games/clagariolite.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_507"
   },
   {
@@ -3049,21 +3049,21 @@ var CLASH_GAMES = [
     "id": "clash_508"
   },
   {
-    "title": "Age of War",
+    "title": "age of war",
     "url": "/games/clageofwar.html",
     "cat": "Action",
     "id": "clash_509"
   },
   {
-    "title": "Age of War 2",
+    "title": "age of war 2",
     "url": "/games/clageofwar2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_510"
   },
   {
     "title": "Ages of Conflict",
     "url": "/games/clagesofconflict.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_511"
   },
   {
@@ -3075,7 +3075,7 @@ var CLASH_GAMES = [
   {
     "title": "Ahoy Survival",
     "url": "/games/clahoysurvival.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_513"
   },
   {
@@ -3093,7 +3093,7 @@ var CLASH_GAMES = [
   {
     "title": "Akumanor Gaiden",
     "url": "/games/clakumanorgaiden.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_516"
   },
   {
@@ -3117,19 +3117,19 @@ var CLASH_GAMES = [
   {
     "title": "Alien Hominid",
     "url": "/games/clalienhominid.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_520"
   },
   {
-    "title": "Alien Hominid (GBA)",
+    "title": "Alien Hominid GBA",
     "url": "/games/clalienhominidgba.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_521"
   },
   {
     "title": "Alien Sky Invasion",
     "url": "/games/clalienskyinvasion.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_522"
   },
   {
@@ -3141,13 +3141,13 @@ var CLASH_GAMES = [
   {
     "title": "Alien Transporter",
     "url": "/games/clalientransporter.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_524"
   },
   {
-    "title": "Alien vs. Predator",
+    "title": "Alien vs Predator",
     "url": "/games/clalienvspredator.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_525"
   },
   {
@@ -3169,9 +3169,9 @@ var CLASH_GAMES = [
     "id": "clash_528"
   },
   {
-    "title": "Altered Beast",
+    "title": "altered beast",
     "url": "/games/clalteredbeast.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_529"
   },
   {
@@ -3187,75 +3187,75 @@ var CLASH_GAMES = [
     "id": "clash_531"
   },
   {
-    "title": "Amidst The Sky",
+    "title": "Amidst the Sky",
     "url": "/games/clamidstthesky.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_532"
   },
   {
     "title": "Amigo Pancho",
     "url": "/games/clamigopancho.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_533"
   },
   {
     "title": "Amigo Pancho 2",
     "url": "/games/clamigopancho2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_534"
   },
   {
     "title": "Amigo Pancho 3",
     "url": "/games/clamigopancho3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_535"
   },
   {
     "title": "Amigo Pancho 4",
     "url": "/games/clamigopancho4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_536"
   },
   {
     "title": "Amigo Pancho 5",
     "url": "/games/clamigopancho5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_537"
   },
   {
     "title": "Amigo Pancho 6",
     "url": "/games/clamigopancho6.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_538"
   },
   {
     "title": "Amigo Pancho 7",
     "url": "/games/clamigopancho7.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_539"
   },
   {
     "title": "Among Us",
     "url": "/games/clamongus.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_540"
   },
   {
-    "title": "Amorphous +",
+    "title": "amorphous",
     "url": "/games/clamorphous.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_541"
   },
   {
     "title": "Ancient Sins",
     "url": "/games/clancientsins.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_542"
   },
   {
     "title": "Angry Birds",
     "url": "/games/clangrybirds.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_543"
   },
   {
@@ -3267,13 +3267,13 @@ var CLASH_GAMES = [
   {
     "title": "Angry Birds Online",
     "url": "/games/clangrybirdsonline.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_545"
   },
   {
     "title": "Angry Birds Showdown",
     "url": "/games/clangrybirdsshowdown.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_546"
   },
   {
@@ -3285,7 +3285,7 @@ var CLASH_GAMES = [
   {
     "title": "Angry Birds Space",
     "url": "/games/clangry-birdsspace.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_548"
   },
   {
@@ -3301,9 +3301,9 @@ var CLASH_GAMES = [
     "id": "clash_550"
   },
   {
-    "title": "Animal Crossing-Wild World",
+    "title": "Animal Crossing: Wild World",
     "url": "/games/clanimalcrossingwildworld.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_551"
   },
   {
@@ -3339,7 +3339,7 @@ var CLASH_GAMES = [
   {
     "title": "Another World",
     "url": "/games/clanotherworld.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_557"
   },
   {
@@ -3355,9 +3355,9 @@ var CLASH_GAMES = [
     "id": "clash_559"
   },
   {
-    "title": "Apes vs. Helium",
+    "title": "Apes vs Helium",
     "url": "/games/clapesvshelium.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_560"
   },
   {
@@ -3375,7 +3375,7 @@ var CLASH_GAMES = [
   {
     "title": "Apple Worm",
     "url": "/games/clappleworm.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_563"
   },
   {
@@ -3393,7 +3393,7 @@ var CLASH_GAMES = [
   {
     "title": "Aquapark.io",
     "url": "/games/claquaparkio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_566"
   },
   {
@@ -3417,7 +3417,7 @@ var CLASH_GAMES = [
   {
     "title": "Archery World Tour",
     "url": "/games/clarcheryworldtour.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_570"
   },
   {
@@ -3453,13 +3453,13 @@ var CLASH_GAMES = [
   {
     "title": "Armor Mayhem 2",
     "url": "/games/clarmormayhem2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_576"
   },
   {
     "title": "Arsonate",
     "url": "/games/clarsonate.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_577"
   },
   {
@@ -3489,7 +3489,7 @@ var CLASH_GAMES = [
   {
     "title": "Arthur's Nightmare",
     "url": "/games/clarthuarsnightmare.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_582"
   },
   {
@@ -3507,7 +3507,7 @@ var CLASH_GAMES = [
   {
     "title": "Asteroids",
     "url": "/games/clasteroidsALT.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_585"
   },
   {
@@ -3537,7 +3537,7 @@ var CLASH_GAMES = [
   {
     "title": "Avalanche",
     "url": "/games/clavalanche.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_590"
   },
   {
@@ -3549,31 +3549,31 @@ var CLASH_GAMES = [
   {
     "title": "Aviamasters",
     "url": "/games/claviamastersbuggy.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_592"
   },
   {
     "title": "Awesome Pirates",
     "url": "/games/clAwesomePirates.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_593"
   },
   {
     "title": "Awesome Planes",
     "url": "/games/clawesomeplanes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_594"
   },
   {
     "title": "Awesome Tanks",
     "url": "/games/clawesometanks.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_595"
   },
   {
     "title": "Awesome Tanks 2",
     "url": "/games/clawesometanks2.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_596"
   },
   {
@@ -3589,9 +3589,9 @@ var CLASH_GAMES = [
     "id": "clash_598"
   },
   {
-    "title": "B3313",
+    "title": "B 3313",
     "url": "/games/clB3313.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_599"
   },
   {
@@ -3603,7 +3603,7 @@ var CLASH_GAMES = [
   {
     "title": "Babel Tower",
     "url": "/games/clbabeltower.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_601"
   },
   {
@@ -3627,7 +3627,7 @@ var CLASH_GAMES = [
   {
     "title": "Backrooms",
     "url": "/games/clbackrooms.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_605"
   },
   {
@@ -3637,9 +3637,9 @@ var CLASH_GAMES = [
     "id": "clash_606"
   },
   {
-    "title": "Backrooms 2D",
+    "title": "Back Rooms 2 D",
     "url": "/games/clbackrooms2D.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_607"
   },
   {
@@ -3667,15 +3667,15 @@ var CLASH_GAMES = [
     "id": "clash_611"
   },
   {
-    "title": "Backyard Soccer",
+    "title": "Backyards Occ Er",
     "url": "/games/clbackyardsoccer.html",
-    "cat": "Sports",
+    "cat": "Action",
     "id": "clash_612"
   },
   {
     "title": "Bacon May Die",
     "url": "/games/clbaconmaydie.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_613"
   },
   {
@@ -3687,19 +3687,19 @@ var CLASH_GAMES = [
   {
     "title": "Bad Monday Simulator",
     "url": "/games/clbadmondaysimulator.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_615"
   },
   {
     "title": "Bad Parenting",
     "url": "/games/clbadparenting.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_616"
   },
   {
     "title": "Bad Piggies",
     "url": "/games/clbadpiggies.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_617"
   },
   {
@@ -3717,31 +3717,31 @@ var CLASH_GAMES = [
   {
     "title": "Bad Time Simulator",
     "url": "/games/clbadtimesim.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_620"
   },
   {
     "title": "Balatro",
     "url": "/games/clbalatrogba.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_621"
   },
   {
     "title": "Baldi's Basics",
     "url": "/games/clbaldisbasics.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_622"
   },
   {
-    "title": "Baldi's Basics Remastered",
+    "title": "Baldis Basics Remastered",
     "url": "/games/clbaldisbasicsremaster.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_623"
   },
   {
     "title": "Baldi's Basics The Ultra Decompile",
     "url": "/games/clbaldidecomp.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_624"
   },
   {
@@ -3753,7 +3753,7 @@ var CLASH_GAMES = [
   {
     "title": "Ball Blast",
     "url": "/games/clballblast.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_626"
   },
   {
@@ -3769,9 +3769,9 @@ var CLASH_GAMES = [
     "id": "clash_628"
   },
   {
-    "title": "Balls And Bricks",
+    "title": "Balls and Bricks",
     "url": "/games/clballsandbricksgood.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_629"
   },
   {
@@ -3783,7 +3783,7 @@ var CLASH_GAMES = [
   {
     "title": "Banana Simulator",
     "url": "/games/clbananasimulator.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_631"
   },
   {
@@ -3793,21 +3793,21 @@ var CLASH_GAMES = [
     "id": "clash_632"
   },
   {
-    "title": "Banjo-Kazooie",
+    "title": "banjo kazooie",
     "url": "/games/clbanjokazooie.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_633"
   },
   {
-    "title": "Banjo-Tooie",
+    "title": "Banjo Tooie",
     "url": "/games/clbanjotooie.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_634"
   },
   {
     "title": "Bank Breakout 2",
     "url": "/games/cl2068.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_635"
   },
   {
@@ -3819,13 +3819,13 @@ var CLASH_GAMES = [
   {
     "title": "Bank Robbery 2",
     "url": "/games/clbankrobbery2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_637"
   },
   {
-    "title": "Barry Has a Secret",
+    "title": "Barry Hasa Secret",
     "url": "/games/clbarryhasasecret.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_638"
   },
   {
@@ -3861,25 +3861,25 @@ var CLASH_GAMES = [
   {
     "title": "Basket Battle",
     "url": "/games/clbasketbattle.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_644"
   },
   {
     "title": "Basket Random",
     "url": "/games/clbasketrandom.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_645"
   },
   {
-    "title": "Basket Slam Dunk 2",
+    "title": "Baskets Lam Dunk 2",
     "url": "/games/clbasketslamdunk2.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_646"
   },
   {
-    "title": "Basketball FRVR",
+    "title": "Basketball Frvr",
     "url": "/games/clbasketballfrvr.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_647"
   },
   {
@@ -3921,7 +3921,7 @@ var CLASH_GAMES = [
   {
     "title": "Batter Up",
     "url": "/games/clbatterup.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_654"
   },
   {
@@ -3951,7 +3951,7 @@ var CLASH_GAMES = [
   {
     "title": "Battles",
     "url": "/games/clbattles.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_659"
   },
   {
@@ -3961,9 +3961,9 @@ var CLASH_GAMES = [
     "id": "clash_660"
   },
   {
-    "title": "Battlezone",
+    "title": "Battle Zone",
     "url": "/games/clbattlezone.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_661"
   },
   {
@@ -3973,15 +3973,15 @@ var CLASH_GAMES = [
     "id": "clash_662"
   },
   {
-    "title": "Beamrider",
+    "title": "Beam Rider",
     "url": "/games/clbeamrider.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_663"
   },
   {
     "title": "Bearbarians",
     "url": "/games/clbearbarians.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_664"
   },
   {
@@ -4003,9 +4003,9 @@ var CLASH_GAMES = [
     "id": "clash_667"
   },
   {
-    "title": "Ben 10 - Alien Force",
+    "title": "Ben 10 Alien Force",
     "url": "/games/clben10alienforce.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_668"
   },
   {
@@ -4015,9 +4015,9 @@ var CLASH_GAMES = [
     "id": "clash_669"
   },
   {
-    "title": "Ben 10 - Omniverse",
+    "title": "Ben 10 Omniverse",
     "url": "/games/clben10omniverse.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_670"
   },
   {
@@ -4027,9 +4027,9 @@ var CLASH_GAMES = [
     "id": "clash_671"
   },
   {
-    "title": "Ben 10 - Ultimate Alien",
+    "title": "Ben 10 Ultimate Alien",
     "url": "/games/clben10ultimatealien.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_672"
   },
   {
@@ -4053,7 +4053,7 @@ var CLASH_GAMES = [
   {
     "title": "BERGENTRUCK 201x",
     "url": "/games/clbergentruck201x.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_676"
   },
   {
@@ -4071,7 +4071,7 @@ var CLASH_GAMES = [
   {
     "title": "BFDIA 5b",
     "url": "/games/clbfdia5b.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_679"
   },
   {
@@ -4081,19 +4081,19 @@ var CLASH_GAMES = [
     "id": "clash_680"
   },
   {
-    "title": "Big Ice Tower Tiny Square",
+    "title": "Big ICE Tower Tiny Square",
     "url": "/games/clbigicetowertinysquare.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_681"
   },
   {
-    "title": "Big Neon Tower Tiny Square",
+    "title": "Big NEON Tower Tiny Square",
     "url": "/games/clbigneontowertinysquare.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_682"
   },
   {
-    "title": "Big Red Button",
+    "title": "big red button",
     "url": "/games/clbigredbutton.html",
     "cat": "Action",
     "id": "clash_683"
@@ -4101,7 +4101,7 @@ var CLASH_GAMES = [
   {
     "title": "Big Shot Boxing",
     "url": "/games/clbigshotboxing2.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_684"
   },
   {
@@ -4113,19 +4113,19 @@ var CLASH_GAMES = [
   {
     "title": "Big Time Butter Baron",
     "url": "/games/clBig_Time_Butter_Baron.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_686"
   },
   {
     "title": "Big Tower Tiny Square",
     "url": "/games/clbtts.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_687"
   },
   {
     "title": "Big Tower Tiny Square 2",
     "url": "/games/clbtts2.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_688"
   },
   {
@@ -4173,7 +4173,7 @@ var CLASH_GAMES = [
   {
     "title": "Bio Evil 4",
     "url": "/games/clbioevil4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_696"
   },
   {
@@ -4183,21 +4183,21 @@ var CLASH_GAMES = [
     "id": "clash_697"
   },
   {
-    "title": "Bit Planes",
+    "title": "BitPlanes",
     "url": "/games/clbitplanes.html",
-    "cat": "Retro",
+    "cat": "Puzzle",
     "id": "clash_698"
   },
   {
     "title": "Black Knight",
     "url": "/games/clblackknight.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_699"
   },
   {
-    "title": "Blackjack",
+    "title": "BlackJack",
     "url": "/games/clblackjack.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_700"
   },
   {
@@ -4215,13 +4215,13 @@ var CLASH_GAMES = [
   {
     "title": "Blacksmith Lab",
     "url": "/games/clblacksmithlab.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_703"
   },
   {
     "title": "Blastronaut",
     "url": "/games/clblastronaut.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_704"
   },
   {
@@ -4231,15 +4231,15 @@ var CLASH_GAMES = [
     "id": "clash_705"
   },
   {
-    "title": "Bleach vs. Naruto",
+    "title": "Bleach vs Naruto",
     "url": "/games/clbleachvsnaruto.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_706"
   },
   {
-    "title": "Blightborne",
+    "title": "Blight Borne",
     "url": "/games/clblightborne.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_707"
   },
   {
@@ -4249,9 +4249,9 @@ var CLASH_GAMES = [
     "id": "clash_708"
   },
   {
-    "title": "Blob's Story 2",
+    "title": "Blobs Story 2",
     "url": "/games/clblobsstory2.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_709"
   },
   {
@@ -4269,13 +4269,13 @@ var CLASH_GAMES = [
   {
     "title": "Block the Pig",
     "url": "/games/clblockthepig.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_712"
   },
   {
-    "title": "Blockpost",
+    "title": "BlockPost",
     "url": "/games/clblockpost.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_713"
   },
   {
@@ -4287,7 +4287,7 @@ var CLASH_GAMES = [
   {
     "title": "Blocky Snakes",
     "url": "/games/clblockysnakes.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_715"
   },
   {
@@ -4299,25 +4299,25 @@ var CLASH_GAMES = [
   {
     "title": "Blood Tournament",
     "url": "/games/clbloodtournament.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_717"
   },
   {
-    "title": "Bloodmoney",
+    "title": "BLOODMONEY!",
     "url": "/games/clbloodmoney.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_718"
   },
   {
     "title": "Bloons",
     "url": "/games/clbloons.html",
-    "cat": "Puzzle",
+    "cat": "Action",
     "id": "clash_719"
   },
   {
     "title": "Bloons 2",
     "url": "/games/clbloons2.html",
-    "cat": "Puzzle",
+    "cat": "Action",
     "id": "clash_720"
   },
   {
@@ -4359,7 +4359,7 @@ var CLASH_GAMES = [
   {
     "title": "Bloons TD",
     "url": "/games/clbloonstd.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_727"
   },
   {
@@ -4407,13 +4407,13 @@ var CLASH_GAMES = [
   {
     "title": "Bloxorz",
     "url": "/games/clbloxorz.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_735"
   },
   {
-    "title": "Blum gi Rocket",
+    "title": "Blumgi Rocket",
     "url": "/games/clblumgirocket.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_736"
   },
   {
@@ -4425,19 +4425,19 @@ var CLASH_GAMES = [
   {
     "title": "Bob the Robber",
     "url": "/games/clbobtherobber.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_738"
   },
   {
-    "title": "Bob the Robber 2",
+    "title": "Bob The Robber 2",
     "url": "/games/clbobtherobber2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_739"
   },
   {
     "title": "Bob the Robber 5",
     "url": "/games/clbobtherobber5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_740"
   },
   {
@@ -4453,15 +4453,15 @@ var CLASH_GAMES = [
     "id": "clash_742"
   },
   {
-    "title": "Bomberman",
+    "title": "bomberman",
     "url": "/games/clbomberman.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_743"
   },
   {
-    "title": "Bomberman 2",
+    "title": "Bomber Man 2",
     "url": "/games/clbomberman2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_744"
   },
   {
@@ -4503,13 +4503,13 @@ var CLASH_GAMES = [
   {
     "title": "Bottle Cracks",
     "url": "/games/clbottlecracks.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_751"
   },
   {
-    "title": "Bounce Back",
+    "title": "Bounceback",
     "url": "/games/clbounceback.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_752"
   },
   {
@@ -4521,7 +4521,7 @@ var CLASH_GAMES = [
   {
     "title": "Bouncemasters",
     "url": "/games/clbouncemasters.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_754"
   },
   {
@@ -4533,13 +4533,13 @@ var CLASH_GAMES = [
   {
     "title": "Bouncy Motors",
     "url": "/games/clbouncymotors.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_756"
   },
   {
     "title": "Bounty of One",
     "url": "/games/clBountyOfOne.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_757"
   },
   {
@@ -4549,9 +4549,9 @@ var CLASH_GAMES = [
     "id": "clash_758"
   },
   {
-    "title": "Bow masters",
+    "title": "Bowmasters",
     "url": "/games/clbowmaster.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_759"
   },
   {
@@ -4563,37 +4563,37 @@ var CLASH_GAMES = [
   {
     "title": "Box Head",
     "url": "/games/clboxhead.html",
-    "cat": "Action",
+    "cat": "Sports",
     "id": "clash_761"
   },
   {
-    "title": "Boxhead 2play Rooms",
+    "title": "Boxhead 2 Playrooms",
     "url": "/games/clboxhead2playrooms.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_762"
   },
   {
     "title": "Boxhead Nightmare",
     "url": "/games/clboxheadnightmare.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_763"
   },
   {
     "title": "Boxing Live 2",
     "url": "/games/clboxinglive-2.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_764"
   },
   {
     "title": "Boxing Random",
     "url": "/games/clboxingrandom.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_765"
   },
   {
     "title": "Brawl Simulator 3D",
     "url": "/games/clbrawlsimulator3d.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_766"
   },
   {
@@ -4615,7 +4615,7 @@ var CLASH_GAMES = [
     "id": "clash_769"
   },
   {
-    "title": "Breaking the Bank",
+    "title": "breaking the bank",
     "url": "/games/clbreakingthebank.html",
     "cat": "Action",
     "id": "clash_770"
@@ -4629,13 +4629,13 @@ var CLASH_GAMES = [
   {
     "title": "Bridge Race",
     "url": "/games/clbridgerace.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_772"
   },
   {
     "title": "Brotato",
     "url": "/games/clbrotato.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_773"
   },
   {
@@ -4651,27 +4651,27 @@ var CLASH_GAMES = [
     "id": "clash_775"
   },
   {
-    "title": "BTD2",
+    "title": "btd 2",
     "url": "/games/clbloonsTD2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_776"
   },
   {
-    "title": "BTD3",
+    "title": "btd 3",
     "url": "/games/clbloonsTD3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_777"
   },
   {
-    "title": "BTD4",
+    "title": "btd 4",
     "url": "/games/clbloonsTD4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_778"
   },
   {
-    "title": "BTD5",
+    "title": "Btd5",
     "url": "/games/clbtd5.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_779"
   },
   {
@@ -4681,13 +4681,13 @@ var CLASH_GAMES = [
     "id": "clash_780"
   },
   {
-    "title": "Bubble Shooter",
+    "title": "Bubbles Hooter",
     "url": "/games/clbubbleshooter.html",
     "cat": "Action",
     "id": "clash_781"
   },
   {
-    "title": "Bubble Shooter Pirate",
+    "title": "Bubbles Hooter Pirate",
     "url": "/games/clbubbleshooterpirate.html",
     "cat": "Action",
     "id": "clash_782"
@@ -4699,7 +4699,7 @@ var CLASH_GAMES = [
     "id": "clash_783"
   },
   {
-    "title": "Bubble Tanks 2",
+    "title": "bubble tanks 2",
     "url": "/games/clbubbletanks2.html",
     "cat": "Action",
     "id": "clash_784"
@@ -4725,7 +4725,7 @@ var CLASH_GAMES = [
   {
     "title": "Bubsy",
     "url": "/games/clbubsy.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_788"
   },
   {
@@ -4753,9 +4753,9 @@ var CLASH_GAMES = [
     "id": "clash_792"
   },
   {
-    "title": "BuildNow.GG",
+    "title": "BuildNow.gg",
     "url": "/games/clbuildnowgg.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_793"
   },
   {
@@ -4771,15 +4771,15 @@ var CLASH_GAMES = [
     "id": "clash_795"
   },
   {
-    "title": "Bunnyland",
+    "title": "Bunny Land",
     "url": "/games/clbunnyland.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_796"
   },
   {
-    "title": "Burger And Frights",
+    "title": "Burger and Frights",
     "url": "/games/clburgerandfrights.html",
-    "cat": "Arcade",
+    "cat": "Action",
     "id": "clash_797",
     "thumb": "https://galxy.it.com/books/thumbs/burger-and-frights.webp"
   },
@@ -4792,25 +4792,25 @@ var CLASH_GAMES = [
   {
     "title": "Burrito Bison",
     "url": "/games/clburritobison.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_799"
   },
   {
-    "title": "Burrito Bison Launcha Libre",
+    "title": "Burrito Bison: Launcha Libre",
     "url": "/games/clburritobisonlaunchalibre.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_800"
   },
   {
     "title": "Burrito Bison Revenge",
     "url": "/games/clburritobisonrevenge.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_801"
   },
   {
     "title": "Bushido Blade",
     "url": "/games/clbushidoblade.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_802"
   },
   {
@@ -4820,21 +4820,21 @@ var CLASH_GAMES = [
     "id": "clash_803"
   },
   {
-    "title": "C.S 1.6",
+    "title": "Cs 1 6",
     "url": "/games/clcs1.6.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_804"
   },
   {
-    "title": "Cactus Mccoy",
+    "title": "cactus mccoy",
     "url": "/games/clcactusmccoy.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_805"
   },
   {
-    "title": "Cactus Mccoy 2",
+    "title": "cactus mccoy 2",
     "url": "/games/clcactusmccoy2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_806"
   },
   {
@@ -4882,25 +4882,25 @@ var CLASH_GAMES = [
   {
     "title": "Cannon Balls 3D",
     "url": "/games/clcannonballs3d.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_814"
   },
   {
     "title": "Cannon Basketball 4",
     "url": "/games/clcannonbasketball4.html",
-    "cat": "Action",
+    "cat": "Sports",
     "id": "clash_815"
   },
   {
     "title": "Cannon Fodder",
     "url": "/games/clcannonfodder.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_816"
   },
   {
     "title": "Canyon Defense",
     "url": "/games/clcanyondefense.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_817"
   },
   {
@@ -4930,13 +4930,13 @@ var CLASH_GAMES = [
   {
     "title": "Car Drawing",
     "url": "/games/clcardrawing.html",
-    "cat": "Racing",
+    "cat": "Action",
     "id": "clash_822"
   },
   {
     "title": "Car Eats Car 2 Deluxe",
     "url": "/games/clcareatscar2deluxe.html",
-    "cat": "Racing",
+    "cat": "Action",
     "id": "clash_823"
   },
   {
@@ -4976,9 +4976,9 @@ var CLASH_GAMES = [
     "id": "clash_829"
   },
   {
-    "title": "CaseOh's Basics in Eating and Fast Fo od",
+    "title": "CaseOh's Basics in Eating and Fast Food",
     "url": "/games/clbaldicaseoh.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_830"
   },
   {
@@ -4994,9 +4994,9 @@ var CLASH_GAMES = [
     "id": "clash_832"
   },
   {
-    "title": "Castlevania",
+    "title": "castlevania",
     "url": "/games/clcastlevania.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_833"
   },
   {
@@ -5024,21 +5024,21 @@ var CLASH_GAMES = [
     "id": "clash_837"
   },
   {
-    "title": "Castlevania (NES)",
+    "title": "Castlevania NES",
     "url": "/games/clcastlevanianes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_838"
   },
   {
     "title": "Castlevania 2",
     "url": "/games/clcastlevania2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_839"
   },
   {
     "title": "Castlevania 3",
     "url": "/games/clcastlevania3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_840"
   },
   {
@@ -5060,15 +5060,15 @@ var CLASH_GAMES = [
     "id": "clash_843"
   },
   {
-    "title": "Castlevania: Aria of Sorrow",
+    "title": "Castlevania Aria of Sorrow",
     "url": "/games/clcastlevaniaariaofsorrow.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_844"
   },
   {
     "title": "Cat Mario",
     "url": "/games/clcatmariogood.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_845"
   },
   {
@@ -5080,7 +5080,7 @@ var CLASH_GAMES = [
   {
     "title": "Cats Love Cake 2",
     "url": "/games/clcatslovecake2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_847"
   },
   {
@@ -5092,7 +5092,7 @@ var CLASH_GAMES = [
   {
     "title": "Cave Story",
     "url": "/games/clcavestory.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_849"
   },
   {
@@ -5116,7 +5116,7 @@ var CLASH_GAMES = [
   {
     "title": "Cell Machine",
     "url": "/games/clcellmachine.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_853"
   },
   {
@@ -5128,7 +5128,7 @@ var CLASH_GAMES = [
   {
     "title": "Cellar Door",
     "url": "/games/clcellardoor.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_855"
   },
   {
@@ -5140,13 +5140,13 @@ var CLASH_GAMES = [
   {
     "title": "Champion Archer",
     "url": "/games/clchampionarcher.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_857"
   },
   {
     "title": "Chaos Faction 2",
     "url": "/games/clchaosfaction2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_858"
   },
   {
@@ -5170,7 +5170,7 @@ var CLASH_GAMES = [
   {
     "title": "Cheese Chompers 3D",
     "url": "/games/clcheesechompers3d.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_862"
   },
   {
@@ -5182,7 +5182,7 @@ var CLASH_GAMES = [
   {
     "title": "Cheese Rolling",
     "url": "/games/clcheeserolling.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_864"
   },
   {
@@ -5194,19 +5194,19 @@ var CLASH_GAMES = [
   {
     "title": "Chess Classic",
     "url": "/games/clchessclassic.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_866"
   },
   {
-    "title": "Chibi Knight",
+    "title": "chibi knight",
     "url": "/games/clchibiknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_867"
   },
   {
-    "title": "Chicken Scream",
+    "title": "Chickens Cream",
     "url": "/games/clchickenscream.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_868"
   },
   {
@@ -5216,21 +5216,21 @@ var CLASH_GAMES = [
     "id": "clash_869"
   },
   {
-    "title": "Chickenwar",
+    "title": "Chicken War",
     "url": "/games/clchickenwar.html",
     "cat": "Action",
     "id": "clash_870"
   },
   {
-    "title": "Chip's Challenge",
+    "title": "Chips Challenge",
     "url": "/games/clchipschallenge.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_871"
   },
   {
     "title": "Choppy Orc",
     "url": "/games/clchoppyorc.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_872"
   },
   {
@@ -5246,9 +5246,9 @@ var CLASH_GAMES = [
     "id": "clash_874"
   },
   {
-    "title": "Chrono Trigger",
+    "title": "chrono trigger",
     "url": "/games/clchronotrigger.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_875"
   },
   {
@@ -5260,13 +5260,13 @@ var CLASH_GAMES = [
   {
     "title": "circlO",
     "url": "/games/clcirclo.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_877"
   },
   {
     "title": "CircloO 2",
     "url": "/games/clCircloO2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_878"
   },
   {
@@ -5294,15 +5294,15 @@ var CLASH_GAMES = [
     "id": "clash_882"
   },
   {
-    "title": "Civiballs",
+    "title": "Civ Iba Ll S",
     "url": "/games/clciviballs.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_883"
   },
   {
-    "title": "Civiballs 2",
+    "title": "Civ Iba Ll S 2",
     "url": "/games/clciviballs2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_884"
   },
   {
@@ -5314,13 +5314,13 @@ var CLASH_GAMES = [
   {
     "title": "Clash Of Vikings",
     "url": "/games/clclashofvikings.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_886"
   },
   {
     "title": "Class of '09",
     "url": "/games/clclassof09.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_887"
   },
   {
@@ -5330,45 +5330,45 @@ var CLASH_GAMES = [
     "id": "clash_888"
   },
   {
-    "title": "Cleanup.io",
+    "title": "Cleanup IO",
     "url": "/games/clcleanupio.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_889"
   },
   {
     "title": "Clear Vision",
     "url": "/games/clclearvision.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_890"
   },
   {
     "title": "Clear Vision 2",
     "url": "/games/clclearvision2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_891"
   },
   {
     "title": "Clear Vision 3",
     "url": "/games/clclearvision3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_892"
   },
   {
     "title": "Clear Vision 4",
     "url": "/games/clclearvision4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_893"
   },
   {
     "title": "Clear Vision 5",
     "url": "/games/clclearvision5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_894"
   },
   {
-    "title": "Clicker Heroes",
+    "title": "clicker heroes",
     "url": "/games/cl2100.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_895"
   },
   {
@@ -5392,7 +5392,7 @@ var CLASH_GAMES = [
   {
     "title": "Cluster Rush",
     "url": "/games/clclusterrush.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_899"
   },
   {
@@ -5414,9 +5414,9 @@ var CLASH_GAMES = [
     "id": "clash_902"
   },
   {
-    "title": "Codename Gordon",
+    "title": "Coden Ame Gordon",
     "url": "/games/clcodenamegordon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_903"
   },
   {
@@ -5476,19 +5476,19 @@ var CLASH_GAMES = [
   {
     "title": "Commander Keen 4",
     "url": "/games/clcommanderkeen4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_913"
   },
   {
     "title": "Commander Keen 5",
     "url": "/games/clcommanderkeen5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_914"
   },
   {
     "title": "Commander Keen 6",
     "url": "/games/clcommanderkeen6.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_915"
   },
   {
@@ -5498,21 +5498,21 @@ var CLASH_GAMES = [
     "id": "clash_916"
   },
   {
-    "title": "Conker's Bad Fur Day",
+    "title": "Conkers Bad Fur Day",
     "url": "/games/clconkersbadfurday.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_917"
   },
   {
     "title": "Connect 3",
     "url": "/games/clconnect3.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_918"
   },
   {
-    "title": "Contra",
+    "title": "contra",
     "url": "/games/clcontra.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_919"
   },
   {
@@ -5524,25 +5524,25 @@ var CLASH_GAMES = [
   {
     "title": "Cooking Mama",
     "url": "/games/clcookingmama.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_921"
   },
   {
     "title": "Cooking Mama 2",
     "url": "/games/clcookingmama2.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_922"
   },
   {
     "title": "Cooking Mama 3",
     "url": "/games/clcookingmama3.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_923"
   },
   {
-    "title": "Core Ball",
+    "title": "Coreball",
     "url": "/games/clcoreball.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_924"
   },
   {
@@ -5614,25 +5614,25 @@ var CLASH_GAMES = [
   {
     "title": "CraftMine",
     "url": "/games/clcraftmine.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_936"
   },
   {
-    "title": "Crank It!",
+    "title": "Crank It",
     "url": "/games/clcrankit.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_937"
   },
   {
     "title": "Crash Bandicoot",
     "url": "/games/clcrashbandicoot.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_938"
   },
   {
     "title": "Crash Bandicoot 2",
     "url": "/games/clcrashbandicoot2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_939"
   },
   {
@@ -5660,21 +5660,21 @@ var CLASH_GAMES = [
     "id": "clash_943"
   },
   {
-    "title": "Crazy Cars",
+    "title": "Crazy Cars!",
     "url": "/games/clcrazycars.html",
-    "cat": "Racing",
+    "cat": "Arcade",
     "id": "clash_944"
   },
   {
     "title": "Crazy Cattle 3D",
     "url": "/games/clcrazycattle3d.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_945"
   },
   {
     "title": "Crazy Chicken 3D",
     "url": "/games/clcrazychicken3D.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_946"
   },
   {
@@ -5750,7 +5750,7 @@ var CLASH_GAMES = [
     "id": "clash_958"
   },
   {
-    "title": "Crunchball 3000",
+    "title": "Crunch Ball 3000",
     "url": "/games/clcrunchball3000.html",
     "cat": "Racing",
     "id": "clash_959"
@@ -5774,7 +5774,7 @@ var CLASH_GAMES = [
     "id": "clash_962"
   },
   {
-    "title": "Csgo Clicker",
+    "title": "csgo clicker",
     "url": "/games/clcsgoclicker.html",
     "cat": "Strategy",
     "id": "clash_963"
@@ -5788,13 +5788,13 @@ var CLASH_GAMES = [
   {
     "title": "Cubefield",
     "url": "/games/clcubefield.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_965"
   },
   {
     "title": "Cupcake 2048",
     "url": "/games/clcupcake2048.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_966"
   },
   {
@@ -5804,33 +5804,33 @@ var CLASH_GAMES = [
     "id": "clash_967"
   },
   {
-    "title": "Curve Ball",
+    "title": "Curveball",
     "url": "/games/clcurveball.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_968"
   },
   {
     "title": "Customer Support",
     "url": "/games/clcustomersupport.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_969"
   },
   {
     "title": "Cut the Rope",
     "url": "/games/clcuttherope.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_970"
   },
   {
     "title": "Cut the Rope Holiday",
     "url": "/games/clcuttheropeholiday.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_971"
   },
   {
-    "title": "Cut the Rope Time Travel",
+    "title": "Cut the Rope: Time Travel",
     "url": "/games/clcuttheropetimetravel.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_972"
   },
   {
@@ -5840,15 +5840,15 @@ var CLASH_GAMES = [
     "id": "clash_973"
   },
   {
-    "title": "Cyberbung Racing",
+    "title": "Cyber Bung Racing",
     "url": "/games/clcyberbungracing.html",
     "cat": "Racing",
     "id": "clash_974"
   },
   {
-    "title": "Dad n Me",
+    "title": "Dad Nm E",
     "url": "/games/cldadnme.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_975"
   },
   {
@@ -5866,13 +5866,13 @@ var CLASH_GAMES = [
   {
     "title": "Dadish",
     "url": "/games/cldadish.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_978"
   },
   {
-    "title": "Dan the Man",
+    "title": "Dan The Man",
     "url": "/games/cldtm.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_979"
   },
   {
@@ -5894,9 +5894,9 @@ var CLASH_GAMES = [
     "id": "clash_982"
   },
   {
-    "title": "Dashmetry",
+    "title": "dashmetry",
     "url": "/games/cldashmetry.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_983"
   },
   {
@@ -5906,15 +5906,15 @@ var CLASH_GAMES = [
     "id": "clash_984"
   },
   {
-    "title": "De Blob 2",
+    "title": "Deb Lob 2",
     "url": "/games/cldeblob2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_985"
   },
   {
-    "title": "Dead Estate",
+    "title": "Deadest Ate",
     "url": "/games/cldeadestate.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_986"
   },
   {
@@ -5930,9 +5930,9 @@ var CLASH_GAMES = [
     "id": "clash_988"
   },
   {
-    "title": "Dead Plate",
+    "title": "DEAD PLATE",
     "url": "/games/cldeadplate.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_989"
   },
   {
@@ -5942,21 +5942,21 @@ var CLASH_GAMES = [
     "id": "clash_990"
   },
   {
-    "title": "Dead Seat",
+    "title": "Deadseat",
     "url": "/games/cldeadseat.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_991"
   },
   {
     "title": "Dead Zed",
     "url": "/games/cldeadzed.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_992"
   },
   {
     "title": "Dead Zed 2",
     "url": "/games/cldeadzed2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_993"
   },
   {
@@ -5974,13 +5974,13 @@ var CLASH_GAMES = [
   {
     "title": "Deal or No Deal",
     "url": "/games/cldealornodeal.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_996"
   },
   {
     "title": "Death Chase",
     "url": "/games/cldeathchase.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_997"
   },
   {
@@ -5998,47 +5998,47 @@ var CLASH_GAMES = [
   {
     "title": "Decision",
     "url": "/games/cldecision.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1000"
   },
   {
     "title": "Decision 2",
     "url": "/games/cldecision2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1001"
   },
   {
     "title": "Decision 3",
     "url": "/games/cldecision3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1002"
   },
   {
     "title": "Decision Medieval",
     "url": "/games/cldecisionmedieval.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1003"
   },
   {
     "title": "Deeper Sleep",
     "url": "/games/cldeepersleep.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1004"
   },
   {
     "title": "Deepest Sword",
     "url": "/games/cldeepestsword.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1005"
   },
   {
-    "title": "Deepsleep",
+    "title": "Deeps Leep",
     "url": "/games/cldeepsleep.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1006"
   },
   {
-    "title": "Defend the Tank",
+    "title": "defend the tank",
     "url": "/games/cldefendthetank.html",
     "cat": "Action",
     "id": "clash_1007"
@@ -6050,13 +6050,13 @@ var CLASH_GAMES = [
     "id": "clash_1008"
   },
   {
-    "title": "Defend Your Nuts",
+    "title": "Defend Yourn Uts",
     "url": "/games/cldefendyournuts.html",
     "cat": "Action",
     "id": "clash_1009"
   },
   {
-    "title": "Defend Your Nuts 2",
+    "title": "Defend Yourn Uts 2",
     "url": "/games/cldefendyournuts2.html",
     "cat": "Action",
     "id": "clash_1010"
@@ -6068,15 +6068,15 @@ var CLASH_GAMES = [
     "id": "clash_1011"
   },
   {
-    "title": "Deltarune",
+    "title": "Delta Rune",
     "url": "/games/cldeltarune.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1012"
   },
   {
     "title": "Deltatraveler",
     "url": "/games/cldeltatraveler.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1013"
   },
   {
@@ -6106,31 +6106,31 @@ var CLASH_GAMES = [
   {
     "title": "Diablo",
     "url": "/games/cldiablo.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1018"
   },
   {
     "title": "Diamond Hollow",
     "url": "/games/cldiamondhollow.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1019"
   },
   {
     "title": "Diamond Hollow 2",
     "url": "/games/cldiamondhollow2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1020"
   },
   {
-    "title": "Diddy Kong Racing",
+    "title": "diddy kong racing",
     "url": "/games/cldiddykong-racing.html",
     "cat": "Racing",
     "id": "clash_1021"
   },
   {
-    "title": "Die in the Dungeon",
+    "title": "Die Int Hed Ung Eon",
     "url": "/games/cldieinthedungeon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1022"
   },
   {
@@ -6142,7 +6142,7 @@ var CLASH_GAMES = [
   {
     "title": "Dig Dug",
     "url": "/games/cldigdug.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1024"
   },
   {
@@ -6154,7 +6154,7 @@ var CLASH_GAMES = [
   {
     "title": "Dig Dug 2",
     "url": "/games/cldigdug2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1026"
   },
   {
@@ -6164,9 +6164,9 @@ var CLASH_GAMES = [
     "id": "clash_1027"
   },
   {
-    "title": "Dig to China",
+    "title": "Dig Toch Ina",
     "url": "/games/cldigtochina.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1028"
   },
   {
@@ -6196,7 +6196,7 @@ var CLASH_GAMES = [
   {
     "title": "Dire Decks",
     "url": "/games/cldiredecks.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1033"
   },
   {
@@ -6206,9 +6206,9 @@ var CLASH_GAMES = [
     "id": "clash_1034"
   },
   {
-    "title": "Doblox",
+    "title": "Dobl Ox",
     "url": "/games/cldoblox.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1035"
   },
   {
@@ -6226,25 +6226,25 @@ var CLASH_GAMES = [
   {
     "title": "Doge 2048",
     "url": "/games/cldoge2048.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_1038"
   },
   {
     "title": "Doge Miner",
     "url": "/games/cldogeminer.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1039"
   },
   {
     "title": "Doge Miner 2",
     "url": "/games/cldogeminer2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1040"
   },
   {
-    "title": "Doki Doki Literature Club",
+    "title": "Do Kid Oki Literature Club",
     "url": "/games/cldokidokiliteratureclub.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1041"
   },
   {
@@ -6260,21 +6260,21 @@ var CLASH_GAMES = [
     "id": "clash_1043"
   },
   {
-    "title": "Don't Escape",
+    "title": "Dont Escape",
     "url": "/games/cldontescape.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1044"
   },
   {
-    "title": "Don't Escape 2",
+    "title": "Dont Escape 2",
     "url": "/games/cldontescape2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1045"
   },
   {
-    "title": "Don't Escape 3",
+    "title": "Dont Escape 3",
     "url": "/games/cldontescape3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1046"
   },
   {
@@ -6284,15 +6284,15 @@ var CLASH_GAMES = [
     "id": "clash_1047"
   },
   {
-    "title": "Donkey Kong",
+    "title": "donkey kong",
     "url": "/games/cldonkeykong.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1048"
   },
   {
-    "title": "Donkey Kong (NES)",
+    "title": "Donkey Kong NES",
     "url": "/games/cldonkeykongnes.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1049"
   },
   {
@@ -6302,9 +6302,9 @@ var CLASH_GAMES = [
     "id": "clash_1050"
   },
   {
-    "title": "Donkey kong 64",
+    "title": "donkey kong 64",
     "url": "/games/cldonkeykong64.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1051"
   },
   {
@@ -6320,9 +6320,9 @@ var CLASH_GAMES = [
     "id": "clash_1053"
   },
   {
-    "title": "Donkey Kong Country",
+    "title": "donkey kong country",
     "url": "/games/cldonkeykongcountry.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1054"
   },
   {
@@ -6332,15 +6332,15 @@ var CLASH_GAMES = [
     "id": "clash_1055"
   },
   {
-    "title": "Donkey Kong Country 2",
+    "title": "donkey kong country 2",
     "url": "/games/cldonkeykongcountry2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1056"
   },
   {
-    "title": "Donkey Kong Country 3",
+    "title": "donkey kong country 3",
     "url": "/games/cldonkeykongcountry3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1057"
   },
   {
@@ -6352,7 +6352,7 @@ var CLASH_GAMES = [
   {
     "title": "Doodle Jump",
     "url": "/games/cldoodlejump.html",
-    "cat": "Action",
+    "cat": "Platformer",
     "id": "clash_1059"
   },
   {
@@ -6382,13 +6382,13 @@ var CLASH_GAMES = [
   {
     "title": "Double Wires",
     "url": "/games/cldoublewires.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1064"
   },
   {
-    "title": "Douchebag Life",
+    "title": "Douche Bag Life",
     "url": "/games/cldouchebaglife.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1065"
   },
   {
@@ -6404,9 +6404,9 @@ var CLASH_GAMES = [
     "id": "clash_1067"
   },
   {
-    "title": "Dr. Mario",
+    "title": "dr mario",
     "url": "/games/cldrmario.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1068"
   },
   {
@@ -6418,7 +6418,7 @@ var CLASH_GAMES = [
   {
     "title": "Drag Racer V3",
     "url": "/games/cl2115.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1070"
   },
   {
@@ -6512,27 +6512,27 @@ var CLASH_GAMES = [
     "id": "clash_1085"
   },
   {
-    "title": "Dragonballadvance",
+    "title": "Dragon Ballad Vance",
     "url": "/games/cldragonballadvance.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1086"
   },
   {
     "title": "Draw Climber",
     "url": "/games/cldrawclimber.html",
-    "cat": "Creative",
+    "cat": "Platformer",
     "id": "clash_1087"
   },
   {
     "title": "Draw the Hill",
     "url": "/games/cldrawthehill.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_1088"
   },
   {
     "title": "Draw the Line",
     "url": "/games/cldrawtheline.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1089"
   },
   {
@@ -6556,13 +6556,13 @@ var CLASH_GAMES = [
   {
     "title": "Dreadhead Parkour",
     "url": "/games/cldreadheadparkour.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1093"
   },
   {
     "title": "Drift Boss",
     "url": "/games/cldriftboss.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1094"
   },
   {
@@ -6592,7 +6592,7 @@ var CLASH_GAMES = [
   {
     "title": "Driven Wild",
     "url": "/games/cldrivenwild.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1099"
   },
   {
@@ -6614,63 +6614,63 @@ var CLASH_GAMES = [
     "id": "clash_1102"
   },
   {
-    "title": "Duck hunt",
+    "title": "Duck Hunt",
     "url": "/games/clduckhunt.html",
-    "cat": "Animals",
+    "cat": "Action",
     "id": "clash_1103"
   },
   {
     "title": "Duck Life",
     "url": "/games/clducklife.html",
-    "cat": "Animals",
+    "cat": "Puzzle",
     "id": "clash_1104"
   },
   {
     "title": "Duck Life 2",
     "url": "/games/clducklife2.html",
-    "cat": "Animals",
+    "cat": "Puzzle",
     "id": "clash_1105"
   },
   {
     "title": "Duck Life 3",
     "url": "/games/clducklife3.html",
-    "cat": "Animals",
+    "cat": "Puzzle",
     "id": "clash_1106"
   },
   {
     "title": "Duck Life 4",
     "url": "/games/clducklife4.html",
-    "cat": "Animals",
+    "cat": "Puzzle",
     "id": "clash_1107"
   },
   {
     "title": "Duck Life 5",
     "url": "/games/clducklfe5.html",
-    "cat": "Animals",
+    "cat": "Puzzle",
     "id": "clash_1108"
   },
   {
     "title": "Duck Life Battle",
     "url": "/games/clducklifebattle.html",
-    "cat": "Animals",
+    "cat": "Action",
     "id": "clash_1109"
   },
   {
     "title": "Duck Life Space",
     "url": "/games/clducklifespace.html",
-    "cat": "Animals",
+    "cat": "Action",
     "id": "clash_1110"
   },
   {
     "title": "Ducklings.io",
     "url": "/games/clducklingsio.html",
-    "cat": "Animals",
+    "cat": "Arcade",
     "id": "clash_1111"
   },
   {
-    "title": "Ducktales",
+    "title": "duck tales",
     "url": "/games/clducktales.html",
-    "cat": "Animals",
+    "cat": "Adventure",
     "id": "clash_1112"
   },
   {
@@ -6680,27 +6680,27 @@ var CLASH_GAMES = [
     "id": "clash_1113"
   },
   {
-    "title": "DUD",
+    "title": "Dud",
     "url": "/games/cldud.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1114"
   },
   {
     "title": "Duke Nukem 2",
     "url": "/games/cldukenukem2.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1115"
   },
   {
-    "title": "Duke Nukem 3D",
+    "title": "Duke Nuke M 3D",
     "url": "/games/cldukenukem3d.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1116"
   },
   {
     "title": "Dumb Ways to Die",
     "url": "/games/cldumbwaystodie.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1117"
   },
   {
@@ -6730,7 +6730,7 @@ var CLASH_GAMES = [
   {
     "title": "Dungeon Raid",
     "url": "/games/cldungeonraid.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1122"
   },
   {
@@ -6752,15 +6752,15 @@ var CLASH_GAMES = [
     "id": "clash_1125"
   },
   {
-    "title": "Dunk Shot",
+    "title": "Dunks Hot",
     "url": "/games/cldunkshot.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1126"
   },
   {
     "title": "Dying Dreams",
     "url": "/games/cldyingdreams.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1127"
   },
   {
@@ -6778,7 +6778,7 @@ var CLASH_GAMES = [
   {
     "title": "Eagle Ride",
     "url": "/games/cleagleride.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1130"
   },
   {
@@ -6788,45 +6788,45 @@ var CLASH_GAMES = [
     "id": "clash_1131"
   },
   {
-    "title": "Earn to Die",
+    "title": "Earn Tod Ie",
     "url": "/games/clearntodie.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1132"
   },
   {
-    "title": "Earn to Die 2",
+    "title": "Earn Tod Ie 2",
     "url": "/games/clearntodie2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1133"
   },
   {
     "title": "Earth Taken",
     "url": "/games/clearthtaken.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1134"
   },
   {
     "title": "Earth Taken 2",
     "url": "/games/clearthtaken2.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1135"
   },
   {
     "title": "Earth Taken 3",
     "url": "/games/clearthtaken3.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1136"
   },
   {
-    "title": "EarthBound",
+    "title": "earthbound",
     "url": "/games/clearthbound.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1137"
   },
   {
     "title": "Earthbound 3",
     "url": "/games/clearthbound3.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1138"
   },
   {
@@ -6838,13 +6838,13 @@ var CLASH_GAMES = [
   {
     "title": "Earthworm Jim",
     "url": "/games/clearthwormjim.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1140"
   },
   {
     "title": "Earthworm Jim 2",
     "url": "/games/clearthwormjim2.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1141"
   },
   {
@@ -6854,9 +6854,9 @@ var CLASH_GAMES = [
     "id": "clash_1142"
   },
   {
-    "title": "Ecco the Dolphin",
+    "title": "ecco the dolphin",
     "url": "/games/cleccothedolphin.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1143"
   },
   {
@@ -6868,7 +6868,7 @@ var CLASH_GAMES = [
   {
     "title": "Edge Not Found",
     "url": "/games/cledgenotfound.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1145"
   },
   {
@@ -6880,19 +6880,19 @@ var CLASH_GAMES = [
   {
     "title": "Effing Hail",
     "url": "/games/cleffinghail.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1147"
   },
   {
     "title": "Effing Machines",
     "url": "/games/cleffingmachines.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1148"
   },
   {
     "title": "Effing Worms",
     "url": "/games/cleffingworms.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1149"
   },
   {
@@ -6916,19 +6916,19 @@ var CLASH_GAMES = [
   {
     "title": "Eggy Car",
     "url": "/games/cleggycar.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1153"
   },
   {
     "title": "Elastic Face",
     "url": "/games/clelasticface.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1154"
   },
   {
     "title": "Elastic Man",
     "url": "/games/cl2334.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1155"
   },
   {
@@ -6938,9 +6938,9 @@ var CLASH_GAMES = [
     "id": "clash_1156"
   },
   {
-    "title": "Electricman 2",
+    "title": "electric man 2",
     "url": "/games/clelectricman2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1157"
   },
   {
@@ -6964,7 +6964,7 @@ var CLASH_GAMES = [
   {
     "title": "Enchain",
     "url": "/games/clenchain.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1161"
   },
   {
@@ -6976,7 +6976,7 @@ var CLASH_GAMES = [
   {
     "title": "Endless War 3",
     "url": "/games/cl2223.html",
-    "cat": "Retro",
+    "cat": "Action",
     "id": "clash_1163"
   },
   {
@@ -7000,19 +7000,19 @@ var CLASH_GAMES = [
   {
     "title": "Enduro",
     "url": "/games/clenduro.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1167"
   },
   {
     "title": "Epic Battle Fantasy 5",
     "url": "/games/clepicbattlefantasy5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1168"
   },
   {
     "title": "Escalating Duel",
     "url": "/games/clescalatingduel.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1169"
   },
   {
@@ -7024,19 +7024,19 @@ var CLASH_GAMES = [
   {
     "title": "Escape Road",
     "url": "/games/clescaperoad.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1171"
   },
   {
     "title": "Escape Road 3",
     "url": "/games/clescaperoad3.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1172"
   },
   {
     "title": "Escape Road City 2",
     "url": "/games/clescaperoadcity2.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1173"
   },
   {
@@ -7084,13 +7084,13 @@ var CLASH_GAMES = [
   {
     "title": "Evil Glitch",
     "url": "/games/clevilglitch.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1181"
   },
   {
     "title": "Evolution",
     "url": "/games/clevolution.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1182"
   },
   {
@@ -7106,7 +7106,7 @@ var CLASH_GAMES = [
     "id": "clash_1184"
   },
   {
-    "title": "Excitebike 64",
+    "title": "excitebike 64",
     "url": "/games/clexcitebike64.html",
     "cat": "Racing",
     "id": "clash_1185"
@@ -7120,7 +7120,7 @@ var CLASH_GAMES = [
   {
     "title": "Exo",
     "url": "/games/clexo.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1187"
   },
   {
@@ -7142,45 +7142,45 @@ var CLASH_GAMES = [
     "id": "clash_1190"
   },
   {
-    "title": "F-zero",
+    "title": "f-zero",
     "url": "/games/clfzero.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1191"
   },
   {
-    "title": "F-zero X",
+    "title": "f-zero x",
     "url": "/games/clfzerox.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1192"
   },
   {
-    "title": "Factory Balls",
+    "title": "factory balls",
     "url": "/games/clfactoryballs.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1193"
   },
   {
     "title": "Factory Balls 2",
     "url": "/games/clfactoryballs2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1194"
   },
   {
     "title": "Factory Balls 3",
     "url": "/games/clfactoryballs3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1195"
   },
   {
     "title": "Factory Balls 4",
     "url": "/games/clfactoryballs4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1196"
   },
   {
     "title": "Factory Balls Forever",
     "url": "/games/clfactoryballsforever.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1197"
   },
   {
@@ -7192,7 +7192,7 @@ var CLASH_GAMES = [
   {
     "title": "Fake Virus",
     "url": "/games/clfakevirus.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1199"
   },
   {
@@ -7204,7 +7204,7 @@ var CLASH_GAMES = [
   {
     "title": "Fallout",
     "url": "/games/clfallout.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1201"
   },
   {
@@ -7228,7 +7228,7 @@ var CLASH_GAMES = [
   {
     "title": "Fancy Pants Adventure",
     "url": "/games/clfancypantsadventure.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1205"
   },
   {
@@ -7240,25 +7240,25 @@ var CLASH_GAMES = [
   {
     "title": "Fancy Pants Adventure 2",
     "url": "/games/clfancypantsadventure2.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1207"
   },
   {
     "title": "Fancy Pants Adventure 4 Part 1",
     "url": "/games/clfpa4p1.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1208"
   },
   {
     "title": "Fancy Pants Adventure 4 Part 2",
     "url": "/games/clfpa4p2.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1209"
   },
   {
-    "title": "Fancy Snowboarding",
+    "title": "Fancy Snow Boarding",
     "url": "/games/clfancysnowboarding.html",
-    "cat": "Sports",
+    "cat": "Action",
     "id": "clash_1210"
   },
   {
@@ -7270,7 +7270,7 @@ var CLASH_GAMES = [
   {
     "title": "Fashion Battle",
     "url": "/games/clfashionbattle.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1212"
   },
   {
@@ -7300,7 +7300,7 @@ var CLASH_GAMES = [
   {
     "title": "Fatty Genius",
     "url": "/games/clfattygenius.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1217"
   },
   {
@@ -7318,61 +7318,61 @@ var CLASH_GAMES = [
   {
     "title": "Feed Us 2",
     "url": "/games/clfeedus2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1220"
   },
   {
     "title": "Feed Us 3",
     "url": "/games/clfeedus3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1221"
   },
   {
     "title": "Feed Us 4",
     "url": "/games/clfeedus4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1222"
   },
   {
     "title": "Feed Us 5",
     "url": "/games/clfeedus5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1223"
   },
   {
-    "title": "Feedus",
+    "title": "Feed Us",
     "url": "/games/clfeedus.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1224"
   },
   {
-    "title": "FIFA 07",
+    "title": "Fifa 07",
     "url": "/games/clFIFA07.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1225"
   },
   {
     "title": "FIFA 10",
     "url": "/games/clFIFA10.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1226"
   },
   {
     "title": "FIFA 11",
     "url": "/games/clFIFA11.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1227"
   },
   {
-    "title": "FIFA 2000",
+    "title": "Fifa 2 000",
     "url": "/games/clfifa2000.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1228"
   },
   {
-    "title": "FIFA 99",
+    "title": "Fifa 99",
     "url": "/games/clFIFA99.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1229"
   },
   {
@@ -7388,33 +7388,33 @@ var CLASH_GAMES = [
     "id": "clash_1231"
   },
   {
-    "title": "FIFA Soccer 06",
+    "title": "Fifa Soccer 06",
     "url": "/games/clFIFAsoccer06.html",
     "cat": "Sports",
     "id": "clash_1232"
   },
   {
-    "title": "FIFA Soccer 95",
+    "title": "Fifa Soccer 95",
     "url": "/games/clFIFAsoccer95.html",
     "cat": "Sports",
     "id": "clash_1233"
   },
   {
-    "title": "FIFA Soccer 96",
+    "title": "Fifa Soccer 96",
     "url": "/games/clFIFAsoccer96.html",
     "cat": "Sports",
     "id": "clash_1234"
   },
   {
-    "title": "FIFA Soccer 97",
+    "title": "Fifa Soccer 97",
     "url": "/games/clFIFAsoccer97.html",
     "cat": "Sports",
     "id": "clash_1235"
   },
   {
-    "title": "FIFA Street 2",
+    "title": "Fifa Street 2",
     "url": "/games/clFIFAstreet2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1236"
   },
   {
@@ -7426,13 +7426,13 @@ var CLASH_GAMES = [
   {
     "title": "Final Earth 2",
     "url": "/games/clfinalearth2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1238"
   },
   {
     "title": "Final Fantasy",
     "url": "/games/clfinalfantasy.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1239"
   },
   {
@@ -7456,7 +7456,7 @@ var CLASH_GAMES = [
   {
     "title": "Final Fantasy II",
     "url": "/games/clfinalfantasyII.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1243"
   },
   {
@@ -7486,13 +7486,13 @@ var CLASH_GAMES = [
   {
     "title": "Final Fantasy Tactics",
     "url": "/games/clfinalfantasytactics.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1248"
   },
   {
     "title": "Final Fantasy VI",
     "url": "/games/clff6.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1249"
   },
   {
@@ -7514,15 +7514,15 @@ var CLASH_GAMES = [
     "id": "clash_1252"
   },
   {
-    "title": "Final Ninja",
+    "title": "final ninja",
     "url": "/games/clfinalninja.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1253"
   },
   {
-    "title": "Find The A lien",
+    "title": "Find the Alien",
     "url": "/games/clfindthealien.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1254"
   },
   {
@@ -7538,9 +7538,9 @@ var CLASH_GAMES = [
     "id": "clash_1256"
   },
   {
-    "title": "Fire Emblem",
+    "title": "fire emblem",
     "url": "/games/clfireemblem.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1257"
   },
   {
@@ -7576,7 +7576,7 @@ var CLASH_GAMES = [
   {
     "title": "Flappy 2048",
     "url": "/games/clflappy2048.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_1263"
   },
   {
@@ -7598,15 +7598,15 @@ var CLASH_GAMES = [
     "id": "clash_1266"
   },
   {
-    "title": "Flood Runner 2",
+    "title": "flood runner 2",
     "url": "/games/clfloodrunner2.html",
     "cat": "Racing",
     "id": "clash_1267"
   },
   {
-    "title": "Flood Runner 3",
+    "title": "flood runner 3",
     "url": "/games/clfloodrunner3.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1268"
   },
   {
@@ -7624,7 +7624,7 @@ var CLASH_GAMES = [
   {
     "title": "Fluidism",
     "url": "/games/clfluidism.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1271"
   },
   {
@@ -7828,13 +7828,13 @@ var CLASH_GAMES = [
   {
     "title": "Focus",
     "url": "/games/clfocus.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1305"
   },
   {
     "title": "Folder Dungeon",
     "url": "/games/clfolderdungeon.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1306"
   },
   {
@@ -7858,37 +7858,37 @@ var CLASH_GAMES = [
   {
     "title": "Fork n Sausage",
     "url": "/games/clforknsausage.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1310"
   },
   {
     "title": "Fortzone Battle Royale",
     "url": "/games/clfortzone.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1311"
   },
   {
     "title": "Free Rider",
     "url": "/games/clfreerider.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1312"
   },
   {
     "title": "Free Rider 2",
     "url": "/games/clfreerider2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1313"
   },
   {
     "title": "Free Rider 3",
     "url": "/games/clfreerider3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1314"
   },
   {
-    "title": "Freegemas",
+    "title": "Free Gemas",
     "url": "/games/clfreegemas.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1315"
   },
   {
@@ -7918,13 +7918,13 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin",
     "url": "/games/clfridaynightfunkin.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1320"
   },
   {
-    "title": "Friday Night Funkin - Akage",
+    "title": "Friday Night Funkin': AKAGE",
     "url": "/games/clfnfakage.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1321"
   },
   {
@@ -7946,9 +7946,9 @@ var CLASH_GAMES = [
     "id": "clash_1324"
   },
   {
-    "title": "Friday Night Funkin B-Sides",
+    "title": "Friday Night Funkin': B-Sides",
     "url": "/games/clfnfbside.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1325"
   },
   {
@@ -7976,21 +7976,21 @@ var CLASH_GAMES = [
     "id": "clash_1329"
   },
   {
-    "title": "Friday Night Funkin D-Sides",
+    "title": "Friday Night Funkin' D-Sides",
     "url": "/games/clfnfdsides.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1330"
   },
   {
-    "title": "Friday Night Funkin Hit Single Real",
+    "title": "Friday Night Funkin': Hit Single Real",
     "url": "/games/clhitsinglereal.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1331"
   },
   {
-    "title": "Friday Night Funkin HORKGLORPGLOOP",
+    "title": "Friday Night Funkin Horkglorpgloop",
     "url": "/games/clfnfhorkglorpgloop.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_1332"
   },
   {
@@ -8000,9 +8000,9 @@ var CLASH_GAMES = [
     "id": "clash_1333"
   },
   {
-    "title": "Friday Night Funkin Neo",
+    "title": "Friday Night Funkin': Neo",
     "url": "/games/clfnfneo.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1334"
   },
   {
@@ -8030,9 +8030,9 @@ var CLASH_GAMES = [
     "id": "clash_1338"
   },
   {
-    "title": "Friday Night Funkin vs Hypno Lullaby",
+    "title": "Friday Night Funkin' vs Hypno Lullaby",
     "url": "/games/clfnfhypnoslullaby.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1339"
   },
   {
@@ -8044,7 +8044,7 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin VS Impostor v4",
     "url": "/games/clfnfimposterv4.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1341"
   },
   {
@@ -8060,9 +8060,9 @@ var CLASH_GAMES = [
     "id": "clash_1343"
   },
   {
-    "title": "Friday Night Funkin vs QT",
+    "title": "Friday Night Funkin': vs. QT",
     "url": "/games/clfnfqt.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1344"
   },
   {
@@ -8090,9 +8090,9 @@ var CLASH_GAMES = [
     "id": "clash_1348"
   },
   {
-    "title": "Friday Night Funkin VS Sky",
+    "title": "Friday Night Funkin VS. Sky",
     "url": "/games/clfnfsky.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1349"
   },
   {
@@ -8128,25 +8128,25 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin Vs. Cyber Sensation",
     "url": "/games/clcybersensation.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1355"
   },
   {
-    "title": "Friday Night Funkin vs. Garcello",
+    "title": "Friday Night Funkin': vs. Garcello",
     "url": "/games/clgarcello.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1356"
   },
   {
-    "title": "Friday Night Funkin vs. Hatsune Miku",
+    "title": "Friday Night Funkin': Vs. Hatsune Miku",
     "url": "/games/clfnfmiku.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1357"
   },
   {
-    "title": "Friday Night Funkin vs. Hex",
+    "title": "Friday Night Funkin': Vs. Hex",
     "url": "/games/clfnfhex.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1358"
   },
   {
@@ -8158,7 +8158,7 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin VS. KAPI",
     "url": "/games/clkapi.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1360"
   },
   {
@@ -8168,21 +8168,21 @@ var CLASH_GAMES = [
     "id": "clash_1361"
   },
   {
-    "title": "Friday Night Funkin vs. Tricky",
+    "title": "Friday Night Funkin': vs. Tricky",
     "url": "/games/clfnftricky.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1362"
   },
   {
-    "title": "Friday Night Funkin vs. Whitty",
+    "title": "Friday Night Funkin': V.S. Whitty",
     "url": "/games/clfnfwhitty.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1363"
   },
   {
-    "title": "Friday Night Funkin vs. Zardy",
+    "title": "Friday Night Funkin vs Zardy",
     "url": "/games/clfnfzardy.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1364"
   },
   {
@@ -8236,7 +8236,7 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin' Drop and Roll, but Playable",
     "url": "/games/clfnfdropandroll.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1373"
   },
   {
@@ -8276,9 +8276,9 @@ var CLASH_GAMES = [
     "id": "clash_1379"
   },
   {
-    "title": "Friday Night Funkin' Sarvente's Mid-Fight Masses",
+    "title": "Friday Night Funkin': Sarvente's Mid-Fight Masses",
     "url": "/games/clfnfmidfight.html",
-    "cat": "Music",
+    "cat": "Action",
     "id": "clash_1380"
   },
   {
@@ -8288,9 +8288,9 @@ var CLASH_GAMES = [
     "id": "clash_1381"
   },
   {
-    "title": "Friday Night Funkin' Shucks V2",
+    "title": "Friday Night Funkin Shucks V2",
     "url": "/games/clfnfshucks-v2.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1382"
   },
   {
@@ -8300,9 +8300,9 @@ var CLASH_GAMES = [
     "id": "clash_1383"
   },
   {
-    "title": "Friday Night Funkin' Soft",
+    "title": "Friday Night Funkinâ€™ Soft",
     "url": "/games/clfnfsoft.html",
-    "cat": "Music",
+    "cat": "Puzzle",
     "id": "clash_1384"
   },
   {
@@ -8324,9 +8324,9 @@ var CLASH_GAMES = [
     "id": "clash_1387"
   },
   {
-    "title": "Friday Night Funkin' TwiddleFinger",
+    "title": "Friday Night Funkin TWIDDLEFINGER",
     "url": "/games/clfnfTWIDDLEFINGER.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1388"
   },
   {
@@ -8372,9 +8372,9 @@ var CLASH_GAMES = [
     "id": "clash_1395"
   },
   {
-    "title": "Friday Night Funkin' Wednesday's Infidelity",
+    "title": "Friday Night Funkinâ€™ Wednesday's Infidelity",
     "url": "/games/clfnfwednesday-infedility.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1396"
   },
   {
@@ -8386,13 +8386,13 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin': Indie Cross",
     "url": "/games/clfnfindiecross.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1398"
   },
   {
     "title": "Friday Night Funkin': Mario's Madness",
     "url": "/games/clmariomadness.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1399"
   },
   {
@@ -8404,19 +8404,19 @@ var CLASH_GAMES = [
   {
     "title": "Friday Night Funkin': Pibby: Apocalypse",
     "url": "/games/clpibbyapocalypse.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1401"
   },
   {
     "title": "Friday Night Funkin': Rev-Mixed",
     "url": "/games/clfnfrevmixed.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1402"
   },
   {
-    "title": "Friday Night Funkin': Shaggy x Matt",
+    "title": "Friday Night Funkin Shaggy X Matt",
     "url": "/games/clfnfshaggyxmatt.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1403"
   },
   {
@@ -8434,7 +8434,7 @@ var CLASH_GAMES = [
   {
     "title": "Fruit Ninja",
     "url": "/games/clfruitninja.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1406"
   },
   {
@@ -8476,7 +8476,7 @@ var CLASH_GAMES = [
   {
     "title": "Fused 240",
     "url": "/games/clfused240.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1413"
   },
   {
@@ -8504,15 +8504,15 @@ var CLASH_GAMES = [
     "id": "clash_1417"
   },
   {
-    "title": "Gacha Life",
+    "title": "Gachalife",
     "url": "/games/cl2290.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1418"
   },
   {
-    "title": "Gachaverse",
+    "title": "Gacha Verse",
     "url": "/games/clgachaverse.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1419"
   },
   {
@@ -8522,9 +8522,9 @@ var CLASH_GAMES = [
     "id": "clash_1420"
   },
   {
-    "title": "Game And Watch Collection",
+    "title": "Game and Watch Collection",
     "url": "/games/clgameandwatchcollection.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1421"
   },
   {
@@ -8536,7 +8536,7 @@ var CLASH_GAMES = [
   {
     "title": "Game Inside a Game Inside a Game...",
     "url": "/games/clgameinsideagameinsideagame.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1423"
   },
   {
@@ -8560,31 +8560,31 @@ var CLASH_GAMES = [
   {
     "title": "General Chaos",
     "url": "/games/clgeneralchaos.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1427"
   },
   {
     "title": "Generic Fighter Maybe",
     "url": "/games/clgenericfightermaybe.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1428"
   },
   {
     "title": "Geometry Vibes",
     "url": "/games/clgeometryvibes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1429"
   },
   {
-    "title": "George And The Printer",
+    "title": "Georgeandtheprinter",
     "url": "/games/clgeorgeandtheprinter.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1430"
   },
   {
-    "title": "Get On Top",
+    "title": "Get on Top",
     "url": "/games/clgetontop.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1431"
   },
   {
@@ -8596,13 +8596,13 @@ var CLASH_GAMES = [
   {
     "title": "Get Yoked",
     "url": "/games/clgetyoked.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1433"
   },
   {
     "title": "Getaway Shootout",
     "url": "/games/clgetawayshootout.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1434"
   },
   {
@@ -8626,7 +8626,7 @@ var CLASH_GAMES = [
   {
     "title": "Gimme the Airpod",
     "url": "/games/clgimmietheairpod.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1438"
   },
   {
@@ -8638,13 +8638,13 @@ var CLASH_GAMES = [
   {
     "title": "Gladihoppers",
     "url": "/games/clgladdihoppers.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1440"
   },
   {
     "title": "Glass City",
     "url": "/games/clglasscity.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1441"
   },
   {
@@ -8656,37 +8656,37 @@ var CLASH_GAMES = [
   {
     "title": "Glory Hunters",
     "url": "/games/clgloryhunters.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1443"
   },
   {
     "title": "Glover",
     "url": "/games/clglover.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1444"
   },
   {
-    "title": "Go to bed",
+    "title": "Go To Bed",
     "url": "/games/clgotobed.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1445"
   },
   {
-    "title": "Goal South Africa",
+    "title": "Goal south Africa",
     "url": "/games/clgoalsouthafrica.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1446"
   },
   {
     "title": "Gobble",
     "url": "/games/clgobble.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1447"
   },
   {
     "title": "Going Balls",
     "url": "/games/clgoingballs.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1448"
   },
   {
@@ -8696,9 +8696,9 @@ var CLASH_GAMES = [
     "id": "clash_1449"
   },
   {
-    "title": "Gold Digger FRVR",
+    "title": "gold digger frvr",
     "url": "/games/clgolddiggerfrvr.html",
-    "cat": "Puzzle",
+    "cat": "Action",
     "id": "clash_1450"
   },
   {
@@ -8714,9 +8714,9 @@ var CLASH_GAMES = [
     "id": "clash_1452"
   },
   {
-    "title": "Golden Axe",
+    "title": "golden axe",
     "url": "/games/clgoldenaxe.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1453"
   },
   {
@@ -8732,9 +8732,9 @@ var CLASH_GAMES = [
     "id": "clash_1455"
   },
   {
-    "title": "Golden Sun",
+    "title": "golden sun",
     "url": "/games/clgoldensun.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1456"
   },
   {
@@ -8750,9 +8750,9 @@ var CLASH_GAMES = [
     "id": "clash_1458"
   },
   {
-    "title": "Goldeneye 007",
+    "title": "golden eye 007",
     "url": "/games/clgoldeneye007.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1459"
   },
   {
@@ -8788,7 +8788,7 @@ var CLASH_GAMES = [
   {
     "title": "Google Snake",
     "url": "/games/clgooglesnake.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1465"
   },
   {
@@ -8800,7 +8800,7 @@ var CLASH_GAMES = [
   {
     "title": "Gorilla Tag",
     "url": "/games/clgorillatag.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1467"
   },
   {
@@ -8860,25 +8860,25 @@ var CLASH_GAMES = [
   {
     "title": "Grand Theft Auto Advance",
     "url": "/games/clgrandtheftautoadvance.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1477"
   },
   {
     "title": "Granny",
     "url": "/games/clgrannyy.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1478"
   },
   {
     "title": "Granny 2",
     "url": "/games/clgranny22.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1479"
   },
   {
     "title": "Granny 3",
     "url": "/games/clgranny3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1480"
   },
   {
@@ -8926,7 +8926,7 @@ var CLASH_GAMES = [
   {
     "title": "Gravity Mod",
     "url": "/games/clgravitymod.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1488"
   },
   {
@@ -8954,9 +8954,9 @@ var CLASH_GAMES = [
     "id": "clash_1492"
   },
   {
-    "title": "Grindcraft",
+    "title": "Grind Craft",
     "url": "/games/clgrindcraft.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_1493"
   },
   {
@@ -8992,7 +8992,7 @@ var CLASH_GAMES = [
   {
     "title": "Growden.io",
     "url": "/games/clgrowdenio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1499"
   },
   {
@@ -9028,7 +9028,7 @@ var CLASH_GAMES = [
   {
     "title": "Guess Their Answer",
     "url": "/games/clguesstheiranswer.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1505"
   },
   {
@@ -9040,25 +9040,25 @@ var CLASH_GAMES = [
   {
     "title": "Gun Knight",
     "url": "/games/clgunknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1507"
   },
   {
-    "title": "Gun Mayhem",
+    "title": "gun mayhem",
     "url": "/games/clgunmayhem.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1508"
   },
   {
-    "title": "Gun Mayhem 2",
+    "title": "gun mayhem 2",
     "url": "/games/clgunmayhem2goof.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1509"
   },
   {
-    "title": "Gun Mayhem Redux",
+    "title": "gun mayhem redux",
     "url": "/games/clgunmayhemredux.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1510"
   },
   {
@@ -9068,13 +9068,13 @@ var CLASH_GAMES = [
     "id": "clash_1511"
   },
   {
-    "title": "Gun Spin",
+    "title": "Gunspin",
     "url": "/games/clgun-spin.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1512"
   },
   {
-    "title": "Gun.smoke",
+    "title": "Gun Smoke",
     "url": "/games/clgunsmoke.html",
     "cat": "Action",
     "id": "clash_1513"
@@ -9086,9 +9086,9 @@ var CLASH_GAMES = [
     "id": "clash_1514"
   },
   {
-    "title": "Gunstar Heroes",
+    "title": "gunstar heroes",
     "url": "/games/clgunstarheroes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1515"
   },
   {
@@ -9100,7 +9100,7 @@ var CLASH_GAMES = [
   {
     "title": "Gym Stack",
     "url": "/games/clgymstack.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1517"
   },
   {
@@ -9118,7 +9118,7 @@ var CLASH_GAMES = [
   {
     "title": "Hacker Typer",
     "url": "/games/clhackertyper.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1520"
   },
   {
@@ -9136,7 +9136,7 @@ var CLASH_GAMES = [
   {
     "title": "Half Life",
     "url": "/games/clhalflife.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1523"
   },
   {
@@ -9166,7 +9166,7 @@ var CLASH_GAMES = [
   {
     "title": "Handshakes",
     "url": "/games/clhandshakes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1528"
   },
   {
@@ -9196,13 +9196,13 @@ var CLASH_GAMES = [
   {
     "title": "Hanger 2",
     "url": "/games/clhanger2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1533"
   },
   {
     "title": "Happy Room",
     "url": "/games/clhappyroom.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1534"
   },
   {
@@ -9212,9 +9212,9 @@ var CLASH_GAMES = [
     "id": "clash_1535"
   },
   {
-    "title": "Harvest Moon",
+    "title": "harvest moon",
     "url": "/games/clharvestmoon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1536"
   },
   {
@@ -9224,21 +9224,21 @@ var CLASH_GAMES = [
     "id": "clash_1537"
   },
   {
-    "title": "Harvest Moon 64",
+    "title": "harvest moon 64",
     "url": "/games/clharvestmoon64.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1538"
   },
   {
     "title": "Harvest.io",
     "url": "/games/clharvestio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1539"
   },
   {
-    "title": "Haunt The House",
+    "title": "Haunt the House",
     "url": "/games/clhauntthehouse.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1540"
   },
   {
@@ -9248,21 +9248,21 @@ var CLASH_GAMES = [
     "id": "clash_1541"
   },
   {
-    "title": "HEI$T",
+    "title": "Heit",
     "url": "/games/clhei%24t.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1542"
   },
   {
     "title": "Helicopter",
     "url": "/games/clhelicopter.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1543"
   },
   {
-    "title": "Helix Jump",
+    "title": "helix jump",
     "url": "/games/clhelixjump.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1544"
   },
   {
@@ -9274,13 +9274,13 @@ var CLASH_GAMES = [
   {
     "title": "Helltaker",
     "url": "/games/clhelltaker.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1546"
   },
   {
-    "title": "Help No Brakes!",
+    "title": "Help Nob Rakes",
     "url": "/games/clhelpnobrakes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1547"
   },
   {
@@ -9328,11 +9328,11 @@ var CLASH_GAMES = [
   {
     "title": "Hex Empire",
     "url": "/games/clhexempire.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1555"
   },
   {
-    "title": "HexGL",
+    "title": "hexgl",
     "url": "/games/clhexgl.html",
     "cat": "Action",
     "id": "clash_1556"
@@ -9340,7 +9340,7 @@ var CLASH_GAMES = [
   {
     "title": "Hextris",
     "url": "/games/clhextris.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1557"
   },
   {
@@ -9358,7 +9358,7 @@ var CLASH_GAMES = [
   {
     "title": "Highway Racer",
     "url": "/games/clhighwayracer2.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1560"
   },
   {
@@ -9370,13 +9370,13 @@ var CLASH_GAMES = [
   {
     "title": "Hill Climb Racing Lite",
     "url": "/games/clhillclimbracinglite.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1562"
   },
   {
     "title": "Hipster Kickball",
     "url": "/games/clhipsterkickball.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1563"
   },
   {
@@ -9388,19 +9388,19 @@ var CLASH_GAMES = [
   {
     "title": "Hobo",
     "url": "/games/clhobo.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1565"
   },
   {
     "title": "Hobo 2",
     "url": "/games/clhobo2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1566"
   },
   {
     "title": "Hobo 3",
     "url": "/games/clhobo3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1567"
   },
   {
@@ -9412,25 +9412,25 @@ var CLASH_GAMES = [
   {
     "title": "Hobo 4",
     "url": "/games/clhobo4.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1569"
   },
   {
     "title": "Hobo 5",
     "url": "/games/clhobo5.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1570"
   },
   {
     "title": "Hobo 6",
     "url": "/games/clhobo6.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1571"
   },
   {
     "title": "Hobo 7",
     "url": "/games/clhobo7.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1572"
   },
   {
@@ -9452,9 +9452,9 @@ var CLASH_GAMES = [
     "id": "clash_1575"
   },
   {
-    "title": "Hole.io",
+    "title": "hole io",
     "url": "/games/clholeio.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1576"
   },
   {
@@ -9514,13 +9514,13 @@ var CLASH_GAMES = [
   {
     "title": "House of Hazards",
     "url": "/games/clhouseofhazards.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1586"
   },
   {
     "title": "Hover Bot Arena",
     "url": "/games/clhoverbotarena.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1587"
   },
   {
@@ -9544,31 +9544,31 @@ var CLASH_GAMES = [
   {
     "title": "Human Expenditure Program",
     "url": "/games/clhumanexpenditureprogram.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1591"
   },
   {
     "title": "Hungry Knight",
     "url": "/games/clhungryknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1592"
   },
   {
     "title": "Hungry Lamu",
     "url": "/games/clhungrylamu.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1593"
   },
   {
     "title": "Hungry Lamu 2",
     "url": "/games/clhungrylamu2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1594"
   },
   {
     "title": "Hypper Sandbox",
     "url": "/games/clhyppersandbox.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_1595"
   },
   {
@@ -9580,19 +9580,19 @@ var CLASH_GAMES = [
   {
     "title": "I Wanna Be The Guy",
     "url": "/games/cliwbtg.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1597"
   },
   {
-    "title": "Ice Climber",
+    "title": "ice climber",
     "url": "/games/cliceclimber.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1598"
   },
   {
     "title": "Ice Dodo",
     "url": "/games/clicedodo.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1599"
   },
   {
@@ -9604,13 +9604,13 @@ var CLASH_GAMES = [
   {
     "title": "Icy Purple Head",
     "url": "/games/clicypurplehead.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1601"
   },
   {
     "title": "Idle Breakout",
     "url": "/games/clidlebreakout.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_1602"
   },
   {
@@ -9640,7 +9640,7 @@ var CLASH_GAMES = [
   {
     "title": "Idle Shark",
     "url": "/games/clidleshark.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_1607"
   },
   {
@@ -9656,9 +9656,9 @@ var CLASH_GAMES = [
     "id": "clash_1609"
   },
   {
-    "title": "Infinite Craft",
+    "title": "infinite craft",
     "url": "/games/clinfinitecraft.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_1610"
   },
   {
@@ -9670,7 +9670,7 @@ var CLASH_GAMES = [
   {
     "title": "Innkeeper",
     "url": "/games/clinnkeeper.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1612"
   },
   {
@@ -9688,43 +9688,43 @@ var CLASH_GAMES = [
   {
     "title": "Interactive Buddy",
     "url": "/games/clinteractivebuddy.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1615"
   },
   {
     "title": "Into Space",
     "url": "/games/clintospace.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1616"
   },
   {
     "title": "Into Space 2",
     "url": "/games/clintospace2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1617"
   },
   {
     "title": "Into Space 3",
     "url": "/games/clintospace3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1618"
   },
   {
-    "title": "Into The Deep Web",
+    "title": "Into Thed Ee Pw Eb",
     "url": "/games/clintothedeepweb.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1619"
   },
   {
     "title": "Intrusion",
     "url": "/games/clintrusion.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1620"
   },
   {
-    "title": "IQ Ball",
+    "title": "Iq Ball",
     "url": "/games/cliqball.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1621"
   },
   {
@@ -9760,7 +9760,7 @@ var CLASH_GAMES = [
   {
     "title": "Jacksmith",
     "url": "/games/cljacksmithencryptedorsmthn.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1627"
   },
   {
@@ -9802,19 +9802,19 @@ var CLASH_GAMES = [
   {
     "title": "Jelly Drift",
     "url": "/games/cljellydrift.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1634"
   },
   {
     "title": "Jelly Mario",
     "url": "/games/cljellymario.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1635"
   },
   {
     "title": "Jelly Truck",
     "url": "/games/cljellytruckgood.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1636"
   },
   {
@@ -9826,19 +9826,19 @@ var CLASH_GAMES = [
   {
     "title": "Jet Force Gemini",
     "url": "/games/cljetforcegemini.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1638"
   },
   {
     "title": "Jet Rush",
     "url": "/games/cljetrush.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1639"
   },
   {
     "title": "Jetpack Joyride",
     "url": "/games/cljetpackjoyride.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1640"
   },
   {
@@ -9862,13 +9862,13 @@ var CLASH_GAMES = [
   {
     "title": "Johnny Trigger",
     "url": "/games/cljohnnytrigger.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1644"
   },
   {
     "title": "Johnny Upgrade",
     "url": "/games/cljohnnyupgrade.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1645"
   },
   {
@@ -9886,7 +9886,7 @@ var CLASH_GAMES = [
   {
     "title": "Journey Downhill",
     "url": "/games/cljourneydownhill.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1648"
   },
   {
@@ -9908,9 +9908,9 @@ var CLASH_GAMES = [
     "id": "clash_1651"
   },
   {
-    "title": "Jumbo Mar io",
+    "title": "Jumbo Mario",
     "url": "/games/cljumbomario.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1652"
   },
   {
@@ -9928,7 +9928,7 @@ var CLASH_GAMES = [
   {
     "title": "Jumping Shell",
     "url": "/games/cljumpingshell.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1655"
   },
   {
@@ -9964,13 +9964,13 @@ var CLASH_GAMES = [
   {
     "title": "Just One Boss",
     "url": "/games/cljustoneboss.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1661"
   },
   {
-    "title": "Justfall.lol",
+    "title": "JustFall.lol",
     "url": "/games/cljustfalllol.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_1662"
   },
   {
@@ -10000,13 +10000,13 @@ var CLASH_GAMES = [
   {
     "title": "Karate Bros",
     "url": "/games/clkaratebros.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1667"
   },
   {
     "title": "Karlson",
     "url": "/games/clkarlson.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1668"
   },
   {
@@ -10042,13 +10042,13 @@ var CLASH_GAMES = [
   {
     "title": "Killer Instinct",
     "url": "/games/clkillerinstinct.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1674"
   },
   {
-    "title": "Killover",
+    "title": "Kill Over",
     "url": "/games/clkillover.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1675"
   },
   {
@@ -10088,21 +10088,21 @@ var CLASH_GAMES = [
     "id": "clash_1681"
   },
   {
-    "title": "Kingdom Hearts Re-Coded",
+    "title": "Kingdom Hearts Recoded",
     "url": "/games/clkingdomheartsrecoded.html",
-    "cat": "Creative",
+    "cat": "Action",
     "id": "clash_1682"
   },
   {
-    "title": "Kirby 64",
+    "title": "kirby 64",
     "url": "/games/clkirby64.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1683"
   },
   {
     "title": "Kirby and the Amazing Mirror",
     "url": "/games/clkirbyandtheamzingmirror.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1684"
   },
   {
@@ -10114,19 +10114,19 @@ var CLASH_GAMES = [
   {
     "title": "Kirby Squeak Squad",
     "url": "/games/clkirbysqueaksquad.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1686"
   },
   {
-    "title": "Kirby Super Star",
+    "title": "Kirby Superstar",
     "url": "/games/clkirbysuperstar.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1687"
   },
   {
     "title": "Kirby Super Star Ultra",
     "url": "/games/clkirbysuperstarultra.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1688"
   },
   {
@@ -10136,39 +10136,39 @@ var CLASH_GAMES = [
     "id": "clash_1689"
   },
   {
-    "title": "Kirby's Adventure",
+    "title": "Kirbys Adventure",
     "url": "/games/clkirbysadventure.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1690"
   },
   {
-    "title": "Kirby's Dream Land",
+    "title": "kirby's dream land",
     "url": "/games/clkirbysdreamland.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1691"
   },
   {
-    "title": "Kirby's Dream Land 3",
+    "title": "Kirbys Dreamland 3",
     "url": "/games/clkirbysdreamland3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1692"
   },
   {
     "title": "Kitten Cannon",
     "url": "/games/clkittencannon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1693"
   },
   {
     "title": "Klifur",
     "url": "/games/clklifur.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1694"
   },
   {
-    "title": "Knightmare Tower",
+    "title": "Knight Mare Tower",
     "url": "/games/clknightmaretower.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_1695"
   },
   {
@@ -10186,7 +10186,7 @@ var CLASH_GAMES = [
   {
     "title": "Krunker",
     "url": "/games/clkrunker.html",
-    "cat": "Action",
+    "cat": "Racing",
     "id": "clash_1698"
   },
   {
@@ -10198,7 +10198,7 @@ var CLASH_GAMES = [
   {
     "title": "Lacey's Flash Games",
     "url": "/games/cllaceysflashgames.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1700"
   },
   {
@@ -10210,13 +10210,13 @@ var CLASH_GAMES = [
   {
     "title": "Last Horizon",
     "url": "/games/cllasthorizon.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1702"
   },
   {
     "title": "Leader Strike",
     "url": "/games/clleaderstrike.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1703"
   },
   {
@@ -10240,13 +10240,13 @@ var CLASH_GAMES = [
   {
     "title": "Learn to Fly",
     "url": "/games/cllearntofly.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1707"
   },
   {
     "title": "Learn to Fly 2",
     "url": "/games/cllearntofly2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1708"
   },
   {
@@ -10258,7 +10258,7 @@ var CLASH_GAMES = [
   {
     "title": "Learn to Fly 3",
     "url": "/games/cllearntofly3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1710"
   },
   {
@@ -10322,9 +10322,9 @@ var CLASH_GAMES = [
     "id": "clash_1720"
   },
   {
-    "title": "Lego Star Wars",
+    "title": "Lego Starw Ars",
     "url": "/games/cllegostarwarsgba.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1721"
   },
   {
@@ -10342,7 +10342,7 @@ var CLASH_GAMES = [
   {
     "title": "Lemmings",
     "url": "/games/cllemmings.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1724"
   },
   {
@@ -10360,7 +10360,7 @@ var CLASH_GAMES = [
   {
     "title": "Level Devil",
     "url": "/games/clleveldevil.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1727"
   },
   {
@@ -10378,19 +10378,19 @@ var CLASH_GAMES = [
   {
     "title": "Line Rider",
     "url": "/games/cllinerider.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1730"
   },
   {
-    "title": "Little Alch emy 2",
+    "title": "Little Alchemy 2",
     "url": "/games/cllittlealchemy2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1731"
   },
   {
     "title": "Little Runmo",
     "url": "/games/cllittlerunmo.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1732"
   },
   {
@@ -10412,9 +10412,9 @@ var CLASH_GAMES = [
     "id": "clash_1735"
   },
   {
-    "title": "Lonewolf",
+    "title": "Lone Wolf",
     "url": "/games/cllonewolf.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1736"
   },
   {
@@ -10462,7 +10462,7 @@ var CLASH_GAMES = [
   {
     "title": "Madalin Stunt Cars 2",
     "url": "/games/clmadstuntcars2.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_1744"
   },
   {
@@ -10484,9 +10484,9 @@ var CLASH_GAMES = [
     "id": "clash_1747"
   },
   {
-    "title": "Madden NFL",
+    "title": "Madden Nfl",
     "url": "/games/clmaddennfl.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1748"
   },
   {
@@ -10526,21 +10526,21 @@ var CLASH_GAMES = [
     "id": "clash_1754"
   },
   {
-    "title": "Madden NFL 2000",
+    "title": "Madden Nfl 2 000",
     "url": "/games/clmaddennfl2000.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1755"
   },
   {
-    "title": "Madden NFL 2001",
+    "title": "Madden Nfl 2 001",
     "url": "/games/clmaddennfl2001.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1756"
   },
   {
-    "title": "Madden NFL 2002",
+    "title": "Madden Nfl 2 002",
     "url": "/games/clmaddennfl2002.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1757"
   },
   {
@@ -10594,11 +10594,11 @@ var CLASH_GAMES = [
   {
     "title": "Madness Off Color",
     "url": "/games/clmadnessoffcolor.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1766"
   },
   {
-    "title": "Madness Premediation",
+    "title": "Madness Premedia Tion",
     "url": "/games/clmadnesspremediation.html",
     "cat": "Action",
     "id": "clash_1767"
@@ -10636,7 +10636,7 @@ var CLASH_GAMES = [
   {
     "title": "Mana God",
     "url": "/games/clmanagod.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1773"
   },
   {
@@ -10654,7 +10654,7 @@ var CLASH_GAMES = [
   {
     "title": "Mario",
     "url": "/games/clmario.html",
-    "cat": "Action",
+    "cat": "Retro",
     "id": "clash_1776"
   },
   {
@@ -10688,13 +10688,13 @@ var CLASH_GAMES = [
     "id": "clash_1781"
   },
   {
-    "title": "Mario builder 64",
+    "title": "Mario Builder 64",
     "url": "/games/clmariobuilder64.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1782"
   },
   {
-    "title": "Mario Combat",
+    "title": "mario combat",
     "url": "/games/clmariocombat.html",
     "cat": "Action",
     "id": "clash_1783"
@@ -10706,7 +10706,7 @@ var CLASH_GAMES = [
     "id": "clash_1784"
   },
   {
-    "title": "Mario Golf",
+    "title": "mario golf",
     "url": "/games/clmariogolf.html",
     "cat": "Sports",
     "id": "clash_1785"
@@ -10718,9 +10718,9 @@ var CLASH_GAMES = [
     "id": "clash_1786"
   },
   {
-    "title": "Mario Kart 64",
+    "title": "mario kart 64",
     "url": "/games/clmariokart64.html",
-    "cat": "Creative",
+    "cat": "Racing",
     "id": "clash_1787"
   },
   {
@@ -10730,15 +10730,15 @@ var CLASH_GAMES = [
     "id": "clash_1788"
   },
   {
-    "title": "Mario Kart DS",
+    "title": "mario kart ds",
     "url": "/games/clmariokartds.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1789"
   },
   {
-    "title": "Mario Kart Super Circuit",
+    "title": "mario kart super circuit",
     "url": "/games/clmariokartsupercircuit.html",
-    "cat": "Creative",
+    "cat": "Racing",
     "id": "clash_1790"
   },
   {
@@ -10748,27 +10748,27 @@ var CLASH_GAMES = [
     "id": "clash_1791"
   },
   {
-    "title": "Mario Paint",
+    "title": "mario paint",
     "url": "/games/clmariopaint.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1792"
   },
   {
-    "title": "Mario Party",
+    "title": "mario party",
     "url": "/games/clmarioparty.html",
-    "cat": "Creative",
+    "cat": "Retro",
     "id": "clash_1793"
   },
   {
-    "title": "Mario Party 2",
+    "title": "mario party 2",
     "url": "/games/clmarioparty2.html",
-    "cat": "Creative",
+    "cat": "Retro",
     "id": "clash_1794"
   },
   {
-    "title": "Mario Party 3",
+    "title": "mario party 3",
     "url": "/games/clmarioparty3.html",
-    "cat": "Creative",
+    "cat": "Retro",
     "id": "clash_1795"
   },
   {
@@ -10778,9 +10778,9 @@ var CLASH_GAMES = [
     "id": "clash_1796"
   },
   {
-    "title": "Mario Party DS",
+    "title": "mario party ds",
     "url": "/games/clmariopartyds.html",
-    "cat": "Creative",
+    "cat": "Retro",
     "id": "clash_1797"
   },
   {
@@ -10802,9 +10802,9 @@ var CLASH_GAMES = [
     "id": "clash_1800"
   },
   {
-    "title": "Mario's Mystery Meat",
+    "title": "Marios Mystery Meat",
     "url": "/games/clmariosmysterymeat.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1801"
   },
   {
@@ -10822,7 +10822,7 @@ var CLASH_GAMES = [
   {
     "title": "Masked Forces Unlimited",
     "url": "/games/clmaskedforcesunlimited.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1804"
   },
   {
@@ -10846,7 +10846,7 @@ var CLASH_GAMES = [
   {
     "title": "Matrix Rampage",
     "url": "/games/clmatrixrampage.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1808"
   },
   {
@@ -10864,25 +10864,25 @@ var CLASH_GAMES = [
   {
     "title": "Meatboy",
     "url": "/games/clmeatboy.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1811"
   },
   {
-    "title": "Meatboy (Flash)",
+    "title": "Meat Boy Flash",
     "url": "/games/clmeatboyflash.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1812"
   },
   {
-    "title": "Medal Of Honor",
+    "title": "Medal of Honor",
     "url": "/games/clmedalofhonor.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1813"
   },
   {
-    "title": "Medieval Shark",
+    "title": "Medievals Hark",
     "url": "/games/clmedievalshark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1814"
   },
   {
@@ -10898,9 +10898,9 @@ var CLASH_GAMES = [
     "id": "clash_1816"
   },
   {
-    "title": "Mega Man",
+    "title": "Megaman",
     "url": "/games/clmegaman.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1817"
   },
   {
@@ -10928,27 +10928,27 @@ var CLASH_GAMES = [
     "id": "clash_1821"
   },
   {
-    "title": "Mega Man 2",
+    "title": "mega man 2",
     "url": "/games/clmegaman2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1822"
   },
   {
-    "title": "Mega Man 2 (GBA)",
+    "title": "Megaman 2 GBA",
     "url": "/games/clmegaman2gba.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1823"
   },
   {
-    "title": "Mega Man 3",
+    "title": "Megaman 3",
     "url": "/games/clmegaman3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1824"
   },
   {
-    "title": "Mega Man 4",
+    "title": "Megaman 4",
     "url": "/games/clmegaman4.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1825"
   },
   {
@@ -10964,21 +10964,21 @@ var CLASH_GAMES = [
     "id": "clash_1827"
   },
   {
-    "title": "Mega Man 6",
+    "title": "Megaman 6",
     "url": "/games/clmegaman6.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1828"
   },
   {
-    "title": "Mega Man 7",
+    "title": "Megaman 7",
     "url": "/games/clmegaman7.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1829"
   },
   {
-    "title": "Mega Man 8",
+    "title": "Megaman 8",
     "url": "/games/clmegaman8.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1830"
   },
   {
@@ -11090,27 +11090,27 @@ var CLASH_GAMES = [
     "id": "clash_1848"
   },
   {
-    "title": "Mega Man X",
+    "title": "mega man x",
     "url": "/games/clmegamanx.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1849"
   },
   {
-    "title": "Mega Man X2",
+    "title": "Megaman X 2",
     "url": "/games/clmegamanx2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1850"
   },
   {
-    "title": "Mega Man X3",
+    "title": "Megaman X 3",
     "url": "/games/clmegamanx3.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1851"
   },
   {
-    "title": "Mega Man X4",
+    "title": "Megaman X 4",
     "url": "/games/clmegamanx4.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1852"
   },
   {
@@ -11126,21 +11126,21 @@ var CLASH_GAMES = [
     "id": "clash_1854"
   },
   {
-    "title": "Mega Man Zero",
+    "title": "mega man zero",
     "url": "/games/clmegamanzero.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1855"
   },
   {
-    "title": "Mega Man ZX",
+    "title": "Megaman Zx",
     "url": "/games/clmegamanzx.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1856"
   },
   {
     "title": "Mega Miner",
     "url": "/games/clmegaminer.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1857"
   },
   {
@@ -11158,13 +11158,13 @@ var CLASH_GAMES = [
   {
     "title": "Melon Playground",
     "url": "/games/clmelonplayground.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1860"
   },
   {
     "title": "Meme 2048",
     "url": "/games/clmeme2048.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_1861"
   },
   {
@@ -11180,9 +11180,9 @@ var CLASH_GAMES = [
     "id": "clash_1863"
   },
   {
-    "title": "Merge Round Racers",
+    "title": "Merger Ou Nd Racers",
     "url": "/games/clmergeroundracers.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1864"
   },
   {
@@ -11216,9 +11216,9 @@ var CLASH_GAMES = [
     "id": "clash_1869"
   },
   {
-    "title": "Metroid",
+    "title": "metroid",
     "url": "/games/clmetroid.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1870"
   },
   {
@@ -11228,9 +11228,9 @@ var CLASH_GAMES = [
     "id": "clash_1871"
   },
   {
-    "title": "Metroid Fusion",
+    "title": "metroid fusion",
     "url": "/games/clmetroidfusion.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_1872"
   },
   {
@@ -11248,7 +11248,7 @@ var CLASH_GAMES = [
   {
     "title": "Miami Shark",
     "url": "/games/clmiamishark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1875"
   },
   {
@@ -11272,13 +11272,13 @@ var CLASH_GAMES = [
   {
     "title": "Mighty Knight",
     "url": "/games/clmightyknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1879"
   },
   {
     "title": "Mighty Knight 2",
     "url": "/games/clmightyknight2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1880"
   },
   {
@@ -11290,13 +11290,13 @@ var CLASH_GAMES = [
   {
     "title": "Min Hero",
     "url": "/games/clminhero.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1882"
   },
   {
     "title": "Mindscape",
     "url": "/games/clmindscape.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1883"
   },
   {
@@ -11312,15 +11312,15 @@ var CLASH_GAMES = [
     "id": "clash_1885"
   },
   {
-    "title": "MinesWeeper",
+    "title": "minesweeper",
     "url": "/games/cl2353.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1886"
   },
   {
     "title": "Minesweeper Plus",
     "url": "/games/clminesweeperplus.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1887"
   },
   {
@@ -11344,13 +11344,13 @@ var CLASH_GAMES = [
   {
     "title": "Mini Tooth",
     "url": "/games/clminitooth.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1891"
   },
   {
     "title": "Mini-putt",
     "url": "/games/clminiputt.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1892"
   },
   {
@@ -11380,7 +11380,7 @@ var CLASH_GAMES = [
   {
     "title": "Missiles",
     "url": "/games/clmissiles.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1897"
   },
   {
@@ -11398,7 +11398,7 @@ var CLASH_GAMES = [
   {
     "title": "Money Rush",
     "url": "/games/clmoneyrush.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1900"
   },
   {
@@ -11410,7 +11410,7 @@ var CLASH_GAMES = [
   {
     "title": "Monster Tracks",
     "url": "/games/clmonstertracks.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1902"
   },
   {
@@ -11444,57 +11444,57 @@ var CLASH_GAMES = [
     "id": "clash_1907"
   },
   {
-    "title": "Mortalkombat 3",
+    "title": "Mortal Kombat 3",
     "url": "/games/clmortalkombat3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1908"
   },
   {
-    "title": "Motherload",
+    "title": "Mother Load",
     "url": "/games/clmotherload.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1909"
   },
   {
-    "title": "Moto Road Rash",
+    "title": "Motor Oad Rash",
     "url": "/games/clmotoroadrash.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1910"
   },
   {
-    "title": "MotoX3M",
+    "title": "Moto X3M",
     "url": "/games/clmotox3m.html",
-    "cat": "Action",
+    "cat": "Racing",
     "id": "clash_1911"
   },
   {
-    "title": "MotoX3M Pool",
+    "title": "motox3m pool",
     "url": "/games/clmotox3mpool.html",
-    "cat": "Action",
+    "cat": "Racing",
     "id": "clash_1912"
   },
   {
-    "title": "MotoX3M Spooky",
+    "title": "Moto X3M Spooky",
     "url": "/games/clmotox3mspooky.html",
-    "cat": "Action",
+    "cat": "Racing",
     "id": "clash_1913"
   },
   {
-    "title": "MotoX3m Winter",
+    "title": "Moto X3M Winter",
     "url": "/games/clmotox3mwinter.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1914"
   },
   {
-    "title": "MotoX3m2",
+    "title": "Moto X3M 2",
     "url": "/games/clmotox3m2.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1915"
   },
   {
-    "title": "MotoX3m3",
+    "title": "Moto X3M 3",
     "url": "/games/clmotox3m3.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1916"
   },
   {
@@ -11529,9 +11529,9 @@ var CLASH_GAMES = [
     "id": "clash_1921"
   },
   {
-    "title": "Multitask",
+    "title": "multitask",
     "url": "/games/clmultitask.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1922"
   },
   {
@@ -11549,7 +11549,7 @@ var CLASH_GAMES = [
   {
     "title": "Mutilate a Doll 2",
     "url": "/games/cl2312.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1925"
   },
   {
@@ -11577,9 +11577,9 @@ var CLASH_GAMES = [
     "id": "clash_1929"
   },
   {
-    "title": "My Teardrop",
+    "title": "myTeardrop",
     "url": "/games/clmyteardrop.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1930"
   },
   {
@@ -11589,9 +11589,9 @@ var CLASH_GAMES = [
     "id": "clash_1931"
   },
   {
-    "title": "N-gon",
+    "title": "n-gon",
     "url": "/games/clngon.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1932"
   },
   {
@@ -11625,15 +11625,15 @@ var CLASH_GAMES = [
     "id": "clash_1937"
   },
   {
-    "title": "NBA Hangtime",
+    "title": "Nba Hang Time",
     "url": "/games/clNBAhangtime.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1938"
   },
   {
-    "title": "NBA Jam",
+    "title": "Nba Jam",
     "url": "/games/clNBAjam.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1939"
   },
   {
@@ -11667,9 +11667,9 @@ var CLASH_GAMES = [
     "id": "clash_1944"
   },
   {
-    "title": "Need For Speed - Most Wanted",
+    "title": "Need For Speed: Most Wanted",
     "url": "/games/clnfsmostwanted.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1945"
   },
   {
@@ -11685,27 +11685,27 @@ var CLASH_GAMES = [
     "id": "clash_1947"
   },
   {
-    "title": "Need For Speed - Underground 2",
+    "title": "Need For Speed: Underground 2",
     "url": "/games/clnfsunderground2.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_1948"
   },
   {
     "title": "Neon Blaster",
     "url": "/games/clneonblaster.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1949"
   },
   {
-    "title": "Neon Rider",
+    "title": "neon rider",
     "url": "/games/clneonrider.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1950"
   },
   {
-    "title": "Net.Attack",
+    "title": "Net Attack",
     "url": "/games/clnetattack.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1951"
   },
   {
@@ -11721,15 +11721,15 @@ var CLASH_GAMES = [
     "id": "clash_1953"
   },
   {
-    "title": "New York Shark",
+    "title": "New Yorks Hark",
     "url": "/games/clnewyorkshark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1954"
   },
   {
     "title": "Newgrounds Rumble",
     "url": "/games/clnewgroundsrumble.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_1955"
   },
   {
@@ -11739,9 +11739,9 @@ var CLASH_GAMES = [
     "id": "clash_1956"
   },
   {
-    "title": "NFL Blitz",
+    "title": "Nfl Blitz",
     "url": "/games/clnflblitz.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1957"
   },
   {
@@ -11781,9 +11781,9 @@ var CLASH_GAMES = [
     "id": "clash_1963"
   },
   {
-    "title": "Nightclub Showdown",
+    "title": "Night Club Show Down",
     "url": "/games/clnightclubshowdown.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1964"
   },
   {
@@ -11801,7 +11801,7 @@ var CLASH_GAMES = [
   {
     "title": "Ninja Brawl",
     "url": "/games/clninjabrawl.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1967"
   },
   {
@@ -11819,7 +11819,7 @@ var CLASH_GAMES = [
   {
     "title": "Nintendo World Cup",
     "url": "/games/clnintendoworldcup.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1970"
   },
   {
@@ -11835,9 +11835,9 @@ var CLASH_GAMES = [
     "id": "clash_1972"
   },
   {
-    "title": "Nitrome Must Die",
+    "title": "nitrome must die",
     "url": "/games/clnitromemustdie.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1973"
   },
   {
@@ -11867,7 +11867,7 @@ var CLASH_GAMES = [
   {
     "title": "NS-Shaft",
     "url": "/games/clnsshaft.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1978"
   },
   {
@@ -11957,7 +11957,7 @@ var CLASH_GAMES = [
   {
     "title": "Obey the Game",
     "url": "/games/clobeythegame.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1993"
   },
   {
@@ -11973,21 +11973,21 @@ var CLASH_GAMES = [
     "id": "clash_1995"
   },
   {
-    "title": "Offline Paradise",
+    "title": "offline paradise",
     "url": "/games/clofflineparadise.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1996"
   },
   {
-    "title": "Oh Flip!",
+    "title": "Oh, Flip!",
     "url": "/games/clohflip.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_1997"
   },
   {
     "title": "Om Nom Bounce",
     "url": "/games/clomnombounce.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_1998"
   },
   {
@@ -11997,27 +11997,27 @@ var CLASH_GAMES = [
     "id": "clash_1999"
   },
   {
-    "title": "One Night As Freddy",
+    "title": "One Night as Freddy",
     "url": "/games/clonenightasfreddy.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2000"
   },
   {
     "title": "One Piece",
     "url": "/games/clonepiece.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2001"
   },
   {
     "title": "One Piece Fighting",
     "url": "/games/clonepiecefighting.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2002"
   },
   {
-    "title": "Onebit Adventure",
+    "title": "One Bit Adventure",
     "url": "/games/clonebitadventure.html",
-    "cat": "Retro",
+    "cat": "Adventure",
     "id": "clash_2003"
   },
   {
@@ -12035,19 +12035,19 @@ var CLASH_GAMES = [
   {
     "title": "Only Up",
     "url": "/games/clonlyup.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2006"
   },
   {
-    "title": "Öoo",
+    "title": "Oo",
     "url": "/games/cl%C3%96oo.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2007"
   },
   {
     "title": "Operius",
     "url": "/games/cloperius.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2008"
   },
   {
@@ -12059,19 +12059,19 @@ var CLASH_GAMES = [
   {
     "title": "Opposite Day",
     "url": "/games/cloppositeday.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2010"
   },
   {
     "title": "Orange Roulette",
     "url": "/games/clorangeroulette.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2011"
   },
   {
     "title": "Orb of Creation",
     "url": "/games/clorbofcreation.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2012"
   },
   {
@@ -12087,9 +12087,9 @@ var CLASH_GAMES = [
     "id": "clash_2014"
   },
   {
-    "title": "OutHold",
+    "title": "Outhold",
     "url": "/games/clouthold.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2015"
   },
   {
@@ -12105,9 +12105,9 @@ var CLASH_GAMES = [
     "id": "clash_2017"
   },
   {
-    "title": "OverBurden",
+    "title": "Overburden",
     "url": "/games/cloverburden.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2018"
   },
   {
@@ -12123,9 +12123,9 @@ var CLASH_GAMES = [
     "id": "clash_2020"
   },
   {
-    "title": "Pandemic 2",
+    "title": "pandemic 2",
     "url": "/games/clpandameic2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2021"
   },
   {
@@ -12161,43 +12161,43 @@ var CLASH_GAMES = [
   {
     "title": "Papa's Bakeria",
     "url": "/games/clpapabakeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2027"
   },
   {
     "title": "Papa's Burgeria",
     "url": "/games/clpapasburgerIIIAAAAA.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2028"
   },
   {
     "title": "Papa's Cheeseria",
     "url": "/games/clpapascheeseria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2029"
   },
   {
     "title": "Papa's Cupcakeria",
     "url": "/games/clpapascupcakeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2030"
   },
   {
     "title": "Papa's Donuteria",
     "url": "/games/clpapadonut.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2031"
   },
   {
     "title": "Papa's Freezeria",
     "url": "/games/clpapasfreezeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2032"
   },
   {
     "title": "Papa's Hot Doggeria",
     "url": "/games/clpapashotdoggeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2033"
   },
   {
@@ -12215,17 +12215,17 @@ var CLASH_GAMES = [
   {
     "title": "Papa's Pancakeria",
     "url": "/games/clpapaspancakeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2036"
   },
   {
     "title": "Papa's Pastaria",
     "url": "/games/clpapaspastaria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2037"
   },
   {
-    "title": "Papa's Pizzaria",
+    "title": "papa's pizzaria",
     "url": "/games/clpapaspizzaria.html",
     "cat": "Action",
     "id": "clash_2038"
@@ -12233,37 +12233,37 @@ var CLASH_GAMES = [
   {
     "title": "Papa's Pizzeria",
     "url": "/games/clpizzapapa.html",
-    "cat": "Food",
+    "cat": "Arcade",
     "id": "clash_2039"
   },
   {
     "title": "Papa's Scooperia",
     "url": "/games/clpapasscooperia.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2040"
   },
   {
     "title": "Papa's Sushiria",
     "url": "/games/clpapassushiria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2041"
   },
   {
-    "title": "Papa's Taco mia",
+    "title": "Papa's Taco Mia",
     "url": "/games/clpapastacomia.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2042"
   },
   {
     "title": "Papa's Wingeria",
     "url": "/games/clpapaswingeria.html",
-    "cat": "Food",
+    "cat": "Puzzle",
     "id": "clash_2043"
   },
   {
-    "title": "Paper Mario",
+    "title": "paper mario",
     "url": "/games/clpapermario.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_2044"
   },
   {
@@ -12305,13 +12305,13 @@ var CLASH_GAMES = [
   {
     "title": "Papery Planes",
     "url": "/games/clpaperyplanes.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2051"
   },
   {
-    "title": "Parappa the Rapper",
+    "title": "Parappa The Rapper",
     "url": "/games/clparappatherapper.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2052"
   },
   {
@@ -12335,13 +12335,13 @@ var CLASH_GAMES = [
   {
     "title": "Parking Rush",
     "url": "/games/clparkingrush.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2056"
   },
   {
     "title": "Particle Clicker",
     "url": "/games/clparticleclicker.html",
-    "cat": "Action",
+    "cat": "Strategy",
     "id": "clash_2057"
   },
   {
@@ -12353,13 +12353,13 @@ var CLASH_GAMES = [
   {
     "title": "Peacekeeper",
     "url": "/games/clpeacekeeper.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2059"
   },
   {
     "title": "Peggle",
     "url": "/games/clpeggle.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2060"
   },
   {
@@ -12377,19 +12377,19 @@ var CLASH_GAMES = [
   {
     "title": "Penguin Diner",
     "url": "/games/clpenguindiner.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2063"
   },
   {
     "title": "Penguin Pass",
     "url": "/games/clpenguinpass.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2064"
   },
   {
-    "title": "Pepsiman",
+    "title": "Pepsi Man",
     "url": "/games/clpepsiman.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2065"
   },
   {
@@ -12401,25 +12401,25 @@ var CLASH_GAMES = [
   {
     "title": "Perfect Dark",
     "url": "/games/clperfectdark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2067"
   },
   {
     "title": "Perfect Hotel",
     "url": "/games/clperfecthotel.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2068"
   },
   {
     "title": "Persona",
     "url": "/games/clpersona.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2069"
   },
   {
     "title": "Persona 2",
     "url": "/games/clpersona2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2070"
   },
   {
@@ -12455,25 +12455,25 @@ var CLASH_GAMES = [
   {
     "title": "Phasma",
     "url": "/games/clphasma.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2076"
   },
   {
-    "title": "Phoenix wright - Ace Attorney",
+    "title": "Phoenix Wright - Ace Attorney",
     "url": "/games/claceattorernefgsdg.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2077"
   },
   {
-    "title": "Phoenix wright - Ace Attorney - Justice For All",
+    "title": "Phoenix Wright - Ace Attorney - Justice for All",
     "url": "/games/clpheonixjusticeforall.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2078"
   },
   {
-    "title": "Phoenix wright - Ace Attorney - Trials and Tribulations",
+    "title": "Phoenix Wright - Ace Attorney - Trials and Tribulations",
     "url": "/games/clpheonixtrialsandyear.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2079"
   },
   {
@@ -12509,19 +12509,19 @@ var CLASH_GAMES = [
   {
     "title": "Ping Pong Chaos",
     "url": "/games/clpingpongchaos.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2085"
   },
   {
-    "title": "Pinkbike",
+    "title": "Pink Bike",
     "url": "/games/clpinkbike.html",
-    "cat": "Sports",
+    "cat": "Racing",
     "id": "clash_2086"
   },
   {
-    "title": "Pitfall!",
+    "title": "Pitfall",
     "url": "/games/clpitfall.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_2087"
   },
   {
@@ -12531,9 +12531,9 @@ var CLASH_GAMES = [
     "id": "clash_2088"
   },
   {
-    "title": "Pixel Battlegrounds.io",
+    "title": "Pixel Battlegrounds IO",
     "url": "/games/clpixelbattlegroundsio.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2089"
   },
   {
@@ -12561,13 +12561,13 @@ var CLASH_GAMES = [
     "id": "clash_2093"
   },
   {
-    "title": "Pixel Shooter",
+    "title": "Pixels Hooter",
     "url": "/games/clpixelshooter.html",
     "cat": "Action",
     "id": "clash_2094"
   },
   {
-    "title": "Pixel Speedrun",
+    "title": "Pixels Peed Run",
     "url": "/games/clpixelspeedrun.html",
     "cat": "Racing",
     "id": "clash_2095"
@@ -12593,13 +12593,13 @@ var CLASH_GAMES = [
   {
     "title": "Pizza Tower",
     "url": "/games/clpizzatower.html",
-    "cat": "Food",
+    "cat": "Strategy",
     "id": "clash_2099"
   },
   {
-    "title": "Plangman",
+    "title": "Plang Man",
     "url": "/games/clplangman.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2100"
   },
   {
@@ -12609,21 +12609,21 @@ var CLASH_GAMES = [
     "id": "clash_2101"
   },
   {
-    "title": "Plants vs. Zombies",
+    "title": "Plants vs Zombies",
     "url": "/games/clpvz.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2102"
   },
   {
-    "title": "Plazma Burst",
+    "title": "Pla Z Mab Urs T",
     "url": "/games/clplazmaburst.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2103"
   },
   {
-    "title": "Plonky",
+    "title": "Plonk Y",
     "url": "/games/clplonky.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2104"
   },
   {
@@ -12641,7 +12641,7 @@ var CLASH_GAMES = [
   {
     "title": "Pogo 3D",
     "url": "/games/clpogo3D.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2107"
   },
   {
@@ -12677,13 +12677,13 @@ var CLASH_GAMES = [
   {
     "title": "PolyBranch",
     "url": "/games/clpolybranch.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2113"
   },
   {
-    "title": "Polytrack",
+    "title": "Poly Track",
     "url": "/games/clpolytrackbutnotflagged.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2114"
   },
   {
@@ -12711,21 +12711,21 @@ var CLASH_GAMES = [
     "id": "clash_2118"
   },
   {
-    "title": "Portal",
+    "title": "portal",
     "url": "/games/clportal.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2119"
   },
   {
-    "title": "Portal 2",
+    "title": "portal 2",
     "url": "/games/cl2417.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2120"
   },
   {
-    "title": "Portal 2D",
+    "title": "Portal 2 D",
     "url": "/games/clportal2d.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2121"
   },
   {
@@ -12743,19 +12743,19 @@ var CLASH_GAMES = [
   {
     "title": "Portal Flash",
     "url": "/games/clportalflash.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2124"
   },
   {
     "title": "Possess Quest",
     "url": "/games/clpossessquest.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_2125"
   },
   {
     "title": "Postal",
     "url": "/games/clpostal.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2126"
   },
   {
@@ -12773,7 +12773,7 @@ var CLASH_GAMES = [
   {
     "title": "Pou",
     "url": "/games/clpou.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2129"
   },
   {
@@ -12801,9 +12801,9 @@ var CLASH_GAMES = [
     "id": "clash_2133"
   },
   {
-    "title": "Prehistoric Shark",
+    "title": "Prehistorics Hark",
     "url": "/games/clprehistoricshark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2134"
   },
   {
@@ -12855,27 +12855,27 @@ var CLASH_GAMES = [
     "id": "clash_2142"
   },
   {
-    "title": "Punch Out",
+    "title": "punch out",
     "url": "/games/clpunchoutarc.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2143"
   },
   {
-    "title": "Punch the Drump",
+    "title": "Punch Thed Rump",
     "url": "/games/cl2245.html",
-    "cat": "Retro",
+    "cat": "Action",
     "id": "clash_2144"
   },
   {
-    "title": "Punch the T rump",
+    "title": "Punch The Trump",
     "url": "/games/clpunchthetrump.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2145"
   },
   {
     "title": "Puppet Hockey",
     "url": "/games/clpuppethockey.html",
-    "cat": "Animals",
+    "cat": "Sports",
     "id": "clash_2146"
   },
   {
@@ -12887,13 +12887,13 @@ var CLASH_GAMES = [
   {
     "title": "Push The Square",
     "url": "/games/clpushthesquare.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2148"
   },
   {
     "title": "Push Your Luck",
     "url": "/games/clpushyourluck.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2149"
   },
   {
@@ -12929,7 +12929,7 @@ var CLASH_GAMES = [
   {
     "title": "Quake 64",
     "url": "/games/clquake64.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2155"
   },
   {
@@ -12941,7 +12941,7 @@ var CLASH_GAMES = [
   {
     "title": "Quake III Arena",
     "url": "/games/clquake3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2157"
   },
   {
@@ -12953,7 +12953,7 @@ var CLASH_GAMES = [
   {
     "title": "Quickie World",
     "url": "/games/clquickieworld.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2159"
   },
   {
@@ -13001,7 +13001,7 @@ var CLASH_GAMES = [
   {
     "title": "Rad Racer",
     "url": "/games/clradracer.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2167"
   },
   {
@@ -13025,7 +13025,7 @@ var CLASH_GAMES = [
   {
     "title": "Ragdoll Archers",
     "url": "/games/clragdollarchers.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2171"
   },
   {
@@ -13037,7 +13037,7 @@ var CLASH_GAMES = [
   {
     "title": "Ragdoll Hit",
     "url": "/games/clragdollhit.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2173"
   },
   {
@@ -13047,15 +13047,15 @@ var CLASH_GAMES = [
     "id": "clash_2174"
   },
   {
-    "title": "Ragdoll Soccer",
+    "title": "Rag Dolls Occ Er",
     "url": "/games/clragdollsoccer.html",
-    "cat": "Sports",
+    "cat": "Action",
     "id": "clash_2175"
   },
   {
-    "title": "Ragdoll.io",
+    "title": "Rag Dolli O",
     "url": "/games/clragdoll-io.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2176"
   },
   {
@@ -13067,7 +13067,7 @@ var CLASH_GAMES = [
   {
     "title": "Raldi's Crackhouse",
     "url": "/games/clraldiscrackhouse.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2178"
   },
   {
@@ -13089,9 +13089,9 @@ var CLASH_GAMES = [
     "id": "clash_2181"
   },
   {
-    "title": "Rayman",
+    "title": "Ray Man",
     "url": "/games/clrayman.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2182"
   },
   {
@@ -13115,7 +13115,7 @@ var CLASH_GAMES = [
   {
     "title": "Reach the Core",
     "url": "/games/clreachthecore.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2186"
   },
   {
@@ -13127,7 +13127,7 @@ var CLASH_GAMES = [
   {
     "title": "Real Flight Simulator",
     "url": "/games/clrealflightsim.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_2188"
   },
   {
@@ -13151,43 +13151,43 @@ var CLASH_GAMES = [
   {
     "title": "Recoil",
     "url": "/games/clrecoil.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2192"
   },
   {
     "title": "Red Ball",
     "url": "/games/clredball.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2193"
   },
   {
     "title": "Red Ball 2",
     "url": "/games/clredball2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2194"
   },
   {
     "title": "Red Ball 3",
     "url": "/games/clredball3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2195"
   },
   {
-    "title": "Red Ball 4 vol.2",
+    "title": "Red Ball 4 Vol. 2",
     "url": "/games/clredball4vol2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2196"
   },
   {
-    "title": "Red Ball 4 vol.3",
+    "title": "Red Ball 4 Vol. 3",
     "url": "/games/clredball4vol3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2197"
   },
   {
     "title": "Red Handed",
     "url": "/games/clredhanded.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2198"
   },
   {
@@ -13217,31 +13217,31 @@ var CLASH_GAMES = [
   {
     "title": "Reign of Centipede",
     "url": "/games/clreignofcentipede.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2203"
   },
   {
     "title": "Renegades",
     "url": "/games/clrenegades.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2204"
   },
   {
     "title": "Resent Client",
     "url": "/games/clresentclient.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2205"
   },
   {
     "title": "Resident Evil",
     "url": "/games/clresidentevil.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2206"
   },
   {
     "title": "Resident Evil 2",
     "url": "/games/clresidentevil2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2207"
   },
   {
@@ -13253,13 +13253,13 @@ var CLASH_GAMES = [
   {
     "title": "Resizer",
     "url": "/games/clresizer.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2209"
   },
   {
     "title": "Resort Empire",
     "url": "/games/clresortempire.html",
-    "cat": "Strategy",
+    "cat": "Action",
     "id": "clash_2210"
   },
   {
@@ -13283,13 +13283,13 @@ var CLASH_GAMES = [
   {
     "title": "Return Man 2",
     "url": "/games/clreturnman2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2214"
   },
   {
-    "title": "Return to Riddle School",
+    "title": "Return Tori Ddl Esch Oo L",
     "url": "/games/clreturntoriddleschool.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2215"
   },
   {
@@ -13301,7 +13301,7 @@ var CLASH_GAMES = [
   {
     "title": "Rhythm Heaven",
     "url": "/games/clrhythmheaven.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2217"
   },
   {
@@ -13331,7 +13331,7 @@ var CLASH_GAMES = [
   {
     "title": "Ricochet Kills 2",
     "url": "/games/clricochetkills2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2222"
   },
   {
@@ -13343,31 +13343,31 @@ var CLASH_GAMES = [
   {
     "title": "Riddle School",
     "url": "/games/clriddleschool.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2224"
   },
   {
     "title": "Riddle School 2",
     "url": "/games/clriddleschool2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2225"
   },
   {
     "title": "Riddle School 3",
     "url": "/games/clriddleschool3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2226"
   },
   {
     "title": "Riddle School 4",
     "url": "/games/clriddleschool445544444%24%24444%24444.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2227"
   },
   {
     "title": "Riddle School 5",
     "url": "/games/clicantbelievegoogleflaggedmeforthenameofthefilelol.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2228"
   },
   {
@@ -13385,31 +13385,31 @@ var CLASH_GAMES = [
   {
     "title": "Riddle Transfer",
     "url": "/games/clriddletransfer.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2231"
   },
   {
     "title": "Riddle Transfer 2",
     "url": "/games/clriddletransfer2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2232"
   },
   {
-    "title": "Ridge Racer",
+    "title": "Ridger Acer",
     "url": "/games/clridgeracer.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2233"
   },
   {
     "title": "Rise Higher",
     "url": "/games/clrisehigher.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2234"
   },
   {
-    "title": "Ristar",
+    "title": "ristar",
     "url": "/games/clristar.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2235"
   },
   {
@@ -13427,7 +13427,7 @@ var CLASH_GAMES = [
   {
     "title": "Road of Fury",
     "url": "/games/clroadoffury.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2238"
   },
   {
@@ -13457,19 +13457,19 @@ var CLASH_GAMES = [
   {
     "title": "Rocket Jump",
     "url": "/games/clrocketjump.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_2243"
   },
   {
     "title": "Rocket Knight Adventures",
     "url": "/games/clrocketknightadventures.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_2244"
   },
   {
     "title": "Rocket League",
     "url": "/games/clrocketleague.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2245"
   },
   {
@@ -13511,19 +13511,19 @@ var CLASH_GAMES = [
   {
     "title": "Roller Baller",
     "url": "/games/clrollerballer.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2252"
   },
   {
     "title": "Rolling Sky",
     "url": "/games/clrollingsky.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2253"
   },
   {
     "title": "Rolly Vortex",
     "url": "/games/clrollyvortex.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2254"
   },
   {
@@ -13541,7 +13541,7 @@ var CLASH_GAMES = [
   {
     "title": "Rooftop Snipers",
     "url": "/games/clrooftopsnipers.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2257"
   },
   {
@@ -13565,17 +13565,17 @@ var CLASH_GAMES = [
   {
     "title": "Roulette Hero",
     "url": "/games/clroulettehero.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2261"
   },
   {
     "title": "Roulette Knight",
     "url": "/games/clrouletteknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2262"
   },
   {
-    "title": "Run",
+    "title": "run",
     "url": "/games/clrun.html",
     "cat": "Racing",
     "id": "clash_2263"
@@ -13623,9 +13623,9 @@ var CLASH_GAMES = [
     "id": "clash_2270"
   },
   {
-    "title": "Saihate Station",
+    "title": "Saihate Station (ã•ã„ã¯ã¦é§…)",
     "url": "/games/clsaihatestation.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2271"
   },
   {
@@ -13637,7 +13637,7 @@ var CLASH_GAMES = [
   {
     "title": "Sand Game",
     "url": "/games/clsandgame.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2273"
   },
   {
@@ -13655,7 +13655,7 @@ var CLASH_GAMES = [
   {
     "title": "Sandboxels",
     "url": "/games/clsandboxels.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_2276"
   },
   {
@@ -13667,7 +13667,7 @@ var CLASH_GAMES = [
   {
     "title": "Sandtris",
     "url": "/games/clsandtris.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2278"
   },
   {
@@ -13683,13 +13683,13 @@ var CLASH_GAMES = [
     "id": "clash_2280"
   },
   {
-    "title": "Santy is Home",
+    "title": "Santy Is Home",
     "url": "/games/cl2432.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2281"
   },
   {
-    "title": "SAS Zombie Assault 2",
+    "title": "Sas Zombie Assault 2",
     "url": "/games/clsaszombieassault2.html",
     "cat": "Action",
     "id": "clash_2282"
@@ -13745,7 +13745,7 @@ var CLASH_GAMES = [
   {
     "title": "Scary Teacher 3D",
     "url": "/games/clscaryteacher3d.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2291"
   },
   {
@@ -13775,7 +13775,7 @@ var CLASH_GAMES = [
   {
     "title": "Schoolboy Runaway",
     "url": "/games/clschoolboyrunaway.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2296"
   },
   {
@@ -13793,25 +13793,25 @@ var CLASH_GAMES = [
   {
     "title": "Scrap Metal 3",
     "url": "/games/clscrapmetal3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2299"
   },
   {
-    "title": "Scrapyard Dog",
+    "title": "Scrapy Ard Dog",
     "url": "/games/clscrapyarddog.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2300"
   },
   {
-    "title": "Scribblenauts",
+    "title": "scribblenauts",
     "url": "/games/clscribblenauts.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2301"
   },
   {
     "title": "Scuba Bear",
     "url": "/games/clscubabear.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2302"
   },
   {
@@ -13821,9 +13821,9 @@ var CLASH_GAMES = [
     "id": "clash_2303"
   },
   {
-    "title": "Secret of Mana",
+    "title": "Secreto Fm Ana",
     "url": "/games/clsecretofmana.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2304"
   },
   {
@@ -13835,7 +13835,7 @@ var CLASH_GAMES = [
   {
     "title": "Sentry Fortress",
     "url": "/games/clsentryfortress.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2306"
   },
   {
@@ -13863,9 +13863,9 @@ var CLASH_GAMES = [
     "id": "clash_2310"
   },
   {
-    "title": "Sh redsauce",
+    "title": "ShredSauce",
     "url": "/games/clshredsauce.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2311"
   },
   {
@@ -13893,21 +13893,21 @@ var CLASH_GAMES = [
     "id": "clash_2315"
   },
   {
-    "title": "Shift",
+    "title": "shift",
     "url": "/games/clshift.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2316"
   },
   {
-    "title": "Shift 2",
+    "title": "shift 2",
     "url": "/games/clshift2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2317"
   },
   {
     "title": "Shift at Midnight",
     "url": "/games/clshiftatmidnight.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2318"
   },
   {
@@ -13923,9 +13923,9 @@ var CLASH_GAMES = [
     "id": "clash_2320"
   },
   {
-    "title": "Shining Force",
+    "title": "shining force",
     "url": "/games/clShining%20Force.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2321"
   },
   {
@@ -13949,7 +13949,7 @@ var CLASH_GAMES = [
   {
     "title": "Short Life",
     "url": "/games/clshortlife.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2325"
   },
   {
@@ -13959,27 +13959,27 @@ var CLASH_GAMES = [
     "id": "clash_2326"
   },
   {
-    "title": "Shredmill",
+    "title": "Shred Mill",
     "url": "/games/clshredmill.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2327"
   },
   {
-    "title": "Shrek 2",
+    "title": "shrek 2",
     "url": "/games/clshrek-2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2328"
   },
   {
     "title": "Side Effects",
     "url": "/games/clsideeffects.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2329"
   },
   {
     "title": "Side Pocket",
     "url": "/games/clsidepocket.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2330"
   },
   {
@@ -13991,7 +13991,7 @@ var CLASH_GAMES = [
   {
     "title": "Sierra 7",
     "url": "/games/clsierra7.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2332"
   },
   {
@@ -14021,7 +14021,7 @@ var CLASH_GAMES = [
   {
     "title": "Silent Hill",
     "url": "/games/clsilenthill.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2337"
   },
   {
@@ -14051,7 +14051,7 @@ var CLASH_GAMES = [
   {
     "title": "Skate It",
     "url": "/games/clskateit.html",
-    "cat": "Other",
+    "cat": "Sports",
     "id": "clash_2342"
   },
   {
@@ -14087,13 +14087,13 @@ var CLASH_GAMES = [
   {
     "title": "Sky Race 3D",
     "url": "/games/clskyrace-3d.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2348"
   },
   {
-    "title": "Sky Rid ers",
+    "title": "Sky Riders",
     "url": "/games/clSkyRiders.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2349"
   },
   {
@@ -14103,15 +14103,15 @@ var CLASH_GAMES = [
     "id": "clash_2350"
   },
   {
-    "title": "Skywire",
+    "title": "skywire",
     "url": "/games/clskywire.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2351"
   },
   {
-    "title": "Skywire 2",
+    "title": "skywire 2",
     "url": "/games/clskywire2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2352"
   },
   {
@@ -14127,15 +14127,15 @@ var CLASH_GAMES = [
     "id": "clash_2354"
   },
   {
-    "title": "Slice It All",
+    "title": "Slice it All",
     "url": "/games/clsliceitall.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2355"
   },
   {
-    "title": "Slice M aster",
+    "title": "Slice Master",
     "url": "/games/clslicemaster.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2356"
   },
   {
@@ -14153,32 +14153,32 @@ var CLASH_GAMES = [
   {
     "title": "Slither.io",
     "url": "/games/clslitherio.html",
-    "cat": "Arcade",
+    "cat": "Puzzle",
     "id": "clash_2359",
     "thumb": "https://galxy.it.com/books/thumbs/slither-io.avif"
   },
   {
     "title": "Slot or Not",
     "url": "/games/clslotornot.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2360"
   },
   {
-    "title": "Slow Roads",
+    "title": "Slowroads",
     "url": "/games/clslowroads.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2361"
   },
   {
     "title": "Smash Carts",
     "url": "/games/clsmashcarts.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2362"
   },
   {
     "title": "Smash Remix",
     "url": "/games/clsmashremix.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2363"
   },
   {
@@ -14190,13 +14190,13 @@ var CLASH_GAMES = [
   {
     "title": "Smoking Barrels",
     "url": "/games/clsmokingbarrels.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2365"
   },
   {
     "title": "Snail Bob",
     "url": "/games/clsnailbob.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2366"
   },
   {
@@ -14224,21 +14224,21 @@ var CLASH_GAMES = [
     "id": "clash_2370"
   },
   {
-    "title": "Snake",
+    "title": "snake",
     "url": "/games/cl2438.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2371"
   },
   {
-    "title": "Sniper Shot",
+    "title": "Snipers Hot",
     "url": "/games/clsnipershot.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2372"
   },
   {
-    "title": "Sniper v2",
+    "title": "Sniper V2",
     "url": "/games/clsniperv2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2373"
   },
   {
@@ -14256,19 +14256,19 @@ var CLASH_GAMES = [
   {
     "title": "Snow Rider 3D",
     "url": "/games/clsnowrider.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2376"
   },
   {
     "title": "Snow Road",
     "url": "/games/clsnowroad.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2377"
   },
   {
-    "title": "Snowball.io",
+    "title": "Snowball IO",
     "url": "/games/clsnowballio.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2378"
   },
   {
@@ -14292,7 +14292,7 @@ var CLASH_GAMES = [
   {
     "title": "Soccer Random",
     "url": "/games/clsoccerrandomgood.html",
-    "cat": "Arcade",
+    "cat": "Sports",
     "id": "clash_2382",
     "thumb": "https://galxy.it.com/books/thumbs/soccer-random.avif"
   },
@@ -14311,7 +14311,7 @@ var CLASH_GAMES = [
   {
     "title": "Soilder Legend",
     "url": "/games/clsoilderlegend.html",
-    "cat": "Action",
+    "cat": "Adventure",
     "id": "clash_2385"
   },
   {
@@ -14329,7 +14329,7 @@ var CLASH_GAMES = [
   {
     "title": "Solar Smash",
     "url": "/games/clsolarsmash.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2388"
   },
   {
@@ -14339,15 +14339,15 @@ var CLASH_GAMES = [
     "id": "clash_2389"
   },
   {
-    "title": "Solitaire",
+    "title": "solitaire",
     "url": "/games/clsolitaire.html",
-    "cat": "Puzzle",
+    "cat": "Action",
     "id": "clash_2390"
   },
   {
     "title": "Solitare",
     "url": "/games/clsolitare.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2391"
   },
   {
@@ -14371,13 +14371,13 @@ var CLASH_GAMES = [
   {
     "title": "Sonny 2",
     "url": "/games/clsonny2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2395"
   },
   {
-    "title": "Sort The C ourt",
+    "title": "Sort the Court",
     "url": "/games/clsortthecourt.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2396"
   },
   {
@@ -14389,7 +14389,7 @@ var CLASH_GAMES = [
   {
     "title": "Soundboard",
     "url": "/games/clsoundboard.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2398"
   },
   {
@@ -14401,7 +14401,7 @@ var CLASH_GAMES = [
   {
     "title": "Space Company",
     "url": "/games/clspacecompany.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2400"
   },
   {
@@ -14411,25 +14411,25 @@ var CLASH_GAMES = [
     "id": "clash_2401"
   },
   {
-    "title": "Space is Key",
+    "title": "Space Is Key",
     "url": "/games/clspaceiskey.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2402"
   },
   {
-    "title": "Space is Key 2",
+    "title": "Space Is Key 2",
     "url": "/games/clspaceiskey2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2403"
   },
   {
-    "title": "Space is Key Xmas",
+    "title": "Space Is Key Xmas",
     "url": "/games/clspaceiskeyxmas.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2404"
   },
   {
-    "title": "Space Wars BattleGround",
+    "title": "Space Wars Battleground",
     "url": "/games/clspacewarsbattleground.html",
     "cat": "Action",
     "id": "clash_2405"
@@ -14437,7 +14437,7 @@ var CLASH_GAMES = [
   {
     "title": "Space Waves",
     "url": "/games/clspacewaves.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2406"
   },
   {
@@ -14453,15 +14453,15 @@ var CLASH_GAMES = [
     "id": "clash_2408"
   },
   {
-    "title": "Speed Sta rs",
+    "title": "Speed Stars",
     "url": "/games/clspeedstars.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2409"
   },
   {
     "title": "Spelunky Classic HD",
     "url": "/games/clspelunky.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_2410"
   },
   {
@@ -14473,7 +14473,7 @@ var CLASH_GAMES = [
   {
     "title": "Spewer",
     "url": "/games/clspewer.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2412"
   },
   {
@@ -14491,7 +14491,7 @@ var CLASH_GAMES = [
   {
     "title": "Spiral Roll",
     "url": "/games/clspiralroll.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2415"
   },
   {
@@ -14513,9 +14513,9 @@ var CLASH_GAMES = [
     "id": "clash_2418"
   },
   {
-    "title": "Sprinter",
+    "title": "sprinter",
     "url": "/games/clsprinter.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2419"
   },
   {
@@ -14557,11 +14557,11 @@ var CLASH_GAMES = [
   {
     "title": "Squid Playground",
     "url": "/games/clsquidplayground.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2426"
   },
   {
-    "title": "Stack",
+    "title": "stack",
     "url": "/games/clstack.html",
     "cat": "Action",
     "id": "clash_2427"
@@ -14569,25 +14569,25 @@ var CLASH_GAMES = [
   {
     "title": "Stack Bump 3D",
     "url": "/games/clstackbump3d.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2428"
   },
   {
-    "title": "Stackball.io",
+    "title": "Stack Ballio",
     "url": "/games/clstackballio.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2429"
   },
   {
-    "title": "Stacktris",
+    "title": "Stack Tris",
     "url": "/games/clstacktris.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2430"
   },
   {
     "title": "Star Fox",
     "url": "/games/clstarfox.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2431"
   },
   {
@@ -14597,9 +14597,9 @@ var CLASH_GAMES = [
     "id": "clash_2432"
   },
   {
-    "title": "Star Fox 64",
+    "title": "star fox 64",
     "url": "/games/clstarfox64.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2433"
   },
   {
@@ -14611,7 +14611,7 @@ var CLASH_GAMES = [
   {
     "title": "Star Raiders",
     "url": "/games/clstarraiders.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2435"
   },
   {
@@ -14623,37 +14623,37 @@ var CLASH_GAMES = [
   {
     "title": "State.io",
     "url": "/games/clstateio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2437"
   },
   {
     "title": "Station 141",
     "url": "/games/clstation141.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2438"
   },
   {
-    "title": "Station Meltdown",
+    "title": "Stationmeltdown",
     "url": "/games/clstationmeltdown.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2439"
   },
   {
-    "title": "Station Satu rn",
+    "title": "Station Saturn",
     "url": "/games/clstationsaturn.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2440"
   },
   {
-    "title": "Steak and Jake",
+    "title": "steak and jake",
     "url": "/games/clsteakandjake.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2441"
   },
   {
-    "title": "Steal A Brainrot",
+    "title": "Steal a Brainrot",
     "url": "/games/clsupitdept.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2442"
   },
   {
@@ -14663,7 +14663,7 @@ var CLASH_GAMES = [
     "id": "clash_2443"
   },
   {
-    "title": "Stealing The Diamond",
+    "title": "stealing the diamond",
     "url": "/games/clstealingthediamond.html",
     "cat": "Action",
     "id": "clash_2444"
@@ -14671,19 +14671,19 @@ var CLASH_GAMES = [
   {
     "title": "Stealth Assassin",
     "url": "/games/clstealthassassin.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2445"
   },
   {
     "title": "Stealth Master",
     "url": "/games/clstealthmaster.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2446"
   },
   {
-    "title": "Steel Empire",
+    "title": "Steele Mp Ire",
     "url": "/games/clsteelempire.html",
-    "cat": "Strategy",
+    "cat": "Action",
     "id": "clash_2447"
   },
   {
@@ -14731,17 +14731,17 @@ var CLASH_GAMES = [
   {
     "title": "Stick Slasher",
     "url": "/games/clstickslasher.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2455"
   },
   {
-    "title": "Stick War",
+    "title": "stick war",
     "url": "/games/clstickwar.html",
     "cat": "Action",
     "id": "clash_2456"
   },
   {
-    "title": "Stick War 2",
+    "title": "stick war 2",
     "url": "/games/clstickwar2.html",
     "cat": "Action",
     "id": "clash_2457"
@@ -14749,7 +14749,7 @@ var CLASH_GAMES = [
   {
     "title": "Stick With It",
     "url": "/games/clstickwithit.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2458"
   },
   {
@@ -14767,7 +14767,7 @@ var CLASH_GAMES = [
   {
     "title": "Stickman and Guns",
     "url": "/games/clstickmanandguns.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2461"
   },
   {
@@ -14779,7 +14779,7 @@ var CLASH_GAMES = [
   {
     "title": "Stickman Duel",
     "url": "/games/clstickmanduel.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2463"
   },
   {
@@ -14789,7 +14789,7 @@ var CLASH_GAMES = [
     "id": "clash_2464"
   },
   {
-    "title": "Stickman gta City",
+    "title": "Stickman Gta City",
     "url": "/games/clstickmangtacity.html",
     "cat": "Action",
     "id": "clash_2465"
@@ -14797,7 +14797,7 @@ var CLASH_GAMES = [
   {
     "title": "Stickman Hook",
     "url": "/games/clstickmanhook.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2466"
   },
   {
@@ -14809,7 +14809,7 @@ var CLASH_GAMES = [
   {
     "title": "Stickman Kombat 2D",
     "url": "/games/clstickmankombat2d.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2468"
   },
   {
@@ -14821,7 +14821,7 @@ var CLASH_GAMES = [
   {
     "title": "Stone Grass Mowing Simulator",
     "url": "/games/clgrassmowing.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_2470"
   },
   {
@@ -14833,31 +14833,31 @@ var CLASH_GAMES = [
   {
     "title": "Storm the House",
     "url": "/games/clstormthehouse.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2472"
   },
   {
-    "title": "Storm the House 2",
+    "title": "Storm The House 2",
     "url": "/games/clstormthehouse2.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2473"
   },
   {
     "title": "Storm the House 3",
     "url": "/games/clstormthehouse3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2474"
   },
   {
-    "title": "Streets Of Rage",
+    "title": "streets of rage",
     "url": "/games/clstreetofrage.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2475"
   },
   {
-    "title": "Streets Of Rage 2",
+    "title": "streets of rage 2",
     "url": "/games/clstreetofrage2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2476"
   },
   {
@@ -14869,19 +14869,19 @@ var CLASH_GAMES = [
   {
     "title": "Strike Force Heroes",
     "url": "/games/clstrikeforceheroes.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2478"
   },
   {
     "title": "Strike Force Heroes 2",
     "url": "/games/clstrikeforceheroes2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2479"
   },
   {
     "title": "Strike Force Heroes 3",
     "url": "/games/clstrikeforceheroes3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2480"
   },
   {
@@ -14941,7 +14941,7 @@ var CLASH_GAMES = [
   {
     "title": "Sugar Sugar",
     "url": "/games/clsugarsugar.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2490"
   },
   {
@@ -14969,33 +14969,33 @@ var CLASH_GAMES = [
     "id": "clash_2494"
   },
   {
-    "title": "Super Bomberman",
+    "title": "super bomberman",
     "url": "/games/clsuperbomberman.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2495"
   },
   {
     "title": "Super Bomberman 2",
     "url": "/games/clsuperbomberman2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2496"
   },
   {
     "title": "Super Bomberman 3",
     "url": "/games/clsuperbomberman3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2497"
   },
   {
     "title": "Super Bomberman 4",
     "url": "/games/clsuperbomberman4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2498"
   },
   {
     "title": "Super Bomberman 5",
     "url": "/games/clsuperbomberman5.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2499"
   },
   {
@@ -15005,9 +15005,9 @@ var CLASH_GAMES = [
     "id": "clash_2500"
   },
   {
-    "title": "Super Car Rush",
+    "title": "Supercar Rush",
     "url": "/games/clsupercarrush.html",
-    "cat": "Racing",
+    "cat": "Action",
     "id": "clash_2501"
   },
   {
@@ -15017,21 +15017,21 @@ var CLASH_GAMES = [
     "id": "clash_2502"
   },
   {
-    "title": "Super Chibi Knight",
+    "title": "Super Chibik Night",
     "url": "/games/clsuperchibiknight.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2503"
   },
   {
     "title": "Super Dark Deception",
     "url": "/games/clsuperdarkdeception.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2504"
   },
   {
-    "title": "Super Diagonal mario 2",
+    "title": "Super Diagonal Mario 2",
     "url": "/games/clsuperdiagonalmario2.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_2505"
   },
   {
@@ -15043,13 +15043,13 @@ var CLASH_GAMES = [
   {
     "title": "Super Fighters",
     "url": "/games/clsuperfighters.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2507"
   },
   {
     "title": "Super House of Dead Ninjas",
     "url": "/games/clsuperhouseofdeadninjas.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2508"
   },
   {
@@ -15071,9 +15071,9 @@ var CLASH_GAMES = [
     "id": "clash_2511"
   },
   {
-    "title": "Super Metroid",
+    "title": "super metroid",
     "url": "/games/clsupermetroid.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_2512"
   },
   {
@@ -15083,27 +15083,27 @@ var CLASH_GAMES = [
     "id": "clash_2513"
   },
   {
-    "title": "Super Monkey Ball 1 & 2",
+    "title": "Super Monkey Ball 1&2",
     "url": "/games/clsmb12.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2514"
   },
   {
-    "title": "Super Monkey Ball jr",
+    "title": "super monkey ball jr",
     "url": "/games/clsupermonkeyballjr.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2515"
   },
   {
-    "title": "Super Noah's Ark 3D",
+    "title": "Super Noah Sark 3D",
     "url": "/games/clsupernoahsark3D.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2516"
   },
   {
-    "title": "Super Oli ver World",
+    "title": "Super Oliver World",
     "url": "/games/clsuperoliverworld.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2517"
   },
   {
@@ -15121,7 +15121,7 @@ var CLASH_GAMES = [
   {
     "title": "Super Punch Out",
     "url": "/games/clsupuncharc.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2520"
   },
   {
@@ -15149,33 +15149,33 @@ var CLASH_GAMES = [
     "id": "clash_2524"
   },
   {
-    "title": "Super Scribblenauts",
+    "title": "Supers Cribble Naut S",
     "url": "/games/clsuperscribblenauts.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2525"
   },
   {
-    "title": "Super Smash bros",
+    "title": "super smash bros",
     "url": "/games/clsupersmashbros.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2526"
   },
   {
     "title": "Super Smash Flash",
     "url": "/games/clsupersmashflash.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2527"
   },
   {
-    "title": "Super Smash Flash 2",
+    "title": "Supers Mash Flash 2",
     "url": "/games/clsupersmashflash2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2528"
   },
   {
     "title": "Super Tilt Bros",
     "url": "/games/clsupertiltbros.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2529"
   },
   {
@@ -15187,13 +15187,13 @@ var CLASH_GAMES = [
   {
     "title": "Superhot",
     "url": "/games/clsuperhot.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2531"
   },
   {
-    "title": "Superhot Line Miami",
+    "title": "Super Hotline Miami",
     "url": "/games/clsuperhotlinemiami.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2532"
   },
   {
@@ -15209,27 +15209,27 @@ var CLASH_GAMES = [
     "id": "clash_2534"
   },
   {
-    "title": "Survival Race v2",
+    "title": "Survival Race V 2",
     "url": "/games/clsurvivalracev2.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2535"
   },
   {
     "title": "Survivor.io",
     "url": "/games/clsurvivorio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2536"
   },
   {
     "title": "Sushi Cat",
     "url": "/games/clsushicat.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2537"
   },
   {
     "title": "Sushi Unroll",
     "url": "/games/clsushiunroll.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2538"
   },
   {
@@ -15253,7 +15253,7 @@ var CLASH_GAMES = [
   {
     "title": "Switchblade",
     "url": "/games/clswitchblade.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2542"
   },
   {
@@ -15269,33 +15269,33 @@ var CLASH_GAMES = [
     "id": "clash_2544"
   },
   {
-    "title": "Swordfight",
+    "title": "Swordfight!!",
     "url": "/games/clswordfight.html",
     "cat": "Action",
     "id": "clash_2545"
   },
   {
-    "title": "Swords and Sandals",
+    "title": "swords and sandals",
     "url": "/games/clswordsandsandals2.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2546"
   },
   {
-    "title": "Swords and Sandals 2",
+    "title": "swords and sandals 2",
     "url": "/games/cl2261.html",
-    "cat": "Retro",
+    "cat": "Puzzle",
     "id": "clash_2547"
   },
   {
     "title": "Swords and Souls",
     "url": "/games/clswordsandsouls.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2548"
   },
   {
     "title": "Sydney Shark",
     "url": "/games/clsydneyshark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2549"
   },
   {
@@ -15325,13 +15325,13 @@ var CLASH_GAMES = [
   {
     "title": "Tactical Assassin 2",
     "url": "/games/cltacticalassassin2.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2554"
   },
   {
     "title": "Tag",
     "url": "/games/cltag-.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2555"
   },
   {
@@ -15373,13 +15373,13 @@ var CLASH_GAMES = [
   {
     "title": "Takeover",
     "url": "/games/cltakeover.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2562"
   },
   {
-    "title": "Tal l.io",
+    "title": "Tall.io",
     "url": "/games/cltallio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2563"
   },
   {
@@ -15397,7 +15397,7 @@ var CLASH_GAMES = [
   {
     "title": "Tank Trouble 2",
     "url": "/games/cltanktrouble2.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2566"
   },
   {
@@ -15415,7 +15415,7 @@ var CLASH_GAMES = [
   {
     "title": "Tanuki Sunset",
     "url": "/games/cltanukisunset.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2569"
   },
   {
@@ -15439,13 +15439,13 @@ var CLASH_GAMES = [
   {
     "title": "Tapper",
     "url": "/games/cltapper.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2573"
   },
   {
     "title": "Tasty Planet",
     "url": "/games/cltastyplanet.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2574"
   },
   {
@@ -15493,7 +15493,7 @@ var CLASH_GAMES = [
   {
     "title": "Telephone Trouble",
     "url": "/games/cltelephonetrouble.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2582"
   },
   {
@@ -15503,15 +15503,15 @@ var CLASH_GAMES = [
     "id": "clash_2583"
   },
   {
-    "title": "Tempest 2000",
+    "title": "Tempest 2 000",
     "url": "/games/cltempest2000.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2584"
   },
   {
     "title": "Temple of Boom",
     "url": "/games/cltempleofboom.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2585"
   },
   {
@@ -15535,13 +15535,13 @@ var CLASH_GAMES = [
   {
     "title": "Terraria",
     "url": "/games/cl2373.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2589"
   },
   {
     "title": "Territorial.io",
     "url": "/games/clterritorialio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2590"
   },
   {
@@ -15577,43 +15577,43 @@ var CLASH_GAMES = [
   {
     "title": "The Battle",
     "url": "/games/cl2264.html",
-    "cat": "Retro",
+    "cat": "Action",
     "id": "clash_2596"
   },
   {
-    "title": "The Binding of Isaac",
+    "title": "the binding of isaac",
     "url": "/games/cl2265.html",
-    "cat": "Retro",
+    "cat": "Action",
     "id": "clash_2597"
   },
   {
     "title": "The Classroom",
     "url": "/games/cltheclassroom.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2598"
   },
   {
     "title": "The Classroom 2",
     "url": "/games/cltheclassroom2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2599"
   },
   {
     "title": "The Classroom 3",
     "url": "/games/cltheclassroom3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2600"
   },
   {
     "title": "The Deadseat",
     "url": "/games/clthedeadseat.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2601"
   },
   {
     "title": "The Deepest Sleep",
     "url": "/games/clthedeepestsleep.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2602"
   },
   {
@@ -15643,7 +15643,7 @@ var CLASH_GAMES = [
   {
     "title": "The Enchanted Cave 2",
     "url": "/games/cltheenchantedcave2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2607"
   },
   {
@@ -15655,7 +15655,7 @@ var CLASH_GAMES = [
   {
     "title": "The Final Earth",
     "url": "/games/clthefinalearth.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2609"
   },
   {
@@ -15667,7 +15667,7 @@ var CLASH_GAMES = [
   {
     "title": "The Heist",
     "url": "/games/cltheheist.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2611"
   },
   {
@@ -15679,19 +15679,19 @@ var CLASH_GAMES = [
   {
     "title": "The Impossible Game",
     "url": "/games/cltheimpossiblegame.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2613"
   },
   {
     "title": "The Impossible Quiz",
     "url": "/games/climpossiblequiz.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2614"
   },
   {
-    "title": "The Impossible Quiz 2",
+    "title": "the impossible quiz 2",
     "url": "/games/climpossiblequiz2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2615"
   },
   {
@@ -15709,7 +15709,7 @@ var CLASH_GAMES = [
   {
     "title": "The Last Stand",
     "url": "/games/clthelaststand.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2618"
   },
   {
@@ -15739,7 +15739,7 @@ var CLASH_GAMES = [
   {
     "title": "The Pit",
     "url": "/games/clthepit.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2623"
   },
   {
@@ -15769,13 +15769,13 @@ var CLASH_GAMES = [
   {
     "title": "The Visitor",
     "url": "/games/clvisitor.html",
-    "cat": "Other",
+    "cat": "Arcade",
     "id": "clash_2628"
   },
   {
     "title": "Theme Park",
     "url": "/games/clthemepark.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2629"
   },
   {
@@ -15785,16 +15785,16 @@ var CLASH_GAMES = [
     "id": "clash_2630"
   },
   {
-    "title": "There Is No Game",
+    "title": "there is no game",
     "url": "/games/clthereisnofile.html",
-    "cat": "Puzzle",
+    "cat": "Action",
     "id": "clash_2631",
     "thumb": "https://galxy.it.com/books/thumbs/there-is-no-file.webp"
   },
   {
-    "title": "Thermomorph",
+    "title": "Thermo Morph",
     "url": "/games/clthermomorph.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2632"
   },
   {
@@ -15804,9 +15804,9 @@ var CLASH_GAMES = [
     "id": "clash_2633"
   },
   {
-    "title": "They Ar e Coming",
+    "title": "They Are Coming",
     "url": "/games/cltheyarecoming.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2634"
   },
   {
@@ -15818,7 +15818,7 @@ var CLASH_GAMES = [
   {
     "title": "This Is The Only Level",
     "url": "/games/clthisistheonlylevel.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2636"
   },
   {
@@ -15830,7 +15830,7 @@ var CLASH_GAMES = [
   {
     "title": "Three Goblets",
     "url": "/games/clthreegoblets.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2638"
   },
   {
@@ -15846,9 +15846,9 @@ var CLASH_GAMES = [
     "id": "clash_2640"
   },
   {
-    "title": "Thumb Fighter",
+    "title": "thumb fighter",
     "url": "/games/cl2375.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2641"
   },
   {
@@ -15866,11 +15866,11 @@ var CLASH_GAMES = [
   {
     "title": "Time Shooter 3: SWAT",
     "url": "/games/cl2463.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2644"
   },
   {
-    "title": "Timewarriors",
+    "title": "Time Warriors",
     "url": "/games/cltimewarriors.html",
     "cat": "Action",
     "id": "clash_2645"
@@ -15878,14 +15878,14 @@ var CLASH_GAMES = [
   {
     "title": "Tiny Fishing",
     "url": "/games/cltinyfishing.html",
-    "cat": "Arcade",
+    "cat": "Puzzle",
     "id": "clash_2646",
     "thumb": "https://galxy.it.com/books/thumbs/tiny-fishing.avif"
   },
   {
-    "title": "Toasterball",
+    "title": "Toaster Ball",
     "url": "/games/cltoasterball.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2647"
   },
   {
@@ -15901,15 +15901,15 @@ var CLASH_GAMES = [
     "id": "clash_2649"
   },
   {
-    "title": "Tomb of the Mask",
+    "title": "Tomb Of The Mask",
     "url": "/games/cltotm.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2650"
   },
   {
     "title": "Tomodachi Collection",
     "url": "/games/cltomodachicollection.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2651"
   },
   {
@@ -15937,9 +15937,9 @@ var CLASH_GAMES = [
     "id": "clash_2655"
   },
   {
-    "title": "Tony Hawk's Underground",
+    "title": "Tony Hawks Underground",
     "url": "/games/cltonyhawksunderground.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2656"
   },
   {
@@ -15949,45 +15949,45 @@ var CLASH_GAMES = [
     "id": "clash_2657"
   },
   {
-    "title": "Toss the Turtle",
+    "title": "Toss The Turtle",
     "url": "/games/cltosstheturtle.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2658"
   },
   {
     "title": "Touhou 1 Touhou-Reiiden",
     "url": "/games/cltouhou.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2659"
   },
   {
     "title": "Touhou 2 Touhou-Fuumaroku",
     "url": "/games/cltouhou2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2660"
   },
   {
     "title": "Touhou 3 Touhou-Yumejikuu",
     "url": "/games/cltouhou3.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2661"
   },
   {
     "title": "Touhou 4 Touhou-Gensokyou",
     "url": "/games/cltouhou4.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2662"
   },
   {
     "title": "Touhou 5 Touhou-Kaikidan",
     "url": "/games/cltouhou5.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2663"
   },
   {
     "title": "Tower Crash 3D",
     "url": "/games/cltowercrash3d.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_2664"
   },
   {
@@ -16011,13 +16011,13 @@ var CLASH_GAMES = [
   {
     "title": "Trace",
     "url": "/games/cltrace.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2668"
   },
   {
     "title": "Traffic Jam 3D",
     "url": "/games/cltrafficjam3d.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2669"
   },
   {
@@ -16071,7 +16071,7 @@ var CLASH_GAMES = [
   {
     "title": "Trees Hate You",
     "url": "/games/cltreeshateyou.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2678"
   },
   {
@@ -16081,15 +16081,15 @@ var CLASH_GAMES = [
     "id": "clash_2679"
   },
   {
-    "title": "Triple Play 2000",
+    "title": "Triple Play 2 000",
     "url": "/games/cltripleplay2000.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2680"
   },
   {
     "title": "Trivia Crack",
     "url": "/games/cltriviacrack.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2681"
   },
   {
@@ -16179,7 +16179,7 @@ var CLASH_GAMES = [
   {
     "title": "Tube Jumpers",
     "url": "/games/cltubejumpers.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_2696"
   },
   {
@@ -16219,33 +16219,33 @@ var CLASH_GAMES = [
     "id": "clash_2702"
   },
   {
-    "title": "Turok - Dinosaur Hunter",
+    "title": "turok dinosaur hunter",
     "url": "/games/clturokdinosaurhunter.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2703"
   },
   {
     "title": "TV Static",
     "url": "/games/cltvstatic.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2704"
   },
   {
-    "title": "Twin Shot",
+    "title": "twin shot",
     "url": "/games/cltwinshot.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2705"
   },
   {
     "title": "Twisted Metal",
     "url": "/games/cltwistedmetal.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2706"
   },
   {
     "title": "Twisted Metal 2",
     "url": "/games/cltwistedmetal2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2707"
   },
   {
@@ -16275,7 +16275,7 @@ var CLASH_GAMES = [
   {
     "title": "Ultimate Car Driving Simulator",
     "url": "/games/clUltimatecardrivingsimulator.html",
-    "cat": "Racing",
+    "cat": "Strategy",
     "id": "clash_2712"
   },
   {
@@ -16287,7 +16287,7 @@ var CLASH_GAMES = [
   {
     "title": "Um Jammer Lammy",
     "url": "/games/clumjammerlammy.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2714"
   },
   {
@@ -16299,19 +16299,19 @@ var CLASH_GAMES = [
   {
     "title": "Underneath",
     "url": "/games/clunderneath.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2716"
   },
   {
     "title": "Undertale Yellow",
     "url": "/games/clundertaleyellow.html",
-    "cat": "Other",
+    "cat": "Adventure",
     "id": "clash_2717"
   },
   {
-    "title": "Unfair Mario",
+    "title": "unfair mario",
     "url": "/games/clunfairmarioworkquestionmark.html",
-    "cat": "Other",
+    "cat": "Retro",
     "id": "clash_2718"
   },
   {
@@ -16323,7 +16323,7 @@ var CLASH_GAMES = [
   {
     "title": "Unicycle Hero",
     "url": "/games/clunicyclehero.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2720"
   },
   {
@@ -16353,13 +16353,13 @@ var CLASH_GAMES = [
   {
     "title": "Upgrade Complete",
     "url": "/games/clupgradecomplete.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2725"
   },
   {
     "title": "Upgrade Complete 2",
     "url": "/games/clupgradecomplete2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2726"
   },
   {
@@ -16369,9 +16369,9 @@ var CLASH_GAMES = [
     "id": "clash_2727"
   },
   {
-    "title": "UpSlash",
+    "title": "Upslash",
     "url": "/games/clupslash.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2728"
   },
   {
@@ -16383,7 +16383,7 @@ var CLASH_GAMES = [
   {
     "title": "UvuvwevwevweOnyetenvewveUgwemubwemOssas",
     "url": "/games/clUvuvwevwevweOnyetenvewveUgwemubwemOssas.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2730"
   },
   {
@@ -16401,7 +16401,7 @@ var CLASH_GAMES = [
   {
     "title": "Vampire Survivors",
     "url": "/games/clvampiresurvivors.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2733"
   },
   {
@@ -16413,85 +16413,85 @@ var CLASH_GAMES = [
   {
     "title": "Vapor Trails",
     "url": "/games/clvaportrails.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2735"
   },
   {
-    "title": "Vex",
+    "title": "vex",
     "url": "/games/clvex.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2736"
   },
   {
     "title": "Vex 2",
     "url": "/games/clvex2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2737"
   },
   {
     "title": "Vex 3",
     "url": "/games/clvex3.html",
-    "cat": "Action",
+    "cat": "Puzzle",
     "id": "clash_2738"
   },
   {
-    "title": "Vex 3 Xmas",
+    "title": "Vex 3 XMAS",
     "url": "/games/clvex3xmas.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2739"
   },
   {
     "title": "Vex 4",
     "url": "/games/clvex4.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2740"
   },
   {
     "title": "Vex 5",
     "url": "/games/clvex5.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2741"
   },
   {
     "title": "Vex 6",
     "url": "/games/clvex6.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2742"
   },
   {
     "title": "Vex 7",
     "url": "/games/clvex7.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2743"
   },
   {
     "title": "Vex 8",
     "url": "/games/clvex8.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2744"
   },
   {
     "title": "Vex Challenges",
     "url": "/games/clvexchallenges.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2745"
   },
   {
-    "title": "Vex x3m",
+    "title": "Vex X3M",
     "url": "/games/clvexx3m.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2746"
   },
   {
-    "title": "Vex x3m 2",
+    "title": "Vex X3M 2",
     "url": "/games/clvexx3m2.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2747"
   },
   {
     "title": "Vib-Ribbon",
     "url": "/games/clvibribbon.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2748"
   },
   {
@@ -16509,7 +16509,7 @@ var CLASH_GAMES = [
   {
     "title": "Volley Random",
     "url": "/games/clvolleyrandom.html",
-    "cat": "Arcade",
+    "cat": "Sports",
     "id": "clash_2751",
     "thumb": "https://galxy.it.com/books/thumbs/volley-random.webp"
   },
@@ -16532,9 +16532,9 @@ var CLASH_GAMES = [
     "id": "clash_2754"
   },
   {
-    "title": "VVVVVV",
+    "title": "Vvvvvv",
     "url": "/games/clvvvvvv.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2755"
   },
   {
@@ -16580,7 +16580,7 @@ var CLASH_GAMES = [
     "id": "clash_2762"
   },
   {
-    "title": "Wario Land 4",
+    "title": "wario land 4",
     "url": "/games/clwarioland4.html",
     "cat": "Action",
     "id": "clash_2763"
@@ -16592,15 +16592,15 @@ var CLASH_GAMES = [
     "id": "clash_2764"
   },
   {
-    "title": "Warioware D.I.Y",
+    "title": "warioware diy",
     "url": "/games/clwariowarediy.html",
     "cat": "Action",
     "id": "clash_2765"
   },
   {
-    "title": "Warioware Touched",
+    "title": "WarioWare: Touched!",
     "url": "/games/clwariowaretouched.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2766"
   },
   {
@@ -16610,9 +16610,9 @@ var CLASH_GAMES = [
     "id": "clash_2767"
   },
   {
-    "title": "Waterwo rks",
+    "title": "Waterworks!",
     "url": "/games/clwaterworks.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2768"
   },
   {
@@ -16622,9 +16622,9 @@ var CLASH_GAMES = [
     "id": "clash_2769"
   },
   {
-    "title": "Wave Race 64",
+    "title": "wave race 64",
     "url": "/games/clwaverace64.html",
-    "cat": "Other",
+    "cat": "Racing",
     "id": "clash_2770"
   },
   {
@@ -16636,13 +16636,13 @@ var CLASH_GAMES = [
   {
     "title": "Wave Run",
     "url": "/games/clwaverun.html",
-    "cat": "Arcade",
+    "cat": "Racing",
     "id": "clash_2772"
   },
   {
     "title": "We Become What We Behold",
     "url": "/games/clwebecomewhatwebehold.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2773"
   },
   {
@@ -16664,9 +16664,9 @@ var CLASH_GAMES = [
     "id": "clash_2776"
   },
   {
-    "title": "Webfishing",
+    "title": "WebFishing",
     "url": "/games/clwebfishing.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2777"
   },
   {
@@ -16714,49 +16714,49 @@ var CLASH_GAMES = [
   {
     "title": "Wheely",
     "url": "/games/clwheely.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2785"
   },
   {
     "title": "Wheely 2",
     "url": "/games/clwheely2.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2786"
   },
   {
     "title": "Wheely 3",
     "url": "/games/clwheely3.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2787"
   },
   {
     "title": "Wheely 4",
     "url": "/games/clwheely4.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2788"
   },
   {
     "title": "Wheely 5",
     "url": "/games/clwheely5.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2789"
   },
   {
     "title": "Wheely 6",
     "url": "/games/clwheely6.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2790"
   },
   {
     "title": "Wheely 7",
     "url": "/games/clwheely7.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2791"
   },
   {
     "title": "Wheely 8",
     "url": "/games/clwheely8.html",
-    "cat": "Racing",
+    "cat": "Puzzle",
     "id": "clash_2792"
   },
   {
@@ -16780,13 +16780,13 @@ var CLASH_GAMES = [
   {
     "title": "Windows Doors",
     "url": "/games/clwindowsdoors.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2796"
   },
   {
     "title": "Winter Falling",
     "url": "/games/clwinterfalling.html",
-    "cat": "Other",
+    "cat": "Platformer",
     "id": "clash_2797"
   },
   {
@@ -16834,7 +16834,7 @@ var CLASH_GAMES = [
   {
     "title": "Wordle",
     "url": "/games/clwordle.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2805"
   },
   {
@@ -16850,27 +16850,27 @@ var CLASH_GAMES = [
     "id": "clash_2807"
   },
   {
-    "title": "World's Hardest Game",
+    "title": "world's hardest game",
     "url": "/games/clworldshardestgame.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2808"
   },
   {
-    "title": "World's Hardest Game 2",
+    "title": "worlds hardest game 2",
     "url": "/games/clworldshardestgame2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2809"
   },
   {
-    "title": "World's Hardest Game 3",
+    "title": "Worlds Hardest Game 3",
     "url": "/games/clworldshardestgame3.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2810"
   },
   {
-    "title": "World's Hardest Game 4",
+    "title": "Worlds Hardest Game 4",
     "url": "/games/clworldshardestgame4.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2811"
   },
   {
@@ -16954,7 +16954,7 @@ var CLASH_GAMES = [
   {
     "title": "Yandere Simulator",
     "url": "/games/clyanderesimulator.html",
-    "cat": "Other",
+    "cat": "Strategy",
     "id": "clash_2825"
   },
   {
@@ -16970,9 +16970,9 @@ var CLASH_GAMES = [
     "id": "clash_2827"
   },
   {
-    "title": "Yohoho.i o",
+    "title": "YoHoHo.io",
     "url": "/games/clyohohoio.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2828"
   },
   {
@@ -16984,7 +16984,7 @@ var CLASH_GAMES = [
   {
     "title": "You Are Jeff Bezos",
     "url": "/games/clyouarejeffbezos.html",
-    "cat": "Action",
+    "cat": "Arcade",
     "id": "clash_2830"
   },
   {
@@ -17008,7 +17008,7 @@ var CLASH_GAMES = [
   {
     "title": "Yume Nikki",
     "url": "/games/clyumenikki.html",
-    "cat": "Other",
+    "cat": "Puzzle",
     "id": "clash_2834"
   },
   {
@@ -17078,15 +17078,15 @@ var CLASH_GAMES = [
     "id": "clash_2845"
   },
   {
-    "title": "Zombotron",
+    "title": "zombotron",
     "url": "/games/clzombotron.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2846"
   },
   {
-    "title": "Zombotron 2",
+    "title": "zombotron 2",
     "url": "/games/clzombotron2.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2847"
   },
   {
@@ -17104,7 +17104,6655 @@ var CLASH_GAMES = [
   {
     "title": "Zuma",
     "url": "/games/clzuma.html",
-    "cat": "Other",
+    "cat": "Action",
     "id": "clash_2850"
+  },
+  {
+    "title": "Coffee Talk",
+    "url": "/games/clcoffeetalk.html",
+    "cat": "Arcade",
+    "id": "tung_2851"
+  },
+  {
+    "title": "Animal Crossing: Population Growing!",
+    "url": "/games/clanimalcrossingpopulationgrowing.html",
+    "cat": "Arcade",
+    "id": "tung_2852"
+  },
+  {
+    "title": "Angry Birds Epic",
+    "url": "/games/clangrybirdsepic.html",
+    "cat": "Arcade",
+    "id": "tung_2853"
+  },
+  {
+    "title": "Antonblast",
+    "url": "/games/clantonblast.html",
+    "cat": "Arcade",
+    "id": "tung_2854"
+  },
+  {
+    "title": "A Difficult Game About Climbing",
+    "url": "/games/cladifficultgameaboutclimbing.html",
+    "cat": "Platformer",
+    "id": "tung_2855"
+  },
+  {
+    "title": "A Game About Feeding A Blackhole",
+    "url": "/games/clagameaboutfeedingablackhole.html",
+    "cat": "Arcade",
+    "id": "tung_2856"
+  },
+  {
+    "title": "Bad Icecream 1",
+    "url": "/games/clbadicecream1.html",
+    "cat": "Arcade",
+    "id": "tung_2857"
+  },
+  {
+    "title": "Baldi's Basics Ultra Decompile",
+    "url": "/games/clbaldisbasicsultradecompile.html",
+    "cat": "Arcade",
+    "id": "tung_2858"
+  },
+  {
+    "title": "Bergentruck",
+    "url": "/games/clbergentruck.html",
+    "cat": "Arcade",
+    "id": "tung_2859"
+  },
+  {
+    "title": "Crazy Balls",
+    "url": "/games/clcrazyballs.html",
+    "cat": "Arcade",
+    "id": "tung_2860"
+  },
+  {
+    "title": "Crossy Roads",
+    "url": "/games/clcrossyroads.html",
+    "cat": "Racing",
+    "id": "tung_2861"
+  },
+  {
+    "title": "Dadish Daily",
+    "url": "/games/cldadishdaily.html",
+    "cat": "Arcade",
+    "id": "tung_2862"
+  },
+  {
+    "title": "Flying Gorilla",
+    "url": "/games/clflyinggorilla.html",
+    "cat": "Arcade",
+    "id": "tung_2863"
+  },
+  {
+    "title": "FNAF Sisters Location",
+    "url": "/games/clfnafsisterslocation.html",
+    "cat": "Arcade",
+    "id": "tung_2864"
+  },
+  {
+    "title": "Gabriel's Awesome Schoolhouse",
+    "url": "/games/clgabrielsawesomeschoolhouse.html",
+    "cat": "Arcade",
+    "id": "tung_2865"
+  },
+  {
+    "title": "My teardrop, daniel",
+    "url": "/games/clmyteardropdaniel.html",
+    "cat": "Arcade",
+    "id": "tung_2866"
+  },
+  {
+    "title": "Oneshot",
+    "url": "/games/cloneshot.html",
+    "cat": "Arcade",
+    "id": "tung_2867"
+  },
+  {
+    "title": "Plauge Inc",
+    "url": "/games/clplaugeinc.html",
+    "cat": "Arcade",
+    "id": "tung_2868"
+  },
+  {
+    "title": "Pokemon Academy Life Forever",
+    "url": "/games/clpokemonacademylifeforever.html",
+    "cat": "Retro",
+    "id": "tung_2869"
+  },
+  {
+    "title": "Slendytubbies I",
+    "url": "/games/clslendytubbiesi.html",
+    "cat": "Arcade",
+    "id": "tung_2870"
+  },
+  {
+    "title": "Slime Ranchers",
+    "url": "/games/clslimeranchers.html",
+    "cat": "Arcade",
+    "id": "tung_2871"
+  },
+  {
+    "title": "Tung Tung Horror",
+    "url": "/games/cltungtunghorror.html",
+    "cat": "Arcade",
+    "id": "tung_2872"
+  },
+  {
+    "title": "Yoked",
+    "url": "/games/clyoked.html",
+    "cat": "Arcade",
+    "id": "tung_2873"
+  },
+  {
+    "title": "FNF, Friday Night Funkin",
+    "url": "/games/clfnffridaynightfunkin.html",
+    "cat": "Arcade",
+    "id": "tung_2874"
+  },
+  {
+    "title": "Friday Night Funkin Aethos",
+    "url": "/games/clfridaynightfunkinaethos.html",
+    "cat": "Arcade",
+    "id": "tung_2875"
+  },
+  {
+    "title": "Friday Night Funkin Atrocity",
+    "url": "/games/clfridaynightfunkinatrocity.html",
+    "cat": "Arcade",
+    "id": "tung_2876"
+  },
+  {
+    "title": "Friday Night Funkin BFDI 26",
+    "url": "/games/clfridaynightfunkinbfdi26.html",
+    "cat": "Arcade",
+    "id": "tung_2877"
+  },
+  {
+    "title": "Friday Night Funkin Bop City",
+    "url": "/games/clfridaynightfunkinbopcity.html",
+    "cat": "Arcade",
+    "id": "tung_2878"
+  },
+  {
+    "title": "Friday Night Funkin For A BFDI",
+    "url": "/games/clfridaynightfunkinforabfdi.html",
+    "cat": "Arcade",
+    "id": "tung_2879"
+  },
+  {
+    "title": "Friday Night Funkin Garcello",
+    "url": "/games/clfridaynightfunkingarcello.html",
+    "cat": "Arcade",
+    "id": "tung_2880"
+  },
+  {
+    "title": "Friday Night Funkin Get Digging",
+    "url": "/games/clfridaynightfunkingetdigging.html",
+    "cat": "Arcade",
+    "id": "tung_2881"
+  },
+  {
+    "title": "Friday Night Funkin Golden Apple",
+    "url": "/games/clfridaynightfunkingoldenapple.html",
+    "cat": "Arcade",
+    "id": "tung_2882"
+  },
+  {
+    "title": "Friday Night Funkin Hex",
+    "url": "/games/clfridaynightfunkinhex.html",
+    "cat": "Arcade",
+    "id": "tung_2883"
+  },
+  {
+    "title": "Friday Night Funkin Kapi",
+    "url": "/games/clfridaynightfunkinkapi.html",
+    "cat": "Arcade",
+    "id": "tung_2884"
+  },
+  {
+    "title": "Friday Night Funkin Hatsune Miku",
+    "url": "/games/clfridaynightfunkinhatsunemiku.html",
+    "cat": "Arcade",
+    "id": "tung_2885"
+  },
+  {
+    "title": "Friday Night Funkin Nonsense",
+    "url": "/games/clfridaynightfunkinnonsense.html",
+    "cat": "Arcade",
+    "id": "tung_2886"
+  },
+  {
+    "title": "Friday Night Funkin Rewrite",
+    "url": "/games/clfridaynightfunkinrewrite.html",
+    "cat": "Arcade",
+    "id": "tung_2887"
+  },
+  {
+    "title": "Friday Night Funkin Rewrite 2",
+    "url": "/games/clfridaynightfunkinrewrite2.html",
+    "cat": "Arcade",
+    "id": "tung_2888"
+  },
+  {
+    "title": "Friday Night Funkin Ron",
+    "url": "/games/clfridaynightfunkinron.html",
+    "cat": "Arcade",
+    "id": "tung_2889"
+  },
+  {
+    "title": "Friday Night Funkin Shaggy",
+    "url": "/games/clfridaynightfunkinshaggy.html",
+    "cat": "Arcade",
+    "id": "tung_2890"
+  },
+  {
+    "title": "Friday Night Funkin Vs. Tord",
+    "url": "/games/clfridaynightfunkinvstord.html",
+    "cat": "Arcade",
+    "id": "tung_2891"
+  },
+  {
+    "title": "Friday Night Funkin Tricky",
+    "url": "/games/clfridaynightfunkintricky.html",
+    "cat": "Arcade",
+    "id": "tung_2892"
+  },
+  {
+    "title": "Friday Night Funkin Whitty",
+    "url": "/games/clfridaynightfunkinwhitty.html",
+    "cat": "Arcade",
+    "id": "tung_2893"
+  },
+  {
+    "title": "Friday Night Funkin Zardy",
+    "url": "/games/clfridaynightfunkinzardy.html",
+    "cat": "Arcade",
+    "id": "tung_2894"
+  },
+  {
+    "title": "Bloon TD4",
+    "url": "/games/clbloontd4.html",
+    "cat": "Arcade",
+    "id": "tung_2895"
+  },
+  {
+    "title": "Bombmerman",
+    "url": "/games/clbombmerman.html",
+    "cat": "Arcade",
+    "id": "tung_2896"
+  },
+  {
+    "title": "Bombmerman 2",
+    "url": "/games/clbombmerman2.html",
+    "cat": "Arcade",
+    "id": "tung_2897"
+  },
+  {
+    "title": "Fancy Pants Adventures 3",
+    "url": "/games/clfancypantsadventures3.html",
+    "cat": "Adventure",
+    "id": "tung_2898"
+  },
+  {
+    "title": "Mario Party 1",
+    "url": "/games/clmarioparty1.html",
+    "cat": "Retro",
+    "id": "tung_2899"
+  },
+  {
+    "title": "Minecraft Legacy Console Edition",
+    "url": "/games/clminecraftlegacyconsoleedition.html",
+    "cat": "Strategy",
+    "id": "tung_2900"
+  },
+  {
+    "title": "Academytale",
+    "url": "/games/clacademytale.html",
+    "cat": "Adventure",
+    "id": "tung_2901"
+  },
+  {
+    "title": "Bloon TD1",
+    "url": "/games/clbloontd1.html",
+    "cat": "Arcade",
+    "id": "tung_2902"
+  },
+  {
+    "title": "Bloon TD2",
+    "url": "/games/clbloontd2.html",
+    "cat": "Arcade",
+    "id": "tung_2903"
+  },
+  {
+    "title": "Brotato Paws And Claws",
+    "url": "/games/clbrotatopawsandclaws.html",
+    "cat": "Arcade",
+    "id": "tung_2904"
+  },
+  {
+    "title": "Capuchin",
+    "url": "/games/clcapuchin.html",
+    "cat": "Arcade",
+    "id": "tung_2905"
+  },
+  {
+    "title": "Duck Life 1",
+    "url": "/games/clducklife1.html",
+    "cat": "Arcade",
+    "id": "tung_2906"
+  },
+  {
+    "title": "Fireboy and Watergirl 4",
+    "url": "/games/clfireboyandwatergirl4.html",
+    "cat": "Arcade",
+    "id": "tung_2907"
+  },
+  {
+    "title": "FNAF World Refreshed",
+    "url": "/games/clfnafworldrefreshed.html",
+    "cat": "Arcade",
+    "id": "tung_2908"
+  },
+  {
+    "title": "Friday Night Funkin Infinite Irida",
+    "url": "/games/clfridaynightfunkininfiniteirida.html",
+    "cat": "Arcade",
+    "id": "tung_2909"
+  },
+  {
+    "title": "Gravity run",
+    "url": "/games/clgravityrun.html",
+    "cat": "Racing",
+    "id": "tung_2910"
+  },
+  {
+    "title": "Little Alchemy",
+    "url": "/games/cllittlealchemy.html",
+    "cat": "Arcade",
+    "id": "tung_2911"
+  },
+  {
+    "title": "Node Buster",
+    "url": "/games/clnodebuster.html",
+    "cat": "Arcade",
+    "id": "tung_2912"
+  },
+  {
+    "title": "Kick The Buddy",
+    "url": "/games/clkickthebuddy.html",
+    "cat": "Arcade",
+    "id": "tung_2913"
+  },
+  {
+    "title": "Karlson2D",
+    "url": "/games/clkarlson2d.html",
+    "cat": "Arcade",
+    "id": "tung_2914"
+  },
+  {
+    "title": "Duck Life 7",
+    "url": "/games/clducklife7.html",
+    "cat": "Arcade",
+    "id": "tung_2915"
+  },
+  {
+    "title": "Ice Baby Quest 2",
+    "url": "/games/clicebabyquest2.html",
+    "cat": "Adventure",
+    "id": "tung_2916"
+  },
+  {
+    "title": "Baldi's Fun New School Plus Ultimate Edition",
+    "url": "/games/clbaldisfunnewschoolplusultimateeditio.html",
+    "cat": "Arcade",
+    "id": "tung_2917"
+  },
+  {
+    "title": "Baldi's Basics Birthday Bash",
+    "url": "/games/clbaldisbasicsbirthdaybash.html",
+    "cat": "Arcade",
+    "id": "tung_2918"
+  },
+  {
+    "title": "Falling Fred",
+    "url": "/games/clfallingfred.html",
+    "cat": "Platformer",
+    "id": "tung_2919"
+  },
+  {
+    "title": "Fancy Pants Adventures 2",
+    "url": "/games/clfancypantsadventures2.html",
+    "cat": "Adventure",
+    "id": "tung_2920"
+  },
+  {
+    "title": "Bloon TD3",
+    "url": "/games/clbloontd3.html",
+    "cat": "Arcade",
+    "id": "tung_2921"
+  },
+  {
+    "title": "Milkman Karlson",
+    "url": "/games/clmilkmankarlson.html",
+    "cat": "Arcade",
+    "id": "tung_2922"
+  },
+  {
+    "title": "Jeffy's Basics",
+    "url": "/games/cljeffysbasics.html",
+    "cat": "Arcade",
+    "id": "tung_2923"
+  },
+  {
+    "title": "Merge Rot",
+    "url": "/games/clmergerot.html",
+    "cat": "Arcade",
+    "id": "tung_2924"
+  },
+  {
+    "title": "Dinosaur",
+    "url": "/games/cldinosaur.html",
+    "cat": "Arcade",
+    "id": "tung_2925"
+  },
+  {
+    "title": "Pixel Gun 3D",
+    "url": "/games/clpixelgun3d.html",
+    "cat": "Action",
+    "id": "tung_2926"
+  },
+  {
+    "title": "Pikuniku",
+    "url": "/games/clpikuniku.html",
+    "cat": "Arcade",
+    "id": "tung_2927"
+  },
+  {
+    "title": "Paint Gal Adventures",
+    "url": "/games/clpaintgaladventures.html",
+    "cat": "Adventure",
+    "id": "tung_2928"
+  },
+  {
+    "title": "Tung Tung Basics",
+    "url": "/games/cltungtungbasics2.html",
+    "cat": "Arcade",
+    "id": "tung_2929"
+  },
+  {
+    "title": "Minecraft 1.12.2",
+    "url": "/games/clminecraft1122.html",
+    "cat": "Strategy",
+    "id": "tung_2930"
+  },
+  {
+    "title": "Minecraft 1.8.8",
+    "url": "/games/clminecraft188.html",
+    "cat": "Strategy",
+    "id": "tung_2931"
+  },
+  {
+    "title": "WebGL Fluid",
+    "url": "/games/clwebglfluid.html",
+    "cat": "Arcade",
+    "id": "tung_2932"
+  },
+  {
+    "title": "Top Driver",
+    "url": "/games/cltopdriver.html",
+    "cat": "Racing",
+    "id": "tung_2933"
+  },
+  {
+    "title": "Tuner Racer",
+    "url": "/games/cltunerracer.html",
+    "cat": "Racing",
+    "id": "tung_2934"
+  },
+  {
+    "title": "GunNight.io",
+    "url": "/games/clgunnightio.html",
+    "cat": "Action",
+    "id": "tung_2935"
+  },
+  {
+    "title": "Top Driver 2",
+    "url": "/games/cltopdriver2.html",
+    "cat": "Racing",
+    "id": "tung_2936"
+  },
+  {
+    "title": "WebGL Water",
+    "url": "/games/clwebglwater.html",
+    "cat": "Arcade",
+    "id": "tung_2937"
+  },
+  {
+    "title": "Escape Road 2",
+    "url": "/games/clescaperoad2.html",
+    "cat": "Racing",
+    "id": "tung_2938"
+  },
+  {
+    "title": "Madalin Stunt Cars 3",
+    "url": "/games/clmadalinstuntcars3.html",
+    "cat": "Arcade",
+    "id": "tung_2939"
+  },
+  {
+    "title": "Traffic Racer",
+    "url": "/games/cltrafficracer.html",
+    "cat": "Racing",
+    "id": "tung_2940"
+  },
+  {
+    "title": "Crazy City Racing",
+    "url": "/games/clcrazycityracing.html",
+    "cat": "Racing",
+    "id": "tung_2941"
+  },
+  {
+    "title": "DriveOff",
+    "url": "/games/cldriveoff.html",
+    "cat": "Racing",
+    "id": "tung_2942"
+  },
+  {
+    "title": "Bus Simulator: EVO",
+    "url": "/games/clbussimulatorevo.html",
+    "cat": "Strategy",
+    "id": "tung_2943"
+  },
+  {
+    "title": "Crazy Bikes!",
+    "url": "/games/clcrazybikes.html",
+    "cat": "Racing",
+    "id": "tung_2944"
+  },
+  {
+    "title": "FullSpeed Racing",
+    "url": "/games/clfullspeedracing.html",
+    "cat": "Racing",
+    "id": "tung_2945"
+  },
+  {
+    "title": "Fear Response",
+    "url": "/games/clfearresponse.html",
+    "cat": "Arcade",
+    "id": "tung_2946"
+  },
+  {
+    "title": "Snow Plow",
+    "url": "/games/clsnowplow.html",
+    "cat": "Arcade",
+    "id": "tung_2947"
+  },
+  {
+    "title": "Harvest Simulator",
+    "url": "/games/clharvestsimulator.html",
+    "cat": "Strategy",
+    "id": "tung_2948"
+  },
+  {
+    "title": "Skyblock Survival 3D",
+    "url": "/games/clskyblocksurvival3d.html",
+    "cat": "Puzzle",
+    "id": "tung_2949"
+  },
+  {
+    "title": "Rogue Within",
+    "url": "/games/clroguewithin.html",
+    "cat": "Arcade",
+    "id": "tung_2950"
+  },
+  {
+    "title": "Skibidi Toilet 1v100",
+    "url": "/games/clskibiditoilet1v100.html",
+    "cat": "Arcade",
+    "id": "tung_2951"
+  },
+  {
+    "title": "BodyCam",
+    "url": "/games/clbodycam.html",
+    "cat": "Arcade",
+    "id": "tung_2952"
+  },
+  {
+    "title": "Feral Frontier",
+    "url": "/games/clferalfrontier.html",
+    "cat": "Arcade",
+    "id": "tung_2953"
+  },
+  {
+    "title": "Granny Prison Escape",
+    "url": "/games/clgrannyprisonescape.html",
+    "cat": "Arcade",
+    "id": "tung_2954"
+  },
+  {
+    "title": "Granny Forest Escape",
+    "url": "/games/clgrannyforestescape.html",
+    "cat": "Arcade",
+    "id": "tung_2955"
+  },
+  {
+    "title": "The Visitor: Massacre",
+    "url": "/games/clthevisitormassacre.html",
+    "cat": "Arcade",
+    "id": "tung_2956"
+  },
+  {
+    "title": "Sniper Shot Bullet Time",
+    "url": "/games/clsnipershotbullettime.html",
+    "cat": "Action",
+    "id": "tung_2957"
+  },
+  {
+    "title": "Kiosk",
+    "url": "/games/clkiosk.html",
+    "cat": "Arcade",
+    "id": "tung_2958"
+  },
+  {
+    "title": "Hide and Seek Pro",
+    "url": "/games/clhideandseekpro.html",
+    "cat": "Arcade",
+    "id": "tung_2959"
+  },
+  {
+    "title": "Granny 4",
+    "url": "/games/clgranny4.html",
+    "cat": "Arcade",
+    "id": "tung_2960"
+  },
+  {
+    "title": "Raft Survival",
+    "url": "/games/clraftsurvival.html",
+    "cat": "Arcade",
+    "id": "tung_2961"
+  },
+  {
+    "title": "Dead Rails",
+    "url": "/games/cldeadrails.html",
+    "cat": "Arcade",
+    "id": "tung_2962"
+  },
+  {
+    "title": "Traffic Tour",
+    "url": "/games/cltraffictour.html",
+    "cat": "Arcade",
+    "id": "tung_2963"
+  },
+  {
+    "title": "Drift Hunters Pro",
+    "url": "/games/cldrifthunterspro.html",
+    "cat": "Racing",
+    "id": "tung_2964"
+  },
+  {
+    "title": "Spy Highway",
+    "url": "/games/clspyhighway.html",
+    "cat": "Arcade",
+    "id": "tung_2965"
+  },
+  {
+    "title": "Block Tech: Epic Sandbox",
+    "url": "/games/clblocktechepicsandbox.html",
+    "cat": "Sports",
+    "id": "tung_2966"
+  },
+  {
+    "title": "Indian Truck Driving",
+    "url": "/games/clindiantruckdriving.html",
+    "cat": "Arcade",
+    "id": "tung_2967"
+  },
+  {
+    "title": "Optric",
+    "url": "/games/cloptric.html",
+    "cat": "Arcade",
+    "id": "tung_2968"
+  },
+  {
+    "title": "Sling Drift",
+    "url": "/games/clslingdrift.html",
+    "cat": "Racing",
+    "id": "tung_2969"
+  },
+  {
+    "title": "Blacktop: Police Chase",
+    "url": "/games/clblacktoppolicechase.html",
+    "cat": "Arcade",
+    "id": "tung_2970"
+  },
+  {
+    "title": "Revolution Idle X",
+    "url": "/games/clrevolutionidlex.html",
+    "cat": "Strategy",
+    "id": "tung_2971"
+  },
+  {
+    "title": "Stunt Car Challenge 3",
+    "url": "/games/clstuntcarchallenge3.html",
+    "cat": "Arcade",
+    "id": "tung_2972"
+  },
+  {
+    "title": "Drag Racing Rivals",
+    "url": "/games/cldragracingrivals.html",
+    "cat": "Racing",
+    "id": "tung_2973"
+  },
+  {
+    "title": "Burnout Drift Hilltop",
+    "url": "/games/clburnoutdrifthilltop.html",
+    "cat": "Racing",
+    "id": "tung_2974"
+  },
+  {
+    "title": "Pako Highway",
+    "url": "/games/clpakohighway.html",
+    "cat": "Arcade",
+    "id": "tung_2975"
+  },
+  {
+    "title": "4x4 Offroad",
+    "url": "/games/cl4x4offroad.html",
+    "cat": "Racing",
+    "id": "tung_2976"
+  },
+  {
+    "title": "Rallypoint",
+    "url": "/games/clrallypoint.html",
+    "cat": "Arcade",
+    "id": "tung_2977"
+  },
+  {
+    "title": "CarX Drift",
+    "url": "/games/clcarxdrift.html",
+    "cat": "Racing",
+    "id": "tung_2978"
+  },
+  {
+    "title": "RaceMax",
+    "url": "/games/clracemax.html",
+    "cat": "Racing",
+    "id": "tung_2979"
+  },
+  {
+    "title": "Cool Cars Highway",
+    "url": "/games/clcoolcarshighway.html",
+    "cat": "Arcade",
+    "id": "tung_2980"
+  },
+  {
+    "title": "Drive Zone",
+    "url": "/games/cldrivezone.html",
+    "cat": "Racing",
+    "id": "tung_2981"
+  },
+  {
+    "title": "Super Crew",
+    "url": "/games/clsupercrew.html",
+    "cat": "Arcade",
+    "id": "tung_2982"
+  },
+  {
+    "title": "Bridge Constructor",
+    "url": "/games/clbridgeconstructor.html",
+    "cat": "Arcade",
+    "id": "tung_2983"
+  },
+  {
+    "title": "4WD Only Up!",
+    "url": "/games/cl4wdonlyup.html",
+    "cat": "Arcade",
+    "id": "tung_2984"
+  },
+  {
+    "title": "The Long Drive",
+    "url": "/games/clthelongdrive.html",
+    "cat": "Racing",
+    "id": "tung_2985"
+  },
+  {
+    "title": "Boxes & Mechanisms",
+    "url": "/games/clboxesmechanisms.html",
+    "cat": "Sports",
+    "id": "tung_2986"
+  },
+  {
+    "title": "Sky Balance",
+    "url": "/games/clskybalance.html",
+    "cat": "Arcade",
+    "id": "tung_2987"
+  },
+  {
+    "title": "Racing Limits",
+    "url": "/games/clracinglimits.html",
+    "cat": "Racing",
+    "id": "tung_2988"
+  },
+  {
+    "title": "Farm Simulator: Evo",
+    "url": "/games/clfarmsimulatorevo.html",
+    "cat": "Strategy",
+    "id": "tung_2989"
+  },
+  {
+    "title": "Coach Bus Simulator",
+    "url": "/games/clcoachbussimulator.html",
+    "cat": "Strategy",
+    "id": "tung_2990"
+  },
+  {
+    "title": "My Water Park",
+    "url": "/games/clmywaterpark.html",
+    "cat": "Arcade",
+    "id": "tung_2991"
+  },
+  {
+    "title": "Drag Racer",
+    "url": "/games/cldragracer.html",
+    "cat": "Racing",
+    "id": "tung_2992"
+  },
+  {
+    "title": "Stickman Rebirth",
+    "url": "/games/clstickmanrebirth.html",
+    "cat": "Arcade",
+    "id": "tung_2993"
+  },
+  {
+    "title": "Labubu Cart Ride",
+    "url": "/games/cllabubucartride.html",
+    "cat": "Arcade",
+    "id": "tung_2994"
+  },
+  {
+    "title": "Fortress Merge",
+    "url": "/games/clfortressmerge.html",
+    "cat": "Arcade",
+    "id": "tung_2995"
+  },
+  {
+    "title": "Attack Hole",
+    "url": "/games/clattackhole.html",
+    "cat": "Puzzle",
+    "id": "tung_2996"
+  },
+  {
+    "title": "Color Water Sort 3D",
+    "url": "/games/clcolorwatersort3d.html",
+    "cat": "Puzzle",
+    "id": "tung_2997"
+  },
+  {
+    "title": "Hide N Seek",
+    "url": "/games/clhidenseek.html",
+    "cat": "Puzzle",
+    "id": "tung_2998"
+  },
+  {
+    "title": "Magic Tiles 3",
+    "url": "/games/clmagictiles3.html",
+    "cat": "Puzzle",
+    "id": "tung_2999"
+  },
+  {
+    "title": "Stacky Dash",
+    "url": "/games/clstackydash.html",
+    "cat": "Racing",
+    "id": "tung_3000"
+  },
+  {
+    "title": "Supreme Duelist",
+    "url": "/games/clsupremeduelist.html",
+    "cat": "Puzzle",
+    "id": "tung_3001"
+  },
+  {
+    "title": "Tall Man Run",
+    "url": "/games/cltallmanrun.html",
+    "cat": "Racing",
+    "id": "tung_3002"
+  },
+  {
+    "title": "Turbo Stars",
+    "url": "/games/clturbostars.html",
+    "cat": "Puzzle",
+    "id": "tung_3003"
+  },
+  {
+    "title": "Mob Control HTML5",
+    "url": "/games/clmobcontrolhtml5.html",
+    "cat": "Puzzle",
+    "id": "tung_3004"
+  },
+  {
+    "title": "Amaze",
+    "url": "/games/clamaze.html",
+    "cat": "Puzzle",
+    "id": "tung_3005"
+  },
+  {
+    "title": "Geometry Dash Lite (REMAKE)",
+    "url": "/games/clgeometrydashliteremake.html",
+    "cat": "Racing",
+    "id": "tung_3006"
+  },
+  {
+    "title": "Bazooka Boy",
+    "url": "/games/clbazookaboy.html",
+    "cat": "Puzzle",
+    "id": "tung_3007"
+  },
+  {
+    "title": "Bottle Jump 3D",
+    "url": "/games/clbottlejump3d.html",
+    "cat": "Platformer",
+    "id": "tung_3008"
+  },
+  {
+    "title": "Color Match",
+    "url": "/games/clcolormatch.html",
+    "cat": "Puzzle",
+    "id": "tung_3009"
+  },
+  {
+    "title": "Dig Deep",
+    "url": "/games/cldigdeep.html",
+    "cat": "Puzzle",
+    "id": "tung_3010"
+  },
+  {
+    "title": "Five Nights at Freddy's",
+    "url": "/games/clfivenightsatfreddys.html",
+    "cat": "Puzzle",
+    "id": "tung_3011"
+  },
+  {
+    "title": "Five Nights at Freddy's 2",
+    "url": "/games/clfivenightsatfreddys2.html",
+    "cat": "Puzzle",
+    "id": "tung_3012"
+  },
+  {
+    "title": "Five Nights at Freddy's 3",
+    "url": "/games/clfivenightsatfreddys3.html",
+    "cat": "Puzzle",
+    "id": "tung_3013"
+  },
+  {
+    "title": "Five Nights at Freddy's 4",
+    "url": "/games/clfivenightsatfreddys4.html",
+    "cat": "Puzzle",
+    "id": "tung_3014"
+  },
+  {
+    "title": "Vex 1",
+    "url": "/games/clvex1.html",
+    "cat": "Puzzle",
+    "id": "tung_3015"
+  },
+  {
+    "title": "Bloons TD 2",
+    "url": "/games/clbloonstd22.html",
+    "cat": "Puzzle",
+    "id": "tung_3016"
+  },
+  {
+    "title": "Bloons TD 3",
+    "url": "/games/clbloonstd32.html",
+    "cat": "Puzzle",
+    "id": "tung_3017"
+  },
+  {
+    "title": "Bloons TD 4",
+    "url": "/games/clbloonstd42.html",
+    "cat": "Puzzle",
+    "id": "tung_3018"
+  },
+  {
+    "title": "Bloons TD 5",
+    "url": "/games/clbloonstd5.html",
+    "cat": "Puzzle",
+    "id": "tung_3019"
+  },
+  {
+    "title": "Cannon Basketball",
+    "url": "/games/clcannonbasketball.html",
+    "cat": "Sports",
+    "id": "tung_3020"
+  },
+  {
+    "title": "Cannon Basketball 2",
+    "url": "/games/clcannonbasketball2.html",
+    "cat": "Sports",
+    "id": "tung_3021"
+  },
+  {
+    "title": "Emulator.JS",
+    "url": "/games/clemulatorjs.html",
+    "cat": "Puzzle",
+    "id": "tung_3022"
+  },
+  {
+    "title": "Highway Racer 2",
+    "url": "/games/clhighwayracer22.html",
+    "cat": "Racing",
+    "id": "tung_3023"
+  },
+  {
+    "title": "Ninja vs EvilCorp",
+    "url": "/games/clninjavsevilcorp.html",
+    "cat": "Puzzle",
+    "id": "tung_3024"
+  },
+  {
+    "title": "The World's Hardest Game",
+    "url": "/games/cltheworldshardestgame.html",
+    "cat": "Puzzle",
+    "id": "tung_3025"
+  },
+  {
+    "title": "The World's Hardest Game 3",
+    "url": "/games/cltheworldshardestgame3.html",
+    "cat": "Puzzle",
+    "id": "tung_3026"
+  },
+  {
+    "title": "The World's Hardest Game 4",
+    "url": "/games/cltheworldshardestgame4.html",
+    "cat": "Puzzle",
+    "id": "tung_3027"
+  },
+  {
+    "title": "This Is The Only Level 2",
+    "url": "/games/clthisistheonlylevel2.html",
+    "cat": "Puzzle",
+    "id": "tung_3028"
+  },
+  {
+    "title": "Ruffle",
+    "url": "/games/clruffle2.html",
+    "cat": "Puzzle",
+    "id": "tung_3029"
+  },
+  {
+    "title": "Offroad Mountain Bike",
+    "url": "/games/cloffroadmountainbike.html",
+    "cat": "Racing",
+    "id": "tung_3030"
+  },
+  {
+    "title": "Brawl Guys.io",
+    "url": "/games/clbrawlguysio.html",
+    "cat": "Puzzle",
+    "id": "tung_3031"
+  },
+  {
+    "title": "Survival Race",
+    "url": "/games/clsurvivalrace.html",
+    "cat": "Racing",
+    "id": "tung_3032"
+  },
+  {
+    "title": "Moto X3M Pool Party",
+    "url": "/games/clmotox3mpoolparty.html",
+    "cat": "Racing",
+    "id": "tung_3033"
+  },
+  {
+    "title": "Flappy Dunk",
+    "url": "/games/clflappydunk.html",
+    "cat": "Puzzle",
+    "id": "tung_3034"
+  },
+  {
+    "title": "Pac-Man Superfast",
+    "url": "/games/clpacmansuperfast.html",
+    "cat": "Puzzle",
+    "id": "tung_3035"
+  },
+  {
+    "title": "Race Master 3D",
+    "url": "/games/clracemaster3d.html",
+    "cat": "Racing",
+    "id": "tung_3036"
+  },
+  {
+    "title": "Bad Parenting 1",
+    "url": "/games/clbadparenting1.html",
+    "cat": "Puzzle",
+    "id": "tung_3037"
+  },
+  {
+    "title": "Blade Ball",
+    "url": "/games/clbladeball.html",
+    "cat": "Puzzle",
+    "id": "tung_3038"
+  },
+  {
+    "title": "Candy Crush",
+    "url": "/games/clcandycrush.html",
+    "cat": "Puzzle",
+    "id": "tung_3039"
+  },
+  {
+    "title": "World Box",
+    "url": "/games/clworldbox.html",
+    "cat": "Sports",
+    "id": "tung_3040"
+  },
+  {
+    "title": "Run 1",
+    "url": "/games/clrun1.html",
+    "cat": "Racing",
+    "id": "tung_3041"
+  },
+  {
+    "title": "Minecraft 1.21.4",
+    "url": "/games/clminecraft1214.html",
+    "cat": "Strategy",
+    "id": "tung_3042"
+  },
+  {
+    "title": "Five Nights at Freddy's: Sister Location",
+    "url": "/games/clfivenightsatfreddyssisterlocation.html",
+    "cat": "Puzzle",
+    "id": "tung_3043"
+  },
+  {
+    "title": "Papers, Please",
+    "url": "/games/clpapersplease.html",
+    "cat": "Puzzle",
+    "id": "tung_3044"
+  },
+  {
+    "title": "Five Nights at Freddy's: World",
+    "url": "/games/clfivenightsatfreddysworld.html",
+    "cat": "Puzzle",
+    "id": "tung_3045"
+  },
+  {
+    "title": "Five Nights at Freddy's: Pizza Simulator",
+    "url": "/games/clfivenightsatfreddyspizzasimulator.html",
+    "cat": "Strategy",
+    "id": "tung_3046"
+  },
+  {
+    "title": "Five Nights at Freddy's: Ultimate Custom Night",
+    "url": "/games/clfivenightsatfreddysultimatecustomnig.html",
+    "cat": "Puzzle",
+    "id": "tung_3047"
+  },
+  {
+    "title": "Do NOT Take This Cat Home",
+    "url": "/games/cldonottakethiscathome.html",
+    "cat": "Puzzle",
+    "id": "tung_3048"
+  },
+  {
+    "title": "People Playground",
+    "url": "/games/clpeopleplayground.html",
+    "cat": "Puzzle",
+    "id": "tung_3049"
+  },
+  {
+    "title": "R.E.P.O",
+    "url": "/games/clrepo.html",
+    "cat": "Puzzle",
+    "id": "tung_3050"
+  },
+  {
+    "title": "ULTRAKILL",
+    "url": "/games/clultrakill2.html",
+    "cat": "Action",
+    "id": "tung_3051"
+  },
+  {
+    "title": "Time Shooter 1",
+    "url": "/games/cltimeshooter1.html",
+    "cat": "Action",
+    "id": "tung_3052"
+  },
+  {
+    "title": "Time Shooter 2",
+    "url": "/games/cltimeshooter2.html",
+    "cat": "Action",
+    "id": "tung_3053"
+  },
+  {
+    "title": "Carrom Clash",
+    "url": "/games/clcarromclash.html",
+    "cat": "Puzzle",
+    "id": "tung_3054"
+  },
+  {
+    "title": "Buckshot Roulette",
+    "url": "/games/clbuckshotroulette.html",
+    "cat": "Puzzle",
+    "id": "tung_3055"
+  },
+  {
+    "title": "Snowbattle.io",
+    "url": "/games/clsnowbattleio.html",
+    "cat": "Action",
+    "id": "tung_3056"
+  },
+  {
+    "title": "Dragon vs Bricks",
+    "url": "/games/cldragonvsbricks.html",
+    "cat": "Puzzle",
+    "id": "tung_3057"
+  },
+  {
+    "title": "Cut the Rope: Holiday Gift",
+    "url": "/games/clcuttheropeholidaygift.html",
+    "cat": "Puzzle",
+    "id": "tung_3058"
+  },
+  {
+    "title": "Bendy and the Ink Machine",
+    "url": "/games/clbendyandtheinkmachine.html",
+    "cat": "Puzzle",
+    "id": "tung_3059"
+  },
+  {
+    "title": "That's Not My Neighbor",
+    "url": "/games/clthatsnotmyneighbor.html",
+    "cat": "Puzzle",
+    "id": "tung_3060"
+  },
+  {
+    "title": "Hotline Miami",
+    "url": "/games/clhotlinemiami.html",
+    "cat": "Puzzle",
+    "id": "tung_3061"
+  },
+  {
+    "title": "Papa's Pizeria",
+    "url": "/games/clpapaspizeria.html",
+    "cat": "Puzzle",
+    "id": "tung_3062"
+  },
+  {
+    "title": "Red Ball 4",
+    "url": "/games/clredball4.html",
+    "cat": "Puzzle",
+    "id": "tung_3063"
+  },
+  {
+    "title": "Chat Bot AI (A.I GPT)",
+    "url": "/games/clchatbotaiaigpt.html",
+    "cat": "Puzzle",
+    "id": "tung_3064"
+  },
+  {
+    "title": "Crazy Kitty 3D",
+    "url": "/games/clcrazykitty3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3065"
+  },
+  {
+    "title": "A Bite at Freddy's",
+    "url": "/games/clabiteatfreddys.html",
+    "cat": "Puzzle",
+    "id": "tung_3066"
+  },
+  {
+    "title": "RE:RUN",
+    "url": "/games/clrerun.html",
+    "cat": "Racing",
+    "id": "tung_3067"
+  },
+  {
+    "title": "CircloO",
+    "url": "/games/clcircloo.html",
+    "cat": "Puzzle",
+    "id": "tung_3068"
+  },
+  {
+    "title": "Pixel Gun Survival",
+    "url": "/games/clpixelgunsurvival.html",
+    "cat": "Action",
+    "id": "tung_3069"
+  },
+  {
+    "title": "Protektor",
+    "url": "/games/clprotektor.html",
+    "cat": "Puzzle",
+    "id": "tung_3070"
+  },
+  {
+    "title": "War The Knights",
+    "url": "/games/clwartheknights.html",
+    "cat": "Action",
+    "id": "tung_3071"
+  },
+  {
+    "title": "Basket Bros",
+    "url": "/games/clbasketbros.html",
+    "cat": "Sports",
+    "id": "tung_3072"
+  },
+  {
+    "title": "Endoparasitic",
+    "url": "/games/clendoparasitic.html",
+    "cat": "Puzzle",
+    "id": "tung_3073"
+  },
+  {
+    "title": "Minecraft 1.5.2",
+    "url": "/games/clminecraft152.html",
+    "cat": "Strategy",
+    "id": "tung_3074"
+  },
+  {
+    "title": "Minecraft Alpha 1.2.6",
+    "url": "/games/clminecraftalpha126.html",
+    "cat": "Strategy",
+    "id": "tung_3075"
+  },
+  {
+    "title": "Minecraft Beta 1.3",
+    "url": "/games/clminecraftbeta13.html",
+    "cat": "Strategy",
+    "id": "tung_3076"
+  },
+  {
+    "title": "Minecraft Beta 1.7.3",
+    "url": "/games/clminecraftbeta173.html",
+    "cat": "Strategy",
+    "id": "tung_3077"
+  },
+  {
+    "title": "Minecraft Indev",
+    "url": "/games/clminecraftindev.html",
+    "cat": "Strategy",
+    "id": "tung_3078"
+  },
+  {
+    "title": "Shipo.io",
+    "url": "/games/clshipoio.html",
+    "cat": "Puzzle",
+    "id": "tung_3079"
+  },
+  {
+    "title": "Rainbow Obby",
+    "url": "/games/clrainbowobby.html",
+    "cat": "Puzzle",
+    "id": "tung_3080"
+  },
+  {
+    "title": "Nazi Zombies: Portable",
+    "url": "/games/clnazizombiesportable.html",
+    "cat": "Action",
+    "id": "tung_3081"
+  },
+  {
+    "title": "Minesweeper Mania",
+    "url": "/games/clminesweepermania.html",
+    "cat": "Puzzle",
+    "id": "tung_3082"
+  },
+  {
+    "title": "Angry Birds Chrome",
+    "url": "/games/clangrybirdschrome.html",
+    "cat": "Puzzle",
+    "id": "tung_3083"
+  },
+  {
+    "title": "sandspiel",
+    "url": "/games/clsandspiel.html",
+    "cat": "Puzzle",
+    "id": "tung_3084"
+  },
+  {
+    "title": "Build a Queen",
+    "url": "/games/clbuildaqueen.html",
+    "cat": "Strategy",
+    "id": "tung_3085"
+  },
+  {
+    "title": "3D Bowling",
+    "url": "/games/cl3dbowling.html",
+    "cat": "Puzzle",
+    "id": "tung_3086"
+  },
+  {
+    "title": "Room Sort",
+    "url": "/games/clroomsort.html",
+    "cat": "Puzzle",
+    "id": "tung_3087"
+  },
+  {
+    "title": "Sushi Roll",
+    "url": "/games/clsushiroll.html",
+    "cat": "Puzzle",
+    "id": "tung_3088"
+  },
+  {
+    "title": "Maze Speedrun",
+    "url": "/games/clmazespeedrun.html",
+    "cat": "Racing",
+    "id": "tung_3089"
+  },
+  {
+    "title": "Kitchen Bazar",
+    "url": "/games/clkitchenbazar.html",
+    "cat": "Puzzle",
+    "id": "tung_3090"
+  },
+  {
+    "title": "Pokey Ball",
+    "url": "/games/clpokeyball.html",
+    "cat": "Puzzle",
+    "id": "tung_3091"
+  },
+  {
+    "title": "Slime.io",
+    "url": "/games/clslimeio.html",
+    "cat": "Puzzle",
+    "id": "tung_3092"
+  },
+  {
+    "title": "Om Nom Run",
+    "url": "/games/clomnomrun.html",
+    "cat": "Racing",
+    "id": "tung_3093"
+  },
+  {
+    "title": "TileTopia",
+    "url": "/games/cltiletopia.html",
+    "cat": "Puzzle",
+    "id": "tung_3094"
+  },
+  {
+    "title": "Fancy Pants Adventure 3",
+    "url": "/games/clfancypantsadventure32.html",
+    "cat": "Adventure",
+    "id": "tung_3095"
+  },
+  {
+    "title": "SpiderDoll",
+    "url": "/games/clspiderdoll.html",
+    "cat": "Puzzle",
+    "id": "tung_3096"
+  },
+  {
+    "title": "Binding of Issac: Wrath of the Lamb",
+    "url": "/games/clbindingofissacwrathofthelamb.html",
+    "cat": "Puzzle",
+    "id": "tung_3097"
+  },
+  {
+    "title": "Happy Sheepies",
+    "url": "/games/clhappysheepies.html",
+    "cat": "Puzzle",
+    "id": "tung_3098"
+  },
+  {
+    "title": "DON'T YOU LECTURE ME",
+    "url": "/games/cldontyoulectureme2.html",
+    "cat": "Puzzle",
+    "id": "tung_3099"
+  },
+  {
+    "title": "Adventure Capatalist",
+    "url": "/games/cladventurecapatalist.html",
+    "cat": "Adventure",
+    "id": "tung_3100"
+  },
+  {
+    "title": "Dadish 2",
+    "url": "/games/cldadish2.html",
+    "cat": "Puzzle",
+    "id": "tung_3101"
+  },
+  {
+    "title": "Dadish 3",
+    "url": "/games/cldadish3.html",
+    "cat": "Puzzle",
+    "id": "tung_3102"
+  },
+  {
+    "title": "Dadish 3D",
+    "url": "/games/cldadish3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3103"
+  },
+  {
+    "title": "Daily Dadish",
+    "url": "/games/cldailydadish.html",
+    "cat": "Puzzle",
+    "id": "tung_3104"
+  },
+  {
+    "title": "EvoWars.io",
+    "url": "/games/clevowarsio.html",
+    "cat": "Action",
+    "id": "tung_3105"
+  },
+  {
+    "title": "Google Feud",
+    "url": "/games/clgooglefeud.html",
+    "cat": "Puzzle",
+    "id": "tung_3106"
+  },
+  {
+    "title": "Idle Lumber Inc",
+    "url": "/games/clidlelumberinc.html",
+    "cat": "Strategy",
+    "id": "tung_3107"
+  },
+  {
+    "title": "Idle Mining Empire",
+    "url": "/games/clidleminingempire.html",
+    "cat": "Strategy",
+    "id": "tung_3108"
+  },
+  {
+    "title": "Merge Harvest",
+    "url": "/games/clmergeharvest.html",
+    "cat": "Puzzle",
+    "id": "tung_3109"
+  },
+  {
+    "title": "Parking Fury 3D",
+    "url": "/games/clparkingfury3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3110"
+  },
+  {
+    "title": "Slope 2",
+    "url": "/games/clslope2.html",
+    "cat": "Puzzle",
+    "id": "tung_3111"
+  },
+  {
+    "title": "Stickman Fight Ragdoll",
+    "url": "/games/clstickmanfightragdoll.html",
+    "cat": "Action",
+    "id": "tung_3112"
+  },
+  {
+    "title": "Stickman Boost",
+    "url": "/games/clstickmanboost.html",
+    "cat": "Puzzle",
+    "id": "tung_3113"
+  },
+  {
+    "title": "Stickman Climb",
+    "url": "/games/clstickmanclimb.html",
+    "cat": "Platformer",
+    "id": "tung_3114"
+  },
+  {
+    "title": "Stickman Golf",
+    "url": "/games/clstickmangolf.html",
+    "cat": "Sports",
+    "id": "tung_3115"
+  },
+  {
+    "title": "2048 Merge Run",
+    "url": "/games/cl2048mergerun.html",
+    "cat": "Racing",
+    "id": "tung_3116"
+  },
+  {
+    "title": "Build a Big Army",
+    "url": "/games/clbuildabigarmy.html",
+    "cat": "Strategy",
+    "id": "tung_3117"
+  },
+  {
+    "title": "Build a Plane",
+    "url": "/games/clbuildaplane.html",
+    "cat": "Strategy",
+    "id": "tung_3118"
+  },
+  {
+    "title": "Camouflage and Sniper",
+    "url": "/games/clcamouflageandsniper.html",
+    "cat": "Action",
+    "id": "tung_3119"
+  },
+  {
+    "title": "Car Survival 3D",
+    "url": "/games/clcarsurvival3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3120"
+  },
+  {
+    "title": "City Defense",
+    "url": "/games/clcitydefense.html",
+    "cat": "Strategy",
+    "id": "tung_3121"
+  },
+  {
+    "title": "Clothing Shop 3D",
+    "url": "/games/clclothingshop3d.html",
+    "cat": "Platformer",
+    "id": "tung_3122"
+  },
+  {
+    "title": "Cool Cars Run 3D",
+    "url": "/games/clcoolcarsrun3d.html",
+    "cat": "Racing",
+    "id": "tung_3123"
+  },
+  {
+    "title": "Crush Cars 3D",
+    "url": "/games/clcrushcars3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3124"
+  },
+  {
+    "title": "Destiny Run 3D",
+    "url": "/games/cldestinyrun3d.html",
+    "cat": "Racing",
+    "id": "tung_3125"
+  },
+  {
+    "title": "Destroy The Car 3D",
+    "url": "/games/cldestroythecar3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3126"
+  },
+  {
+    "title": "Diamond Seeker",
+    "url": "/games/cldiamondseeker.html",
+    "cat": "Puzzle",
+    "id": "tung_3127"
+  },
+  {
+    "title": "Draw Joust",
+    "url": "/games/cldrawjoust.html",
+    "cat": "Puzzle",
+    "id": "tung_3128"
+  },
+  {
+    "title": "Evolving Bombs 3D",
+    "url": "/games/clevolvingbombs3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3129"
+  },
+  {
+    "title": "Fire and Frost Master",
+    "url": "/games/clfireandfrostmaster.html",
+    "cat": "Puzzle",
+    "id": "tung_3130"
+  },
+  {
+    "title": "Fitness Empire",
+    "url": "/games/clfitnessempire.html",
+    "cat": "Puzzle",
+    "id": "tung_3131"
+  },
+  {
+    "title": "Flick Goal",
+    "url": "/games/clflickgoal.html",
+    "cat": "Puzzle",
+    "id": "tung_3132"
+  },
+  {
+    "title": "Flip Master",
+    "url": "/games/clflipmaster.html",
+    "cat": "Puzzle",
+    "id": "tung_3133"
+  },
+  {
+    "title": "Giant Wanted",
+    "url": "/games/clgiantwanted.html",
+    "cat": "Puzzle",
+    "id": "tung_3134"
+  },
+  {
+    "title": "Gun Clone",
+    "url": "/games/clgunclone.html",
+    "cat": "Action",
+    "id": "tung_3135"
+  },
+  {
+    "title": "Gun Runner",
+    "url": "/games/clgunrunner.html",
+    "cat": "Racing",
+    "id": "tung_3136"
+  },
+  {
+    "title": "Kaji Run",
+    "url": "/games/clkajirun.html",
+    "cat": "Racing",
+    "id": "tung_3137"
+  },
+  {
+    "title": "Make a SuperBoat",
+    "url": "/games/clmakeasuperboat.html",
+    "cat": "Puzzle",
+    "id": "tung_3138"
+  },
+  {
+    "title": "Makeover Run",
+    "url": "/games/clmakeoverrun.html",
+    "cat": "Racing",
+    "id": "tung_3139"
+  },
+  {
+    "title": "Mega Car Jumps",
+    "url": "/games/clmegacarjumps.html",
+    "cat": "Retro",
+    "id": "tung_3140"
+  },
+  {
+    "title": "Monster Box 3D",
+    "url": "/games/clmonsterbox3d.html",
+    "cat": "Sports",
+    "id": "tung_3141"
+  },
+  {
+    "title": "Office Fight",
+    "url": "/games/clofficefight.html",
+    "cat": "Action",
+    "id": "tung_3142"
+  },
+  {
+    "title": "Robot Invasion",
+    "url": "/games/clrobotinvasion.html",
+    "cat": "Puzzle",
+    "id": "tung_3143"
+  },
+  {
+    "title": "Seat Jam 3D",
+    "url": "/games/clseatjam3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3144"
+  },
+  {
+    "title": "Shooting Master",
+    "url": "/games/clshootingmaster.html",
+    "cat": "Action",
+    "id": "tung_3145"
+  },
+  {
+    "title": "Supermarket 3D",
+    "url": "/games/clsupermarket3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3146"
+  },
+  {
+    "title": "Survive to Victory",
+    "url": "/games/clsurvivetovictory.html",
+    "cat": "Puzzle",
+    "id": "tung_3147"
+  },
+  {
+    "title": "Telekinesis Attack",
+    "url": "/games/cltelekinesisattack.html",
+    "cat": "Puzzle",
+    "id": "tung_3148"
+  },
+  {
+    "title": "Telekinesis Car",
+    "url": "/games/cltelekinesiscar.html",
+    "cat": "Puzzle",
+    "id": "tung_3149"
+  },
+  {
+    "title": "Telekinesis Drive",
+    "url": "/games/cltelekinesisdrive.html",
+    "cat": "Racing",
+    "id": "tung_3150"
+  },
+  {
+    "title": "Telekinesis",
+    "url": "/games/cltelekinesis.html",
+    "cat": "Puzzle",
+    "id": "tung_3151"
+  },
+  {
+    "title": "Tug of War with Cars",
+    "url": "/games/cltugofwarwithcars.html",
+    "cat": "Action",
+    "id": "tung_3152"
+  },
+  {
+    "title": "Twerk Race 3D",
+    "url": "/games/cltwerkrace3d.html",
+    "cat": "Racing",
+    "id": "tung_3153"
+  },
+  {
+    "title": "Twisted Rope 3D",
+    "url": "/games/cltwistedrope3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3154"
+  },
+  {
+    "title": "Wall Crawler",
+    "url": "/games/clwallcrawler.html",
+    "cat": "Adventure",
+    "id": "tung_3155"
+  },
+  {
+    "title": "War Regions",
+    "url": "/games/clwarregions.html",
+    "cat": "Action",
+    "id": "tung_3156"
+  },
+  {
+    "title": "Weapon Craft Run",
+    "url": "/games/clweaponcraftrun.html",
+    "cat": "Racing",
+    "id": "tung_3157"
+  },
+  {
+    "title": "Weapon Upgrade Rush",
+    "url": "/games/clweaponupgraderush.html",
+    "cat": "Puzzle",
+    "id": "tung_3158"
+  },
+  {
+    "title": "Weapon Scale",
+    "url": "/games/clweaponscale.html",
+    "cat": "Puzzle",
+    "id": "tung_3159"
+  },
+  {
+    "title": "Rich Run 3D",
+    "url": "/games/clrichrun3d.html",
+    "cat": "Racing",
+    "id": "tung_3160"
+  },
+  {
+    "title": "High Heels",
+    "url": "/games/clhighheels.html",
+    "cat": "Puzzle",
+    "id": "tung_3161"
+  },
+  {
+    "title": "Andy's Apple Farm",
+    "url": "/games/clandysapplefarm.html",
+    "cat": "Puzzle",
+    "id": "tung_3162"
+  },
+  {
+    "title": "OMORI",
+    "url": "/games/clomori.html",
+    "cat": "Puzzle",
+    "id": "tung_3163"
+  },
+  {
+    "title": "Five Nights at Freddy's 4: Halloween",
+    "url": "/games/clfivenightsatfreddys4halloween.html",
+    "cat": "Puzzle",
+    "id": "tung_3164"
+  },
+  {
+    "title": "Code Editor",
+    "url": "/games/clcodeeditor.html",
+    "cat": "Puzzle",
+    "id": "tung_3165"
+  },
+  {
+    "title": "God's Flesh",
+    "url": "/games/clgodsflesh.html",
+    "cat": "Puzzle",
+    "id": "tung_3166"
+  },
+  {
+    "title": "Celeste PICO",
+    "url": "/games/clcelestepico.html",
+    "cat": "Puzzle",
+    "id": "tung_3167"
+  },
+  {
+    "title": "Kitty Toy",
+    "url": "/games/clkittytoy.html",
+    "cat": "Puzzle",
+    "id": "tung_3168"
+  },
+  {
+    "title": "Infinimoes",
+    "url": "/games/clinfinimoes.html",
+    "cat": "Puzzle",
+    "id": "tung_3169"
+  },
+  {
+    "title": "Adventure Drivers",
+    "url": "/games/cladventuredrivers.html",
+    "cat": "Racing",
+    "id": "tung_3170"
+  },
+  {
+    "title": "Kindergarten",
+    "url": "/games/clkindergarten.html",
+    "cat": "Puzzle",
+    "id": "tung_3171"
+  },
+  {
+    "title": "Kindergarten 2",
+    "url": "/games/clkindergarten2.html",
+    "cat": "Puzzle",
+    "id": "tung_3172"
+  },
+  {
+    "title": "Nijika's Ahoge",
+    "url": "/games/clnijikasahoge.html",
+    "cat": "Puzzle",
+    "id": "tung_3173"
+  },
+  {
+    "title": "City Smash",
+    "url": "/games/clcitysmash.html",
+    "cat": "Puzzle",
+    "id": "tung_3174"
+  },
+  {
+    "title": "Amanda the Adventurer",
+    "url": "/games/clamandatheadventurer.html",
+    "cat": "Adventure",
+    "id": "tung_3175"
+  },
+  {
+    "title": "Slender: The 8 Pages",
+    "url": "/games/clslenderthe8pages.html",
+    "cat": "Puzzle",
+    "id": "tung_3176"
+  },
+  {
+    "title": "Raft",
+    "url": "/games/clraft.html",
+    "cat": "Puzzle",
+    "id": "tung_3177"
+  },
+  {
+    "title": "The Man In The Window",
+    "url": "/games/clthemaninthewindow2.html",
+    "cat": "Puzzle",
+    "id": "tung_3178"
+  },
+  {
+    "title": "Fears to Fathom: Home Alone",
+    "url": "/games/clfearstofathomhomealone.html",
+    "cat": "Puzzle",
+    "id": "tung_3179"
+  },
+  {
+    "title": "Cuphead",
+    "url": "/games/clcuphead.html",
+    "cat": "Puzzle",
+    "id": "tung_3180"
+  },
+  {
+    "title": "Baldi's Basics Classic Remastered",
+    "url": "/games/clbaldisbasicsclassicremastered.html",
+    "cat": "Retro",
+    "id": "tung_3181"
+  },
+  {
+    "title": "Baldi's Basics Plus",
+    "url": "/games/clbaldisbasicsplus.html",
+    "cat": "Puzzle",
+    "id": "tung_3182"
+  },
+  {
+    "title": "Hollow Knight",
+    "url": "/games/clhollowknight2.html",
+    "cat": "Puzzle",
+    "id": "tung_3183"
+  },
+  {
+    "title": "sandstone",
+    "url": "/games/clsandstone.html",
+    "cat": "Puzzle",
+    "id": "tung_3184"
+  },
+  {
+    "title": "Madness Combat: Project Nexus (classic)",
+    "url": "/games/clmadnesscombatprojectnexusclassic.html",
+    "cat": "Action",
+    "id": "tung_3185"
+  },
+  {
+    "title": "Spacebar Clicker",
+    "url": "/games/clspacebarclicker.html",
+    "cat": "Strategy",
+    "id": "tung_3186"
+  },
+  {
+    "title": "Friday Night Funkin': Creepypasta JP",
+    "url": "/games/clfridaynightfunkincreepypastajp.html",
+    "cat": "Puzzle",
+    "id": "tung_3187"
+  },
+  {
+    "title": "Friday Night Funkin': Sonic Legacy",
+    "url": "/games/clfridaynightfunkinsoniclegacy.html",
+    "cat": "Retro",
+    "id": "tung_3188"
+  },
+  {
+    "title": "Friday Night Funkin': Mistful Crimson Morning Reboot",
+    "url": "/games/clfridaynightfunkinmistfulcrimsonmorni.html",
+    "cat": "Puzzle",
+    "id": "tung_3189"
+  },
+  {
+    "title": "I woke up next to you again.",
+    "url": "/games/cliwokeupnexttoyouagain.html",
+    "cat": "Puzzle",
+    "id": "tung_3190"
+  },
+  {
+    "title": "UNDERWHEELS",
+    "url": "/games/clunderwheels.html",
+    "cat": "Puzzle",
+    "id": "tung_3191"
+  },
+  {
+    "title": "RigBMX",
+    "url": "/games/clrigbmx.html",
+    "cat": "Puzzle",
+    "id": "tung_3192"
+  },
+  {
+    "title": "RigBMX 2",
+    "url": "/games/clrigbmx2.html",
+    "cat": "Puzzle",
+    "id": "tung_3193"
+  },
+  {
+    "title": "groon groon, babey!",
+    "url": "/games/clgroongroonbabey.html",
+    "cat": "Puzzle",
+    "id": "tung_3194"
+  },
+  {
+    "title": "Friday Night Funkin': Jeffy's Endless Aethos",
+    "url": "/games/clfridaynightfunkinjeffysendlessaethos.html",
+    "cat": "Puzzle",
+    "id": "tung_3195"
+  },
+  {
+    "title": "Friday Night Funkin': vs. BOPCITY",
+    "url": "/games/clfridaynightfunkinvsbopcity.html",
+    "cat": "Puzzle",
+    "id": "tung_3196"
+  },
+  {
+    "title": "Friday Night Funkin': 17 Bucks: Floor 1",
+    "url": "/games/clfridaynightfunkin17bucksfloor1.html",
+    "cat": "Puzzle",
+    "id": "tung_3197"
+  },
+  {
+    "title": "Friday Night Funkin': FIRE IN THE HOLE: Lobotomy Dash Funkin'",
+    "url": "/games/clfridaynightfunkinfireintheholeloboto.html",
+    "cat": "Racing",
+    "id": "tung_3198"
+  },
+  {
+    "title": "Kindergarten 3",
+    "url": "/games/clkindergarten3.html",
+    "cat": "Puzzle",
+    "id": "tung_3199"
+  },
+  {
+    "title": "Five Nights at Candy's",
+    "url": "/games/clfivenightsatcandys.html",
+    "cat": "Puzzle",
+    "id": "tung_3200"
+  },
+  {
+    "title": "Pokemon Red",
+    "url": "/games/clpokemonred.html",
+    "cat": "Retro",
+    "id": "tung_3201"
+  },
+  {
+    "title": "PortaBoy+",
+    "url": "/games/clportaboy.html",
+    "cat": "Puzzle",
+    "id": "tung_3202"
+  },
+  {
+    "title": "PacMan (Horror)",
+    "url": "/games/clpacmanhorror.html",
+    "cat": "Retro",
+    "id": "tung_3203"
+  },
+  {
+    "title": "Oshi Oshi Punch!",
+    "url": "/games/closhioshipunch.html",
+    "cat": "Puzzle",
+    "id": "tung_3204"
+  },
+  {
+    "title": "Nubby's Number Factory",
+    "url": "/games/clnubbysnumberfactory.html",
+    "cat": "Puzzle",
+    "id": "tung_3205"
+  },
+  {
+    "title": "Touhou: Luminous Strike",
+    "url": "/games/cltouhouluminousstrike.html",
+    "cat": "Action",
+    "id": "tung_3206"
+  },
+  {
+    "title": "Bust a Loop",
+    "url": "/games/clbustaloop.html",
+    "cat": "Puzzle",
+    "id": "tung_3207"
+  },
+  {
+    "title": "Touhou Mother",
+    "url": "/games/cltouhoumother.html",
+    "cat": "Puzzle",
+    "id": "tung_3208"
+  },
+  {
+    "title": "Friday Night Funkin': Darkness Takeover",
+    "url": "/games/clfridaynightfunkindarknesstakeover.html",
+    "cat": "Puzzle",
+    "id": "tung_3209"
+  },
+  {
+    "title": "SpongeBob SquarePants: Land Ho!",
+    "url": "/games/clspongebobsquarepantslandho.html",
+    "cat": "Puzzle",
+    "id": "tung_3210"
+  },
+  {
+    "title": "SpongeBob SquarePants: SpongeBob Run",
+    "url": "/games/clspongebobsquarepantsspongebobrun.html",
+    "cat": "Racing",
+    "id": "tung_3211"
+  },
+  {
+    "title": "SpongeBob SquarePants: Squidward's Sizzlin' Scare",
+    "url": "/games/clspongebobsquarepantssquidwardssizzli.html",
+    "cat": "Action",
+    "id": "tung_3212"
+  },
+  {
+    "title": "SpongeBob SquarePants: Sandy's Sponge Stacker",
+    "url": "/games/clspongebobsquarepantssandysspongestac.html",
+    "cat": "Puzzle",
+    "id": "tung_3213"
+  },
+  {
+    "title": "SpongeBob SquarePants: Tasty Pastry Party",
+    "url": "/games/clspongebobsquarepantstastypastryparty.html",
+    "cat": "Puzzle",
+    "id": "tung_3214"
+  },
+  {
+    "title": "SpongeBob SquarePants: The Kah-Ray-Tay Squid",
+    "url": "/games/clspongebobsquarepantsthekahraytaysqui.html",
+    "cat": "Puzzle",
+    "id": "tung_3215"
+  },
+  {
+    "title": "SpongeBob SquarePants: WereSquirrel",
+    "url": "/games/clspongebobsquarepantsweresquirrel.html",
+    "cat": "Puzzle",
+    "id": "tung_3216"
+  },
+  {
+    "title": "SpongeBob SquarePants: Krabby Katch",
+    "url": "/games/clspongebobsquarepantskrabbykatch.html",
+    "cat": "Puzzle",
+    "id": "tung_3217"
+  },
+  {
+    "title": "Teen Titans GO!: Jump Jousts",
+    "url": "/games/clteentitansgojumpjousts.html",
+    "cat": "Platformer",
+    "id": "tung_3218"
+  },
+  {
+    "title": "Teen Titans GO!: Jump Jousts 2",
+    "url": "/games/clteentitansgojumpjousts2.html",
+    "cat": "Platformer",
+    "id": "tung_3219"
+  },
+  {
+    "title": "Cat Connection",
+    "url": "/games/clcatconnection.html",
+    "cat": "Puzzle",
+    "id": "tung_3220"
+  },
+  {
+    "title": "Cat Gunner: Super Zombie Shoot",
+    "url": "/games/clcatgunnersuperzombieshoot.html",
+    "cat": "Action",
+    "id": "tung_3221"
+  },
+  {
+    "title": "Love Letters",
+    "url": "/games/clloveletters.html",
+    "cat": "Puzzle",
+    "id": "tung_3222"
+  },
+  {
+    "title": "Chiikawa Puzzle",
+    "url": "/games/clchiikawapuzzle.html",
+    "cat": "Puzzle",
+    "id": "tung_3223"
+  },
+  {
+    "title": "Plinko",
+    "url": "/games/clplinko.html",
+    "cat": "Puzzle",
+    "id": "tung_3224"
+  },
+  {
+    "title": "Sonic the Hedgehog 2: Community's Cut",
+    "url": "/games/clsonicthehedgehog2communityscut.html",
+    "cat": "Retro",
+    "id": "tung_3225"
+  },
+  {
+    "title": "Sonic the Hedgehog 3: Angel Island Remastered",
+    "url": "/games/clsonicthehedgehog3angelislandremaster.html",
+    "cat": "Retro",
+    "id": "tung_3226"
+  },
+  {
+    "title": "Getting Over It with Bennett Foddy",
+    "url": "/games/clgettingoveritwithbennettfoddy.html",
+    "cat": "Puzzle",
+    "id": "tung_3227"
+  },
+  {
+    "title": "Friday Night Funkin vs Shaggy",
+    "url": "/games/clfridaynightfunkinvsshaggy.html",
+    "cat": "Puzzle",
+    "id": "tung_3228"
+  },
+  {
+    "title": "BitGun.io",
+    "url": "/games/clbitgunio.html",
+    "cat": "Action",
+    "id": "tung_3229"
+  },
+  {
+    "title": "Boom Slingers: Reboom",
+    "url": "/games/clboomslingersreboom.html",
+    "cat": "Puzzle",
+    "id": "tung_3230"
+  },
+  {
+    "title": "CG FC 25",
+    "url": "/games/clcgfc25.html",
+    "cat": "Puzzle",
+    "id": "tung_3231"
+  },
+  {
+    "title": "Count Masters: Stickman Games",
+    "url": "/games/clcountmastersstickmangames.html",
+    "cat": "Puzzle",
+    "id": "tung_3232"
+  },
+  {
+    "title": "Dalgona Candy Honeycomb Cookie",
+    "url": "/games/cldalgonacandyhoneycombcookie.html",
+    "cat": "Puzzle",
+    "id": "tung_3233"
+  },
+  {
+    "title": "Highway Racer 2 REMASTERED",
+    "url": "/games/clhighwayracer2remastered.html",
+    "cat": "Racing",
+    "id": "tung_3234"
+  },
+  {
+    "title": "Hula Hoop Race",
+    "url": "/games/clhulahooprace.html",
+    "cat": "Racing",
+    "id": "tung_3235"
+  },
+  {
+    "title": "Jelly Restaurant",
+    "url": "/games/cljellyrestaurant.html",
+    "cat": "Puzzle",
+    "id": "tung_3236"
+  },
+  {
+    "title": "Layers Roll",
+    "url": "/games/cllayersroll.html",
+    "cat": "Puzzle",
+    "id": "tung_3237"
+  },
+  {
+    "title": "Lazy Jumper",
+    "url": "/games/cllazyjumper.html",
+    "cat": "Platformer",
+    "id": "tung_3238"
+  },
+  {
+    "title": "Man Runner 2048",
+    "url": "/games/clmanrunner2048.html",
+    "cat": "Racing",
+    "id": "tung_3239"
+  },
+  {
+    "title": "Pottery Master",
+    "url": "/games/clpotterymaster.html",
+    "cat": "Puzzle",
+    "id": "tung_3240"
+  },
+  {
+    "title": "Shovel 3D",
+    "url": "/games/clshovel3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3241"
+  },
+  {
+    "title": "Super Star Car",
+    "url": "/games/clsuperstarcar.html",
+    "cat": "Puzzle",
+    "id": "tung_3242"
+  },
+  {
+    "title": "Traffic Rider",
+    "url": "/games/cltrafficrider.html",
+    "cat": "Puzzle",
+    "id": "tung_3243"
+  },
+  {
+    "title": "Sonic Mania",
+    "url": "/games/clsonicmania.html",
+    "cat": "Retro",
+    "id": "tung_3244"
+  },
+  {
+    "title": "Slime Rancher",
+    "url": "/games/clslimerancher.html",
+    "cat": "Puzzle",
+    "id": "tung_3245"
+  },
+  {
+    "title": "Pac Man World",
+    "url": "/games/clpacmanworld.html",
+    "cat": "Puzzle",
+    "id": "tung_3246"
+  },
+  {
+    "title": "Pac Man World 2",
+    "url": "/games/clpacmanworld2.html",
+    "cat": "Puzzle",
+    "id": "tung_3247"
+  },
+  {
+    "title": "Shapez.io",
+    "url": "/games/clshapezio.html",
+    "cat": "Puzzle",
+    "id": "tung_3248"
+  },
+  {
+    "title": "[!] COMMENTS",
+    "url": "/games/clcomments.html",
+    "cat": "Puzzle",
+    "id": "tung_3249"
+  },
+  {
+    "title": "Plants vs. Zombies 2 Gardenless",
+    "url": "/games/clplantsvszombies2gardenless.html",
+    "cat": "Action",
+    "id": "tung_3250"
+  },
+  {
+    "title": "Sonic.EXE",
+    "url": "/games/clsonicexe.html",
+    "cat": "Retro",
+    "id": "tung_3251"
+  },
+  {
+    "title": "FNF Vs. Hypno's Lullaby v2",
+    "url": "/games/clfnfvshypnoslullabyv2.html",
+    "cat": "Puzzle",
+    "id": "tung_3252"
+  },
+  {
+    "title": "FNF Vs. Sonic.EXE 3.0/4.0",
+    "url": "/games/clfnfvssonicexe3040.html",
+    "cat": "Retro",
+    "id": "tung_3253"
+  },
+  {
+    "title": "Tattletail",
+    "url": "/games/cltattletail.html",
+    "cat": "Puzzle",
+    "id": "tung_3254"
+  },
+  {
+    "title": "Friday Night Funkin vs Sunday Remastered HD",
+    "url": "/games/clfridaynightfunkinvssundayremasteredh.html",
+    "cat": "Puzzle",
+    "id": "tung_3255"
+  },
+  {
+    "title": "Friday Night Funkin vs Carol V2",
+    "url": "/games/clfridaynightfunkinvscarolv2.html",
+    "cat": "Puzzle",
+    "id": "tung_3256"
+  },
+  {
+    "title": "Toy Rider",
+    "url": "/games/cltoyrider.html",
+    "cat": "Puzzle",
+    "id": "tung_3257"
+  },
+  {
+    "title": "Friday Night Funkin Vs. Dave and Bambi v3",
+    "url": "/games/clfridaynightfunkinvsdaveandbambiv3.html",
+    "cat": "Puzzle",
+    "id": "tung_3258"
+  },
+  {
+    "title": "FNF vs Bob v2.0 (Bobâ€™s Onslaught)",
+    "url": "/games/clfnfvsbobv20bobsonslaught.html",
+    "cat": "Puzzle",
+    "id": "tung_3259"
+  },
+  {
+    "title": "Friday Night Funkin': Gumballs",
+    "url": "/games/clfridaynightfunkingumballs.html",
+    "cat": "Puzzle",
+    "id": "tung_3260"
+  },
+  {
+    "title": "Oneshot (LEGACY)",
+    "url": "/games/cloneshotlegacy.html",
+    "cat": "Puzzle",
+    "id": "tung_3261"
+  },
+  {
+    "title": "Celeste",
+    "url": "/games/clceleste.html",
+    "cat": "Puzzle",
+    "id": "tung_3262"
+  },
+  {
+    "title": "Doom 3",
+    "url": "/games/cldoom3.html",
+    "cat": "Puzzle",
+    "id": "tung_3263"
+  },
+  {
+    "title": "Pizza Tower: Scoutdigo",
+    "url": "/games/clpizzatowerscoutdigo.html",
+    "cat": "Strategy",
+    "id": "tung_3264"
+  },
+  {
+    "title": "Off",
+    "url": "/games/cloff.html",
+    "cat": "Puzzle",
+    "id": "tung_3265"
+  },
+  {
+    "title": "Space Funeral",
+    "url": "/games/clspacefuneral.html",
+    "cat": "Puzzle",
+    "id": "tung_3266"
+  },
+  {
+    "title": "Endroll",
+    "url": "/games/clendroll.html",
+    "cat": "Puzzle",
+    "id": "tung_3267"
+  },
+  {
+    "title": "Friday Night Funkin': VS. Impostor: Alternated",
+    "url": "/games/clfridaynightfunkinvsimpostoralternate.html",
+    "cat": "Puzzle",
+    "id": "tung_3268"
+  },
+  {
+    "title": "Friday Night Funkin': Chaos Nightmare - Sonic Vs. Fleetway",
+    "url": "/games/clfridaynightfunkinchaosnightmaresonic.html",
+    "cat": "Retro",
+    "id": "tung_3269"
+  },
+  {
+    "title": "BFDIA 5b: 5*30",
+    "url": "/games/clbfdia5b530.html",
+    "cat": "Puzzle",
+    "id": "tung_3270"
+  },
+  {
+    "title": "Friday Night Funkin' VS Impostor B-Sides",
+    "url": "/games/clfridaynightfunkinvsimpostorbsides.html",
+    "cat": "Puzzle",
+    "id": "tung_3271"
+  },
+  {
+    "title": "Godzilla Daikaiju Battle Royale",
+    "url": "/games/clgodzilladaikaijubattleroyale.html",
+    "cat": "Action",
+    "id": "tung_3272"
+  },
+  {
+    "title": "Friday Night Funkin' Sunday Night Suicide: Rookies Edition",
+    "url": "/games/clfridaynightfunkinsundaynightsuicider.html",
+    "cat": "Puzzle",
+    "id": "tung_3273"
+  },
+  {
+    "title": "Rio Rex",
+    "url": "/games/clriorex.html",
+    "cat": "Puzzle",
+    "id": "tung_3274"
+  },
+  {
+    "title": "Friday Night Funkin vs Nonsense",
+    "url": "/games/clfridaynightfunkinvsnonsense.html",
+    "cat": "Puzzle",
+    "id": "tung_3275"
+  },
+  {
+    "title": "Buster Jam",
+    "url": "/games/clbusterjam.html",
+    "cat": "Puzzle",
+    "id": "tung_3276"
+  },
+  {
+    "title": "Mindwave",
+    "url": "/games/clmindwave.html",
+    "cat": "Puzzle",
+    "id": "tung_3277"
+  },
+  {
+    "title": "Look Outside",
+    "url": "/games/cllookoutside.html",
+    "cat": "Puzzle",
+    "id": "tung_3278"
+  },
+  {
+    "title": "Milk Inside a Bag of Milk Inside a Bag of Milk",
+    "url": "/games/clmilkinsideabagofmilkinsideabagofmilk.html",
+    "cat": "Puzzle",
+    "id": "tung_3279"
+  },
+  {
+    "title": "Milk Outside A Bag Of Milk Outside A Bag Of Milk",
+    "url": "/games/clmilkoutsideabagofmilkoutsideabagofmi.html",
+    "cat": "Puzzle",
+    "id": "tung_3280"
+  },
+  {
+    "title": "1 Date Danger",
+    "url": "/games/cl1datedanger.html",
+    "cat": "Puzzle",
+    "id": "tung_3281"
+  },
+  {
+    "title": "Final Fantasy VII",
+    "url": "/games/clfinalfantasyvii2.html",
+    "cat": "Puzzle",
+    "id": "tung_3282"
+  },
+  {
+    "title": "Goblin Goopmaxxing",
+    "url": "/games/clgoblingoopmaxxing.html",
+    "cat": "Puzzle",
+    "id": "tung_3283"
+  },
+  {
+    "title": "Rogue Sergeant The Final Operation",
+    "url": "/games/clroguesergeantthefinaloperation.html",
+    "cat": "Puzzle",
+    "id": "tung_3284"
+  },
+  {
+    "title": "Friday Night Funkin vs Undertale",
+    "url": "/games/clfridaynightfunkinvsundertale.html",
+    "cat": "Adventure",
+    "id": "tung_3285"
+  },
+  {
+    "title": "Midnight Shift",
+    "url": "/games/clmidnightshift.html",
+    "cat": "Puzzle",
+    "id": "tung_3286"
+  },
+  {
+    "title": "Please Dont Touch Anything",
+    "url": "/games/clpleasedonttouchanything.html",
+    "cat": "Puzzle",
+    "id": "tung_3287"
+  },
+  {
+    "title": "Royal Towers: Medieval TD",
+    "url": "/games/clroyaltowersmedievaltd.html",
+    "cat": "Strategy",
+    "id": "tung_3288"
+  },
+  {
+    "title": "3D Bolt Master",
+    "url": "/games/cl3dboltmaster.html",
+    "cat": "Puzzle",
+    "id": "tung_3289"
+  },
+  {
+    "title": "Match Triple 3D",
+    "url": "/games/clmatchtriple3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3290"
+  },
+  {
+    "title": "Stick War: Legacy",
+    "url": "/games/clstickwarlegacy.html",
+    "cat": "Action",
+    "id": "tung_3291"
+  },
+  {
+    "title": "In Stars and Time",
+    "url": "/games/clinstarsandtime.html",
+    "cat": "Puzzle",
+    "id": "tung_3292"
+  },
+  {
+    "title": "Hobo 1",
+    "url": "/games/clhobo1.html",
+    "cat": "Puzzle",
+    "id": "tung_3293"
+  },
+  {
+    "title": "Pico's School (1999)",
+    "url": "/games/clpicosschool1999.html",
+    "cat": "Puzzle",
+    "id": "tung_3294"
+  },
+  {
+    "title": "Friday Night Funkin': Heartbreak Havoc [Vs. Sky: REDUX]",
+    "url": "/games/clfridaynightfunkinheartbreakhavocvssk.html",
+    "cat": "Puzzle",
+    "id": "tung_3295"
+  },
+  {
+    "title": "Kirby ~ Soft & Wet",
+    "url": "/games/clkirbysoftwet.html",
+    "cat": "Retro",
+    "id": "tung_3296"
+  },
+  {
+    "title": "Half Life: Opposing Force",
+    "url": "/games/clhalflifeopposingforce.html",
+    "cat": "Puzzle",
+    "id": "tung_3297"
+  },
+  {
+    "title": "Duck Life 8",
+    "url": "/games/clducklife8.html",
+    "cat": "Puzzle",
+    "id": "tung_3298"
+  },
+  {
+    "title": "Pokemon HeartGold",
+    "url": "/games/clpokemonheartgold.html",
+    "cat": "Retro",
+    "id": "tung_3299"
+  },
+  {
+    "title": "Bank Robbery",
+    "url": "/games/clbankrobbery.html",
+    "cat": "Puzzle",
+    "id": "tung_3300"
+  },
+  {
+    "title": "Bank Robbery 3",
+    "url": "/games/clbankrobbery3.html",
+    "cat": "Puzzle",
+    "id": "tung_3301"
+  },
+  {
+    "title": "Stickman Destruction",
+    "url": "/games/clstickmandestruction.html",
+    "cat": "Puzzle",
+    "id": "tung_3302"
+  },
+  {
+    "title": "FNF vs Pibby Corrupted",
+    "url": "/games/clfnfvspibbycorrupted.html",
+    "cat": "Puzzle",
+    "id": "tung_3303"
+  },
+  {
+    "title": "JavascriptPS1",
+    "url": "/games/cljavascriptps1.html",
+    "cat": "Puzzle",
+    "id": "tung_3304"
+  },
+  {
+    "title": "VS Rewrite: ROUND 2",
+    "url": "/games/clvsrewriteround2.html",
+    "cat": "Puzzle",
+    "id": "tung_3305"
+  },
+  {
+    "title": "Five Nights at Freddy's: World Refreshed",
+    "url": "/games/clfivenightsatfreddysworldrefreshed.html",
+    "cat": "Puzzle",
+    "id": "tung_3306"
+  },
+  {
+    "title": "Iron Lung",
+    "url": "/games/clironlung.html",
+    "cat": "Puzzle",
+    "id": "tung_3307"
+  },
+  {
+    "title": "Fear & Hunger",
+    "url": "/games/clfearhunger.html",
+    "cat": "Puzzle",
+    "id": "tung_3308"
+  },
+  {
+    "title": "Needy Streamer Overload",
+    "url": "/games/clneedystreameroverload.html",
+    "cat": "Puzzle",
+    "id": "tung_3309"
+  },
+  {
+    "title": "Friday Night Funkin vs Tabi",
+    "url": "/games/clfridaynightfunkinvstabi.html",
+    "cat": "Puzzle",
+    "id": "tung_3310"
+  },
+  {
+    "title": "Clover Pit",
+    "url": "/games/clcloverpit.html",
+    "cat": "Puzzle",
+    "id": "tung_3311"
+  },
+  {
+    "title": "Peaks of Yore",
+    "url": "/games/clpeaksofyore.html",
+    "cat": "Puzzle",
+    "id": "tung_3312"
+  },
+  {
+    "title": "Untitled Goose Game",
+    "url": "/games/cluntitledgoosegame.html",
+    "cat": "Puzzle",
+    "id": "tung_3313"
+  },
+  {
+    "title": "Endoparasitic 2",
+    "url": "/games/clendoparasitic2.html",
+    "cat": "Puzzle",
+    "id": "tung_3314"
+  },
+  {
+    "title": "Breath of the Wild NDS",
+    "url": "/games/clbreathofthewildnds.html",
+    "cat": "Puzzle",
+    "id": "tung_3315"
+  },
+  {
+    "title": "Dimension Incident",
+    "url": "/games/cldimensionincident.html",
+    "cat": "Puzzle",
+    "id": "tung_3316"
+  },
+  {
+    "title": "Fear Assessment",
+    "url": "/games/clfearassessment2.html",
+    "cat": "Puzzle",
+    "id": "tung_3317"
+  },
+  {
+    "title": "game inside a game inside a game inside a game inside a game inside a game",
+    "url": "/games/clgameinsideagameinsideagameinsideagam.html",
+    "cat": "Puzzle",
+    "id": "tung_3318"
+  },
+  {
+    "title": "Undertale: Last Breath",
+    "url": "/games/clundertalelastbreath.html",
+    "cat": "Adventure",
+    "id": "tung_3319"
+  },
+  {
+    "title": "64 in 1 NES",
+    "url": "/games/cl64in1nes.html",
+    "cat": "Puzzle",
+    "id": "tung_3320"
+  },
+  {
+    "title": "Christmas Massacre",
+    "url": "/games/clchristmasmassacre.html",
+    "cat": "Puzzle",
+    "id": "tung_3321"
+  },
+  {
+    "title": "Famidash",
+    "url": "/games/clfamidash3.html",
+    "cat": "Racing",
+    "id": "tung_3322"
+  },
+  {
+    "title": "Bart Blast",
+    "url": "/games/clbartblast2.html",
+    "cat": "Puzzle",
+    "id": "tung_3323"
+  },
+  {
+    "title": "Power Hover",
+    "url": "/games/clpowerhover.html",
+    "cat": "Puzzle",
+    "id": "tung_3324"
+  },
+  {
+    "title": "Fundamental Paper Novel",
+    "url": "/games/clfundamentalpapernovel.html",
+    "cat": "Puzzle",
+    "id": "tung_3325"
+  },
+  {
+    "title": "Worst Time Simulator",
+    "url": "/games/clworsttimesimulator.html",
+    "cat": "Strategy",
+    "id": "tung_3326"
+  },
+  {
+    "title": "Undertale Last Breath PHASE THREE",
+    "url": "/games/clundertalelastbreathphasethree.html",
+    "cat": "Adventure",
+    "id": "tung_3327"
+  },
+  {
+    "title": "Five Nights at Last Breath",
+    "url": "/games/clfivenightsatlastbreath.html",
+    "cat": "Puzzle",
+    "id": "tung_3328"
+  },
+  {
+    "title": "Jeffrey Epstein Basics In Education And Kidnapping",
+    "url": "/games/cljeffreyepsteinbasicsineducationandki.html",
+    "cat": "Puzzle",
+    "id": "tung_3329"
+  },
+  {
+    "title": "Breaklock",
+    "url": "/games/clbreaklock.html",
+    "cat": "Puzzle",
+    "id": "tung_3330"
+  },
+  {
+    "title": "Witch's Heart",
+    "url": "/games/clwitchsheart.html",
+    "cat": "Puzzle",
+    "id": "tung_3331"
+  },
+  {
+    "title": "Ultrapool",
+    "url": "/games/clultrapool.html",
+    "cat": "Puzzle",
+    "id": "tung_3332"
+  },
+  {
+    "title": "Dice a Million",
+    "url": "/games/cldiceamillion.html",
+    "cat": "Puzzle",
+    "id": "tung_3333"
+  },
+  {
+    "title": "FISH",
+    "url": "/games/clfish.html",
+    "cat": "Puzzle",
+    "id": "tung_3334"
+  },
+  {
+    "title": "Flying Gorilla 3D",
+    "url": "/games/clflyinggorilla3d.html",
+    "cat": "Puzzle",
+    "id": "tung_3335"
+  },
+  {
+    "title": "Scary Shawarma Kiosk: the ANOMALY",
+    "url": "/games/clscaryshawarmakiosktheanomaly.html",
+    "cat": "Action",
+    "id": "tung_3336"
+  },
+  {
+    "title": "Suika Game",
+    "url": "/games/clsuikagame.html",
+    "cat": "Puzzle",
+    "id": "tung_3337"
+  },
+  {
+    "title": "Hollow Knight: Silksong",
+    "url": "/games/clhollowknightsilksong.html",
+    "cat": "Puzzle",
+    "id": "tung_3338"
+  },
+  {
+    "title": "Sam & Max Hit the Road",
+    "url": "/games/clsammaxhittheroad.html",
+    "cat": "Racing",
+    "id": "tung_3339"
+  },
+  {
+    "title": "Command & Conquer",
+    "url": "/games/clcommandconquer.html",
+    "cat": "Puzzle",
+    "id": "tung_3340"
+  },
+  {
+    "title": "Bart Bash",
+    "url": "/games/clbartbash.html",
+    "cat": "Puzzle",
+    "id": "tung_3341"
+  },
+  {
+    "title": "Your Only Move Is HUSTLE",
+    "url": "/games/clyouronlymoveishustle.html",
+    "cat": "Puzzle",
+    "id": "tung_3342"
+  },
+  {
+    "title": "Serial Experiments Lain",
+    "url": "/games/clserialexperimentslain.html",
+    "cat": "Puzzle",
+    "id": "tung_3343"
+  },
+  {
+    "title": "I Have No Mouth, and I Must Scream",
+    "url": "/games/clihavenomouthandimustscream.html",
+    "cat": "Puzzle",
+    "id": "tung_3344"
+  },
+  {
+    "title": "Thing-Thing Arena 3",
+    "url": "/games/clthingthingarena3.html",
+    "cat": "Puzzle",
+    "id": "tung_3345"
+  },
+  {
+    "title": "Scratch Inc",
+    "url": "/games/clscratchinc.html",
+    "cat": "Puzzle",
+    "id": "tung_3346"
+  },
+  {
+    "title": "Gabriel's Awesome Schoolhouse (GASH)",
+    "url": "/games/clgabrielsawesomeschoolhousegash.html",
+    "cat": "Puzzle",
+    "id": "tung_3347"
+  },
+  {
+    "title": "Geometry Dash",
+    "url": "/games/clgeometrydash.html",
+    "cat": "Racing",
+    "id": "tung_3348"
+  },
+  {
+    "title": "BeatBlock",
+    "url": "/games/clbeatblock.html",
+    "cat": "Puzzle",
+    "id": "tung_3349"
+  },
+  {
+    "title": "Stardew Valley",
+    "url": "/games/clstardewvalley.html",
+    "cat": "Puzzle",
+    "id": "tung_3350"
+  },
+  {
+    "title": "Who's Your Daddy",
+    "url": "/games/clwhosyourdaddy.html",
+    "cat": "Puzzle",
+    "id": "tung_3351"
+  },
+  {
+    "title": "Lethal Ape",
+    "url": "/games/cllethalape.html",
+    "cat": "Puzzle",
+    "id": "tung_3352"
+  },
+  {
+    "title": "Fear & Hunger 2: Termina",
+    "url": "/games/clfearhunger2termina.html",
+    "cat": "Puzzle",
+    "id": "tung_3353"
+  },
+  {
+    "title": "Slendytubbies 1",
+    "url": "/games/clslendytubbies1.html",
+    "cat": "Puzzle",
+    "id": "tung_3354"
+  },
+  {
+    "title": "Fih",
+    "url": "/games/clfih.html",
+    "cat": "Puzzle",
+    "id": "tung_3355"
+  },
+  {
+    "title": "Rocket Goal.io",
+    "url": "/games/clrocketgoalio.html",
+    "cat": "Puzzle",
+    "id": "tung_3356"
+  },
+  {
+    "title": "Scampton The Great",
+    "url": "/games/clscamptonthegreat.html",
+    "cat": "Puzzle",
+    "id": "tung_3357"
+  },
+  {
+    "title": "Bendy and the Ink Machine: ALL CHAPTERS",
+    "url": "/games/clbendyandtheinkmachineallchapters.html",
+    "cat": "Puzzle",
+    "id": "tung_3358"
+  },
+  {
+    "title": "Plague Inc",
+    "url": "/games/clplagueinc.html",
+    "cat": "Puzzle",
+    "id": "tung_3359"
+  },
+  {
+    "title": "Slendytubbies 2",
+    "url": "/games/clslendytubbies2.html",
+    "cat": "Puzzle",
+    "id": "tung_3360"
+  },
+  {
+    "title": "Slendytubbies 2D",
+    "url": "/games/clslendytubbies2d.html",
+    "cat": "Puzzle",
+    "id": "tung_3361"
+  },
+  {
+    "title": "Spaceflight Simulator",
+    "url": "/games/clspaceflightsimulator.html",
+    "cat": "Strategy",
+    "id": "tung_3362"
+  },
+  {
+    "title": "Need For Speed: Carbon",
+    "url": "/games/clneedforspeedcarbon.html",
+    "cat": "Racing",
+    "id": "tung_3363"
+  },
+  {
+    "title": "Five Nights at Frickbear's 3",
+    "url": "/games/clfivenightsatfrickbears3.html",
+    "cat": "Puzzle",
+    "id": "tung_3364"
+  },
+  {
+    "title": "MiSide",
+    "url": "/games/clmiside.html",
+    "cat": "Puzzle",
+    "id": "tung_3365"
+  },
+  {
+    "title": "-3",
+    "url": "/games/cl3.html",
+    "cat": "Puzzle",
+    "id": "tung_3366"
+  },
+  {
+    "title": "-b",
+    "url": "/games/clb.html",
+    "cat": "Puzzle",
+    "id": "tung_3367"
+  },
+  {
+    "title": "tÂ³ (T cubed)",
+    "url": "/games/clttcubed.html",
+    "cat": "Puzzle",
+    "id": "tung_3368"
+  },
+  {
+    "title": "20 Minutes Till Dawn",
+    "url": "/games/cl20minutestilldawn.html",
+    "cat": "Puzzle",
+    "id": "tung_3369"
+  },
+  {
+    "title": "Apollo Justice - Ace Attorney",
+    "url": "/games/clapollojusticeaceattorney.html",
+    "cat": "Puzzle",
+    "id": "tung_3370"
+  },
+  {
+    "title": "Ace Attorney Investigations - Miles Edgeworth",
+    "url": "/games/claceattorneyinvestigationsmilesedgewo.html",
+    "cat": "Puzzle",
+    "id": "tung_3371"
+  },
+  {
+    "title": "Cruelty Squad",
+    "url": "/games/clcrueltysquad.html",
+    "cat": "Puzzle",
+    "id": "tung_3372"
+  },
+  {
+    "title": "Just Shapes & Beats",
+    "url": "/games/cljustshapesbeats.html",
+    "cat": "Puzzle",
+    "id": "tung_3373"
+  },
+  {
+    "title": "Totally Accurate Battle Simulator (TABS)",
+    "url": "/games/cltotallyaccuratebattlesimulatortabs.html",
+    "cat": "Action",
+    "id": "tung_3374"
+  },
+  {
+    "title": "Animal Crossing (GAMECUBE)",
+    "url": "/games/clanimalcrossinggamecube.html",
+    "cat": "Puzzle",
+    "id": "tung_3375"
+  },
+  {
+    "title": "Friday Night Funkin vs Shucks v2",
+    "url": "/games/clfridaynightfunkinvsshucksv2.html",
+    "cat": "Puzzle",
+    "id": "tung_3376"
+  },
+  {
+    "title": "Vena",
+    "url": "/games/clvena.html",
+    "cat": "Puzzle",
+    "id": "tung_3377"
+  },
+  {
+    "title": "s.p.l.i.t",
+    "url": "/games/clsplit.html",
+    "cat": "Puzzle",
+    "id": "tung_3378"
+  },
+  {
+    "title": "My Talking Baby Hippo",
+    "url": "/games/clmytalkingbabyhippo.html",
+    "cat": "Puzzle",
+    "id": "tung_3379"
+  },
+  {
+    "title": "subway surfers",
+    "url": "/games/clsubwaysurfers.html",
+    "cat": "Action",
+    "id": "tung_3380"
+  },
+  {
+    "title": "zrist",
+    "url": "/games/clzrist.html",
+    "cat": "Action",
+    "id": "tung_3381"
+  },
+  {
+    "title": "minecraft [v1.5.2]",
+    "url": "/games/clminecraftv152.html",
+    "cat": "Strategy",
+    "id": "tung_3382"
+  },
+  {
+    "title": "chrome dino game",
+    "url": "/games/clchromedinogame.html",
+    "cat": "Action",
+    "id": "tung_3383"
+  },
+  {
+    "title": "theme hotel",
+    "url": "/games/clthemehotel.html",
+    "cat": "Action",
+    "id": "tung_3384"
+  },
+  {
+    "title": "escaping the prison",
+    "url": "/games/clescapingtheprison.html",
+    "cat": "Action",
+    "id": "tung_3385"
+  },
+  {
+    "title": "among us fangame",
+    "url": "/games/clamongusfangame.html",
+    "cat": "Action",
+    "id": "tung_3386"
+  },
+  {
+    "title": "edge surf",
+    "url": "/games/cledgesurf.html",
+    "cat": "Action",
+    "id": "tung_3387"
+  },
+  {
+    "title": "fnaf 1",
+    "url": "/games/clfnaf1.html",
+    "cat": "Action",
+    "id": "tung_3388"
+  },
+  {
+    "title": "warioware",
+    "url": "/games/clwarioware.html",
+    "cat": "Action",
+    "id": "tung_3389"
+  },
+  {
+    "title": "yoshi's island",
+    "url": "/games/clyoshisisland.html",
+    "cat": "Adventure",
+    "id": "tung_3390"
+  },
+  {
+    "title": "donkey kong land",
+    "url": "/games/cldonkeykongland.html",
+    "cat": "Retro",
+    "id": "tung_3391"
+  },
+  {
+    "title": "color switch",
+    "url": "/games/clcolorswitch.html",
+    "cat": "Action",
+    "id": "tung_3392"
+  },
+  {
+    "title": "btd",
+    "url": "/games/clbtd.html",
+    "cat": "Action",
+    "id": "tung_3393"
+  },
+  {
+    "title": "superstar saga",
+    "url": "/games/clsuperstarsaga.html",
+    "cat": "Action",
+    "id": "tung_3394"
+  },
+  {
+    "title": "adofai",
+    "url": "/games/cladofai2.html",
+    "cat": "Action",
+    "id": "tung_3395"
+  },
+  {
+    "title": "super meat boy",
+    "url": "/games/clsupermeatboy.html",
+    "cat": "Action",
+    "id": "tung_3396"
+  },
+  {
+    "title": "battleships",
+    "url": "/games/clbattleships.html",
+    "cat": "Action",
+    "id": "tung_3397"
+  },
+  {
+    "title": "animal crossing",
+    "url": "/games/clanimalcrossing2.html",
+    "cat": "Action",
+    "id": "tung_3398"
+  },
+  {
+    "title": "nintendogs",
+    "url": "/games/clnintendogs.html",
+    "cat": "Action",
+    "id": "tung_3399"
+  },
+  {
+    "title": "doodle defender",
+    "url": "/games/cldoodledefender.html",
+    "cat": "Action",
+    "id": "tung_3400"
+  },
+  {
+    "title": "mother 3",
+    "url": "/games/clmother3.html",
+    "cat": "Action",
+    "id": "tung_3401"
+  },
+  {
+    "title": "pokemon diamond",
+    "url": "/games/clpokemondiamond.html",
+    "cat": "Retro",
+    "id": "tung_3402"
+  },
+  {
+    "title": "banjo pilot",
+    "url": "/games/clbanjopilot.html",
+    "cat": "Action",
+    "id": "tung_3403"
+  },
+  {
+    "title": "kirby mass attack",
+    "url": "/games/clkirbymassattack.html",
+    "cat": "Retro",
+    "id": "tung_3404"
+  },
+  {
+    "title": "worms world party",
+    "url": "/games/clwormsworldparty.html",
+    "cat": "Action",
+    "id": "tung_3405"
+  },
+  {
+    "title": "adventure captialist",
+    "url": "/games/cladventurecaptialist.html",
+    "cat": "Adventure",
+    "id": "tung_3406"
+  },
+  {
+    "title": "ocarina of time",
+    "url": "/games/clocarinaoftime2.html",
+    "cat": "Action",
+    "id": "tung_3407"
+  },
+  {
+    "title": "street fighter 2",
+    "url": "/games/clstreetfighter22.html",
+    "cat": "Action",
+    "id": "tung_3408"
+  },
+  {
+    "title": "rabbit samurai",
+    "url": "/games/clrabbitsamurai.html",
+    "cat": "Action",
+    "id": "tung_3409"
+  },
+  {
+    "title": "mario tennis",
+    "url": "/games/clmariotennis2.html",
+    "cat": "Sports",
+    "id": "tung_3410"
+  },
+  {
+    "title": "mystery dungeon",
+    "url": "/games/clmysterydungeon.html",
+    "cat": "Adventure",
+    "id": "tung_3411"
+  },
+  {
+    "title": "super mario flash",
+    "url": "/games/clsupermarioflash.html",
+    "cat": "Retro",
+    "id": "tung_3412"
+  },
+  {
+    "title": "dbz: supersonic warriors",
+    "url": "/games/cldbzsupersonicwarriors.html",
+    "cat": "Action",
+    "id": "tung_3413"
+  },
+  {
+    "title": "bloxors",
+    "url": "/games/clbloxors.html",
+    "cat": "Action",
+    "id": "tung_3414"
+  },
+  {
+    "title": "duck life 6",
+    "url": "/games/clducklife6.html",
+    "cat": "Action",
+    "id": "tung_3415"
+  },
+  {
+    "title": "tetris ds",
+    "url": "/games/cltetrisds.html",
+    "cat": "Puzzle",
+    "id": "tung_3416"
+  },
+  {
+    "title": "super princess peach",
+    "url": "/games/clsuperprincesspeach.html",
+    "cat": "Action",
+    "id": "tung_3417"
+  },
+  {
+    "title": "duke nukem advance",
+    "url": "/games/cldukenukemadvance.html",
+    "cat": "Action",
+    "id": "tung_3418"
+  },
+  {
+    "title": "mario party advance",
+    "url": "/games/clmariopartyadvance.html",
+    "cat": "Retro",
+    "id": "tung_3419"
+  },
+  {
+    "title": "mario pinball land",
+    "url": "/games/clmariopinballland.html",
+    "cat": "Retro",
+    "id": "tung_3420"
+  },
+  {
+    "title": "rayman 3",
+    "url": "/games/clrayman3.html",
+    "cat": "Action",
+    "id": "tung_3421"
+  },
+  {
+    "title": "simcity 2000",
+    "url": "/games/clsimcity2000.html",
+    "cat": "Strategy",
+    "id": "tung_3422"
+  },
+  {
+    "title": "simpsons road rage",
+    "url": "/games/clsimpsonsroadrage.html",
+    "cat": "Racing",
+    "id": "tung_3423"
+  },
+  {
+    "title": "quest 64",
+    "url": "/games/clquest64.html",
+    "cat": "Adventure",
+    "id": "tung_3424"
+  },
+  {
+    "title": "gex 64",
+    "url": "/games/clgex64.html",
+    "cat": "Action",
+    "id": "tung_3425"
+  },
+  {
+    "title": "duke nukem 64",
+    "url": "/games/cldukenukem64.html",
+    "cat": "Action",
+    "id": "tung_3426"
+  },
+  {
+    "title": "super mario flash 2",
+    "url": "/games/clsupermarioflash2.html",
+    "cat": "Retro",
+    "id": "tung_3427"
+  },
+  {
+    "title": "skibidi toilet attack",
+    "url": "/games/clskibiditoiletattack.html",
+    "cat": "Action",
+    "id": "tung_3428"
+  },
+  {
+    "title": "link to the past",
+    "url": "/games/cllinktothepast2.html",
+    "cat": "Action",
+    "id": "tung_3429"
+  },
+  {
+    "title": "super tennis",
+    "url": "/games/clsupertennis.html",
+    "cat": "Sports",
+    "id": "tung_3430"
+  },
+  {
+    "title": "wario's woods",
+    "url": "/games/clwarioswoods.html",
+    "cat": "Action",
+    "id": "tung_3431"
+  },
+  {
+    "title": "choose your weapon",
+    "url": "/games/clchooseyourweapon.html",
+    "cat": "Action",
+    "id": "tung_3432"
+  },
+  {
+    "title": "choose your weapon 2",
+    "url": "/games/clchooseyourweapon2.html",
+    "cat": "Action",
+    "id": "tung_3433"
+  },
+  {
+    "title": "choose your weapon 3",
+    "url": "/games/clchooseyourweapon3.html",
+    "cat": "Action",
+    "id": "tung_3434"
+  },
+  {
+    "title": "connect 4",
+    "url": "/games/clconnect4.html",
+    "cat": "Action",
+    "id": "tung_3435"
+  },
+  {
+    "title": "electric box",
+    "url": "/games/clelectricbox.html",
+    "cat": "Sports",
+    "id": "tung_3436"
+  },
+  {
+    "title": "mc tower defence 2",
+    "url": "/games/clmctowerdefence2.html",
+    "cat": "Strategy",
+    "id": "tung_3437"
+  },
+  {
+    "title": "cars 2",
+    "url": "/games/clcars2.html",
+    "cat": "Action",
+    "id": "tung_3438"
+  },
+  {
+    "title": "adventure time",
+    "url": "/games/cladventuretime.html",
+    "cat": "Adventure",
+    "id": "tung_3439"
+  },
+  {
+    "title": "garfield gets real",
+    "url": "/games/clgarfieldgetsreal.html",
+    "cat": "Action",
+    "id": "tung_3440"
+  },
+  {
+    "title": "five nights at ???",
+    "url": "/games/clfivenightsat.html",
+    "cat": "Action",
+    "id": "tung_3441"
+  },
+  {
+    "title": "kirby amazing mirror",
+    "url": "/games/clkirbyamazingmirror.html",
+    "cat": "Retro",
+    "id": "tung_3442"
+  },
+  {
+    "title": "stair race 3d",
+    "url": "/games/clstairrace3d.html",
+    "cat": "Racing",
+    "id": "tung_3443"
+  },
+  {
+    "title": "knife hit",
+    "url": "/games/clknifehit.html",
+    "cat": "Action",
+    "id": "tung_3444"
+  },
+  {
+    "title": "lazy jump 3d",
+    "url": "/games/cllazyjump3d.html",
+    "cat": "Platformer",
+    "id": "tung_3445"
+  },
+  {
+    "title": "go ball",
+    "url": "/games/clgoball.html",
+    "cat": "Action",
+    "id": "tung_3446"
+  },
+  {
+    "title": "flippy fish",
+    "url": "/games/clflippyfish.html",
+    "cat": "Action",
+    "id": "tung_3447"
+  },
+  {
+    "title": "shop empire",
+    "url": "/games/clshopempire.html",
+    "cat": "Platformer",
+    "id": "tung_3448"
+  },
+  {
+    "title": "monster brawl",
+    "url": "/games/clmonsterbrawl.html",
+    "cat": "Action",
+    "id": "tung_3449"
+  },
+  {
+    "title": "shift 3",
+    "url": "/games/clshift3.html",
+    "cat": "Action",
+    "id": "tung_3450"
+  },
+  {
+    "title": "shift 4",
+    "url": "/games/clshift4.html",
+    "cat": "Action",
+    "id": "tung_3451"
+  },
+  {
+    "title": "monopoly",
+    "url": "/games/clmonopoly.html",
+    "cat": "Action",
+    "id": "tung_3452"
+  },
+  {
+    "title": "picross ds",
+    "url": "/games/clpicrossds.html",
+    "cat": "Action",
+    "id": "tung_3453"
+  },
+  {
+    "title": "ballistic chickens",
+    "url": "/games/clballisticchickens.html",
+    "cat": "Action",
+    "id": "tung_3454"
+  },
+  {
+    "title": "basketbros io",
+    "url": "/games/clbasketbrosio.html",
+    "cat": "Sports",
+    "id": "tung_3455"
+  },
+  {
+    "title": "tron",
+    "url": "/games/cltron.html",
+    "cat": "Action",
+    "id": "tung_3456"
+  },
+  {
+    "title": "undertale",
+    "url": "/games/clundertale.html",
+    "cat": "Adventure",
+    "id": "tung_3457"
+  },
+  {
+    "title": "geometry rash",
+    "url": "/games/clgeometryrash.html",
+    "cat": "Action",
+    "id": "tung_3458"
+  },
+  {
+    "title": "sandtrix",
+    "url": "/games/clsandtrix.html",
+    "cat": "Action",
+    "id": "tung_3459"
+  },
+  {
+    "title": "shapeshipper",
+    "url": "/games/clshapeshipper.html",
+    "cat": "Action",
+    "id": "tung_3460"
+  },
+  {
+    "title": "slope ball",
+    "url": "/games/clslopeball.html",
+    "cat": "Action",
+    "id": "tung_3461"
+  },
+  {
+    "title": "totally accurate battle sim",
+    "url": "/games/cltotallyaccuratebattlesim.html",
+    "cat": "Action",
+    "id": "tung_3462"
+  },
+  {
+    "title": "watermelon game",
+    "url": "/games/clwatermelongame.html",
+    "cat": "Action",
+    "id": "tung_3463"
+  },
+  {
+    "title": "wall smash",
+    "url": "/games/clwallsmash.html",
+    "cat": "Action",
+    "id": "tung_3464"
+  },
+  {
+    "title": "grand theft grotto",
+    "url": "/games/clgrandtheftgrotto.html",
+    "cat": "Action",
+    "id": "tung_3465"
+  },
+  {
+    "title": "drift mania",
+    "url": "/games/cldriftmania.html",
+    "cat": "Racing",
+    "id": "tung_3466"
+  },
+  {
+    "title": "pool",
+    "url": "/games/clpool.html",
+    "cat": "Action",
+    "id": "tung_3467"
+  },
+  {
+    "title": "time shooter",
+    "url": "/games/cltimeshooter.html",
+    "cat": "Action",
+    "id": "tung_3468"
+  },
+  {
+    "title": "time shooter 3",
+    "url": "/games/cltimeshooter3.html",
+    "cat": "Action",
+    "id": "tung_3469"
+  },
+  {
+    "title": "battletoads",
+    "url": "/games/clbattletoads.html",
+    "cat": "Action",
+    "id": "tung_3470"
+  },
+  {
+    "title": "kid icarus",
+    "url": "/games/clkidicarus.html",
+    "cat": "Action",
+    "id": "tung_3471"
+  },
+  {
+    "title": "ninja gaiden",
+    "url": "/games/clninjagaiden.html",
+    "cat": "Action",
+    "id": "tung_3472"
+  },
+  {
+    "title": "contra iii",
+    "url": "/games/clcontraiii.html",
+    "cat": "Action",
+    "id": "tung_3473"
+  },
+  {
+    "title": "final fantasy iv",
+    "url": "/games/clfinalfantasyiv.html",
+    "cat": "Action",
+    "id": "tung_3474"
+  },
+  {
+    "title": "mystical ninja",
+    "url": "/games/clmysticalninja.html",
+    "cat": "Action",
+    "id": "tung_3475"
+  },
+  {
+    "title": "yoshi's story",
+    "url": "/games/clyoshisstory.html",
+    "cat": "Adventure",
+    "id": "tung_3476"
+  },
+  {
+    "title": "kirby's dreamland 2",
+    "url": "/games/clkirbysdreamland2.html",
+    "cat": "Retro",
+    "id": "tung_3477"
+  },
+  {
+    "title": "link's awakening dx",
+    "url": "/games/cllinksawakeningdx.html",
+    "cat": "Action",
+    "id": "tung_3478"
+  },
+  {
+    "title": "metroid ii",
+    "url": "/games/clmetroidii.html",
+    "cat": "Retro",
+    "id": "tung_3479"
+  },
+  {
+    "title": "wario land ii",
+    "url": "/games/clwariolandii.html",
+    "cat": "Action",
+    "id": "tung_3480"
+  },
+  {
+    "title": "final fantasy tactics adv",
+    "url": "/games/clfinalfantasytacticsadv.html",
+    "cat": "Action",
+    "id": "tung_3481"
+  },
+  {
+    "title": "drill dozer",
+    "url": "/games/cldrilldozer.html",
+    "cat": "Action",
+    "id": "tung_3482"
+  },
+  {
+    "title": "comix zone",
+    "url": "/games/clcomixzone.html",
+    "cat": "Action",
+    "id": "tung_3483"
+  },
+  {
+    "title": "phantasy star iv",
+    "url": "/games/clphantasystariv.html",
+    "cat": "Action",
+    "id": "tung_3484"
+  },
+  {
+    "title": "ranger x",
+    "url": "/games/clrangerx.html",
+    "cat": "Action",
+    "id": "tung_3485"
+  },
+  {
+    "title": "shinobi iii",
+    "url": "/games/clshinobiiii.html",
+    "cat": "Action",
+    "id": "tung_3486"
+  },
+  {
+    "title": "sonic the hedgehog",
+    "url": "/games/clsonicthehedgehog4.html",
+    "cat": "Retro",
+    "id": "tung_3487"
+  },
+  {
+    "title": "vectorman",
+    "url": "/games/clvectorman.html",
+    "cat": "Action",
+    "id": "tung_3488"
+  },
+  {
+    "title": "vectorman 2",
+    "url": "/games/clvectorman2.html",
+    "cat": "Action",
+    "id": "tung_3489"
+  },
+  {
+    "title": "illusion of gaia",
+    "url": "/games/clillusionofgaia.html",
+    "cat": "Action",
+    "id": "tung_3490"
+  },
+  {
+    "title": "pokemon yellow",
+    "url": "/games/clpokemonyellow.html",
+    "cat": "Retro",
+    "id": "tung_3491"
+  },
+  {
+    "title": "abuda the alien",
+    "url": "/games/clabudathealien.html",
+    "cat": "Action",
+    "id": "tung_3492"
+  },
+  {
+    "title": "battle beavers",
+    "url": "/games/clbattlebeavers.html",
+    "cat": "Action",
+    "id": "tung_3493"
+  },
+  {
+    "title": "control craft 2",
+    "url": "/games/clcontrolcraft2.html",
+    "cat": "Strategy",
+    "id": "tung_3494"
+  },
+  {
+    "title": "bubble spinner",
+    "url": "/games/clbubblespinner.html",
+    "cat": "Action",
+    "id": "tung_3495"
+  },
+  {
+    "title": "crush the castle",
+    "url": "/games/clcrushthecastle.html",
+    "cat": "Action",
+    "id": "tung_3496"
+  },
+  {
+    "title": "crush the castle 2",
+    "url": "/games/clcrushthecastle2.html",
+    "cat": "Action",
+    "id": "tung_3497"
+  },
+  {
+    "title": "epic battle fantasy",
+    "url": "/games/clepicbattlefantasy.html",
+    "cat": "Action",
+    "id": "tung_3498"
+  },
+  {
+    "title": "epic battle fantasy 2",
+    "url": "/games/clepicbattlefantasy2.html",
+    "cat": "Action",
+    "id": "tung_3499"
+  },
+  {
+    "title": "epic battle fantasy 3",
+    "url": "/games/clepicbattlefantasy3.html",
+    "cat": "Action",
+    "id": "tung_3500"
+  },
+  {
+    "title": "dragon boy 2",
+    "url": "/games/cldragonboy2.html",
+    "cat": "Action",
+    "id": "tung_3501"
+  },
+  {
+    "title": "zombocalypse",
+    "url": "/games/clzombocalypse.html",
+    "cat": "Action",
+    "id": "tung_3502"
+  },
+  {
+    "title": "lows adventures 2",
+    "url": "/games/cllowsadventures2.html",
+    "cat": "Adventure",
+    "id": "tung_3503"
+  },
+  {
+    "title": "sudoku",
+    "url": "/games/clsudoku.html",
+    "cat": "Puzzle",
+    "id": "tung_3504"
+  },
+  {
+    "title": "minecraft [v1.8]",
+    "url": "/games/clminecraftv18.html",
+    "cat": "Strategy",
+    "id": "tung_3505"
+  },
+  {
+    "title": "astra client [v1.8]",
+    "url": "/games/clastraclientv18.html",
+    "cat": "Action",
+    "id": "tung_3506"
+  },
+  {
+    "title": "astra client [v1.8 wasm]",
+    "url": "/games/clastraclientv18wasm.html",
+    "cat": "Action",
+    "id": "tung_3507"
+  },
+  {
+    "title": "wubzzys adventure",
+    "url": "/games/clwubzzysadventure.html",
+    "cat": "Adventure",
+    "id": "tung_3508"
+  },
+  {
+    "title": "pick crafter",
+    "url": "/games/clpickcrafter.html",
+    "cat": "Strategy",
+    "id": "tung_3509"
+  },
+  {
+    "title": "xx142-b2.exe",
+    "url": "/games/clxx142b2exe.html",
+    "cat": "Action",
+    "id": "tung_3510"
+  },
+  {
+    "title": "canopy",
+    "url": "/games/clcanopy.html",
+    "cat": "Action",
+    "id": "tung_3511"
+  },
+  {
+    "title": "cave chaos",
+    "url": "/games/clcavechaos.html",
+    "cat": "Action",
+    "id": "tung_3512"
+  },
+  {
+    "title": "change type",
+    "url": "/games/clchangetype.html",
+    "cat": "Action",
+    "id": "tung_3513"
+  },
+  {
+    "title": "cheese dreams",
+    "url": "/games/clcheesedreams.html",
+    "cat": "Action",
+    "id": "tung_3514"
+  },
+  {
+    "title": "ditto",
+    "url": "/games/clditto.html",
+    "cat": "Action",
+    "id": "tung_3515"
+  },
+  {
+    "title": "feed me",
+    "url": "/games/clfeedme.html",
+    "cat": "Action",
+    "id": "tung_3516"
+  },
+  {
+    "title": "frost bite",
+    "url": "/games/clfrostbite.html",
+    "cat": "Action",
+    "id": "tung_3517"
+  },
+  {
+    "title": "frost bite 2",
+    "url": "/games/clfrostbite2.html",
+    "cat": "Action",
+    "id": "tung_3518"
+  },
+  {
+    "title": "icebreaker",
+    "url": "/games/clicebreaker.html",
+    "cat": "Action",
+    "id": "tung_3519"
+  },
+  {
+    "title": "mutiny",
+    "url": "/games/clmutiny.html",
+    "cat": "Action",
+    "id": "tung_3520"
+  },
+  {
+    "title": "oodlegobs",
+    "url": "/games/cloodlegobs.html",
+    "cat": "Action",
+    "id": "tung_3521"
+  },
+  {
+    "title": "super treadmill",
+    "url": "/games/clsupertreadmill.html",
+    "cat": "Action",
+    "id": "tung_3522"
+  },
+  {
+    "title": "swindler",
+    "url": "/games/clswindler.html",
+    "cat": "Action",
+    "id": "tung_3523"
+  },
+  {
+    "title": "test subject arena",
+    "url": "/games/cltestsubjectarena.html",
+    "cat": "Action",
+    "id": "tung_3524"
+  },
+  {
+    "title": "test subject complete",
+    "url": "/games/cltestsubjectcomplete.html",
+    "cat": "Action",
+    "id": "tung_3525"
+  },
+  {
+    "title": "twin shot 2",
+    "url": "/games/cltwinshot2.html",
+    "cat": "Action",
+    "id": "tung_3526"
+  },
+  {
+    "title": "three line",
+    "url": "/games/clthreeline.html",
+    "cat": "Action",
+    "id": "tung_3527"
+  },
+  {
+    "title": "bike champ",
+    "url": "/games/clbikechamp.html",
+    "cat": "Racing",
+    "id": "tung_3528"
+  },
+  {
+    "title": "bike champ 2",
+    "url": "/games/clbikechamp2.html",
+    "cat": "Racing",
+    "id": "tung_3529"
+  },
+  {
+    "title": "corporation inc",
+    "url": "/games/clcorporationinc.html",
+    "cat": "Action",
+    "id": "tung_3530"
+  },
+  {
+    "title": "shop empire fable",
+    "url": "/games/clshopempirefable.html",
+    "cat": "Platformer",
+    "id": "tung_3531"
+  },
+  {
+    "title": "papa louie",
+    "url": "/games/clpapalouie.html",
+    "cat": "Action",
+    "id": "tung_3532"
+  },
+  {
+    "title": "papa louie 2",
+    "url": "/games/clpapalouie2.html",
+    "cat": "Action",
+    "id": "tung_3533"
+  },
+  {
+    "title": "papa louie 3",
+    "url": "/games/clpapalouie3.html",
+    "cat": "Action",
+    "id": "tung_3534"
+  },
+  {
+    "title": "steak and jake midnight",
+    "url": "/games/clsteakandjakemidnight.html",
+    "cat": "Action",
+    "id": "tung_3535"
+  },
+  {
+    "title": "incremancer",
+    "url": "/games/clincremancer.html",
+    "cat": "Action",
+    "id": "tung_3536"
+  },
+  {
+    "title": "40 Escape",
+    "url": "/games/cl40escape2.html",
+    "cat": "Action",
+    "id": "tung_3537"
+  },
+  {
+    "title": "Ace Attorney",
+    "url": "/games/claceattorney.html",
+    "cat": "Action",
+    "id": "tung_3538"
+  },
+  {
+    "title": "Achillies 1 Fr",
+    "url": "/games/clachillies1fr2.html",
+    "cat": "Action",
+    "id": "tung_3539"
+  },
+  {
+    "title": "Achillies 2",
+    "url": "/games/clachillies22.html",
+    "cat": "Action",
+    "id": "tung_3540"
+  },
+  {
+    "title": "Akopa S Revenge",
+    "url": "/games/clakopasrevenge.html",
+    "cat": "Action",
+    "id": "tung_3541"
+  },
+  {
+    "title": "Akopa S Revenge 2",
+    "url": "/games/clakopasrevenge2.html",
+    "cat": "Action",
+    "id": "tung_3542"
+  },
+  {
+    "title": "Allocation",
+    "url": "/games/clallocation.html",
+    "cat": "Action",
+    "id": "tung_3543"
+  },
+  {
+    "title": "Are We There Yet",
+    "url": "/games/clarewethereyet.html",
+    "cat": "Action",
+    "id": "tung_3544"
+  },
+  {
+    "title": "Ascent",
+    "url": "/games/clascent.html",
+    "cat": "Action",
+    "id": "tung_3545"
+  },
+  {
+    "title": "Baloons TD",
+    "url": "/games/clbaloonstd.html",
+    "cat": "Action",
+    "id": "tung_3546"
+  },
+  {
+    "title": "Bas",
+    "url": "/games/clbas.html",
+    "cat": "Action",
+    "id": "tung_3547"
+  },
+  {
+    "title": "Battles Im",
+    "url": "/games/clbattlesim2.html",
+    "cat": "Action",
+    "id": "tung_3548"
+  },
+  {
+    "title": "Ben 10 Protector",
+    "url": "/games/clben10protector2.html",
+    "cat": "Action",
+    "id": "tung_3549"
+  },
+  {
+    "title": "Binding of Isacc Sheep Time",
+    "url": "/games/clbindingofisaccsheeptime2.html",
+    "cat": "Action",
+    "id": "tung_3550"
+  },
+  {
+    "title": "Bitlife Encrypted",
+    "url": "/games/clbitlifeencrypted.html",
+    "cat": "Action",
+    "id": "tung_3551"
+  },
+  {
+    "title": "Block Craft Parkour",
+    "url": "/games/clblockcraftparkour2.html",
+    "cat": "Puzzle",
+    "id": "tung_3552"
+  },
+  {
+    "title": "Block Crafts Hooter",
+    "url": "/games/clblockcraftshooter2.html",
+    "cat": "Puzzle",
+    "id": "tung_3553"
+  },
+  {
+    "title": "Bloons Pp 1",
+    "url": "/games/clbloonspp12.html",
+    "cat": "Action",
+    "id": "tung_3554"
+  },
+  {
+    "title": "Bloons Pp 2",
+    "url": "/games/clbloonspp22.html",
+    "cat": "Action",
+    "id": "tung_3555"
+  },
+  {
+    "title": "Bloons Pp 3",
+    "url": "/games/clbloonspp32.html",
+    "cat": "Action",
+    "id": "tung_3556"
+  },
+  {
+    "title": "Bloons Pp 4",
+    "url": "/games/clbloonspp42.html",
+    "cat": "Action",
+    "id": "tung_3557"
+  },
+  {
+    "title": "Bloons Pp 5",
+    "url": "/games/clbloonspp52.html",
+    "cat": "Action",
+    "id": "tung_3558"
+  },
+  {
+    "title": "Bloons TD 1",
+    "url": "/games/clbloonstd12.html",
+    "cat": "Action",
+    "id": "tung_3559"
+  },
+  {
+    "title": "Blumgi Ball",
+    "url": "/games/clblumgiball.html",
+    "cat": "Action",
+    "id": "tung_3560"
+  },
+  {
+    "title": "Blumgi Bloom",
+    "url": "/games/clblumgibloom.html",
+    "cat": "Action",
+    "id": "tung_3561"
+  },
+  {
+    "title": "Blumgi Bounce",
+    "url": "/games/clblumgibounce.html",
+    "cat": "Action",
+    "id": "tung_3562"
+  },
+  {
+    "title": "Blumgi Merge",
+    "url": "/games/clblumgimerge.html",
+    "cat": "Action",
+    "id": "tung_3563"
+  },
+  {
+    "title": "Blumgi Paintball",
+    "url": "/games/clblumgipaintball.html",
+    "cat": "Action",
+    "id": "tung_3564"
+  },
+  {
+    "title": "Blumgi Slime",
+    "url": "/games/clblumgislime.html",
+    "cat": "Action",
+    "id": "tung_3565"
+  },
+  {
+    "title": "Blumgi Soccer",
+    "url": "/games/clblumgisoccer.html",
+    "cat": "Sports",
+    "id": "tung_3566"
+  },
+  {
+    "title": "Bmx 2",
+    "url": "/games/clbmx22.html",
+    "cat": "Action",
+    "id": "tung_3567"
+  },
+  {
+    "title": "Bntts",
+    "url": "/games/clbntts.html",
+    "cat": "Action",
+    "id": "tung_3568"
+  },
+  {
+    "title": "Bolly Beat",
+    "url": "/games/clbollybeat.html",
+    "cat": "Action",
+    "id": "tung_3569"
+  },
+  {
+    "title": "Bottle Flip 3D",
+    "url": "/games/clbottleflip3d.html",
+    "cat": "Action",
+    "id": "tung_3570"
+  },
+  {
+    "title": "Bowl File Name",
+    "url": "/games/clbowlfilename.html",
+    "cat": "Action",
+    "id": "tung_3571"
+  },
+  {
+    "title": "Boy Galaxy",
+    "url": "/games/clboygalaxy.html",
+    "cat": "Action",
+    "id": "tung_3572"
+  },
+  {
+    "title": "Btts",
+    "url": "/games/clbtts3.html",
+    "cat": "Action",
+    "id": "tung_3573"
+  },
+  {
+    "title": "Btts 2",
+    "url": "/games/clbtts22.html",
+    "cat": "Action",
+    "id": "tung_3574"
+  },
+  {
+    "title": "Bubble Tanks TD",
+    "url": "/games/clbubbletankstd2.html",
+    "cat": "Action",
+    "id": "tung_3575"
+  },
+  {
+    "title": "Burrito Bison 2",
+    "url": "/games/clburritobison2.html",
+    "cat": "Action",
+    "id": "tung_3576"
+  },
+  {
+    "title": "Car Crash 3",
+    "url": "/games/clcarcrash3.html",
+    "cat": "Action",
+    "id": "tung_3577"
+  },
+  {
+    "title": "Car King Arena",
+    "url": "/games/clcarkingarena.html",
+    "cat": "Action",
+    "id": "tung_3578"
+  },
+  {
+    "title": "Car Mods",
+    "url": "/games/clcarmods.html",
+    "cat": "Action",
+    "id": "tung_3579"
+  },
+  {
+    "title": "Car Stunts Driving",
+    "url": "/games/clcarstuntsdriving.html",
+    "cat": "Action",
+    "id": "tung_3580"
+  },
+  {
+    "title": "Cheshire Ina Chat Room",
+    "url": "/games/clcheshireinachatroom.html",
+    "cat": "Action",
+    "id": "tung_3581"
+  },
+  {
+    "title": "Cl Madness Ambulation",
+    "url": "/games/clclmadnessambulation2.html",
+    "cat": "Action",
+    "id": "tung_3582"
+  },
+  {
+    "title": "Clash Royale",
+    "url": "/games/clclashroyale.html",
+    "cat": "Action",
+    "id": "tung_3583"
+  },
+  {
+    "title": "Coal Llc Demo",
+    "url": "/games/clcoalllcdemo2.html",
+    "cat": "Action",
+    "id": "tung_3584"
+  },
+  {
+    "title": "Cod 4",
+    "url": "/games/clcod42.html",
+    "cat": "Action",
+    "id": "tung_3585"
+  },
+  {
+    "title": "Cod Black Ops",
+    "url": "/games/clcodblackops.html",
+    "cat": "Action",
+    "id": "tung_3586"
+  },
+  {
+    "title": "Cod Modern Warfare",
+    "url": "/games/clcodmodernwarfare2.html",
+    "cat": "Action",
+    "id": "tung_3587"
+  },
+  {
+    "title": "Cod World at War",
+    "url": "/games/clcodworldatwar2.html",
+    "cat": "Action",
+    "id": "tung_3588"
+  },
+  {
+    "title": "Codd Efi Ance",
+    "url": "/games/clcoddefiance2.html",
+    "cat": "Action",
+    "id": "tung_3589"
+  },
+  {
+    "title": "Coffee Maker",
+    "url": "/games/clcoffeemaker.html",
+    "cat": "Action",
+    "id": "tung_3590"
+  },
+  {
+    "title": "Color Burst 3D",
+    "url": "/games/clcolorburst3d.html",
+    "cat": "Action",
+    "id": "tung_3591"
+  },
+  {
+    "title": "Combo Pool",
+    "url": "/games/clcombopool.html",
+    "cat": "Action",
+    "id": "tung_3592"
+  },
+  {
+    "title": "Cot L K",
+    "url": "/games/clcotlk.html",
+    "cat": "Action",
+    "id": "tung_3593"
+  },
+  {
+    "title": "Counters Nip E",
+    "url": "/games/clcountersnipe.html",
+    "cat": "Action",
+    "id": "tung_3594"
+  },
+  {
+    "title": "Crash Bandicoot 3",
+    "url": "/games/clcrashbandicoot3.html",
+    "cat": "Action",
+    "id": "tung_3595"
+  },
+  {
+    "title": "Csd S",
+    "url": "/games/clcsds2.html",
+    "cat": "Action",
+    "id": "tung_3596"
+  },
+  {
+    "title": "Dank Tomb",
+    "url": "/games/cldanktomb.html",
+    "cat": "Action",
+    "id": "tung_3597"
+  },
+  {
+    "title": "Db Zat Tacks AI Yan S",
+    "url": "/games/cldbzattacksaiyans2.html",
+    "cat": "Action",
+    "id": "tung_3598"
+  },
+  {
+    "title": "Db Zd Evolution",
+    "url": "/games/cldbzdevolution2.html",
+    "cat": "Action",
+    "id": "tung_3599"
+  },
+  {
+    "title": "Db Zs Up Er Warriors Sonic",
+    "url": "/games/cldbzsuperwarriorssonic2.html",
+    "cat": "Action",
+    "id": "tung_3600"
+  },
+  {
+    "title": "Dbo Rigi Ns",
+    "url": "/games/cldborigins3.html",
+    "cat": "Action",
+    "id": "tung_3601"
+  },
+  {
+    "title": "Dbo Rigi Ns 2",
+    "url": "/games/cldborigins22.html",
+    "cat": "Action",
+    "id": "tung_3602"
+  },
+  {
+    "title": "Dementi Um",
+    "url": "/games/cldementium2.html",
+    "cat": "Action",
+    "id": "tung_3603"
+  },
+  {
+    "title": "Dig Dug 2 6",
+    "url": "/games/cldigdug262.html",
+    "cat": "Action",
+    "id": "tung_3604"
+  },
+  {
+    "title": "Dino Dudes",
+    "url": "/games/cldinodudes2.html",
+    "cat": "Action",
+    "id": "tung_3605"
+  },
+  {
+    "title": "Doodle Jump Goober",
+    "url": "/games/cldoodlejumpgoober.html",
+    "cat": "Platformer",
+    "id": "tung_3606"
+  },
+  {
+    "title": "Douche Bagwork Out",
+    "url": "/games/cldouchebagworkout.html",
+    "cat": "Action",
+    "id": "tung_3607"
+  },
+  {
+    "title": "Dragon Xcl Ien T",
+    "url": "/games/cldragonxclient2.html",
+    "cat": "Action",
+    "id": "tung_3608"
+  },
+  {
+    "title": "Dubs Te P",
+    "url": "/games/cldubstep2.html",
+    "cat": "Action",
+    "id": "tung_3609"
+  },
+  {
+    "title": "Duck Lf E 5",
+    "url": "/games/clducklfe52.html",
+    "cat": "Action",
+    "id": "tung_3610"
+  },
+  {
+    "title": "Dusk Child",
+    "url": "/games/clduskchild.html",
+    "cat": "Action",
+    "id": "tung_3611"
+  },
+  {
+    "title": "Ehmorris Lander",
+    "url": "/games/clehmorrislander.html",
+    "cat": "Action",
+    "id": "tung_3612"
+  },
+  {
+    "title": "Etrian Oddyssey",
+    "url": "/games/cletrianoddyssey2.html",
+    "cat": "Action",
+    "id": "tung_3613"
+  },
+  {
+    "title": "Fifa 2 0001",
+    "url": "/games/clfifa20001.html",
+    "cat": "Action",
+    "id": "tung_3614"
+  },
+  {
+    "title": "Fire Blob",
+    "url": "/games/clfireblob.html",
+    "cat": "Action",
+    "id": "tung_3615"
+  },
+  {
+    "title": "Fireboy and Water Girl 5",
+    "url": "/games/clfireboyandwatergirl5.html",
+    "cat": "Action",
+    "id": "tung_3616"
+  },
+  {
+    "title": "Fireboy and Water Girl 6",
+    "url": "/games/clfireboyandwatergirl6.html",
+    "cat": "Action",
+    "id": "tung_3617"
+  },
+  {
+    "title": "Fnf Hex",
+    "url": "/games/clfnfhex2.html",
+    "cat": "Action",
+    "id": "tung_3618"
+  },
+  {
+    "title": "Fnf Indie Cross",
+    "url": "/games/clfnfindiecross2.html",
+    "cat": "Action",
+    "id": "tung_3619"
+  },
+  {
+    "title": "Fnf Mid Fight",
+    "url": "/games/clfnfmidfight2.html",
+    "cat": "Action",
+    "id": "tung_3620"
+  },
+  {
+    "title": "Fnf Miku",
+    "url": "/games/clfnfmiku2.html",
+    "cat": "Action",
+    "id": "tung_3621"
+  },
+  {
+    "title": "Fnf Neo",
+    "url": "/games/clfnfneo2.html",
+    "cat": "Action",
+    "id": "tung_3622"
+  },
+  {
+    "title": "Fnf Soft",
+    "url": "/games/clfnfsoft2.html",
+    "cat": "Action",
+    "id": "tung_3623"
+  },
+  {
+    "title": "Fnf Tricky",
+    "url": "/games/clfnftricky2.html",
+    "cat": "Action",
+    "id": "tung_3624"
+  },
+  {
+    "title": "Fnf Whitty",
+    "url": "/games/clfnfwhitty2.html",
+    "cat": "Action",
+    "id": "tung_3625"
+  },
+  {
+    "title": "Fort Zone",
+    "url": "/games/clfortzone2.html",
+    "cat": "Action",
+    "id": "tung_3626"
+  },
+  {
+    "title": "From Rust to Ash",
+    "url": "/games/clfromrusttoash.html",
+    "cat": "Action",
+    "id": "tung_3627"
+  },
+  {
+    "title": "Fruit Merge",
+    "url": "/games/clfruitmerge.html",
+    "cat": "Action",
+    "id": "tung_3628"
+  },
+  {
+    "title": "Funny Battle",
+    "url": "/games/clfunnybattle3.html",
+    "cat": "Action",
+    "id": "tung_3629"
+  },
+  {
+    "title": "Funny Battle 2",
+    "url": "/games/clfunnybattle22.html",
+    "cat": "Action",
+    "id": "tung_3630"
+  },
+  {
+    "title": "Garce Llo",
+    "url": "/games/clgarcello2.html",
+    "cat": "Action",
+    "id": "tung_3631"
+  },
+  {
+    "title": "Getting Over It",
+    "url": "/games/clgettingoverit2.html",
+    "cat": "Action",
+    "id": "tung_3632"
+  },
+  {
+    "title": "Ghost Trick",
+    "url": "/games/clghosttrick2.html",
+    "cat": "Action",
+    "id": "tung_3633"
+  },
+  {
+    "title": "Gimmie the Air Pod",
+    "url": "/games/clgimmietheairpod2.html",
+    "cat": "Action",
+    "id": "tung_3634"
+  },
+  {
+    "title": "Golf Orbit",
+    "url": "/games/clgolforbit.html",
+    "cat": "Sports",
+    "id": "tung_3635"
+  },
+  {
+    "title": "Golf Sunday",
+    "url": "/games/clgolfsunday.html",
+    "cat": "Sports",
+    "id": "tung_3636"
+  },
+  {
+    "title": "Granny 2 2",
+    "url": "/games/clgranny222.html",
+    "cat": "Action",
+    "id": "tung_3637"
+  },
+  {
+    "title": "Grimace Birthday",
+    "url": "/games/clgrimacebirthday2.html",
+    "cat": "Action",
+    "id": "tung_3638"
+  },
+  {
+    "title": "Gta",
+    "url": "/games/clgta3.html",
+    "cat": "Action",
+    "id": "tung_3639"
+  },
+  {
+    "title": "Gta 2",
+    "url": "/games/clgta23.html",
+    "cat": "Action",
+    "id": "tung_3640"
+  },
+  {
+    "title": "Gta China",
+    "url": "/games/clgtachina2.html",
+    "cat": "Action",
+    "id": "tung_3641"
+  },
+  {
+    "title": "Gta File Name",
+    "url": "/games/clgtafilename.html",
+    "cat": "Action",
+    "id": "tung_3642"
+  },
+  {
+    "title": "Gun Cho",
+    "url": "/games/clguncho.html",
+    "cat": "Action",
+    "id": "tung_3643"
+  },
+  {
+    "title": "Gun Mayhem 2 Goof",
+    "url": "/games/clgunmayhem2goof2.html",
+    "cat": "Action",
+    "id": "tung_3644"
+  },
+  {
+    "title": "Hide Seek",
+    "url": "/games/clhideseek.html",
+    "cat": "Action",
+    "id": "tung_3645"
+  },
+  {
+    "title": "High Stakes",
+    "url": "/games/clhighstakes.html",
+    "cat": "Action",
+    "id": "tung_3646"
+  },
+  {
+    "title": "Highway Traffic 3D",
+    "url": "/games/clhighwaytraffic3d.html",
+    "cat": "Action",
+    "id": "tung_3647"
+  },
+  {
+    "title": "Hit 8 Ox",
+    "url": "/games/clhit8ox.html",
+    "cat": "Action",
+    "id": "tung_3648"
+  },
+  {
+    "title": "Hobo vs Zombies",
+    "url": "/games/clhobovszombies.html",
+    "cat": "Action",
+    "id": "tung_3649"
+  },
+  {
+    "title": "Ice Age Baby",
+    "url": "/games/cliceagebaby.html",
+    "cat": "Action",
+    "id": "tung_3650"
+  },
+  {
+    "title": "Impossible Quiz 1",
+    "url": "/games/climpossiblequiz1.html",
+    "cat": "Action",
+    "id": "tung_3651"
+  },
+  {
+    "title": "Impossible Quiz 2",
+    "url": "/games/climpossiblequiz22.html",
+    "cat": "Action",
+    "id": "tung_3652"
+  },
+  {
+    "title": "Inclement Emerald",
+    "url": "/games/clinclementemerald2.html",
+    "cat": "Action",
+    "id": "tung_3653"
+  },
+  {
+    "title": "Inside Story",
+    "url": "/games/clinsidestory2.html",
+    "cat": "Adventure",
+    "id": "tung_3654"
+  },
+  {
+    "title": "Into Ruins",
+    "url": "/games/clintoruins.html",
+    "cat": "Action",
+    "id": "tung_3655"
+  },
+  {
+    "title": "Kingdom Hearts Days",
+    "url": "/games/clkingdomheartsdays2.html",
+    "cat": "Action",
+    "id": "tung_3656"
+  },
+  {
+    "title": "Kingdom Hearts Recoded File Name",
+    "url": "/games/clkingdomheartsrecodedfilename.html",
+    "cat": "Action",
+    "id": "tung_3657"
+  },
+  {
+    "title": "Koopas Revenge",
+    "url": "/games/clkoopasrevenge2.html",
+    "cat": "Action",
+    "id": "tung_3658"
+  },
+  {
+    "title": "Last Fire Red",
+    "url": "/games/cllastfirered2.html",
+    "cat": "Action",
+    "id": "tung_3659"
+  },
+  {
+    "title": "Last Stand 2",
+    "url": "/games/cllaststand2.html",
+    "cat": "Action",
+    "id": "tung_3660"
+  },
+  {
+    "title": "Lego Batman",
+    "url": "/games/cllegobatman2.html",
+    "cat": "Action",
+    "id": "tung_3661"
+  },
+  {
+    "title": "Lego Batman 2 Superheroes",
+    "url": "/games/cllegobatman2superheroes2.html",
+    "cat": "Action",
+    "id": "tung_3662"
+  },
+  {
+    "title": "Lego Indiana Jones",
+    "url": "/games/cllegoindianajones3.html",
+    "cat": "Action",
+    "id": "tung_3663"
+  },
+  {
+    "title": "Lego Indiana Jones 2",
+    "url": "/games/cllegoindianajones22.html",
+    "cat": "Action",
+    "id": "tung_3664"
+  },
+  {
+    "title": "Lego Ninja Go",
+    "url": "/games/cllegoninjago2.html",
+    "cat": "Action",
+    "id": "tung_3665"
+  },
+  {
+    "title": "Low Knight",
+    "url": "/games/cllowknight.html",
+    "cat": "Action",
+    "id": "tung_3666"
+  },
+  {
+    "title": "Lucky Blocks",
+    "url": "/games/clluckyblocks2.html",
+    "cat": "Puzzle",
+    "id": "tung_3667"
+  },
+  {
+    "title": "Madden 93",
+    "url": "/games/clmadden932.html",
+    "cat": "Action",
+    "id": "tung_3668"
+  },
+  {
+    "title": "Madden 94",
+    "url": "/games/clmadden942.html",
+    "cat": "Action",
+    "id": "tung_3669"
+  },
+  {
+    "title": "Madden 95",
+    "url": "/games/clmadden952.html",
+    "cat": "Action",
+    "id": "tung_3670"
+  },
+  {
+    "title": "Madden 96",
+    "url": "/games/clmadden962.html",
+    "cat": "Action",
+    "id": "tung_3671"
+  },
+  {
+    "title": "Madden 98",
+    "url": "/games/clmadden98.html",
+    "cat": "Action",
+    "id": "tung_3672"
+  },
+  {
+    "title": "Madden 99",
+    "url": "/games/clmadden992.html",
+    "cat": "Action",
+    "id": "tung_3673"
+  },
+  {
+    "title": "Madness Combat Nexus",
+    "url": "/games/clmadnesscombatnexus2.html",
+    "cat": "Action",
+    "id": "tung_3674"
+  },
+  {
+    "title": "Madness Stand",
+    "url": "/games/clmadnessstand2.html",
+    "cat": "Action",
+    "id": "tung_3675"
+  },
+  {
+    "title": "Marbler Acer",
+    "url": "/games/clmarbleracer2.html",
+    "cat": "Action",
+    "id": "tung_3676"
+  },
+  {
+    "title": "Mario 3",
+    "url": "/games/clmario32.html",
+    "cat": "Retro",
+    "id": "tung_3677"
+  },
+  {
+    "title": "Mastermind World Conquerer",
+    "url": "/games/clmastermindworldconquerer2.html",
+    "cat": "Action",
+    "id": "tung_3678"
+  },
+  {
+    "title": "Mcf Psf Bhd",
+    "url": "/games/clmcfpsfbhd2.html",
+    "cat": "Action",
+    "id": "tung_3679"
+  },
+  {
+    "title": "Mcrae Rally",
+    "url": "/games/clmcraerally2.html",
+    "cat": "Action",
+    "id": "tung_3680"
+  },
+  {
+    "title": "Megaman 0",
+    "url": "/games/clmegaman0.html",
+    "cat": "Retro",
+    "id": "tung_3681"
+  },
+  {
+    "title": "Megaman 5",
+    "url": "/games/clmegaman52.html",
+    "cat": "Retro",
+    "id": "tung_3682"
+  },
+  {
+    "title": "Metal Gears Olid Ps",
+    "url": "/games/clmetalgearsolidps2.html",
+    "cat": "Action",
+    "id": "tung_3683"
+  },
+  {
+    "title": "Micro Mages",
+    "url": "/games/clmicromages.html",
+    "cat": "Action",
+    "id": "tung_3684"
+  },
+  {
+    "title": "Mimic",
+    "url": "/games/clmimic.html",
+    "cat": "Action",
+    "id": "tung_3685"
+  },
+  {
+    "title": "Mini Mart",
+    "url": "/games/clminimart.html",
+    "cat": "Action",
+    "id": "tung_3686"
+  },
+  {
+    "title": "Mortal Kombat",
+    "url": "/games/clmortalkombat.html",
+    "cat": "Action",
+    "id": "tung_3687"
+  },
+  {
+    "title": "Mortal Kombat 2",
+    "url": "/games/clmortalkombat22.html",
+    "cat": "Action",
+    "id": "tung_3688"
+  },
+  {
+    "title": "Moto X3m Spooky Land",
+    "url": "/games/clmotox3mspookyland.html",
+    "cat": "Racing",
+    "id": "tung_3689"
+  },
+  {
+    "title": "N Plus",
+    "url": "/games/clnplus.html",
+    "cat": "Action",
+    "id": "tung_3690"
+  },
+  {
+    "title": "Night Fire",
+    "url": "/games/clnightfire2.html",
+    "cat": "Action",
+    "id": "tung_3691"
+  },
+  {
+    "title": "Null Kevin",
+    "url": "/games/clnullkevin2.html",
+    "cat": "Action",
+    "id": "tung_3692"
+  },
+  {
+    "title": "Obby But You Can Only Go Up",
+    "url": "/games/clobbybutyoucanonlygoup.html",
+    "cat": "Action",
+    "id": "tung_3693"
+  },
+  {
+    "title": "Omega Nugget Clicker",
+    "url": "/games/clomeganuggetclicker.html",
+    "cat": "Retro",
+    "id": "tung_3694"
+  },
+  {
+    "title": "Ordinary Sonic Rom Hack",
+    "url": "/games/clordinarysonicromhack2.html",
+    "cat": "Retro",
+    "id": "tung_3695"
+  },
+  {
+    "title": "Ovo Dimensions",
+    "url": "/games/clovodimensions2.html",
+    "cat": "Action",
+    "id": "tung_3696"
+  },
+  {
+    "title": "Papa Bakeria",
+    "url": "/games/clpapabakeria2.html",
+    "cat": "Action",
+    "id": "tung_3697"
+  },
+  {
+    "title": "Papa Donut",
+    "url": "/games/clpapadonut2.html",
+    "cat": "Action",
+    "id": "tung_3698"
+  },
+  {
+    "title": "Papa Pizza",
+    "url": "/games/clpapapizza.html",
+    "cat": "Action",
+    "id": "tung_3699"
+  },
+  {
+    "title": "Papa Pizza Mamamia",
+    "url": "/games/clpapapizzamamamia.html",
+    "cat": "Action",
+    "id": "tung_3700"
+  },
+  {
+    "title": "Paper IO",
+    "url": "/games/clpaperio.html",
+    "cat": "Action",
+    "id": "tung_3701"
+  },
+  {
+    "title": "Partners Intime",
+    "url": "/games/clpartnersintime2.html",
+    "cat": "Action",
+    "id": "tung_3702"
+  },
+  {
+    "title": "Penfile Namey Kicks",
+    "url": "/games/clpenfilenameykicks.html",
+    "cat": "Action",
+    "id": "tung_3703"
+  },
+  {
+    "title": "Pepsi Manal T",
+    "url": "/games/clpepsimanalt.html",
+    "cat": "Action",
+    "id": "tung_3704"
+  },
+  {
+    "title": "Persona 2 File Name",
+    "url": "/games/clpersona2filename.html",
+    "cat": "Action",
+    "id": "tung_3705"
+  },
+  {
+    "title": "Pheonix Justice for All",
+    "url": "/games/clpheonixjusticeforall2.html",
+    "cat": "Action",
+    "id": "tung_3706"
+  },
+  {
+    "title": "Pico 8",
+    "url": "/games/clpico8.html",
+    "cat": "Action",
+    "id": "tung_3707"
+  },
+  {
+    "title": "Pico Driller",
+    "url": "/games/clpicodriller.html",
+    "cat": "Action",
+    "id": "tung_3708"
+  },
+  {
+    "title": "Pico Hot",
+    "url": "/games/clpicohot.html",
+    "cat": "Action",
+    "id": "tung_3709"
+  },
+  {
+    "title": "Pico Life",
+    "url": "/games/clpicolife.html",
+    "cat": "Action",
+    "id": "tung_3710"
+  },
+  {
+    "title": "Pico Night Punkin",
+    "url": "/games/clpiconightpunkin.html",
+    "cat": "Action",
+    "id": "tung_3711"
+  },
+  {
+    "title": "Pieces of Cake",
+    "url": "/games/clpiecesofcake.html",
+    "cat": "Action",
+    "id": "tung_3712"
+  },
+  {
+    "title": "Pikwip",
+    "url": "/games/clpikwip.html",
+    "cat": "Action",
+    "id": "tung_3713"
+  },
+  {
+    "title": "Pixel Quest Lost Idols",
+    "url": "/games/clpixelquestlostidols2.html",
+    "cat": "Adventure",
+    "id": "tung_3714"
+  },
+  {
+    "title": "Pizza Papa",
+    "url": "/games/clpizzapapa2.html",
+    "cat": "Action",
+    "id": "tung_3715"
+  },
+  {
+    "title": "Pokemon Black",
+    "url": "/games/clpokemonblack.html",
+    "cat": "Retro",
+    "id": "tung_3716"
+  },
+  {
+    "title": "Pokemon Black 2html",
+    "url": "/games/clpokemonblack2html.html",
+    "cat": "Retro",
+    "id": "tung_3717"
+  },
+  {
+    "title": "Pokemon Blue",
+    "url": "/games/clpokemonblue.html",
+    "cat": "Retro",
+    "id": "tung_3718"
+  },
+  {
+    "title": "Pokemon Emerald Random",
+    "url": "/games/clpokemonemeraldrandom.html",
+    "cat": "Retro",
+    "id": "tung_3719"
+  },
+  {
+    "title": "Pokemon Mon Clover",
+    "url": "/games/clpokemonmonclover.html",
+    "cat": "Retro",
+    "id": "tung_3720"
+  },
+  {
+    "title": "Pokemon Mon Crystal",
+    "url": "/games/clpokemonmoncrystal.html",
+    "cat": "Retro",
+    "id": "tung_3721"
+  },
+  {
+    "title": "Pokemon Mon Firer Ed",
+    "url": "/games/clpokemonmonfirered.html",
+    "cat": "Retro",
+    "id": "tung_3722"
+  },
+  {
+    "title": "Pokemon Mon Firer Edra Nd Om Ize D",
+    "url": "/games/clpokemonmonfireredrandomized.html",
+    "cat": "Retro",
+    "id": "tung_3723"
+  },
+  {
+    "title": "Pokemon Mon Leaf Green",
+    "url": "/games/clpokemonmonleafgreen.html",
+    "cat": "Retro",
+    "id": "tung_3724"
+  },
+  {
+    "title": "Pokemon Mon Mystery Dungeon",
+    "url": "/games/clpokemonmonmysterydungeon.html",
+    "cat": "Retro",
+    "id": "tung_3725"
+  },
+  {
+    "title": "Pokemon Mon Quetzal",
+    "url": "/games/clpokemonmonquetzal.html",
+    "cat": "Retro",
+    "id": "tung_3726"
+  },
+  {
+    "title": "Pokemon Mon Ruby",
+    "url": "/games/clpokemonmonruby.html",
+    "cat": "Retro",
+    "id": "tung_3727"
+  },
+  {
+    "title": "Pokemon Mon Ultimate Fusion",
+    "url": "/games/clpokemonmonultimatefusion.html",
+    "cat": "Retro",
+    "id": "tung_3728"
+  },
+  {
+    "title": "Pokemon Mon Unbound",
+    "url": "/games/clpokemonmonunbound.html",
+    "cat": "Retro",
+    "id": "tung_3729"
+  },
+  {
+    "title": "Pokemon Mon Vega",
+    "url": "/games/clpokemonmonvega.html",
+    "cat": "Retro",
+    "id": "tung_3730"
+  },
+  {
+    "title": "Pokemon Mone Ne Rg Ize Deme Ra Ld",
+    "url": "/games/clpokemonmonenergizedemerald.html",
+    "cat": "Retro",
+    "id": "tung_3731"
+  },
+  {
+    "title": "Pokemon Mone Vol Ve DS Fd Gs Dfs",
+    "url": "/games/clpokemonmonevolvedsfdgsdfs.html",
+    "cat": "Retro",
+    "id": "tung_3732"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ld",
+    "url": "/games/clpokemonmonemerald.html",
+    "cat": "Retro",
+    "id": "tung_3733"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ld Imperium",
+    "url": "/games/clpokemonmonemeraldimperium.html",
+    "cat": "Retro",
+    "id": "tung_3734"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ld Kai Zo",
+    "url": "/games/clpokemonmonemeraldkaizo.html",
+    "cat": "Retro",
+    "id": "tung_3735"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ld Mini",
+    "url": "/games/clpokemonmonemeraldmini.html",
+    "cat": "Retro",
+    "id": "tung_3736"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ld Rouge",
+    "url": "/games/clpokemonmonemeraldrouge.html",
+    "cat": "Retro",
+    "id": "tung_3737"
+  },
+  {
+    "title": "Pokemon Moneme Ra Ldc Rest",
+    "url": "/games/clpokemonmonemeraldcrest.html",
+    "cat": "Retro",
+    "id": "tung_3738"
+  },
+  {
+    "title": "Pokemon Moneme Ra Lds Ea Glass",
+    "url": "/games/clpokemonmonemeraldseaglass.html",
+    "cat": "Retro",
+    "id": "tung_3739"
+  },
+  {
+    "title": "Pokemon Mongol D",
+    "url": "/games/clpokemonmongold.html",
+    "cat": "Retro",
+    "id": "tung_3740"
+  },
+  {
+    "title": "Pokemon Monro Ck Et Edition",
+    "url": "/games/clpokemonmonrocketedition.html",
+    "cat": "Retro",
+    "id": "tung_3741"
+  },
+  {
+    "title": "Pokemon Mons App Hire",
+    "url": "/games/clpokemonmonsapphire.html",
+    "cat": "Retro",
+    "id": "tung_3742"
+  },
+  {
+    "title": "Pokemon Mons Ilv Er",
+    "url": "/games/clpokemonmonsilver.html",
+    "cat": "Retro",
+    "id": "tung_3743"
+  },
+  {
+    "title": "Pokemon Mons Nap",
+    "url": "/games/clpokemonmonsnap.html",
+    "cat": "Retro",
+    "id": "tung_3744"
+  },
+  {
+    "title": "Pokemon Mons Tad Ium",
+    "url": "/games/clpokemonmonstadium.html",
+    "cat": "Retro",
+    "id": "tung_3745"
+  },
+  {
+    "title": "Pokemon Monto Wer Defense",
+    "url": "/games/clpokemonmontowerdefense.html",
+    "cat": "Retro",
+    "id": "tung_3746"
+  },
+  {
+    "title": "Pokemon Mystery Explorers Ofs Ky",
+    "url": "/games/clpokemonmysteryexplorersofsky.html",
+    "cat": "Retro",
+    "id": "tung_3747"
+  },
+  {
+    "title": "Pokemon Pearl",
+    "url": "/games/clpokemonpearl.html",
+    "cat": "Retro",
+    "id": "tung_3748"
+  },
+  {
+    "title": "Pokemon Platinum",
+    "url": "/games/clpokemonplatinum.html",
+    "cat": "Retro",
+    "id": "tung_3749"
+  },
+  {
+    "title": "Pokemon Platinum Randomized",
+    "url": "/games/clpokemonplatinumrandomized.html",
+    "cat": "Retro",
+    "id": "tung_3750"
+  },
+  {
+    "title": "Pokemon White",
+    "url": "/games/clpokemonwhite.html",
+    "cat": "Retro",
+    "id": "tung_3751"
+  },
+  {
+    "title": "Pokemon White 2",
+    "url": "/games/clpokemonwhite2.html",
+    "cat": "Retro",
+    "id": "tung_3752"
+  },
+  {
+    "title": "Pokemon White 2 File Name",
+    "url": "/games/clpokemonwhite2filename.html",
+    "cat": "Retro",
+    "id": "tung_3753"
+  },
+  {
+    "title": "Poker Ed",
+    "url": "/games/clpokered2.html",
+    "cat": "Action",
+    "id": "tung_3754"
+  },
+  {
+    "title": "Pokes Cor Che Dsi Lv Er",
+    "url": "/games/clpokescorchedsilver2.html",
+    "cat": "Action",
+    "id": "tung_3755"
+  },
+  {
+    "title": "Pork Like",
+    "url": "/games/clporklike.html",
+    "cat": "Action",
+    "id": "tung_3756"
+  },
+  {
+    "title": "Portal Defenders TD",
+    "url": "/games/clportaldefenderstd2.html",
+    "cat": "Action",
+    "id": "tung_3757"
+  },
+  {
+    "title": "Porter",
+    "url": "/games/clporter.html",
+    "cat": "Action",
+    "id": "tung_3758"
+  },
+  {
+    "title": "Praxis Fighter X",
+    "url": "/games/clpraxisfighterx.html",
+    "cat": "Action",
+    "id": "tung_3759"
+  },
+  {
+    "title": "Prebronze Age",
+    "url": "/games/clprebronzeage.html",
+    "cat": "Action",
+    "id": "tung_3760"
+  },
+  {
+    "title": "Pull Frog",
+    "url": "/games/clpullfrog.html",
+    "cat": "Action",
+    "id": "tung_3761"
+  },
+  {
+    "title": "Quake 2",
+    "url": "/games/clquake22.html",
+    "cat": "Action",
+    "id": "tung_3762"
+  },
+  {
+    "title": "Quake 3",
+    "url": "/games/clquake32.html",
+    "cat": "Action",
+    "id": "tung_3763"
+  },
+  {
+    "title": "Radical Red",
+    "url": "/games/clradicalred2.html",
+    "cat": "Action",
+    "id": "tung_3764"
+  },
+  {
+    "title": "Rainbows IX",
+    "url": "/games/clrainbowsix2.html",
+    "cat": "Action",
+    "id": "tung_3765"
+  },
+  {
+    "title": "Rainbows IX File Name",
+    "url": "/games/clrainbowsixfilename.html",
+    "cat": "Action",
+    "id": "tung_3766"
+  },
+  {
+    "title": "Ray 1",
+    "url": "/games/clray12.html",
+    "cat": "Action",
+    "id": "tung_3767"
+  },
+  {
+    "title": "Ray 2",
+    "url": "/games/clray22.html",
+    "cat": "Action",
+    "id": "tung_3768"
+  },
+  {
+    "title": "Real Flights Im",
+    "url": "/games/clrealflightsim2.html",
+    "cat": "Action",
+    "id": "tung_3769"
+  },
+  {
+    "title": "Rotate",
+    "url": "/games/clrotate.html",
+    "cat": "Action",
+    "id": "tung_3770"
+  },
+  {
+    "title": "Silk",
+    "url": "/games/clsilk.html",
+    "cat": "Action",
+    "id": "tung_3771"
+  },
+  {
+    "title": "Slime Labratory",
+    "url": "/games/clslimelabratory2.html",
+    "cat": "Action",
+    "id": "tung_3772"
+  },
+  {
+    "title": "Slipways",
+    "url": "/games/clslipways.html",
+    "cat": "Action",
+    "id": "tung_3773"
+  },
+  {
+    "title": "Slope Plus",
+    "url": "/games/clslopeplus2.html",
+    "cat": "Action",
+    "id": "tung_3774"
+  },
+  {
+    "title": "Smb Crossover",
+    "url": "/games/clsmbcrossover2.html",
+    "cat": "Action",
+    "id": "tung_3775"
+  },
+  {
+    "title": "Snake Is",
+    "url": "/games/clsnakeis.html",
+    "cat": "Action",
+    "id": "tung_3776"
+  },
+  {
+    "title": "Snakelike",
+    "url": "/games/clsnakelike.html",
+    "cat": "Action",
+    "id": "tung_3777"
+  },
+  {
+    "title": "Snow Rider",
+    "url": "/games/clsnowrider2.html",
+    "cat": "Action",
+    "id": "tung_3778"
+  },
+  {
+    "title": "Sonic 3dbl Ast Dx",
+    "url": "/games/clsonic3dblastdx2.html",
+    "cat": "Retro",
+    "id": "tung_3779"
+  },
+  {
+    "title": "Steal Brainrot Online",
+    "url": "/games/clstealbrainrotonline.html",
+    "cat": "Puzzle",
+    "id": "tung_3780"
+  },
+  {
+    "title": "Stick RPG Complete",
+    "url": "/games/clstickrpgcomplete2.html",
+    "cat": "Adventure",
+    "id": "tung_3781"
+  },
+  {
+    "title": "Stickman Airship",
+    "url": "/games/clstickmanairship.html",
+    "cat": "Action",
+    "id": "tung_3782"
+  },
+  {
+    "title": "Stickman Breaking Bank",
+    "url": "/games/clstickmanbreakingbank.html",
+    "cat": "Action",
+    "id": "tung_3783"
+  },
+  {
+    "title": "Stickman Escaping Prison",
+    "url": "/games/clstickmanescapingprison.html",
+    "cat": "Action",
+    "id": "tung_3784"
+  },
+  {
+    "title": "Stickman Flee Complex",
+    "url": "/games/clstickmanfleecomplex.html",
+    "cat": "Action",
+    "id": "tung_3785"
+  },
+  {
+    "title": "Stickman Stealing Diamond",
+    "url": "/games/clstickmanstealingdiamond2.html",
+    "cat": "Action",
+    "id": "tung_3786"
+  },
+  {
+    "title": "Strange Journet",
+    "url": "/games/clstrangejournet2.html",
+    "cat": "Action",
+    "id": "tung_3787"
+  },
+  {
+    "title": "Streange Rope Police",
+    "url": "/games/clstreangeropepolice.html",
+    "cat": "Action",
+    "id": "tung_3788"
+  },
+  {
+    "title": "Subway Surfers Barcelona",
+    "url": "/games/clsubwaysurfersbarcelona.html",
+    "cat": "Action",
+    "id": "tung_3789"
+  },
+  {
+    "title": "Subway Surfers Beijing",
+    "url": "/games/clsubwaysurfersbeijing.html",
+    "cat": "Action",
+    "id": "tung_3790"
+  },
+  {
+    "title": "Subway Surfers Berlin",
+    "url": "/games/clsubwaysurfersberlin.html",
+    "cat": "Action",
+    "id": "tung_3791"
+  },
+  {
+    "title": "Subway Surfers Buenos Aires",
+    "url": "/games/clsubwaysurfersbuenosaires.html",
+    "cat": "Action",
+    "id": "tung_3792"
+  },
+  {
+    "title": "Subway Surfers Havana",
+    "url": "/games/clsubwaysurfershavana.html",
+    "cat": "Action",
+    "id": "tung_3793"
+  },
+  {
+    "title": "Subway Surfers Houston",
+    "url": "/games/clsubwaysurfershouston.html",
+    "cat": "Action",
+    "id": "tung_3794"
+  },
+  {
+    "title": "Subway Surfers Iceland",
+    "url": "/games/clsubwaysurfersiceland.html",
+    "cat": "Action",
+    "id": "tung_3795"
+  },
+  {
+    "title": "Subway Surfers London",
+    "url": "/games/clsubwaysurferslondon.html",
+    "cat": "Action",
+    "id": "tung_3796"
+  },
+  {
+    "title": "Subway Surfers Mexico",
+    "url": "/games/clsubwaysurfersmexico.html",
+    "cat": "Action",
+    "id": "tung_3797"
+  },
+  {
+    "title": "Subway Surfers Miami",
+    "url": "/games/clsubwaysurfersmiami.html",
+    "cat": "Action",
+    "id": "tung_3798"
+  },
+  {
+    "title": "Subway Surfers Monaco",
+    "url": "/games/clsubwaysurfersmonaco.html",
+    "cat": "Action",
+    "id": "tung_3799"
+  },
+  {
+    "title": "Subway Surfers Stp Et Ers Burg",
+    "url": "/games/clsubwaysurfersstpetersburg.html",
+    "cat": "Action",
+    "id": "tung_3800"
+  },
+  {
+    "title": "Subway Surfers Winter Holiday",
+    "url": "/games/clsubwaysurferswinterholiday.html",
+    "cat": "Action",
+    "id": "tung_3801"
+  },
+  {
+    "title": "Subway Surfers Zurich",
+    "url": "/games/clsubwaysurferszurich.html",
+    "cat": "Action",
+    "id": "tung_3802"
+  },
+  {
+    "title": "Suika",
+    "url": "/games/clsuika.html",
+    "cat": "Action",
+    "id": "tung_3803"
+  },
+  {
+    "title": "Suika Pico",
+    "url": "/games/clsuikapico.html",
+    "cat": "Action",
+    "id": "tung_3804"
+  },
+  {
+    "title": "Sun and Moon",
+    "url": "/games/clsunandmoon2.html",
+    "cat": "Action",
+    "id": "tung_3805"
+  },
+  {
+    "title": "Super Castle Vaniavi",
+    "url": "/games/clsupercastlevaniavi2.html",
+    "cat": "Action",
+    "id": "tung_3806"
+  },
+  {
+    "title": "Super Mario",
+    "url": "/games/clsupermario2.html",
+    "cat": "Retro",
+    "id": "tung_3807"
+  },
+  {
+    "title": "Super Mario Bros 2 Us",
+    "url": "/games/clsupermariobros2us2.html",
+    "cat": "Retro",
+    "id": "tung_3808"
+  },
+  {
+    "title": "Super Mario World 2",
+    "url": "/games/clsupermarioworld22.html",
+    "cat": "Retro",
+    "id": "tung_3809"
+  },
+  {
+    "title": "Survev IO",
+    "url": "/games/clsurvevio.html",
+    "cat": "Action",
+    "id": "tung_3810"
+  },
+  {
+    "title": "Sushi Cat 2",
+    "url": "/games/clsushicat2.html",
+    "cat": "Action",
+    "id": "tung_3811"
+  },
+  {
+    "title": "Sword Ands Hield Ultimate Plus",
+    "url": "/games/clswordandshieldultimateplus2.html",
+    "cat": "Action",
+    "id": "tung_3812"
+  },
+  {
+    "title": "Swordplay",
+    "url": "/games/clswordplay2.html",
+    "cat": "Action",
+    "id": "tung_3813"
+  },
+  {
+    "title": "Taisei",
+    "url": "/games/cltaisei2.html",
+    "cat": "Action",
+    "id": "tung_3814"
+  },
+  {
+    "title": "Tank Mayhem",
+    "url": "/games/cltankmayhem.html",
+    "cat": "Action",
+    "id": "tung_3815"
+  },
+  {
+    "title": "Terra",
+    "url": "/games/clterra.html",
+    "cat": "Action",
+    "id": "tung_3816"
+  },
+  {
+    "title": "There Is No File",
+    "url": "/games/clthereisnofile2.html",
+    "cat": "Action",
+    "id": "tung_3817"
+  },
+  {
+    "title": "Toast Arling",
+    "url": "/games/cltoastarling.html",
+    "cat": "Action",
+    "id": "tung_3818"
+  },
+  {
+    "title": "Tony Hawk Pro Skater",
+    "url": "/games/cltonyhawkproskater.html",
+    "cat": "Sports",
+    "id": "tung_3819"
+  },
+  {
+    "title": "Tony Hawk Skater 2",
+    "url": "/games/cltonyhawkskater22.html",
+    "cat": "Sports",
+    "id": "tung_3820"
+  },
+  {
+    "title": "Tony Hawk Skater 4",
+    "url": "/games/cltonyhawkskater42.html",
+    "cat": "Sports",
+    "id": "tung_3821"
+  },
+  {
+    "title": "Too Many Types",
+    "url": "/games/cltoomanytypes2.html",
+    "cat": "Action",
+    "id": "tung_3822"
+  },
+  {
+    "title": "Tower Blocks",
+    "url": "/games/cltowerblocks.html",
+    "cat": "Puzzle",
+    "id": "tung_3823"
+  },
+  {
+    "title": "Trucks Im",
+    "url": "/games/cltrucksim2.html",
+    "cat": "Action",
+    "id": "tung_3824"
+  },
+  {
+    "title": "Tunnel Rush Better",
+    "url": "/games/cltunnelrushbetter2.html",
+    "cat": "Action",
+    "id": "tung_3825"
+  },
+  {
+    "title": "Two Ball 3D",
+    "url": "/games/cltwoball3d.html",
+    "cat": "Action",
+    "id": "tung_3826"
+  },
+  {
+    "title": "Ufo Swamp Oddysey",
+    "url": "/games/clufoswampoddysey.html",
+    "cat": "Action",
+    "id": "tung_3827"
+  },
+  {
+    "title": "Uno",
+    "url": "/games/cluno.html",
+    "cat": "Action",
+    "id": "tung_3828"
+  },
+  {
+    "title": "Villager",
+    "url": "/games/clvillager.html",
+    "cat": "Action",
+    "id": "tung_3829"
+  },
+  {
+    "title": "Witchcraft TD",
+    "url": "/games/clwitchcrafttd.html",
+    "cat": "Strategy",
+    "id": "tung_3830"
+  },
+  {
+    "title": "Wolfenstein",
+    "url": "/games/clwolfenstein2.html",
+    "cat": "Action",
+    "id": "tung_3831"
+  },
+  {
+    "title": "World Cup 98",
+    "url": "/games/clworldcup982.html",
+    "cat": "Action",
+    "id": "tung_3832"
+  },
+  {
+    "title": "Zombopaclypse 2",
+    "url": "/games/clzombopaclypse22.html",
+    "cat": "Action",
+    "id": "tung_3833"
+  },
+  {
+    "title": "Zuma Shooter",
+    "url": "/games/clzumashooter.html",
+    "cat": "Action",
+    "id": "tung_3834"
+  },
+  {
+    "title": "game inside itself",
+    "url": "/games/clgameinsideitself.html",
+    "cat": "Action",
+    "id": "tung_3835"
+  },
+  {
+    "title": "100ng",
+    "url": "/games/cl100ng.html",
+    "cat": "Arcade",
+    "id": "tung_3836"
+  },
+  {
+    "title": "2048 Multitask",
+    "url": "/games/cl2048multitask.html",
+    "cat": "Puzzle",
+    "id": "tung_3837"
+  },
+  {
+    "title": "ShapeShootout",
+    "url": "/games/clshapeshootout.html",
+    "cat": "Action",
+    "id": "tung_3838"
+  },
+  {
+    "title": "Stickman Survival",
+    "url": "/games/clstickmansurvival.html",
+    "cat": "Arcade",
+    "id": "tung_3839"
+  },
+  {
+    "title": "Trimps",
+    "url": "/games/cltrimps.html",
+    "cat": "Arcade",
+    "id": "tung_3840"
+  },
+  {
+    "title": "Align 4",
+    "url": "/games/clalign4.html",
+    "cat": "Arcade",
+    "id": "tung_3841"
+  },
+  {
+    "title": "Amazing Rope Police",
+    "url": "/games/clamazingropepolice.html",
+    "cat": "Arcade",
+    "id": "tung_3842"
+  },
+  {
+    "title": "Amidst The Clouds",
+    "url": "/games/clamidsttheclouds.html",
+    "cat": "Arcade",
+    "id": "tung_3843"
+  },
+  {
+    "title": "Angelunder",
+    "url": "/games/clangelunder.html",
+    "cat": "Arcade",
+    "id": "tung_3844"
+  },
+  {
+    "title": "Angry Sharks",
+    "url": "/games/clangrysharks.html",
+    "cat": "Arcade",
+    "id": "tung_3845"
+  },
+  {
+    "title": "Aquapark Slides",
+    "url": "/games/claquaparkslides.html",
+    "cat": "Arcade",
+    "id": "tung_3846"
+  },
+  {
+    "title": "Astray",
+    "url": "/games/clastray.html",
+    "cat": "Arcade",
+    "id": "tung_3847"
+  },
+  {
+    "title": "Blacholesquare",
+    "url": "/games/clblacholesquare.html",
+    "cat": "Arcade",
+    "id": "tung_3848"
+  },
+  {
+    "title": "Bus And Subway",
+    "url": "/games/clbusandsubway.html",
+    "cat": "Arcade",
+    "id": "tung_3849"
+  },
+  {
+    "title": "Cars Simulator",
+    "url": "/games/clcarssimulator.html",
+    "cat": "Strategy",
+    "id": "tung_3850"
+  },
+  {
+    "title": "Champion Island",
+    "url": "/games/clchampionisland.html",
+    "cat": "Adventure",
+    "id": "tung_3851"
+  },
+  {
+    "title": "Chill Radio",
+    "url": "/games/clchillradio.html",
+    "cat": "Arcade",
+    "id": "tung_3852"
+  },
+  {
+    "title": "Cnpingpong",
+    "url": "/games/clcnpingpong.html",
+    "cat": "Arcade",
+    "id": "tung_3853"
+  },
+  {
+    "title": "Dante",
+    "url": "/games/cldante.html",
+    "cat": "Arcade",
+    "id": "tung_3854"
+  },
+  {
+    "title": "Doctor Acorn2",
+    "url": "/games/cldoctoracorn2.html",
+    "cat": "Arcade",
+    "id": "tung_3855"
+  },
+  {
+    "title": "Eaglerfaithful",
+    "url": "/games/cleaglerfaithful.html",
+    "cat": "Arcade",
+    "id": "tung_3856"
+  },
+  {
+    "title": "Eaglerjp",
+    "url": "/games/cleaglerjp.html",
+    "cat": "Arcade",
+    "id": "tung_3857"
+  },
+  {
+    "title": "Eel Slap",
+    "url": "/games/cleelslap.html",
+    "cat": "Arcade",
+    "id": "tung_3858"
+  },
+  {
+    "title": "Fairsquares",
+    "url": "/games/clfairsquares.html",
+    "cat": "Arcade",
+    "id": "tung_3859"
+  },
+  {
+    "title": "Fancypantsadventures",
+    "url": "/games/clfancypantsadventures.html",
+    "cat": "Adventure",
+    "id": "tung_3860"
+  },
+  {
+    "title": "Fireboywatergirlforesttemple",
+    "url": "/games/clfireboywatergirlforesttemple.html",
+    "cat": "Arcade",
+    "id": "tung_3861"
+  },
+  {
+    "title": "Fleeingthecomplex",
+    "url": "/games/clfleeingthecomplex.html",
+    "cat": "Arcade",
+    "id": "tung_3862"
+  },
+  {
+    "title": "Fnaw",
+    "url": "/games/clfnaw2.html",
+    "cat": "Arcade",
+    "id": "tung_3863"
+  },
+  {
+    "title": "Froggys Battle",
+    "url": "/games/clfroggysbattle.html",
+    "cat": "Action",
+    "id": "tung_3864"
+  },
+  {
+    "title": "Frying Nemo",
+    "url": "/games/clfryingnemo.html",
+    "cat": "Arcade",
+    "id": "tung_3865"
+  },
+  {
+    "title": "Fsucraft",
+    "url": "/games/clfsucraft.html",
+    "cat": "Strategy",
+    "id": "tung_3866"
+  },
+  {
+    "title": "Fuclient",
+    "url": "/games/clfuclient.html",
+    "cat": "Arcade",
+    "id": "tung_3867"
+  },
+  {
+    "title": "Gdtd",
+    "url": "/games/clgdtd.html",
+    "cat": "Arcade",
+    "id": "tung_3868"
+  },
+  {
+    "title": "Gearsofbabies",
+    "url": "/games/clgearsofbabies.html",
+    "cat": "Arcade",
+    "id": "tung_3869"
+  },
+  {
+    "title": "Generic Fishing Game",
+    "url": "/games/clgenericfishinggame.html",
+    "cat": "Arcade",
+    "id": "tung_3870"
+  },
+  {
+    "title": "Geochallenge",
+    "url": "/games/clgeochallenge.html",
+    "cat": "Arcade",
+    "id": "tung_3871"
+  },
+  {
+    "title": "Geogeo",
+    "url": "/games/clgeogeo.html",
+    "cat": "Arcade",
+    "id": "tung_3872"
+  },
+  {
+    "title": "Geoneondash",
+    "url": "/games/clgeoneondash.html",
+    "cat": "Racing",
+    "id": "tung_3873"
+  },
+  {
+    "title": "Geops1",
+    "url": "/games/clgeops1.html",
+    "cat": "Arcade",
+    "id": "tung_3874"
+  },
+  {
+    "title": "Georash",
+    "url": "/games/clgeorash.html",
+    "cat": "Arcade",
+    "id": "tung_3875"
+  },
+  {
+    "title": "Geotrash",
+    "url": "/games/clgeotrash.html",
+    "cat": "Arcade",
+    "id": "tung_3876"
+  },
+  {
+    "title": "Gmonster",
+    "url": "/games/clgmonster.html",
+    "cat": "Arcade",
+    "id": "tung_3877"
+  },
+  {
+    "title": "Goodnight",
+    "url": "/games/clgoodnight.html",
+    "cat": "Arcade",
+    "id": "tung_3878"
+  },
+  {
+    "title": "Goodnight Meowmie",
+    "url": "/games/clgoodnightmeowmie.html",
+    "cat": "Arcade",
+    "id": "tung_3879"
+  },
+  {
+    "title": "Gravity Soccer",
+    "url": "/games/clgravitysoccer.html",
+    "cat": "Sports",
+    "id": "tung_3880"
+  },
+  {
+    "title": "Greybox",
+    "url": "/games/clgreybox.html",
+    "cat": "Sports",
+    "id": "tung_3881"
+  },
+  {
+    "title": "Happy Hop",
+    "url": "/games/clhappyhop.html",
+    "cat": "Platformer",
+    "id": "tung_3882"
+  },
+  {
+    "title": "Highrisehop",
+    "url": "/games/clhighrisehop.html",
+    "cat": "Platformer",
+    "id": "tung_3883"
+  },
+  {
+    "title": "Hill Climb Racing",
+    "url": "/games/clhillclimbracing.html",
+    "cat": "Racing",
+    "id": "tung_3884"
+  },
+  {
+    "title": "Iceagebaby2",
+    "url": "/games/cliceagebaby2.html",
+    "cat": "Arcade",
+    "id": "tung_3885"
+  },
+  {
+    "title": "Idledices",
+    "url": "/games/clidledices.html",
+    "cat": "Strategy",
+    "id": "tung_3886"
+  },
+  {
+    "title": "Invite The Blackbird",
+    "url": "/games/clinvitetheblackbird.html",
+    "cat": "Arcade",
+    "id": "tung_3887"
+  },
+  {
+    "title": "Just Fall",
+    "url": "/games/cljustfall.html",
+    "cat": "Platformer",
+    "id": "tung_3888"
+  },
+  {
+    "title": "Kitchen Gun Game",
+    "url": "/games/clkitchengungame.html",
+    "cat": "Action",
+    "id": "tung_3889"
+  },
+  {
+    "title": "Knife Master",
+    "url": "/games/clknifemaster.html",
+    "cat": "Arcade",
+    "id": "tung_3890"
+  },
+  {
+    "title": "Level13",
+    "url": "/games/cllevel13.html",
+    "cat": "Arcade",
+    "id": "tung_3891"
+  },
+  {
+    "title": "Ltf Idle",
+    "url": "/games/clltfidle.html",
+    "cat": "Strategy",
+    "id": "tung_3892"
+  },
+  {
+    "title": "Ltf3",
+    "url": "/games/clltf3.html",
+    "cat": "Arcade",
+    "id": "tung_3893"
+  },
+  {
+    "title": "Marvinspectrum",
+    "url": "/games/clmarvinspectrum.html",
+    "cat": "Arcade",
+    "id": "tung_3894"
+  },
+  {
+    "title": "Mc2d",
+    "url": "/games/clmc2d.html",
+    "cat": "Arcade",
+    "id": "tung_3895"
+  },
+  {
+    "title": "Mindustry",
+    "url": "/games/clmindustry.html",
+    "cat": "Arcade",
+    "id": "tung_3896"
+  },
+  {
+    "title": "Mineblocks",
+    "url": "/games/clmineblocks.html",
+    "cat": "Puzzle",
+    "id": "tung_3897"
+  },
+  {
+    "title": "Minecraft 15",
+    "url": "/games/clminecraft15.html",
+    "cat": "Strategy",
+    "id": "tung_3898"
+  },
+  {
+    "title": "Minecraft 18",
+    "url": "/games/clminecraft18.html",
+    "cat": "Strategy",
+    "id": "tung_3899"
+  },
+  {
+    "title": "Minecraftbeta",
+    "url": "/games/clminecraftbeta.html",
+    "cat": "Strategy",
+    "id": "tung_3900"
+  },
+  {
+    "title": "My Rusty Submarine",
+    "url": "/games/clmyrustysubmarine.html",
+    "cat": "Arcade",
+    "id": "tung_3901"
+  },
+  {
+    "title": "Ninja",
+    "url": "/games/clninja.html",
+    "cat": "Arcade",
+    "id": "tung_3902"
+  },
+  {
+    "title": "Noob Steve Parkour",
+    "url": "/games/clnoobsteveparkour.html",
+    "cat": "Arcade",
+    "id": "tung_3903"
+  },
+  {
+    "title": "Nsresurgence",
+    "url": "/games/clnsresurgence.html",
+    "cat": "Arcade",
+    "id": "tung_3904"
+  },
+  {
+    "title": "Pigeon Ascent",
+    "url": "/games/clpigeonascent.html",
+    "cat": "Arcade",
+    "id": "tung_3905"
+  },
+  {
+    "title": "Planetlife",
+    "url": "/games/clplanetlife.html",
+    "cat": "Arcade",
+    "id": "tung_3906"
+  },
+  {
+    "title": "Poom",
+    "url": "/games/clpoom.html",
+    "cat": "Arcade",
+    "id": "tung_3907"
+  },
+  {
+    "title": "Popcat Classic",
+    "url": "/games/clpopcatclassic.html",
+    "cat": "Retro",
+    "id": "tung_3908"
+  },
+  {
+    "title": "Rabbit Samurai2",
+    "url": "/games/clrabbitsamurai2.html",
+    "cat": "Arcade",
+    "id": "tung_3909"
+  },
+  {
+    "title": "Rhythm Doctor",
+    "url": "/games/clrhythmdoctor.html",
+    "cat": "Arcade",
+    "id": "tung_3910"
+  },
+  {
+    "title": "Rolling Forests",
+    "url": "/games/clrollingforests.html",
+    "cat": "Arcade",
+    "id": "tung_3911"
+  },
+  {
+    "title": "Run4bootleg",
+    "url": "/games/clrun4bootleg.html",
+    "cat": "Racing",
+    "id": "tung_3912"
+  },
+  {
+    "title": "Runner",
+    "url": "/games/clrunner.html",
+    "cat": "Racing",
+    "id": "tung_3913"
+  },
+  {
+    "title": "Scooperia",
+    "url": "/games/clscooperia.html",
+    "cat": "Arcade",
+    "id": "tung_3914"
+  },
+  {
+    "title": "Scrapmetal",
+    "url": "/games/clscrapmetal.html",
+    "cat": "Arcade",
+    "id": "tung_3915"
+  },
+  {
+    "title": "Scratcharia",
+    "url": "/games/clscratcharia.html",
+    "cat": "Arcade",
+    "id": "tung_3916"
+  },
+  {
+    "title": "Shellshockers",
+    "url": "/games/clshellshockers.html",
+    "cat": "Arcade",
+    "id": "tung_3917"
+  },
+  {
+    "title": "Shotinthedark",
+    "url": "/games/clshotinthedark.html",
+    "cat": "Arcade",
+    "id": "tung_3918"
+  },
+  {
+    "title": "Shuttledeck",
+    "url": "/games/clshuttledeck.html",
+    "cat": "Arcade",
+    "id": "tung_3919"
+  },
+  {
+    "title": "Sky Car Stunt",
+    "url": "/games/clskycarstunt.html",
+    "cat": "Arcade",
+    "id": "tung_3920"
+  },
+  {
+    "title": "Sleepingbeauty",
+    "url": "/games/clsleepingbeauty.html",
+    "cat": "Arcade",
+    "id": "tung_3921"
+  },
+  {
+    "title": "Slime Rush Td",
+    "url": "/games/clslimerushtd.html",
+    "cat": "Arcade",
+    "id": "tung_3922"
+  },
+  {
+    "title": "Soccer Skills",
+    "url": "/games/clsoccerskills.html",
+    "cat": "Sports",
+    "id": "tung_3923"
+  },
+  {
+    "title": "Spacegarden",
+    "url": "/games/clspacegarden.html",
+    "cat": "Arcade",
+    "id": "tung_3924"
+  },
+  {
+    "title": "Spelunky",
+    "url": "/games/clspelunky2.html",
+    "cat": "Arcade",
+    "id": "tung_3925"
+  },
+  {
+    "title": "Spinningrat",
+    "url": "/games/clspinningrat.html",
+    "cat": "Arcade",
+    "id": "tung_3926"
+  },
+  {
+    "title": "Squaredash",
+    "url": "/games/clsquaredash.html",
+    "cat": "Racing",
+    "id": "tung_3927"
+  },
+  {
+    "title": "Squarerush",
+    "url": "/games/clsquarerush.html",
+    "cat": "Arcade",
+    "id": "tung_3928"
+  },
+  {
+    "title": "Ssurferbotleg",
+    "url": "/games/clssurferbotleg.html",
+    "cat": "Arcade",
+    "id": "tung_3929"
+  },
+  {
+    "title": "Starve",
+    "url": "/games/clstarve.html",
+    "cat": "Arcade",
+    "id": "tung_3930"
+  },
+  {
+    "title": "Stick Archers",
+    "url": "/games/clstickarchers.html",
+    "cat": "Arcade",
+    "id": "tung_3931"
+  },
+  {
+    "title": "Stick Duel Battle",
+    "url": "/games/clstickduelbattle.html",
+    "cat": "Action",
+    "id": "tung_3932"
+  },
+  {
+    "title": "Subway Surfers Ny",
+    "url": "/games/clsubwaysurfersny.html",
+    "cat": "Arcade",
+    "id": "tung_3933"
+  },
+  {
+    "title": "Superautopets",
+    "url": "/games/clsuperautopets.html",
+    "cat": "Arcade",
+    "id": "tung_3934"
+  },
+  {
+    "title": "Superfowlist",
+    "url": "/games/clsuperfowlist.html",
+    "cat": "Arcade",
+    "id": "tung_3935"
+  },
+  {
+    "title": "Surviv",
+    "url": "/games/clsurviv.html",
+    "cat": "Arcade",
+    "id": "tung_3936"
+  },
+  {
+    "title": "Synesthesia",
+    "url": "/games/clsynesthesia.html",
+    "cat": "Arcade",
+    "id": "tung_3937"
+  },
+  {
+    "title": "Tactical Weapon Pack 2",
+    "url": "/games/cltacticalweaponpack2.html",
+    "cat": "Arcade",
+    "id": "tung_3938"
+  },
+  {
+    "title": "The Final Earth 2",
+    "url": "/games/clthefinalearth2.html",
+    "cat": "Arcade",
+    "id": "tung_3939"
+  },
+  {
+    "title": "The Hotel",
+    "url": "/games/clthehotel.html",
+    "cat": "Arcade",
+    "id": "tung_3940"
+  },
+  {
+    "title": "Throwrocks",
+    "url": "/games/clthrowrocks.html",
+    "cat": "Arcade",
+    "id": "tung_3941"
+  },
+  {
+    "title": "Tiny Islands",
+    "url": "/games/cltinyislands.html",
+    "cat": "Adventure",
+    "id": "tung_3942"
+  },
+  {
+    "title": "Townscaper",
+    "url": "/games/cltownscaper.html",
+    "cat": "Arcade",
+    "id": "tung_3943"
+  },
+  {
+    "title": "Twitch Tetris",
+    "url": "/games/cltwitchtetris.html",
+    "cat": "Puzzle",
+    "id": "tung_3944"
+  },
+  {
+    "title": "Veloce",
+    "url": "/games/clveloce.html",
+    "cat": "Arcade",
+    "id": "tung_3945"
+  },
+  {
+    "title": "Weavesilk",
+    "url": "/games/clweavesilk.html",
+    "cat": "Arcade",
+    "id": "tung_3946"
+  },
+  {
+    "title": "Webcleaner",
+    "url": "/games/clwebcleaner.html",
+    "cat": "Arcade",
+    "id": "tung_3947"
+  },
+  {
+    "title": "Webgl Fluid Simulation",
+    "url": "/games/clwebglfluidsimulation.html",
+    "cat": "Strategy",
+    "id": "tung_3948"
+  },
+  {
+    "title": "Webretro",
+    "url": "/games/clwebretro.html",
+    "cat": "Retro",
+    "id": "tung_3949"
+  },
+  {
+    "title": "Webxash",
+    "url": "/games/clwebxash.html",
+    "cat": "Arcade",
+    "id": "tung_3950"
+  },
+  {
+    "title": "Wiicraft",
+    "url": "/games/clwiicraft.html",
+    "cat": "Strategy",
+    "id": "tung_3951"
+  },
+  {
+    "title": "Win The Whitehouse",
+    "url": "/games/clwinthewhitehouse.html",
+    "cat": "Arcade",
+    "id": "tung_3952"
+  },
+  {
+    "title": "Wolf2d",
+    "url": "/games/clwolf2d.html",
+    "cat": "Arcade",
+    "id": "tung_3953"
+  },
+  {
+    "title": "Wounded Summer Baby Edition",
+    "url": "/games/clwoundedsummerbabyedition.html",
+    "cat": "Arcade",
+    "id": "tung_3954"
+  },
+  {
+    "title": "X Trial Racing",
+    "url": "/games/clxtrialracing.html",
+    "cat": "Racing",
+    "id": "tung_3955"
+  },
+  {
+    "title": "Yohoho",
+    "url": "/games/clyohoho.html",
+    "cat": "Arcade",
+    "id": "tung_3956"
+  },
+  {
+    "title": "Yoshifabrication",
+    "url": "/games/clyoshifabrication.html",
+    "cat": "Arcade",
+    "id": "tung_3957"
+  },
+  {
+    "title": "Zombs Royale",
+    "url": "/games/clzombsroyale.html",
+    "cat": "Arcade",
+    "id": "tung_3958"
   }
 ];

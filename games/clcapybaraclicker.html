@@ -1,46 +1,37 @@
 <!DOCTYPE html>
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<!DOCTYPE html>
-<html lang="en-US">
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@027a7fc4b20820dc401547a74cf4f2ee875cd3e2/capybara%20clicker/"
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Capybara Clicker</title>
-  <meta name="description" content="Capybara Clicker the best clicker games">
-  <meta name="title" content="Capybara Clicker">
-  <meta name="keywords" content="Capybara Clicker">
-  <meta name="news_keywords" content="Capybara Clicker">
-  <link rel="icon" href="logo-capybara-licker.png">
-  <meta name="robots" content="noindex">
-
-<body>
-  <link rel="stylesheet" href="game.css">
-  <!--Game-->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Capybara Clicker — Clash Games</title>
   <style>
-    @font-face {
-      font-family: 'myfont';
-      src: url('assets/fonts/BuloRounded-Black.ttf');
-    }
-
-    .myfont {
-      font-family: myfont;
-      position: absolute;
-      left: -100000px;
-      visibility: hidden;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
-  <script defer="defer" src="game_ob.min.js"></script>
-  <div class="myfont">.</div>
-  <div id="app">
-    <div id="game-container"></div>
-  </div>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m03c19ee.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>

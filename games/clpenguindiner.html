@@ -1,118 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html>
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@983ac580e56eef2c58c19568d68445148f5defe3/penguin%20diner/">
+<html lang="en">
 <head>
-  <title>Penguin Diner 1</title>
-  <meta charset="UTF-8" />
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@41987be9a4f10b3fd091b76322ad5e1dcd4359a0/gdab.js"></script>
-  <link href="assets/css/style.css?v=95" rel="stylesheet" type="text/css" />
-  <link href="assets/css/fonts.css?v=95" rel="stylesheet" type="text/css" />
-
-  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-  <meta name="HandheldFriendly" content="true" />
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-  <meta property="og:title" content="Penguin Diner 1">
-  <meta property="og:description" content="Play Penguin Diner 1">
-  <meta property="og:image" content="./assets/cover.jpg">
-  <meta property="og:url" content="./">
-
-
-  <script>
-    var _VERSION = 95;
-  </script>
-
-  <!-- GD VERSION --->
-
-  <script>
-    window["GD_OPTIONS"] = {
-      "gameId": "dd108118c3aa426e88fe2f7baebfd72b",
-      "onEvent": function(event) {
-        switch (event.name) {
-          case "SDK_GAME_START":
-            // advertisement done, resume game logic and unmute audio
-            if (app && app.unpauseForAds) {
-              app.unpauseForAds();
-            }
-            break;
-          case "SDK_GAME_PAUSE":
-            // pause game logic / mute audio
-            if (app && app.pauseForAds) {
-              app.pauseForAds();
-            }
-            break;
-          case "SDK_GDPR_TRACKING":
-            // this event is triggered when your user doesn't want to be tracked
-            break;
-          case "SDK_GDPR_TARGETING":
-            // this event is triggered when your user doesn't want personalised targeting of ads and such
-            break;
-        }
-      },
-    };
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id))
-        return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = 'main.min.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'gamedistribution-jssdk'));
-  </script>
-
-
-
-  <script src="assets/pixi.min.js?v=95" type="text/javascript"></script>
-  <script src="assets/app.min.js?v=95" type="text/javascript"></script>
-
-  <!-- ADD GOOGLE TRACKING CODE IN HERE --->
-
-  <!--//INCLUDE-PWA-->
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Penguin Diner — Clash Games</title>
   <style>
-    body {
-      overflow: hidden;
-    }
-
-    #pull-to-hide {
-      -webkit-overflow-scrolling: touch;
-      overflow: auto;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
-
-  <script>
-    Config.isWhiteLabel = true;
-    Config.logoURL = '';
-    Config.hasFullScreenSupport = false;
-  </script>
-
-
-
 </head>
-
 <body>
-
-  <p class="noselect" style="font-family: 'arial'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-  <p class="noselect" style="font-family: 'arial_black'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-  <p class="noselect" style="font-family: 'geek_a_byte'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-  <p class="noselect" style="font-family: 'letter_o_mattic'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-  <p class="noselect" style="font-family: 'komika_text'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-  <p class="noselect" style="font-family: 'crazy_krabs'; color: transparent; z-index: -100;position: absolute;"> Play Penguin Diner 1 </p>
-
-
-  <div id="pull-to-hide" style="height: 200%; width:100% ;position: absolute; top: 0;left:0;z-index: -1">
-    &nbsp;
-  </div>
-
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mce6b9d6.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>

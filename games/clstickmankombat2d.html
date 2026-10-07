@@ -1,63 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <base href = "https://cdn.jsdelivr.net/gh/faralong/all@main/stickkombat/">
-    <meta charset="UTF-8">
-
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-	
-	<!-- Made with Construct, the game and app creator :: https://www.construct.net -->
-	<meta name="generator" content="Scirra Construct">
-
-
-
-	<link rel="manifest" href="appmanifest.json">
-
-
-	<link rel="stylesheet" href="style.css">
-	<link rel="stylesheet" href="styleIos.css">
-
-<script>window.__GS_BOOT_CFG__={version: 0, sdkSrc: 'sdk-bundle/gamepush.gdd.js', platformType: 'GAME_DISTRIBUTION'};</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stickman Kombat 2D — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
- 
- 
 <body>
-
-<script>
-    window.gdsdk = {
-        showAd: function () {
-            return new Promise((resolve, reject) => {
-                
-              
-
-                setTimeout(() => {
-                    
-                    resolve("closed"); 
-                }, 500);
-
-                
-            });
-        }
-    };
-</script>
-
-	
-	<script src="spine-webgl.js"></script>
-	<script src="spine-draw.js"></script>
-	<script src="spine-gl-cache.js"></script>
-	<script src="spine-bone-control.js"></script>
-	<script src="spine-palette.js"></script>
-	
-	<noscript>
-		<div id="notSupportedWrap">
-			<h2 id="notSupportedTitle">This content requires JavaScript</h2>
-			<p class="notSupportedMessage">JavaScript appears to be disabled. Please enable it to view this content.</p>
-		</div>
-	</noscript>
-	<script src="scripts/modernjscheck.js"></script>
-	<script src="scripts/supportcheck.js"></script>
-	<script src="scripts/main-edit3.js" type="module"></script>
-
-
-</body> 
+  <iframe id="game-frame" src="https://tungtung-school.lavachamber.com/study2/768.html" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    const frame = document.getElementById('game-frame');
+    frame.addEventListener('error', function() {
+      frame.src = '/classic/' + "https://tungtung-school.lavachamber.com/study2/768.html";
+    });
+  </script>
+</body>
 </html>

@@ -1,33 +1,37 @@
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-<!-- Made by Genizy--> 
-
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Mini Crossword</title>
-    <base href="https://cdn.jsdelivr.net/gh/lort3453s/braybray/crossword/">
-    <link rel="icon" type="image/x-icon" href="media/graphics/promo/icons/favicon.ico" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <meta name="viewport"
-        content="width=device-width,height=device-height, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no, minimal-ui" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="stylesheet" type="text/css" href="game.css?v=1695035089">
-    <script type="text/javascript" src="game.js?v=1695035089"></script>
-    <script type="text/javascript" src="control.js"></script>
-    <script type="text/javascript" src="custom.js"></script>
-	
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Crossword — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
-
-<body onload="setTimeout(function(){window.scrollTo(0,1)},1);">
-    <!--body-->
-    <div id="ajaxbar">
-        <div id="game"><canvas id="canvas"></canvas></div>
-
-        <div id="orientate"><img src="media/graphics/orientate/landscape.jpg" /></div>
-        <div id="play" class="play" onclick=""></div>
-
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m6e76772.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>

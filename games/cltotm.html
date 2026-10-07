@@ -1,50 +1,22 @@
 <!DOCTYPE html>
-
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-
-
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@main/tomb/">
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>New Tab</title>
-  <link href="style.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tomb Of The Mask — Clash Games</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden; /* prevent scrollbars */
-      background: black; /* optional: black background */
-    }
-    #gameContainer {
-      width: 100vw;
-      height: 100vh;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
 </head>
-<body dir="ltr">
-  <script src="UnityProgress.js"></script>
-  <script src="UnityLoader.js"></script>
+<body>
+  <iframe id="game-frame" src="https://tungtung-school.lavachamber.com/study2/109.html" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
   <script>
-    var gameInstance = UnityLoader.instantiate("gameContainer", "totm.json", {
-      onProgress: UnityProgress,
-      Module: {
-        onRuntimeInitialized: function() {
-          UnityProgress(gameInstance, "complete");
-        }
-      }
+    const frame = document.getElementById('game-frame');
+    frame.addEventListener('error', function() {
+      frame.src = '/classic/' + "https://tungtung-school.lavachamber.com/study2/109.html";
     });
   </script>
-
-  <div class="webgl-content">
-    <div id="gameContainer"></div>
-  </div>
 </body>
 </html>

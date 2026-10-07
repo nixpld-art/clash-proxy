@@ -1,44 +1,37 @@
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-
-
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<link rel="icon" type="image/png"
-		href="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@174be0db9145f7375365bda889a200e5cd31bbe0/icons/icon-512.png">
-	<link rel="stylesheet"
-		href="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@174be0db9145f7375365bda889a200e5cd31bbe0/style.css"
-		type="text/css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Baskets Lam Dunk 2 — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
-
 <body>
-	<div id="fb-root"></div>
-	<script src="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@174be0db9145f7375365bda889a200e5cd31bbe0/box2d.wasm.js">
-	</script> <noscript>
-		<div id="notSupportedWrap">
-			<h2 id="notSupportedTitle">This content requires JavaScript</h2>
-			<p class="notSupportedMessage">JavaScript appears to be disabled. Please enable it to view this content.</p>
-			<p class="notSupportedMessage">This game was built with Construct. <a
-					href="https://www.construct.net/en">Build your own games</a></p>
-		</div>
-	</noscript>
-	<script
-		src="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@6afc68a9cabdefddeac8d6897c714b752a3a8845/scripts/supportcheck.js">
-	</script>
-	<script
-		src="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@6afc68a9cabdefddeac8d6897c714b752a3a8845/scripts/offlineclient.js">
-	</script>
-	<script src="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@6afc68a9cabdefddeac8d6897c714b752a3a8845/scripts/main.js">
-	</script>
-	<script
-		src="https://cdn.jsdelivr.net/gh/yrgen73/BSD2@6afc68a9cabdefddeac8d6897c714b752a3a8845/scripts/register-sw.js">
-	</script>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mee4384f.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,50 +1,37 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title> google.com</title>
-  </head>
-  <body style="text-align: center">
-    <canvas id="unity-canvas" width=1280 height=720 style="width: 1280px; height: 720px; background: #601527"></canvas>
-    <script src="https://cdn.jsdelivr.net/gh/school-management-google/xahaz@main/Build/WebGL.loader.js"></script>
-    <script>
-      // CDN base url (BURAYA sen kendi repo yolunu yazacaksın)
-      const cdnBase = "https://cdn.jsdelivr.net/gh/school-management-google/xahaz@main/Build/";
-
-      // Ortak birleştirme fonksiyonu
-      async function mergeParts(baseName, count) {
-        let parts = [];
-        for (let i = 0; i < count; i++) {
-          const resp = await fetch(`${cdnBase}${baseName}.part${i}`);
-          const buf = await resp.arrayBuffer();
-          parts.push(new Uint8Array(buf));
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Santy Is Home — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/3kh@aba902390fff20765e8e11e4b631b6e5664e17c3/m1136b3d/index.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
         }
-        let totalLength = parts.reduce((sum, p) => sum + p.length, 0);
-        let merged = new Uint8Array(totalLength);
-        let offset = 0;
-        for (let p of parts) {
-          merged.set(p, offset);
-          offset += p.length;
-        }
-        return URL.createObjectURL(new Blob([merged], { type: "application/gzip" }));
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
       }
-
-      (async () => {
-        // İki dosya da 3 parçaya bölünmüş durumda
-        const dataUrl = await mergeParts("WebGL.data.gz", 3);
-        const wasmUrl = await mergeParts("WebGL.wasm.gz", 3);
-
-        createUnityInstance(document.querySelector("#unity-canvas"), {
-          dataUrl: dataUrl,
-          frameworkUrl: cdnBase + "WebGL.framework.js.js",
-          codeUrl: wasmUrl,
-          streamingAssetsUrl: "StreamingAssets",
-          companyName: "Kulu",
-          productName: "Santy is Home",
-          productVersion: "0.1",
-        });
-      })();
-    </script>
-  </body>
+    })();
+  </script>
+</body>
 </html>

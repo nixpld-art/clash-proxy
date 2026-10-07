@@ -1,50 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-<html lang="en-us">
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@7edd971a7c7283829db983c25289230aa9c782d1/stacktris/">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Stacktris</title>
-  <meta name="robots" content="noindex,nofollow" />
-  <meta name="description" content="">
-  <meta name="google" content="notranslate">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <link rel="stylesheet" href="webapp/fancade.css">
-  <link rel="icon" href="webapp/favicon.ico">
-  <script src="poki-sdk.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stack Tris — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
-
-<body id="body">
-  <div id="modal_parent">
-    <div id="modal_content"><span id="modal_close_button">&times;</span>
-      <div id="store_link_modal_content" class="modal_inner"></div>
-      <div id="share_file_modal_content" class="modal_inner"></div>
-    </div>
-  </div>
-  <div id="canvas_border" class="emscripten_border">
-    <div id="play_content" class="middle center">
-      <div class="edge">
-        <div class="box">
-          <div class="black"><img src="webapp/cover.jpg" class="cover">
-            <p class="title">Stacktris</p>
-            <p class="author">Fancade</p>
-          </div>
-        </div>
-      </div>
-      <div id="progress_or_play"><progress id="progress" class="loading" value="0" max="100"></progress></div>
-      <p class="description"></p>
-    </div><canvas class="emscripten" id="canvas" tabindex="-1"></canvas>
-    <div id="gradient"></div>
-    <div id="webview_content"></div>
-  </div>
-  <script type="text/javascript" src="webapp/source_min.js" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="webapp/index.js" crossorigin="anonymous"></script>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/mf5ad8b2.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>

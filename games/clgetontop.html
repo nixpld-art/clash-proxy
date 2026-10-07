@@ -1,10 +1,37 @@
-<Module>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
-
-
-
-<html> <head> <meta charset="UTF-8"> <title>Get_On_Top_Touch</title> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"> <meta name="generator" content="Construct 3"> <meta name="author" content="stefano"> <meta name="description" content="Get On Top Touch"> <link rel="manifest" href="appmanifest.json"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/GetOnTopUnblocked/GetOnTopUnblocked.github.io@693e592e4c9f1910a9b5ccc9c6624f8687e963e3/style.css" type="text/css"> </head> <body> <div id="fb-root"></div> <script src="https://cdn.jsdelivr.net/gh/GetOnTopUnblocked/GetOnTopUnblocked.github.io@693e592e4c9f1910a9b5ccc9c6624f8687e963e3/box2d.wasm.js"></script> <noscript> <div id="notSupportedWrap"> <h2 id="notSupportedTitle">This content requires JavaScript</h2> <p class="notSupportedMessage">JavaScript appears to be disabled. Please enable it to view this content.</p> </div> </noscript> <script src="https://cdn.jsdelivr.net/gh/GetOnTopUnblocked/GetOnTopUnblocked.github.io@693e592e4c9f1910a9b5ccc9c6624f8687e963e3/scripts/supportcheck.js"></script> <script src="https://cdn.jsdelivr.net/gh/GetOnTopUnblocked/GetOnTopUnblocked.github.io@693e592e4c9f1910a9b5ccc9c6624f8687e963e3/scripts/offlineclient.js"></script> <script src="https://cdn.jsdelivr.net/gh/bobydob/godotpack@e46121e50d1e80597ca6d88776418185ceb449a2/side/got/main.js"></script> <script src="https://cdn.jsdelivr.net/gh/GetOnTopUnblocked/GetOnTopUnblocked.github.io@693e592e4c9f1910a9b5ccc9c6624f8687e963e3/scripts/register-sw.js"></script> </body> <script> window.addEventListener("keydown", function(e) { // space and arrow keys if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { e.preventDefault(); } }, false); </script> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Get on Top — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/m4fbbeb0.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
+</body>
+</html>

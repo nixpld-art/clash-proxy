@@ -1,92 +1,37 @@
 <!DOCTYPE html>
-
-
-<!-- Ultimate Game Stash file--> 
-<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
-
 <html lang="en">
-<base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@dbdca8d3035fa078b774545e33c85a7eb6110088/jumping%20shell/">
 <head>
-
-	<meta charset="utf-8">
-
-	<title>Jumping Shell</title>
-	<meta name="robots" content="noindex,nofollow" />
-
-	<meta id="viewport" name="viewport"
-		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<meta name="apple-mobile-web-app-capable" content="yes">
-
-
-	<link rel="shortcut icon" type="image/png" href="./favicon.png">
-
-	<!-- added this line for Poki -->
-	<script src="poki-sdk.js"></script>
-
-	<script src="./progress.js" />
-
-	<script>
-		window.addEventListener ("touchmove", function (event) { event.preventDefault (); }, { capture: false, passive: false });
-		if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
-			var meta = document.getElementById ("viewport");
-			meta.setAttribute ('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
-		}
-	</script>
-
-	<style>
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			height: 100%;
-			overflow: hidden;
-		}
-
-		#openfl-content {
-			background: #000000;
-			width: 100%;
-			height: 100%;
-		}
-
-		#progress {
-			position: relative;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 50%;
-		}
-	</style>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jumping Shell — Clash Games</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; overflow:hidden; background:#0b0d14; }
+    iframe { width:100%; height:100%; border:none; display:block; }
+  </style>
 </head>
-
 <body>
-
-	<noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this
-		page.</noscript>
-
-	<div id="openfl-content"><progress id="progress" value="0" max="1"></progress></div>
-
-	<script>
-		var __filesToLoad = {
-			"./Jumping Shell.js": {total: 2482661}
-		}
-		
-		var __progressBar;
-		
-		var __progressListener = function __progressListener(progress) {
-			if(!__progressBar) __progressBar = document.getElementById("progress");
-			if(__progressBar) __progressBar.value = progress;
-		};
-
-		var __completionCallback = function __completionCallback() {
-			__progressBar.parentNode.removeChild(__progressBar);
-			lime.embed ("Jumping Shell", "openfl-content", 1252, 704, { parameters: {} });
-		};
-
-		__loadWithProgress(__filesToLoad, __progressListener, __completionCallback);
-		
-	</script>
-
+  <iframe id="game-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; gamepad; clipboard-write; encrypted-media; focus-without-user-activation *"></iframe>
+  <script>
+    (async function() {
+      const frame = document.getElementById('game-frame');
+      const target = "https://cdn.jsdelivr.net/gh/zennedu/hydra@4afc772e861d3df34427623bbc4afa7ce1fbb067/m551560d/me361f75.html";
+      try {
+        let res;
+        try {
+          res = await fetch(target);
+        } catch (e) {
+          res = await fetch('/classic/' + target);
+        }
+        if (!res.ok) res = await fetch('/classic/' + target);
+        const html = await res.text();
+        const base = '<base href="' + target.replace(/[^/]*$/, '') + '">';
+        let out = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, '$&' + base) : (base + html);
+        frame.srcdoc = out;
+      } catch (e) {
+        frame.src = '/classic/' + target;
+      }
+    })();
+  </script>
 </body>
-
 </html>
