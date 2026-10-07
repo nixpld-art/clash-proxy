@@ -228,7 +228,7 @@ for (const [cName, tungGame] of tungUnique.entries()) {
       title: tungGame.name,
       url: `/games/${encodeURIComponent(filename)}`,
       cat: detectCategory(tungGame.name, tungGame.category),
-      id: `tung_${finalGamesList.length + 1}`
+      id: `clash_${finalGamesList.length + 1}`
     };
     finalGamesList.push(newEntry);
     addedCount++;
