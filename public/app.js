@@ -516,15 +516,19 @@ function renderNextGamesBatch() {
 }
 
 // Infinite scroll on games grid
-window.addEventListener("scroll", () => {
+function checkScrollForGames() {
 	const arcadeView = document.getElementById("view-arcade");
 	if (!arcadeView || !arcadeView.classList.contains("active")) return;
-	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-		if (renderedGameCount < filteredGamesList.length) {
-			renderNextGamesBatch();
-		}
+	const ws = document.querySelector(".aura-workspace");
+	const atBottom = ws ? (ws.scrollTop + ws.clientHeight >= ws.scrollHeight - 600) : (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500);
+	if (atBottom && renderedGameCount < filteredGamesList.length) {
+		renderNextGamesBatch();
 	}
-});
+}
+window.addEventListener("scroll", checkScrollForGames);
+const auraWorkspaceEl = document.querySelector(".aura-workspace");
+if (auraWorkspaceEl) auraWorkspaceEl.addEventListener("scroll", checkScrollForGames);
+
 
 // Category filtering
 catChips.forEach(chip => {

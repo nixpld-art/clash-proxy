@@ -51,9 +51,11 @@
 	<script src="app.js?v=1" defer></script>
 </head>
 <body>
-	<!-- Ambient Background Orbs -->
+	<!-- Ambient Background Orbs & Cyber Grid -->
 	<div class="ambient-glow glow-1"></div>
 	<div class="ambient-glow glow-2"></div>
+	<div class="ambient-glow glow-3"></div>
+	<div class="background-grid"></div>
 
 	<!-- Top Status & Utility Bar -->
 	<header class="aura-topbar">
@@ -108,9 +110,12 @@
 							<span id="omnibar-engine-badge" class="engine-badge">Google</span>
 						</div>
 						<input type="text" id="omnibar-input" class="omnibar-input" placeholder="Search the web or type a URL..." autocomplete="off" spellcheck="false" />
-						<button id="omnibar-go-btn" class="omnibar-btn" title="Navigate">
-							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-						</button>
+						<div class="omnibar-meta">
+							<span class="omnibar-shortcut"><kbd>↵</kbd></span>
+							<button id="omnibar-go-btn" class="omnibar-btn" title="Navigate">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+							</button>
+						</div>
 					</div>
 
 					<!-- Speed Dial Quick Cards -->
