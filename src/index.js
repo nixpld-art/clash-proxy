@@ -175,8 +175,10 @@ const fastify = Fastify({
 					}
 					return;
 				}
-				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-				res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+				// Allow embedding in offline launchers, Google Sites, and multi-origin mirrors
+				res.setHeader("Access-Control-Allow-Origin", "*");
+				res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+				res.setHeader("Access-Control-Allow-Headers", "*");
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {

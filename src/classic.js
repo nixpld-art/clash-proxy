@@ -304,6 +304,7 @@ async function smartFetch(targetInput, init = {}) {
 const RESP_STRIP = new Set([
 	"content-security-policy", "content-security-policy-report-only",
 	"x-frame-options", "strict-transport-security", "set-cookie",
+	"cross-origin-opener-policy", "cross-origin-embedder-policy", "cross-origin-resource-policy",
 	"alt-svc", "public-key-pins", "public-key-pins-report-only",
 	"report-to", "nel", "connection", "keep-alive", "transfer-encoding",
 	"proxy-authenticate", "proxy-authorization", "trailer", "upgrade",

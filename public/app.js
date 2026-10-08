@@ -730,6 +730,16 @@ const initSWPromise = (async () => {
 		return false;
 	}
 
+	// Automatic environment detection:
+	// Worker mirrors (*.workers.dev, *.pages.dev) and embedded frames (offline launcher) cannot reliably run Wisp WebSockets
+	const isWorkerMirror = location.hostname.endsWith(".workers.dev") || location.hostname.endsWith(".pages.dev");
+	const isEmbedded = window.self !== window.top;
+	if (isWorkerMirror || isEmbedded) {
+		classicMode = true;
+		console.log("[Aura] Detected Worker Mirror or Embedded Launcher — automatically utilizing rock-solid Classic Proxy Engine");
+		return false;
+	}
+
 	try {
 		if (!("serviceWorker" in navigator)) {
 			classicMode = true;
@@ -740,7 +750,7 @@ const initSWPromise = (async () => {
 		try {
 			registration = await Promise.race([
 				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW missing")),
-				new Promise((_, rej) => setTimeout(() => rej(new Error("sw_timeout")), 5000))
+				new Promise((_, rej) => setTimeout(() => rej(new Error("sw_timeout")), 2500))
 			]);
 		} catch (swErr) {
 			if (chosenMode === "auto") {
@@ -754,7 +764,7 @@ const initSWPromise = (async () => {
 		if (navigator.serviceWorker && !navigator.serviceWorker.controller) {
 			await new Promise(res => {
 				navigator.serviceWorker.addEventListener("controllerchange", () => res(), { once: true });
-				setTimeout(res, 500);
+				setTimeout(res, 400);
 			});
 		}
 
@@ -768,8 +778,14 @@ const initSWPromise = (async () => {
 			const libcurlMod = await import(transportPath);
 			const LibcurlClass = libcurlMod.default;
 			const libcurlClient = new LibcurlClass({ wisp: wispUrl });
-			for (let i = 0; i < 30 && !libcurlClient.ready; i++) {
+			// Quick connection check (up to 4 tries = 1.6s)
+			for (let i = 0; i < 4 && !libcurlClient.ready; i++) {
 				try { await libcurlClient.init(); } catch (e) { await new Promise(r => setTimeout(r, 400)); }
+			}
+			if (!libcurlClient.ready) {
+				console.warn("[Aura] Wisp transport not reachable, falling back to Classic mode");
+				classicMode = true;
+				return false;
 			}
 			transportAdapter = {
 				ready: true,
@@ -1167,6 +1183,13 @@ function createTab(initialUrl = "") {
 		if (typeof updateShieldUI === "function") updateShieldUI();
 	});
 
+	iframe.addEventListener("error", () => {
+		if (tab && tab.url && !iframe.src.includes("/classic/")) {
+			console.log("[Aura] Iframe load error, auto-recovering to Classic engine:", tab.url);
+			iframe.src = "/classic/" + tab.url;
+		}
+	});
+
 	if (proxyHost) proxyHost.appendChild(iframe);
 
 	const tab = {
@@ -1245,26 +1268,19 @@ async function loadTabUrl(tab, rawInput) {
 	const mode = getProxyMode();
 	let routed = false;
 
-	if (mode !== "classic" && !classicMode && !isYouTube && sjController) {
+	if ((mode === "sw" || mode === "auto") && !classicMode && !isYouTube && sjController) {
 		try {
 			const frame = sjController.createFrame(tab.iframe);
 			frame.go(targetUrl);
 			routed = true;
 		} catch (e) {
-			console.warn("[Aura] Scramjet route retry:", e);
-			try {
-				if (typeof sjController.wait === "function") await sjController.wait();
-				const frame = sjController.createFrame(tab.iframe);
-				frame.go(targetUrl);
-				routed = true;
-			} catch (e2) {}
+			console.warn("[Aura] Scramjet route failed, falling back to Classic:", e);
 		}
 	}
 
+	// Always fall back to the rock-solid Classic engine (/classic/<url>)
 	if (!routed) {
-		tab.iframe.src = (mode === "classic" || classicMode || isYouTube)
-			? "/classic/" + targetUrl
-			: "/scram/service/" + encodeURIComponent(targetUrl);
+		tab.iframe.src = "/classic/" + targetUrl;
 	}
 }
 
@@ -3466,12 +3482,12 @@ if (mirrorDownloadLauncherBtn) {
 <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #07090f; font-family: sans-serif; }
-iframe { width: 100%; height: 100%; border: none; display: block; }
+html, body { width: 100vw; height: 100vh; overflow: hidden; background: #07090f; font-family: sans-serif; }
+iframe { width: 100vw; height: 100vh; border: none; display: block; }
 </style>
 </head>
 <body>
-<iframe id="aura-frame" src="${activeHost}/"></iframe>
+<iframe id="aura-frame" src="${activeHost}/" allow="camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen; autoplay; gamepad" allowfullscreen="true" style="width:100vw;height:100vh;border:none;"></iframe>
 <script>
 window.addEventListener("keydown", function(e) {
 	if (e.key === "\`" || e.key === "Escape") {
