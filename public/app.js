@@ -551,6 +551,142 @@ function extractTitleFromUrl(url) {
 	}
 }
 
+function extractDomain(url) {
+	if (!url) return "";
+	try {
+		return new URL(url).hostname.replace(/^www\./, "");
+	} catch (e) {
+		return "";
+	}
+}
+
+// ============================================================
+// Game & Browser Speed Multiplier Engine (Clash Speed Hack)
+// ============================================================
+let currentGameSpeed = 1.0;
+
+function injectGameSpeedHook(iframeWin, speed = 1.0) {
+	if (!iframeWin) return;
+	try {
+		iframeWin.__clashSpeed = speed;
+		if (!iframeWin.__clashHooked) {
+			iframeWin.__clashHooked = true;
+
+			let virtualTime = 0;
+			let lastRealTime = (iframeWin.performance && iframeWin.performance.now) ? iframeWin.performance.now() : Date.now();
+			let virtualDate = Date.now();
+			let lastRealDate = Date.now();
+
+			// Hook performance.now with virtual monotonic time
+			if (iframeWin.performance && iframeWin.performance.now) {
+				const origPerfNow = iframeWin.performance.now.bind(iframeWin.performance);
+				iframeWin.performance.now = function() {
+					const now = origPerfNow();
+					const dt = Math.max(0, now - lastRealTime);
+					lastRealTime = now;
+					virtualTime += dt * (iframeWin.__clashSpeed ?? 1.0);
+					return virtualTime;
+				};
+			}
+
+			// Hook Date.now with virtual monotonic time
+			const origDateNow = iframeWin.Date.now;
+			iframeWin.Date.now = function() {
+				const now = origDateNow ? origDateNow() : new Date().getTime();
+				const dt = Math.max(0, now - lastRealDate);
+				lastRealDate = now;
+				virtualDate += dt * (iframeWin.__clashSpeed ?? 1.0);
+				return Math.round(virtualDate);
+			};
+
+			// Hook requestAnimationFrame
+			const origRAF = iframeWin.requestAnimationFrame;
+			if (origRAF) {
+				iframeWin.requestAnimationFrame = function(cb) {
+					return origRAF.call(iframeWin, function(realNow) {
+						if (iframeWin.performance && iframeWin.performance.now) {
+							cb(iframeWin.performance.now());
+						} else {
+							cb(realNow * (iframeWin.__clashSpeed ?? 1.0));
+						}
+					});
+				};
+			}
+
+			// Hook setTimeout
+			const origSetTimeout = iframeWin.setTimeout;
+			if (origSetTimeout) {
+				iframeWin.setTimeout = function(fn, delay, ...args) {
+					const sp = iframeWin.__clashSpeed ?? 1.0;
+					const scaled = sp > 0 ? Math.max(1, Math.round(delay / sp)) : delay;
+					return origSetTimeout.call(iframeWin, fn, scaled, ...args);
+				};
+			}
+
+			// Hook setInterval
+			const origSetInterval = iframeWin.setInterval;
+			if (origSetInterval) {
+				iframeWin.setInterval = function(fn, delay, ...args) {
+					const sp = iframeWin.__clashSpeed ?? 1.0;
+					const scaled = sp > 0 ? Math.max(1, Math.round(delay / sp)) : delay;
+					return origSetInterval.call(iframeWin, fn, scaled, ...args);
+				};
+			}
+
+			iframeWin.setClashSpeed = function(newSpeed) {
+				iframeWin.__clashSpeed = newSpeed;
+			};
+		}
+	} catch (e) {
+		console.warn("[Clash Speed Hook] Hook error:", e);
+	}
+}
+
+function setGameSpeed(speed) {
+	currentGameSpeed = parseFloat(speed) || 1.0;
+
+	// Apply to active arcade player modal iframe
+	if (playerContainer) {
+		const frame = playerContainer.querySelector("iframe");
+		if (frame && frame.contentWindow) {
+			injectGameSpeedHook(frame.contentWindow, currentGameSpeed);
+			try {
+				if (typeof frame.contentWindow.setClashSpeed === "function") {
+					frame.contentWindow.setClashSpeed(currentGameSpeed);
+				}
+			} catch (e) {}
+		}
+	}
+
+	// Apply to active proxy browser tab iframe
+	if (activeProxyIframe && activeProxyIframe.contentWindow) {
+		injectGameSpeedHook(activeProxyIframe.contentWindow, currentGameSpeed);
+		try {
+			if (typeof activeProxyIframe.contentWindow.setClashSpeed === "function") {
+				activeProxyIframe.contentWindow.setClashSpeed(currentGameSpeed);
+			}
+		} catch (e) {}
+	}
+
+	updateSpeedUI();
+	showToast(`⚡ Speed multiplier set to ${currentGameSpeed}x`);
+}
+
+function updateSpeedUI() {
+	const label = document.getElementById("deck-speed-label");
+	if (label) label.textContent = `${currentGameSpeed.toFixed(1)}x`;
+
+	document.querySelectorAll(".speed-opt-btn").forEach(btn => {
+		const sp = parseFloat(btn.dataset.speed);
+		btn.classList.toggle("active", Math.abs(sp - currentGameSpeed) < 0.05);
+	});
+
+	document.querySelectorAll(".player-speed-btn").forEach(btn => {
+		const sp = parseFloat(btn.dataset.speed);
+		btn.classList.toggle("active", Math.abs(sp - currentGameSpeed) < 0.05);
+	});
+}
+
 function updateBookmarkBtnState(url) {
 	if (!deckBookmarkBtn) return;
 	const isBookmarked = browserBookmarks.some(b => b.url === url);
@@ -636,6 +772,7 @@ function switchTab(tabId) {
 		}
 	});
 	renderTabs();
+	if (typeof updateShieldUI === "function") updateShieldUI();
 }
 
 function closeTab(tabId, e) {
@@ -646,6 +783,9 @@ function closeTab(tabId, e) {
 	const [closedTab] = browserTabs.splice(idx, 1);
 	if (closedTab && closedTab.iframe) {
 		closedTab.iframe.remove();
+	}
+	if (typeof ClashShield !== "undefined") {
+		ClashShield.removeTab(tabId);
 	}
 
 	if (browserTabs.length === 0) {
@@ -658,6 +798,7 @@ function closeTab(tabId, e) {
 	} else {
 		renderTabs();
 	}
+	if (typeof updateShieldUI === "function") updateShieldUI();
 }
 
 function createTab(initialUrl = "") {
@@ -665,12 +806,24 @@ function createTab(initialUrl = "") {
 	const iframe = document.createElement("iframe");
 	iframe.className = "proxy-frame";
 	iframe.id = "frame_" + tabId;
+	iframe.dataset.tabId = tabId;
 	iframe.allow = "camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen";
 	iframe.setAttribute("allowfullscreen", "true");
 	iframe.style.width = "100%";
 	iframe.style.height = "100%";
 	iframe.style.border = "none";
 	iframe.style.display = "none";
+
+	iframe.addEventListener("load", () => {
+		if (typeof ClashShield !== "undefined") {
+			ClashShield.applyToFrame(iframe, tab.url);
+		}
+		if (typeof injectGameSpeedHook === "function" && iframe.contentWindow) {
+			injectGameSpeedHook(iframe.contentWindow, currentGameSpeed);
+		}
+		if (typeof updateShieldUI === "function") updateShieldUI();
+	});
+
 	if (proxyHost) proxyHost.appendChild(iframe);
 
 	const tab = {
@@ -697,6 +850,11 @@ async function loadTabUrl(tab, rawInput) {
 	const targetUrl = resolveSearchUrl(rawInput);
 	tab.url = targetUrl;
 	tab.title = extractTitleFromUrl(targetUrl);
+
+	if (typeof ClashShield !== "undefined") {
+		ClashShield.resetTabCount(tab.id);
+		if (typeof updateShieldUI === "function") updateShieldUI();
+	}
 
 	if (tab.id === activeTabId) {
 		if (deckUrlInput) deckUrlInput.value = targetUrl;
@@ -969,8 +1127,39 @@ const playerFullscreenBtn = document.getElementById("player-fullscreen-btn");
 const playerAboutblankBtn = document.getElementById("player-aboutblank-btn");
 let activeGameUrl = "";
 
+// Real Game Cover Image Dictionary
+let gameCoversMap = {};
+async function loadGameCoversMap() {
+	try {
+		const res = await fetch("/game_covers.json");
+		if (res.ok) {
+			gameCoversMap = await res.json();
+		}
+	} catch (e) {
+		console.warn("[Aura] Covers map load failed:", e);
+	}
+}
+
+function getGameCover(game) {
+	if (!game) return null;
+	if (game.img) return game.img;
+	const title = (game.title || "").trim();
+	const titleLow = title.toLowerCase();
+	if (gameCoversMap[title]) return gameCoversMap[title];
+	if (gameCoversMap[titleLow]) return gameCoversMap[titleLow];
+
+	const filename = (game.filename || (game.url || "").split("/").pop() || "").replace(/\.html$/i, "");
+	if (filename && gameCoversMap[filename]) return gameCoversMap[filename];
+
+	const cleanTitle = titleLow.replace(/[^a-z0-9]/g, "");
+	if (cleanTitle && gameCoversMap[cleanTitle]) return gameCoversMap[cleanTitle];
+
+	return null;
+}
+
 async function loadArcadeCatalog() {
 	try {
+		await loadGameCoversMap();
 		const res = await fetch("/api/games");
 		if (!res.ok) throw new Error("Catalog fetch failed");
 		const data = await res.json();
@@ -1125,6 +1314,7 @@ function renderNextGamesBatch() {
 		card.dataset.url = game.url;
 		card.dataset.title = game.title;
 
+		const coverUrl = getGameCover(game);
 		const monogram = getGameMonogram(game.title);
 		const cat = game.category || game.cat || "Arcade";
 		const isFav = isGameFavorited(game.title);
@@ -1132,7 +1322,8 @@ function renderNextGamesBatch() {
 		card.innerHTML = `
 			<button class="game-star-btn ${isFav ? "favorited" : ""}" title="${isFav ? "Remove Favorite" : "Add to Favorites"}"><img src="/assets/icons/star.svg" class="icon-inline" alt="" /></button>
 			<div class="game-thumb">
-				<div class="game-cover-art" data-category="${escapeHtml(cat.toLowerCase())}">
+				${coverUrl ? `<img class="game-cover-img" src="${coverUrl}" loading="lazy" alt="${escapeHtml(game.title)}" onerror="this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='flex';" />` : ""}
+				<div class="game-cover-art" data-category="${escapeHtml(cat.toLowerCase())}" style="${coverUrl ? 'display: none;' : ''}">
 					<div class="game-cover-mesh"></div>
 					<img src="/assets/icons/gamepad.svg" class="game-cover-svg" alt="" />
 					<span class="game-cover-code">${monogram}</span>
@@ -1225,6 +1416,15 @@ function launchGame(game) {
 			iframe.style.height = `${100 / resScale}%`;
 		}
 
+		iframe.addEventListener("load", () => {
+			if (typeof ClashShield !== "undefined") {
+				ClashShield.applyToFrame(iframe, activeGameUrl);
+			}
+			if (typeof injectGameSpeedHook === "function" && iframe.contentWindow) {
+				injectGameSpeedHook(iframe.contentWindow, currentGameSpeed);
+			}
+		});
+
 		playerContainer.appendChild(iframe);
 	}
 
@@ -1273,8 +1473,38 @@ if (playerFullscreenBtn) {
 
 if (playerAboutblankBtn) {
 	playerAboutblankBtn.addEventListener("click", () => {
-		if (activeGameUrl) {
-			openInAboutBlank(window.location.origin + activeGameUrl);
+		if (activeGameUrl) openInAboutBlank(activeGameUrl);
+	});
+}
+
+const playerInspectBtn = document.getElementById("player-inspect-btn");
+if (playerInspectBtn) {
+	playerInspectBtn.addEventListener("click", () => {
+		const frame = playerContainer ? playerContainer.querySelector("iframe") : null;
+		if (!frame || !frame.contentWindow) {
+			showToast("No active game to inspect");
+			return;
+		}
+		try {
+			const win = frame.contentWindow;
+			const doc = frame.contentDocument || win.document;
+			if (win.eruda) {
+				win.eruda.show();
+				showToast("DevTools opened");
+				return;
+			}
+			const script = doc.createElement("script");
+			script.src = "https://cdn.jsdelivr.net/npm/eruda";
+			script.onload = () => {
+				if (win.eruda) {
+					win.eruda.init();
+					win.eruda.show();
+					showToast("DevTools Console Activated!");
+				}
+			};
+			doc.head.appendChild(script);
+		} catch (e) {
+			showToast("Cannot inspect cross-origin game directly");
 		}
 	});
 }
@@ -1631,7 +1861,18 @@ if (settingGhostMode) {
 	});
 }
 
-// Aura Shield Toggles & Stats
+// Clash Shield Toolbar & Settings Elements
+const navShieldBtn = document.getElementById("nav-shield-btn");
+const shieldPopover = document.getElementById("shield-popover");
+const shieldCountBadge = document.getElementById("shield-count-badge");
+const popoverShieldCount = document.getElementById("popover-shield-count");
+const shieldStatusPill = document.getElementById("shield-status-pill");
+const shieldStatusText = document.getElementById("shield-status-text");
+const popoverToggleAdblock = document.getElementById("popover-toggle-adblock");
+const popoverTogglePopups = document.getElementById("popover-toggle-popups");
+const popoverToggleDarkmode = document.getElementById("popover-toggle-darkmode");
+const shieldWhitelistBtn = document.getElementById("shield-whitelist-btn");
+
 const settingShieldAdblock = document.getElementById("setting-shield-adblock");
 const settingShieldPopups = document.getElementById("setting-shield-popups");
 const settingShieldDarkmode = document.getElementById("setting-shield-darkmode");
@@ -1639,45 +1880,194 @@ const settingShieldTotalBlocked = document.getElementById("setting-shield-total-
 const settingShieldDataSaved = document.getElementById("setting-shield-data-saved");
 const settingShieldClearStats = document.getElementById("setting-shield-clear-stats");
 
-function updateShieldDisplay() {
-	if (typeof ClashShield !== "undefined") {
-		const stats = ClashShield.getStats();
-		if (settingShieldTotalBlocked) settingShieldTotalBlocked.textContent = (stats.totalBlocked || 0).toLocaleString();
-		if (settingShieldDataSaved) {
-			const kb = (stats.totalBlocked || 0) * 45;
-			settingShieldDataSaved.textContent = kb > 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`;
-		}
-		if (settingShieldAdblock) settingShieldAdblock.checked = ClashShield.isEnabled();
-		if (settingShieldPopups) settingShieldPopups.checked = ClashShield.isBlockPopups();
-		if (settingShieldDarkmode) settingShieldDarkmode.checked = ClashShield.isDarkMode();
+function updateShieldUI() {
+	if (typeof ClashShield === "undefined") return;
+
+	const shieldConfig = ClashShield.getConfig();
+	const shieldStats = ClashShield.getStats();
+	const activeTab = browserTabs.find((t) => t.id === activeTabId);
+	const count = activeTab ? ClashShield.getTabBlockedCount(activeTab.id) : 0;
+	const currentHost = activeTab && activeTab.url ? extractDomain(activeTab.url) : "";
+	const isWhitelisted = currentHost && ClashShield.isWhitelisted(currentHost);
+
+	// 1. Toolbar Badge
+	if (shieldCountBadge) {
+		shieldCountBadge.textContent = count;
+		shieldCountBadge.classList.toggle("zero", count === 0);
 	}
+	if (navShieldBtn) {
+		navShieldBtn.classList.toggle("shield-active", shieldConfig.adBlockEnabled && !isWhitelisted);
+	}
+
+	// 2. Popover Details
+	if (popoverShieldCount) {
+		popoverShieldCount.textContent = count;
+	}
+	if (shieldStatusPill && shieldStatusText) {
+		if (!shieldConfig.adBlockEnabled || isWhitelisted) {
+			shieldStatusPill.className = "shield-status-pill paused";
+			shieldStatusText.textContent = isWhitelisted ? "Site Whitelisted" : "Shield Paused";
+		} else {
+			shieldStatusPill.className = "shield-status-pill active";
+			shieldStatusText.textContent = "Shield Active";
+		}
+	}
+	if (popoverToggleAdblock) popoverToggleAdblock.checked = shieldConfig.adBlockEnabled;
+	if (popoverTogglePopups) popoverTogglePopups.checked = shieldConfig.popupBlockEnabled;
+	if (popoverToggleDarkmode) popoverToggleDarkmode.checked = shieldConfig.forceDarkMode;
+
+	if (shieldWhitelistBtn) {
+		shieldWhitelistBtn.textContent = isWhitelisted ? "Resume protection on this site" : "Pause on this site";
+	}
+
+	// 3. Settings Card Sync
+	if (settingShieldTotalBlocked) settingShieldTotalBlocked.textContent = (shieldStats.totalBlocked || 0).toLocaleString();
+	if (settingShieldDataSaved) {
+		settingShieldDataSaved.textContent = ClashShield.formatBytes(shieldStats.bytesSaved || 0);
+	}
+	if (settingShieldAdblock) settingShieldAdblock.checked = shieldConfig.adBlockEnabled;
+	if (settingShieldPopups) settingShieldPopups.checked = shieldConfig.popupBlockEnabled;
+	if (settingShieldDarkmode) settingShieldDarkmode.checked = shieldConfig.forceDarkMode;
 }
 
+function updateShieldDisplay() {
+	updateShieldUI();
+}
+
+// Nav Shield Button Toggle
+if (navShieldBtn && shieldPopover) {
+	navShieldBtn.addEventListener("click", (e) => {
+		e.stopPropagation();
+		shieldPopover.classList.toggle("hidden");
+		updateShieldUI();
+	});
+
+	document.addEventListener("click", (e) => {
+		if (!e.target.closest(".nav-shield-wrapper")) {
+			shieldPopover.classList.add("hidden");
+		}
+	});
+}
+
+// Popover Quick Toggles
+if (popoverToggleAdblock) {
+	popoverToggleAdblock.addEventListener("change", () => {
+		ClashShield.setAdBlockEnabled(popoverToggleAdblock.checked);
+		showToast(popoverToggleAdblock.checked ? "🛡️ Ad & Tracker Shield enabled" : "Ad blocking paused");
+		updateShieldUI();
+	});
+}
+if (popoverTogglePopups) {
+	popoverTogglePopups.addEventListener("change", () => {
+		ClashShield.setPopupBlockEnabled(popoverTogglePopups.checked);
+		showToast(popoverTogglePopups.checked ? "🚫 Aggressive popups blocked" : "Popup blocker paused");
+		updateShieldUI();
+	});
+}
+if (popoverToggleDarkmode) {
+	popoverToggleDarkmode.addEventListener("change", () => {
+		ClashShield.setForceDarkMode(popoverToggleDarkmode.checked);
+		showToast(popoverToggleDarkmode.checked ? "🌙 Force Dark Mode enabled" : "Force Dark Mode paused");
+		// Refresh frame styling
+		if (activeProxyIframe) {
+			const activeTab = browserTabs.find(t => t.id === activeTabId);
+			if (activeTab) ClashShield.applyToFrame(activeProxyIframe, activeTab.url);
+		}
+		updateShieldUI();
+	});
+}
+if (shieldWhitelistBtn) {
+	shieldWhitelistBtn.addEventListener("click", () => {
+		const activeTab = browserTabs.find((t) => t.id === activeTabId);
+		const currentHost = activeTab && activeTab.url ? extractDomain(activeTab.url) : "";
+		if (!currentHost) {
+			showToast("No active web page open in tab");
+			return;
+		}
+		if (ClashShield.isWhitelisted(currentHost)) {
+			ClashShield.unwhitelistDomain(currentHost);
+			showToast(`Resumed Shield on ${currentHost}`);
+		} else {
+			ClashShield.whitelistDomain(currentHost);
+			showToast(`Paused Shield on ${currentHost}`);
+		}
+		if (activeProxyIframe && activeTab) {
+			ClashShield.applyToFrame(activeProxyIframe, activeTab.url);
+		}
+		updateShieldUI();
+	});
+}
+
+// Settings Page Toggles
 if (settingShieldAdblock) {
 	settingShieldAdblock.addEventListener("change", (e) => {
-		if (typeof ClashShield !== "undefined") ClashShield.setEnabled(e.target.checked);
+		if (typeof ClashShield !== "undefined") ClashShield.setAdBlockEnabled(e.target.checked);
+		updateShieldUI();
 		showToast(e.target.checked ? "Aura AdBlocker Enabled" : "Aura AdBlocker Disabled");
 	});
 }
 if (settingShieldPopups) {
 	settingShieldPopups.addEventListener("change", (e) => {
-		if (typeof ClashShield !== "undefined") ClashShield.setBlockPopups(e.target.checked);
+		if (typeof ClashShield !== "undefined") ClashShield.setPopupBlockEnabled(e.target.checked);
+		updateShieldUI();
 		showToast(e.target.checked ? "Popup Blocker Enabled" : "Popup Blocker Disabled");
 	});
 }
 if (settingShieldDarkmode) {
 	settingShieldDarkmode.addEventListener("change", (e) => {
-		if (typeof ClashShield !== "undefined") ClashShield.setDarkMode(e.target.checked);
+		if (typeof ClashShield !== "undefined") ClashShield.setForceDarkMode(e.target.checked);
+		updateShieldUI();
 		showToast(e.target.checked ? "Force Dark Mode Enabled" : "Force Dark Mode Disabled");
 	});
 }
 if (settingShieldClearStats) {
 	settingShieldClearStats.addEventListener("click", () => {
 		if (typeof ClashShield !== "undefined") ClashShield.clearStats();
-		updateShieldDisplay();
+		updateShieldUI();
 		showToast("Aura Shield statistics reset");
 	});
 }
+
+// Reactive listener on ClashShield
+if (typeof ClashShield !== "undefined" && typeof ClashShield.onChange === "function") {
+	ClashShield.onChange(() => {
+		updateShieldUI();
+	});
+}
+
+// Deck Speed Button & Popover
+const deckSpeedBtn = document.getElementById("deck-speed-btn");
+const deckSpeedPopover = document.getElementById("deck-speed-popover");
+const deckSpeedOpts = document.querySelectorAll(".speed-opt-btn");
+
+if (deckSpeedBtn && deckSpeedPopover) {
+	deckSpeedBtn.addEventListener("click", (e) => {
+		e.stopPropagation();
+		deckSpeedPopover.classList.toggle("hidden");
+	});
+	document.addEventListener("click", (e) => {
+		if (!e.target.closest(".deck-speed-wrapper")) {
+			deckSpeedPopover.classList.add("hidden");
+		}
+	});
+}
+
+deckSpeedOpts.forEach(btn => {
+	btn.addEventListener("click", () => {
+		const sp = parseFloat(btn.dataset.speed) || 1.0;
+		setGameSpeed(sp);
+		if (deckSpeedPopover) deckSpeedPopover.classList.add("hidden");
+	});
+});
+
+// Player Modal Speed Multipliers
+const playerSpeedBtns = document.querySelectorAll(".player-speed-btn");
+playerSpeedBtns.forEach(btn => {
+	btn.addEventListener("click", () => {
+		const sp = parseFloat(btn.dataset.speed) || 1.0;
+		setGameSpeed(sp);
+	});
+});
 
 // Chromebook Optimizer Toggles
 const settingPerfStaticBg = document.getElementById("setting-perf-staticbg");

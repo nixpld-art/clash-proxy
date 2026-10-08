@@ -2714,5 +2714,289 @@ body.potato-mode .background-grid {
 	opacity: 0.08 !important;
 }
 
+/* ============================================================
+   Clash Shield Popover & AdBlock UI
+   ============================================================ */
+.nav-shield-wrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+.nav-shield-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.nav-shield-btn.shield-active {
+	color: #00cec9;
+	border-color: rgba(0, 206, 201, 0.4);
+	box-shadow: 0 0 12px rgba(0, 206, 201, 0.25);
+}
+.shield-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 17px;
+	height: 17px;
+	padding: 0 5px;
+	border-radius: 9px;
+	background: #00cec9;
+	color: #050811;
+	font-size: 0.68rem;
+	font-weight: 800;
+	font-family: var(--font-mono);
+	line-height: 1;
+	box-shadow: 0 0 8px rgba(0, 206, 201, 0.6);
+	transition: all 0.2s ease;
+}
+.shield-badge.zero {
+	background: rgba(255, 255, 255, 0.12);
+	color: var(--text-muted);
+	box-shadow: none;
+	opacity: 0.6;
+}
+
+.shield-popover {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	width: 290px;
+	background: rgba(12, 16, 28, 0.96);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border: 1px solid rgba(0, 206, 201, 0.3);
+	border-radius: 12px;
+	box-shadow: 0 20px 48px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 206, 201, 0.15);
+	padding: 16px;
+	z-index: 1050;
+	animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.shield-popover.hidden {
+	display: none;
+}
+@keyframes popoverFadeIn {
+	from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.shield-popover-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+.shield-popover-title {
+	font-size: 0.82rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+}
+.shield-status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 9px;
+	border-radius: 12px;
+	background: rgba(0, 206, 201, 0.12);
+	border: 1px solid rgba(0, 206, 201, 0.35);
+	color: #00cec9;
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+.shield-status-pill.paused {
+	background: rgba(245, 158, 11, 0.12);
+	border-color: rgba(245, 158, 11, 0.35);
+	color: #f59e0b;
+}
+.shield-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	box-shadow: 0 0 6px currentColor;
+}
+.shield-stats-banner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 10px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.35);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	margin-bottom: 14px;
+	text-align: center;
+}
+.shield-stats-num {
+	font-size: 1.8rem;
+	font-weight: 800;
+	color: #00cec9;
+	font-family: var(--font-mono);
+	line-height: 1;
+	margin-bottom: 4px;
+}
+.shield-stats-label {
+	font-size: 0.72rem;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+.shield-toggles-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 14px;
+}
+.shield-toggle-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	color: var(--text-primary);
+	font-weight: 600;
+}
+.shield-popover-footer {
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	padding-top: 10px;
+}
+.shield-whitelist-btn {
+	width: 100%;
+	padding: 7px 12px;
+	border-radius: 7px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--text-secondary);
+	font-size: 0.75rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+.shield-whitelist-btn:hover {
+	background: rgba(255, 255, 255, 0.12);
+	color: #ffffff;
+}
+
+/* ============================================================
+   Game Speed Controller & Deck Multiplier
+   ============================================================ */
+.deck-speed-wrapper {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+.deck-speed-popover {
+	position: absolute;
+	top: calc(100% + 10px);
+	right: 0;
+	width: 220px;
+	background: rgba(12, 16, 28, 0.96);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border: 1px solid rgba(255, 215, 0, 0.3);
+	border-radius: 12px;
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.12);
+	padding: 12px;
+	z-index: 1050;
+	animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.deck-speed-popover.hidden {
+	display: none;
+}
+.deck-speed-title {
+	font-size: 0.78rem;
+	font-weight: 800;
+	color: #ffd700;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+.speed-btn-group {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 6px;
+}
+.speed-opt-btn {
+	padding: 6px 8px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--text-secondary);
+	font-size: 0.78rem;
+	font-weight: 700;
+	font-family: var(--font-mono);
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+.speed-opt-btn:hover {
+	background: rgba(255, 215, 0, 0.15);
+	color: #ffd700;
+	border-color: rgba(255, 215, 0, 0.4);
+}
+.speed-opt-btn.active {
+	background: #ffd700;
+	color: #07080c;
+	font-weight: 800;
+	border-color: #ffd700;
+	box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Player Topbar Speed Control */
+.player-speed-controls {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: rgba(0, 0, 0, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: var(--radius-pill);
+	padding: 3px 6px;
+}
+.player-speed-label {
+	font-size: 0.72rem;
+	font-weight: 800;
+	color: #ffd700;
+	margin-right: 4px;
+	letter-spacing: 0.02em;
+}
+.player-speed-btn {
+	padding: 3px 8px;
+	border-radius: 12px;
+	background: transparent;
+	border: 1px solid transparent;
+	color: var(--text-secondary);
+	font-size: 0.72rem;
+	font-weight: 700;
+	font-family: var(--font-mono);
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+.player-speed-btn:hover {
+	color: #ffd700;
+	background: rgba(255, 215, 0, 0.1);
+}
+.player-speed-btn.active {
+	background: #ffd700;
+	color: #07080c;
+	font-weight: 800;
+	box-shadow: 0 0 8px rgba(255, 215, 0, 0.45);
+}
+
+/* Real Game Image Covers */
+.game-cover-img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	border-radius: var(--radius-sm);
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+	z-index: 1;
+}
+.game-card:hover .game-cover-img {
+	transform: scale(1.08);
+	filter: brightness(1.1);
+}
+
 
 

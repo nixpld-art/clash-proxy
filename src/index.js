@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "url";
 import { hostname } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { readdirSync, readFileSync, createWriteStream, statSync } from "node:fs";
+import { readdirSync, readFileSync, createWriteStream, statSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
@@ -62,6 +62,21 @@ function loadGameTitles() {
 }
 loadGameTitles();
 
+let gameCoverMap = new Map();
+function loadGameCovers() {
+	try {
+		const coversPath = join(publicPath, "game_covers.json");
+		if (existsSync(coversPath)) {
+			const obj = JSON.parse(readFileSync(coversPath, "utf8"));
+			gameCoverMap = new Map(Object.entries(obj));
+			console.log(`Loaded ${gameCoverMap.size} game covers`);
+		}
+	} catch (e) {
+		console.warn("Could not load game_covers.json:", e.message);
+	}
+}
+loadGameCovers();
+
 // Pre-load games list
 let cachedGames = null;
 function getGamesList() {
@@ -77,13 +92,19 @@ function getGamesList() {
 				} catch {}
 				return true;
 			})
-			.map((filename, index) => ({
-				id: `game-${index + 1}`,
-				title: gameTitleMap.get(filename) || formatGameTitle(filename),
-				filename: filename,
-				url: `/games/${encodeURIComponent(filename)}`,
-				cat: gameCategoryMap.get(filename) || "Arcade"
-			}))
+			.map((filename, index) => {
+				const title = gameTitleMap.get(filename) || formatGameTitle(filename);
+				const fname = filename.replace(/\.html$/i, "");
+				const img = gameCoverMap.get(title) || gameCoverMap.get(title.toLowerCase()) || gameCoverMap.get(fname) || null;
+				return {
+					id: `game-${index + 1}`,
+					title: title,
+					filename: filename,
+					url: `/games/${encodeURIComponent(filename)}`,
+					cat: gameCategoryMap.get(filename) || "Arcade",
+					img: img
+				};
+			})
 			.sort((a, b) => a.title.localeCompare(b.title));
 	} catch (err) {
 		console.error("Error reading games directory:", err);

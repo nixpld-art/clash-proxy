@@ -187,6 +187,79 @@
 						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
 					</div>
 					<div class="deck-actions">
+						<!-- Clash Shield Button & Popover -->
+						<div class="nav-shield-wrapper">
+							<button id="nav-shield-btn" class="deck-btn nav-shield-btn" aria-label="Aura Shield" title="Aura Shield — AdBlock &amp; Tracker Protection">
+								<img src="/assets/icons/shield.svg" class="deck-icon-img" alt="" />
+								<span class="deck-btn-label">Shield</span>
+								<span id="shield-count-badge" class="shield-badge zero">0</span>
+							</button>
+
+							<!-- Clash Shield Dropdown Popover -->
+							<div id="shield-popover" class="shield-popover hidden">
+								<div class="shield-popover-header">
+									<div class="shield-status-pill active" id="shield-status-pill">
+										<span class="shield-status-dot"></span>
+										<span id="shield-status-text">Shield Active</span>
+									</div>
+									<span class="shield-popover-title">Aura Shield</span>
+								</div>
+
+								<div class="shield-stats-banner">
+									<span id="popover-shield-count" class="shield-stats-num">0</span>
+									<span class="shield-stats-label">Ads & Trackers Blocked on Tab</span>
+								</div>
+
+								<div class="shield-toggles-list">
+									<div class="shield-toggle-item">
+										<span class="shield-toggle-label">Block Ads & Trackers</span>
+										<label class="toggle-switch toggle-sm">
+											<input type="checkbox" id="popover-toggle-adblock" checked />
+											<span class="toggle-slider"></span>
+										</label>
+									</div>
+									<div class="shield-toggle-item">
+										<span class="shield-toggle-label">Block Popups</span>
+										<label class="toggle-switch toggle-sm">
+											<input type="checkbox" id="popover-toggle-popups" checked />
+											<span class="toggle-slider"></span>
+										</label>
+									</div>
+									<div class="shield-toggle-item">
+										<span class="shield-toggle-label">Force Dark Mode</span>
+										<label class="toggle-switch toggle-sm">
+											<input type="checkbox" id="popover-toggle-darkmode" />
+											<span class="toggle-slider"></span>
+										</label>
+									</div>
+								</div>
+
+								<div class="shield-popover-footer">
+									<button id="shield-whitelist-btn" class="shield-whitelist-btn">
+										Pause on this site
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Game & Tab Speed Controller -->
+						<div class="deck-speed-wrapper">
+							<button id="deck-speed-btn" class="deck-btn" title="Speed Multiplier (0.5x - 3x)">
+								⚡ <span id="deck-speed-label">1.0x</span>
+							</button>
+							<div id="deck-speed-popover" class="deck-speed-popover hidden">
+								<div class="deck-speed-title">⚡ Speed Multiplier</div>
+								<div class="speed-btn-group">
+									<button class="speed-opt-btn" data-speed="0.5">0.5x</button>
+									<button class="speed-opt-btn active" data-speed="1.0">1.0x</button>
+									<button class="speed-opt-btn" data-speed="1.25">1.25x</button>
+									<button class="speed-opt-btn" data-speed="1.5">1.5x</button>
+									<button class="speed-opt-btn" data-speed="2.0">2.0x</button>
+									<button class="speed-opt-btn" data-speed="3.0">3.0x</button>
+								</div>
+							</div>
+						</div>
+
 						<button id="deck-inspect-btn" class="deck-btn" title="Inspect Element / DevTools Console (Eruda)"><img src="/assets/icons/terminal.svg" class="deck-icon-img" alt="" /> DevTools</button>
 						<button id="deck-aboutblank-btn" class="deck-btn" title="Pop out into about:blank">about:blank</button>
 						<button id="deck-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶</button>
@@ -1006,6 +1079,16 @@
 				<span class="player-esc-badge"><kbd>ESC</kbd> to exit</span>
 			</div>
 			<div class="player-actions">
+				<!-- Game Speed Hack Controls -->
+				<div class="player-speed-controls" id="player-speed-controls" title="Game Speed Multiplier">
+					<span class="player-speed-label">⚡ Speed</span>
+					<button class="player-speed-btn" data-speed="0.5">0.5x</button>
+					<button class="player-speed-btn active" data-speed="1.0">1x</button>
+					<button class="player-speed-btn" data-speed="1.5">1.5x</button>
+					<button class="player-speed-btn" data-speed="2.0">2x</button>
+					<button class="player-speed-btn" data-speed="3.0">3x</button>
+				</div>
+				<button id="player-inspect-btn" class="deck-btn" title="Inspect Element / DevTools Console (Eruda)"><img src="/assets/icons/terminal.svg" class="deck-icon-img" alt="" /> DevTools</button>
 				<button id="player-aboutblank-btn" class="deck-btn" title="Open in about:blank">about:blank</button>
 				<button id="player-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶ Fullscreen</button>
 				<button id="player-close-btn" class="deck-btn player-exit-btn" title="Exit Game (ESC)">✕ Exit Game</button>
