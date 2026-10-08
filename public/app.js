@@ -113,16 +113,16 @@ if (importVaultBtn) {
 // 2b. Vault Gamification & Cyber Badges Engine
 // ============================================================
 const VAULT_BADGES = [
-	{ id: "first_game", title: "First Spark", desc: "Launch your first arcade game", icon: "🕹️", test: (s) => (s.games || 0) >= 1 },
-	{ id: "game_10", title: "Arcade Veteran", desc: "Play 10 arcade games", icon: "🎮", test: (s) => (s.games || 0) >= 10 },
-	{ id: "game_50", title: "Master of Grid", desc: "Play 50 arcade games", icon: "👑", test: (s) => (s.games || 0) >= 50 },
-	{ id: "first_browse", title: "Ghost Gateway", desc: "Proxy your first web destination", icon: "🌐", test: (s) => (s.sites || 0) >= 1 },
-	{ id: "browse_20", title: "Net Voyager", desc: "Proxy 20 web sessions", icon: "🚀", test: (s) => (s.sites || 0) >= 20 },
-	{ id: "sound_expert", title: "Sonic Disruptor", desc: "Play 5 sound effects", icon: "🔊", test: (s) => (s.sounds || 0) >= 5 },
-	{ id: "ai_convo", title: "Neural Symbiosis", desc: "Converse with Aura Intelligence", icon: "🤖", test: (s) => (s.ai || 0) >= 1 },
-	{ id: "stealth_cloak", title: "Ghost Chameleon", desc: "Activate a Stealth Cloak disguise", icon: "🛡️", test: (s) => (s.cloaks || 0) >= 1 },
-	{ id: "about_blank", title: "Null Void", desc: "Launch in about:blank mode", icon: "↗", test: (s) => (s.blank || 0) >= 1 },
-	{ id: "speed_dial", title: "Grid Customizer", desc: "Add a custom speed dial shortcut", icon: "⭐", test: (s) => (s.shortcuts || 0) >= 1 }
+	{ id: "first_game", title: "First Spark", desc: "Launch your first arcade game", icon: "/assets/icons/badge-spark.svg", test: (s) => (s.games || 0) >= 1 },
+	{ id: "game_10", title: "Arcade Veteran", desc: "Play 10 arcade games", icon: "/assets/icons/badge-veteran.svg", test: (s) => (s.games || 0) >= 10 },
+	{ id: "game_50", title: "Master of Grid", desc: "Play 50 arcade games", icon: "/assets/icons/badge-master.svg", test: (s) => (s.games || 0) >= 50 },
+	{ id: "first_browse", title: "Ghost Gateway", desc: "Proxy your first web destination", icon: "/assets/icons/badge-gateway.svg", test: (s) => (s.sites || 0) >= 1 },
+	{ id: "browse_20", title: "Net Voyager", desc: "Proxy 20 web sessions", icon: "/assets/icons/badge-voyager.svg", test: (s) => (s.sites || 0) >= 20 },
+	{ id: "sound_expert", title: "Sonic Disruptor", desc: "Play 5 sound effects", icon: "/assets/icons/badge-sonic.svg", test: (s) => (s.sounds || 0) >= 5 },
+	{ id: "ai_convo", title: "Neural Symbiosis", desc: "Converse with Aura Intelligence", icon: "/assets/icons/badge-neural.svg", test: (s) => (s.ai || 0) >= 1 },
+	{ id: "stealth_cloak", title: "Ghost Chameleon", desc: "Activate a Stealth Cloak disguise", icon: "/assets/icons/badge-chameleon.svg", test: (s) => (s.cloaks || 0) >= 1 },
+	{ id: "about_blank", title: "Null Void", desc: "Launch in about:blank mode", icon: "/assets/icons/badge-void.svg", test: (s) => (s.blank || 0) >= 1 },
+	{ id: "speed_dial", title: "Grid Customizer", desc: "Add a custom speed dial shortcut", icon: "/assets/icons/badge-customizer.svg", test: (s) => (s.shortcuts || 0) >= 1 }
 ];
 
 function getVaultStats() {
@@ -238,7 +238,7 @@ function renderVaultModal() {
 			const card = document.createElement("div");
 			card.className = `badge-card ${isUnlocked ? "unlocked" : ""}`;
 			card.innerHTML = `
-				<span class="badge-icon">${b.icon}</span>
+				<span class="badge-icon"><img src="${b.icon}" class="badge-img" alt="${escapeHtml(b.title)}" /></span>
 				<span class="badge-title">${escapeHtml(b.title)}</span>
 				<span class="badge-desc">${escapeHtml(b.desc)}</span>
 			`;
@@ -585,7 +585,7 @@ function renderBookmarksBar() {
 	browserBookmarks.forEach(bm => {
 		const chip = document.createElement("button");
 		chip.className = "bookmark-chip";
-		chip.textContent = "★ " + bm.title;
+		chip.innerHTML = `<img src="/assets/icons/star.svg" class="inline-icon-img" alt="" /> ` + escapeHtml(bm.title);
 		chip.title = bm.url;
 		chip.addEventListener("click", () => {
 			const currentTab = browserTabs.find(t => t.id === activeTabId);
@@ -838,12 +838,12 @@ const shortcutUrlInput = document.getElementById("shortcut-url-input");
 const shortcutIconInput = document.getElementById("shortcut-icon-input");
 
 const DEFAULT_SHORTCUTS = [
-	{ name: "YouTube", url: "https://youtube.com", icon: "▶️" },
-	{ name: "Discord", url: "https://discord.com", icon: "💬" },
-	{ name: "Reddit", url: "https://reddit.com", icon: "🤖" },
-	{ name: "Twitch", url: "https://twitch.tv", icon: "🟣" },
-	{ name: "Wikipedia", url: "https://wikipedia.org", icon: "📖" },
-	{ name: "GitHub", url: "https://github.com", icon: "🐙" }
+	{ name: "YouTube", url: "https://youtube.com", icon: "/assets/icons/youtube.svg" },
+	{ name: "Discord", url: "https://discord.com", icon: "/assets/icons/discord.svg" },
+	{ name: "Reddit", url: "https://reddit.com", icon: "/assets/icons/reddit.svg" },
+	{ name: "Twitch", url: "https://twitch.tv", icon: "/assets/icons/twitch.svg" },
+	{ name: "Wikipedia", url: "https://wikipedia.org", icon: "/assets/icons/wikipedia.svg" },
+	{ name: "GitHub", url: "https://github.com", icon: "/assets/icons/github.svg" }
 ];
 
 function getCustomShortcuts() {
@@ -872,8 +872,12 @@ function renderSpeedDials() {
 		const btn = document.createElement("button");
 		btn.className = "speed-dial-item";
 		btn.dataset.url = s.url;
+		const iconMarkup = (s.icon && (s.icon.startsWith("/") || s.icon.startsWith("http")))
+			? `<img src="${s.icon}" class="sd-icon-img" alt="${escapeHtml(s.name)}" />`
+			: `<span class="sd-icon">${s.icon || "🌐"}</span>`;
+
 		btn.innerHTML = `
-			<span class="sd-icon">${s.icon || "🌐"}</span>
+			<span class="sd-icon">${iconMarkup}</span>
 			<span class="sd-label">${escapeHtml(s.name)}</span>
 			${s.isCustom ? `<span class="sd-del-btn" title="Remove Shortcut" style="position:absolute;top:4px;right:6px;font-size:0.7rem;color:#ef4444;cursor:pointer;">✕</span>` : ""}
 		`;
@@ -900,7 +904,7 @@ function renderSpeedDials() {
 	addBtn.id = "add-shortcut-btn";
 	addBtn.title = "Add Custom Shortcut";
 	addBtn.innerHTML = `
-		<span class="sd-icon">➕</span>
+		<span class="sd-icon"><img src="/assets/icons/plus.svg" class="sd-icon-img" alt="Add" /></span>
 		<span class="sd-label">Add Site</span>
 	`;
 	addBtn.addEventListener("click", () => {
@@ -1080,6 +1084,16 @@ function applyFilterAndSearch() {
 	renderNextGamesBatch();
 }
 
+function getGameMonogram(title) {
+	if (!title) return "GM";
+	const clean = title.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+	const words = clean.split(/\s+/).filter(Boolean);
+	if (words.length === 0) return "GM";
+	if (/^\d+$/.test(words[0])) return words[0].substring(0, 4);
+	if (words.length === 1) return words[0].substring(0, 3).toUpperCase();
+	return (words[0][0] + words[1][0]).toUpperCase();
+}
+
 function renderNextGamesBatch() {
 	if (!arcadeGrid) return;
 	if (filteredGamesList.length === 0) {
@@ -1098,17 +1112,22 @@ function renderNextGamesBatch() {
 		card.dataset.url = game.url;
 		card.dataset.title = game.title;
 
-		const iconChar = game.icon || "🕹️";
+		const monogram = getGameMonogram(game.title);
+		const cat = game.category || game.cat || "Arcade";
 		const isFav = isGameFavorited(game.title);
 
 		card.innerHTML = `
-			<button class="game-star-btn ${isFav ? "favorited" : ""}" title="${isFav ? "Remove Favorite" : "Add to Favorites"}">★</button>
+			<button class="game-star-btn ${isFav ? "favorited" : ""}" title="${isFav ? "Remove Favorite" : "Add to Favorites"}"><img src="/assets/icons/star.svg" class="icon-inline" alt="" /></button>
 			<div class="game-thumb">
-				<span class="game-thumb-icon">${iconChar}</span>
+				<div class="game-cover-art" data-category="${escapeHtml(cat.toLowerCase())}">
+					<div class="game-cover-mesh"></div>
+					<img src="/assets/icons/gamepad.svg" class="game-cover-svg" alt="" />
+					<span class="game-cover-code">${monogram}</span>
+				</div>
 			</div>
 			<div class="game-meta">
 				<span class="game-title" title="${escapeHtml(game.title)}">${escapeHtml(game.title)}</span>
-				<span class="game-cat">${escapeHtml(game.category || "Arcade")}</span>
+				<span class="game-cat">${escapeHtml(cat)}</span>
 			</div>
 		`;
 
@@ -1332,7 +1351,7 @@ async function loadSoundboard() {
 				const card = document.createElement("button");
 				card.className = "sound-btn";
 				card.innerHTML = `
-					<span class="sb-icon">${snd.icon || "🔊"}</span>
+					<span class="sb-icon"><img src="/assets/icons/sound.svg" class="sb-icon-img" alt="" /></span>
 					<span class="sb-title">${escapeHtml(snd.title)}</span>
 				`;
 				card.addEventListener("click", () => {

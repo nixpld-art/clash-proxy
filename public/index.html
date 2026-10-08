@@ -48,7 +48,8 @@
 	<script src="register-sw.js?v=30" defer></script>
 	<script src="search.js?v=30" defer></script>
 	<script src="shield.js?v=30" defer></script>
-	<script src="app.js?v=1" defer></script>
+	<script src="interactive-bg.js?v=1" defer></script>
+	<script src="app.js?v=2" defer></script>
 </head>
 <body>
 	<!-- Ambient Background Orbs & Cyber Grid -->
@@ -74,31 +75,31 @@
 		<div class="topbar-right">
 			<!-- Anonymous Vault Level & XP Chip -->
 			<div class="vault-level-pill" id="vault-level-pill" title="Anonymous Vault Level & Badges (Click to view)">
-				<span class="level-icon">⚡</span>
+				<img src="/assets/icons/energy.svg" class="icon-inline" alt="XP" />
 				<span id="vault-level-display">Lv. 1 • 0 XP</span>
 			</div>
 
 			<!-- Multi-Mirror Hub Button -->
 			<button id="mirror-hub-btn" class="topbar-btn" title="26 School Mirror Links & 1-Click Vault Share">
-				<span class="topbar-icon">🔗</span>
+				<img src="/assets/icons/link.svg" class="topbar-icon-img" alt="Mirrors" />
 				<span class="topbar-label">Mirrors</span>
 			</button>
 
 			<!-- Quick Stealth Cloak Trigger -->
 			<button id="quick-cloak-btn" class="topbar-btn" title="Quick Disguise as Google Drive">
-				<span class="topbar-icon">🛡️</span>
+				<img src="/assets/icons/shield.svg" class="topbar-icon-img" alt="Cloak" />
 				<span class="topbar-label">Cloak</span>
 			</button>
 
 			<!-- Open in about:blank -->
 			<button id="topbar-aboutblank-btn" class="topbar-btn" title="Open Aura in about:blank">
-				<span class="topbar-icon">↗</span>
+				<img src="/assets/icons/external.svg" class="topbar-icon-img" alt="about:blank" />
 				<span class="topbar-label">about:blank</span>
 			</button>
 
 			<!-- Anonymous Vault Identity Key -->
 			<div class="vault-pill" id="vault-key-pill" title="Your Anonymous Device Key (Click to copy)">
-				<span class="vault-icon">🔑</span>
+				<img src="/assets/icons/shield.svg" class="icon-inline" alt="Key" />
 				<span id="vault-key-display">AURA-INIT</span>
 			</div>
 		</div>
@@ -133,31 +134,31 @@
 					<!-- Speed Dial Quick Cards -->
 					<div class="speed-dial-grid" id="speed-dial-grid">
 						<button class="speed-dial-item" data-url="https://youtube.com">
-							<span class="sd-icon">▶️</span>
+							<span class="sd-icon"><img src="/assets/icons/youtube.svg" class="sd-icon-img" alt="YouTube" /></span>
 							<span class="sd-label">YouTube</span>
 						</button>
 						<button class="speed-dial-item" data-url="https://discord.com">
-							<span class="sd-icon">💬</span>
+							<span class="sd-icon"><img src="/assets/icons/discord.svg" class="sd-icon-img" alt="Discord" /></span>
 							<span class="sd-label">Discord</span>
 						</button>
 						<button class="speed-dial-item" data-url="https://reddit.com">
-							<span class="sd-icon">🤖</span>
+							<span class="sd-icon"><img src="/assets/icons/reddit.svg" class="sd-icon-img" alt="Reddit" /></span>
 							<span class="sd-label">Reddit</span>
 						</button>
 						<button class="speed-dial-item" data-url="https://twitch.tv">
-							<span class="sd-icon">🟣</span>
+							<span class="sd-icon"><img src="/assets/icons/twitch.svg" class="sd-icon-img" alt="Twitch" /></span>
 							<span class="sd-label">Twitch</span>
 						</button>
 						<button class="speed-dial-item" data-url="https://wikipedia.org">
-							<span class="sd-icon">📖</span>
+							<span class="sd-icon"><img src="/assets/icons/wikipedia.svg" class="sd-icon-img" alt="Wikipedia" /></span>
 							<span class="sd-label">Wikipedia</span>
 						</button>
 						<button class="speed-dial-item" data-url="https://github.com">
-							<span class="sd-icon">🐙</span>
+							<span class="sd-icon"><img src="/assets/icons/github.svg" class="sd-icon-img" alt="GitHub" /></span>
 							<span class="sd-label">GitHub</span>
 						</button>
 						<button class="speed-dial-item add-shortcut-btn" id="add-shortcut-btn" title="Add Custom Shortcut">
-							<span class="sd-icon">➕</span>
+							<span class="sd-icon"><img src="/assets/icons/plus.svg" class="sd-icon-img" alt="Add" /></span>
 							<span class="sd-label">Add Site</span>
 						</button>
 					</div>
@@ -181,9 +182,9 @@
 						<button id="deck-reload-btn" class="deck-btn" title="Reload">↻</button>
 					</div>
 					<div class="deck-url-bar">
-						<span class="deck-lock">🔒</span>
+						<img src="/assets/icons/shield.svg" class="deck-icon-img" alt="Secure" />
 						<input type="text" id="deck-url-input" class="deck-url-input" placeholder="Search the web or type a URL..." autocomplete="off" spellcheck="false" />
-						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page">★</button>
+						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
 					</div>
 					<div class="deck-actions">
 						<button id="deck-aboutblank-btn" class="deck-btn" title="Pop out into about:blank">about:blank</button>
@@ -219,22 +220,25 @@
 
 				<!-- Game of the Week Spotlight Banner -->
 				<div class="gotw-banner" id="gotw-banner">
-					<div class="gotw-badge">🔥 GAME OF THE WEEK</div>
+					<div class="gotw-badge"><img src="/assets/icons/flame.svg" class="inline-icon-img" alt="" /> GAME OF THE WEEK</div>
 					<h3 class="gotw-title" id="gotw-title">Drive Mad</h3>
 					<p class="gotw-desc">Master crazy custom obstacle courses, springy truck physics, and 100 exhilarating levels.</p>
+					<div class="gotw-hero-img-wrap">
+						<img src="/assets/games/drivemad-hero.svg" class="gotw-hero-img" alt="Drive Mad Gameplay" />
+					</div>
 					<div class="gotw-stats-row">
-						<span class="gotw-stat">⭐ 4.9 Rating</span>
-						<span class="gotw-stat">🎮 42,800+ Plays</span>
-						<button id="gotw-play-btn" class="deck-btn gotw-play-btn">▶ Play Game of the Week</button>
+						<span class="gotw-stat"><img src="/assets/icons/star.svg" class="inline-icon-img" alt="" /> 4.9 Rating</span>
+						<span class="gotw-stat"><img src="/assets/icons/gamepad.svg" class="inline-icon-img" alt="" /> 42,800+ Plays</span>
+						<button id="gotw-play-btn" class="deck-btn gotw-play-btn"><img src="/assets/icons/gamepad.svg" class="inline-icon-img" alt="" /> Play Game of the Week</button>
 					</div>
 				</div>
 
 				<!-- Category Chips with Favorites & Recent -->
 				<div class="arcade-categories" id="arcade-cat-chips">
 					<button class="cat-chip active" data-cat="all">All Games</button>
-					<button class="cat-chip" data-cat="popular">🔥 Trending</button>
-					<button class="cat-chip" data-cat="favorites">⭐ My Favorites</button>
-					<button class="cat-chip" data-cat="recent">🕒 Recently Played</button>
+					<button class="cat-chip" data-cat="popular"><img src="/assets/icons/flame.svg" class="chip-icon-img" alt="" /> Trending</button>
+					<button class="cat-chip" data-cat="favorites"><img src="/assets/icons/star.svg" class="chip-icon-img" alt="" /> My Favorites</button>
+					<button class="cat-chip" data-cat="recent"><img src="/assets/icons/history.svg" class="chip-icon-img" alt="" /> Recently Played</button>
 					<button class="cat-chip" data-cat="action">Action</button>
 					<button class="cat-chip" data-cat="racing">Racing</button>
 					<button class="cat-chip" data-cat="puzzle">Puzzle</button>
@@ -288,12 +292,12 @@
 			<div class="soundboard-container">
 				<div class="soundboard-header">
 					<h2 class="section-title">Sound FX Deck</h2>
-					<button id="sb-stop-btn" class="deck-btn" style="color:#ef4444">⏹ Stop All Sounds</button>
+					<button id="sb-stop-btn" class="deck-btn" style="color:#ef4444"><img src="/assets/icons/sound.svg" class="inline-icon-img" alt="" /> Stop All Sounds</button>
 				</div>
 				<!-- Custom Audio Player Bar -->
 				<div class="sb-custom-bar">
 					<input type="text" id="sb-custom-input" class="aura-input" placeholder="Paste custom MP3 URL or MyInstants link..." style="flex:1;" />
-					<button id="sb-custom-play-btn" class="deck-btn" style="white-space:nowrap;">▶ Play Audio</button>
+					<button id="sb-custom-play-btn" class="deck-btn" style="white-space:nowrap;"><img src="/assets/icons/sound.svg" class="inline-icon-img" alt="" /> Play Audio</button>
 				</div>
 				<div class="sound-grid" id="soundboard-grid">
 					<div class="loading-state">Loading sounds...</div>
@@ -566,23 +570,23 @@
 	     ============================================================ -->
 	<nav class="aura-dock">
 		<button class="dock-item active" data-view="browse" title="Browse">
-			<span class="dock-icon">🌐</span>
+			<span class="dock-icon"><img src="/assets/icons/globe.svg" class="dock-icon-img" alt="Browse" /></span>
 			<span class="dock-label">Browse</span>
 		</button>
 		<button class="dock-item" data-view="arcade" title="Arcade">
-			<span class="dock-icon">🎮</span>
+			<span class="dock-icon"><img src="/assets/icons/gamepad.svg" class="dock-icon-img" alt="Arcade" /></span>
 			<span class="dock-label">Arcade</span>
 		</button>
 		<button class="dock-item" data-view="ai" title="Aura AI">
-			<span class="dock-icon">🤖</span>
+			<span class="dock-icon"><img src="/assets/icons/ai.svg" class="dock-icon-img" alt="Aura AI" /></span>
 			<span class="dock-label">Aura AI</span>
 		</button>
 		<button class="dock-item" data-view="soundboard" title="Soundboard">
-			<span class="dock-icon">🔊</span>
+			<span class="dock-icon"><img src="/assets/icons/sound.svg" class="dock-icon-img" alt="Sounds" /></span>
 			<span class="dock-label">Sounds</span>
 		</button>
 		<button class="dock-item" data-view="settings" title="Settings">
-			<span class="dock-icon">⚙️</span>
+			<span class="dock-icon"><img src="/assets/icons/gear.svg" class="dock-icon-img" alt="Settings" /></span>
 			<span class="dock-label">Settings</span>
 		</button>
 	</nav>
@@ -594,7 +598,7 @@
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="modal-title-wrap">
-					<span class="modal-icon">🔒</span>
+					<img src="/assets/icons/shield.svg" class="modal-icon-img" alt="" />
 					<h3>Aura System Control</h3>
 				</div>
 				<button id="owner-bridge-close" class="modal-close-btn">✕</button>
@@ -653,7 +657,7 @@
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="modal-title-wrap">
-					<span class="modal-icon">⚡</span>
+					<img src="/assets/icons/energy.svg" class="modal-icon-img" alt="" />
 					<h3>Anonymous Vault Progression</h3>
 				</div>
 				<button id="vault-modal-close" class="modal-close-btn">✕</button>
@@ -693,7 +697,7 @@
 			</div>
 
 			<div style="margin-top: 20px; display: flex; gap: 10px;">
-				<button id="vp-copy-sync-link-btn" class="deck-btn" style="flex: 1; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">🔗 Copy 1-Click Vault Sync Link</button>
+				<button id="vp-copy-sync-link-btn" class="deck-btn" style="flex: 1; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;"><img src="/assets/icons/link.svg" class="inline-icon-img" alt="" /> Copy 1-Click Vault Sync Link</button>
 			</div>
 		</div>
 	</div>
@@ -705,7 +709,7 @@
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="modal-title-wrap">
-					<span class="modal-icon">🔗</span>
+					<img src="/assets/icons/link.svg" class="modal-icon-img" alt="" />
 					<h3>Aura Mirror Network</h3>
 				</div>
 				<button id="mirror-hub-close" class="modal-close-btn">✕</button>
@@ -740,7 +744,7 @@
 				</div>
 			</div>
 			<div style="margin-top: 18px;">
-				<button id="mirror-copy-sync-btn" class="deck-btn" style="width: 100%;">🔗 Copy Cross-Mirror 1-Click Link</button>
+				<button id="mirror-copy-sync-btn" class="deck-btn" style="width: 100%;"><img src="/assets/icons/link.svg" class="inline-icon-img" alt="" /> Copy Cross-Mirror 1-Click Link</button>
 			</div>
 		</div>
 	</div>
@@ -752,7 +756,7 @@
 		<div class="modal-box" style="max-width: 440px;">
 			<div class="modal-header">
 				<div class="modal-title-wrap">
-					<span class="modal-icon">➕</span>
+					<img src="/assets/icons/plus.svg" class="modal-icon-img" alt="" />
 					<h3>Add Speed Dial Site</h3>
 				</div>
 				<button id="shortcut-modal-close" class="modal-close-btn">✕</button>
