@@ -348,6 +348,10 @@ function switchView(viewName) {
 		}
 	});
 
+	if (viewName === "chat" && typeof onEnterChatView === "function") {
+		onEnterChatView();
+	}
+
 	window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1830,6 +1834,385 @@ function escapeHtml(str) {
 }
 
 // ============================================================
+// 12. Community Chat System (Sign-in Required)
+// ============================================================
+const CHAT_TOKEN_KEY = "aura_chat_token";
+let currentChatUser = null;
+let chatPollTimer = null;
+let chatWebSocket = null;
+const knownChatMessageIds = new Set();
+
+const chatAuthGate = document.getElementById("chat-auth-gate");
+const chatActivePanel = document.getElementById("chat-active-panel");
+const chatTabLogin = document.getElementById("chat-tab-login");
+const chatTabRegister = document.getElementById("chat-tab-register");
+const chatLoginForm = document.getElementById("chat-login-form");
+const chatRegisterForm = document.getElementById("chat-register-form");
+const chatLoginStatus = document.getElementById("chat-login-status");
+const chatRegStatus = document.getElementById("chat-reg-status");
+
+const chatUserDisplay = document.getElementById("chat-user-display");
+const chatUserTag = document.getElementById("chat-user-tag");
+const chatUserAvatar = document.getElementById("chat-user-avatar");
+const chatSignoutBtn = document.getElementById("chat-signout-btn");
+const chatMessagesContainer = document.getElementById("chat-messages-container");
+const chatComposerForm = document.getElementById("chat-composer-form");
+const chatComposerInput = document.getElementById("chat-composer-input");
+
+function getChatToken() {
+	return localStorage.getItem(CHAT_TOKEN_KEY) || localStorage.getItem("clash_jwt_token") || "";
+}
+
+function setChatToken(token) {
+	if (token) {
+		localStorage.setItem(CHAT_TOKEN_KEY, token);
+		localStorage.setItem("clash_jwt_token", token);
+	} else {
+		localStorage.removeItem(CHAT_TOKEN_KEY);
+	}
+}
+
+function onEnterChatView() {
+	if (!currentChatUser) {
+		checkChatAuth();
+	} else {
+		loadChatMessages();
+		if (chatComposerInput) chatComposerInput.focus();
+	}
+}
+
+// Tab Switching
+if (chatTabLogin && chatTabRegister) {
+	chatTabLogin.addEventListener("click", () => {
+		chatTabLogin.classList.add("active");
+		chatTabRegister.classList.remove("active");
+		chatLoginForm?.classList.remove("hidden");
+		chatRegisterForm?.classList.add("hidden");
+		if (chatLoginStatus) chatLoginStatus.textContent = "";
+		if (chatRegStatus) chatRegStatus.textContent = "";
+	});
+
+	chatTabRegister.addEventListener("click", () => {
+		chatTabRegister.classList.add("active");
+		chatTabLogin.classList.remove("active");
+		chatRegisterForm?.classList.remove("hidden");
+		chatLoginForm?.classList.add("hidden");
+		if (chatLoginStatus) chatLoginStatus.textContent = "";
+		if (chatRegStatus) chatRegStatus.textContent = "";
+	});
+}
+
+// Auth State Handlers
+async function checkChatAuth() {
+	const token = getChatToken();
+	if (!token) {
+		showChatAuthGate();
+		return;
+	}
+
+	try {
+		const res = await fetch("/api/auth/me", {
+			headers: { "Authorization": `Bearer ${token}` }
+		});
+		const data = await res.json();
+		if (data.user) {
+			currentChatUser = data.user;
+			showChatActivePanel();
+		} else {
+			setChatToken("");
+			showChatAuthGate();
+		}
+	} catch (e) {
+		showChatAuthGate();
+	}
+}
+
+function showChatAuthGate() {
+	if (chatAuthGate) chatAuthGate.classList.remove("hidden");
+	if (chatActivePanel) chatActivePanel.classList.add("hidden");
+	if (chatPollTimer) {
+		clearInterval(chatPollTimer);
+		chatPollTimer = null;
+	}
+}
+
+function showChatActivePanel() {
+	if (chatAuthGate) chatAuthGate.classList.add("hidden");
+	if (chatActivePanel) chatActivePanel.classList.remove("hidden");
+
+	if (currentChatUser) {
+		const name = currentChatUser.displayName || currentChatUser.username || "Member";
+		if (chatUserDisplay) chatUserDisplay.textContent = name;
+		if (chatUserAvatar) chatUserAvatar.textContent = name.charAt(0).toUpperCase();
+		if (chatUserTag) {
+			const role = (currentChatUser.role || "MEMBER").toUpperCase();
+			const tag = currentChatUser.customTag || role;
+			chatUserTag.textContent = tag;
+			if (role === "ADMIN" || currentChatUser.role === "admin") {
+				chatUserTag.className = "chat-role-badge admin";
+			} else {
+				chatUserTag.className = "chat-role-badge";
+			}
+		}
+	}
+
+	loadChatMessages();
+	initChatWebSocket();
+
+	if (!chatPollTimer) {
+		chatPollTimer = setInterval(loadChatMessages, 3500);
+	}
+}
+
+// Login
+if (chatLoginForm) {
+	chatLoginForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const username = document.getElementById("chat-login-username")?.value?.trim();
+		const password = document.getElementById("chat-login-password")?.value;
+
+		if (!username || !password) return;
+		if (chatLoginStatus) {
+			chatLoginStatus.className = "auth-status-msg";
+			chatLoginStatus.textContent = "Authenticating...";
+		}
+
+		try {
+			const res = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password })
+			});
+			const data = await res.json();
+			if (!res.ok || data.error) {
+				if (chatLoginStatus) {
+					chatLoginStatus.className = "auth-status-msg error";
+					chatLoginStatus.textContent = data.error || "Login failed.";
+				}
+				return;
+			}
+
+			setChatToken(data.token);
+			currentChatUser = data.user;
+			if (chatLoginStatus) {
+				chatLoginStatus.className = "auth-status-msg success";
+				chatLoginStatus.textContent = `✓ Signed in as @${data.user.username}!`;
+			}
+			setTimeout(() => {
+				if (chatLoginStatus) chatLoginStatus.textContent = "";
+				showChatActivePanel();
+			}, 300);
+		} catch (err) {
+			if (chatLoginStatus) {
+				chatLoginStatus.className = "auth-status-msg error";
+				chatLoginStatus.textContent = "Network error: " + err.message;
+			}
+		}
+	});
+}
+
+// Register
+if (chatRegisterForm) {
+	chatRegisterForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const username = document.getElementById("chat-reg-username")?.value?.trim();
+		const displayName = document.getElementById("chat-reg-display")?.value?.trim();
+		const password = document.getElementById("chat-reg-password")?.value;
+
+		if (!username || !password) return;
+		if (chatRegStatus) {
+			chatRegStatus.className = "auth-status-msg";
+			chatRegStatus.textContent = "Creating account...";
+		}
+
+		try {
+			const res = await fetch("/api/auth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password, displayName: displayName || username })
+			});
+			const data = await res.json();
+			if (!res.ok || data.error) {
+				if (chatRegStatus) {
+					chatRegStatus.className = "auth-status-msg error";
+					chatRegStatus.textContent = data.error || "Registration failed.";
+				}
+				return;
+			}
+
+			setChatToken(data.token);
+			currentChatUser = data.user;
+			if (chatRegStatus) {
+				chatRegStatus.className = "auth-status-msg success";
+				chatRegStatus.textContent = "✓ Account created! Entering chat...";
+			}
+			setTimeout(() => {
+				if (chatRegStatus) chatRegStatus.textContent = "";
+				showChatActivePanel();
+			}, 300);
+		} catch (err) {
+			if (chatRegStatus) {
+				chatRegStatus.className = "auth-status-msg error";
+				chatRegStatus.textContent = "Network error: " + err.message;
+			}
+		}
+	});
+}
+
+// Sign out
+if (chatSignoutBtn) {
+	chatSignoutBtn.addEventListener("click", () => {
+		setChatToken("");
+		currentChatUser = null;
+		if (chatWebSocket) {
+			try { chatWebSocket.close(); } catch(e) {}
+			chatWebSocket = null;
+		}
+		showChatAuthGate();
+	});
+}
+
+// Message Rendering
+async function loadChatMessages() {
+	const token = getChatToken();
+	if (!token) return;
+
+	try {
+		const res = await fetch("/api/chat/global", {
+			headers: { "Authorization": `Bearer ${token}` }
+		});
+		if (res.status === 401) {
+			setChatToken("");
+			showChatAuthGate();
+			return;
+		}
+		const data = await res.json();
+		if (data.success && Array.isArray(data.messages)) {
+			let addedAny = false;
+			data.messages.forEach(msg => {
+				if (!knownChatMessageIds.has(msg.id)) {
+					knownChatMessageIds.add(msg.id);
+					appendChatMessage(msg);
+					addedAny = true;
+				}
+			});
+			if (addedAny && chatMessagesContainer) {
+				chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+			}
+		}
+	} catch (e) {}
+}
+
+function appendChatMessage(msg) {
+	if (!chatMessagesContainer) return;
+	const isMine = currentChatUser && (msg.userId === currentChatUser.id || msg.username === currentChatUser.username);
+	const row = document.createElement("div");
+	row.className = `chat-msg-row ${isMine ? "mine" : ""}`;
+
+	const authorName = escapeHtml(msg.displayName || msg.username || "User");
+	const roleTag = msg.customTag || (msg.role === "admin" ? "STAFF" : "");
+	const initial = authorName.charAt(0).toUpperCase();
+	const timeStr = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+
+	row.innerHTML = `
+		<div class="chat-msg-avatar">${initial}</div>
+		<div class="chat-msg-content-wrap">
+			<div class="chat-msg-meta">
+				<span class="chat-msg-author ${msg.role === "admin" ? "admin" : ""}">${authorName}</span>
+				${roleTag ? `<span class="chat-role-badge ${msg.role === "admin" ? "admin" : ""}">${escapeHtml(roleTag)}</span>` : ""}
+				<span class="chat-msg-time">${timeStr}</span>
+			</div>
+			<div class="chat-msg-bubble">${escapeHtml(msg.content)}</div>
+		</div>
+	`;
+
+	chatMessagesContainer.appendChild(row);
+}
+
+// Send Message
+if (chatComposerForm) {
+	chatComposerForm.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		const text = chatComposerInput?.value?.trim();
+		if (!text) return;
+
+		const token = getChatToken();
+		if (!token) {
+			showChatAuthGate();
+			return;
+		}
+
+		chatComposerInput.value = "";
+
+		// WebSocket send if available
+		if (chatWebSocket && chatWebSocket.readyState === WebSocket.OPEN) {
+			chatWebSocket.send(JSON.stringify({
+				type: "global_chat_send",
+				content: text
+			}));
+		}
+
+		// HTTP send
+		try {
+			const res = await fetch("/api/chat/global", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+				},
+				body: JSON.stringify({ content: text })
+			});
+			const data = await res.json();
+			if (data.success && data.message) {
+				if (!knownChatMessageIds.has(data.message.id)) {
+					knownChatMessageIds.add(data.message.id);
+					appendChatMessage(data.message);
+					if (chatMessagesContainer) {
+						chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+					}
+				}
+			}
+		} catch (err) {
+			console.error("Failed to post message:", err);
+		}
+	});
+}
+
+// WebSocket Live Broadcast
+function initChatWebSocket() {
+	const token = getChatToken();
+	if (!token || (chatWebSocket && chatWebSocket.readyState === WebSocket.OPEN)) return;
+
+	try {
+		const proto = location.protocol === "https:" ? "wss:" : "ws:";
+		chatWebSocket = new WebSocket(`${proto}//${location.host}/ws`);
+
+		chatWebSocket.onopen = () => {
+			chatWebSocket.send(JSON.stringify({ type: "auth", token }));
+		};
+
+		chatWebSocket.onmessage = (evt) => {
+			try {
+				const data = JSON.parse(evt.data);
+				if (data.type === "global_chat_message" && data.message) {
+					if (!knownChatMessageIds.has(data.message.id)) {
+						knownChatMessageIds.add(data.message.id);
+						appendChatMessage(data.message);
+						if (chatMessagesContainer) {
+							chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+						}
+					}
+				}
+			} catch (e) {}
+		};
+
+		chatWebSocket.onclose = () => {
+			chatWebSocket = null;
+		};
+	} catch (e) {}
+}
+
+// ============================================================
 // 11. Initialization
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -1839,4 +2222,5 @@ document.addEventListener("DOMContentLoaded", () => {
 	loadArcadeCatalog();
 	loadSoundboard();
 	updateShieldDisplay();
+	checkChatAuth();
 });

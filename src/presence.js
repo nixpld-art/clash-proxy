@@ -260,6 +260,20 @@ export function broadcastToRoom(roomCode, payload) {
 	}
 }
 
+export function broadcastGlobalChat(messageObj) {
+	const msg = JSON.stringify({
+		type: "global_chat_message",
+		message: messageObj
+	});
+	for (const sockets of activeSockets.values()) {
+		for (const ws of sockets) {
+			if (ws.readyState === ws.OPEN) {
+				ws.send(msg);
+			}
+		}
+	}
+}
+
 export const presenceWss = new WebSocketServer({ noServer: true });
 
 presenceWss.on("connection", (ws, req) => {
@@ -538,6 +552,40 @@ presenceWss.on("connection", (ws, req) => {
 					type: "lounge_rooms_list",
 					rooms: getLoungeRooms()
 				}));
+			} else if (data.type === "global_chat_send" && currentUserId) {
+				const content = String(data.content || "").trim().slice(0, 500);
+				if (content) {
+					const modErr = moderateOutgoing(currentUserId, content);
+					if (modErr) {
+						ws.send(JSON.stringify({ type: "error", message: modErr }));
+					} else {
+						const sender = db.prepare(`
+							SELECT id, username, display_name, avatar_url, role, custom_tag, equipped_frame, equipped_name_theme, equipped_chat_theme
+							FROM users WHERE id = ?
+						`).get(currentUserId);
+
+						const insertResult = db.prepare(`
+							INSERT INTO global_messages (user_id, content) VALUES (?, ?)
+						`).run(currentUserId, content);
+
+						const messageObj = {
+							id: insertResult.lastInsertRowid,
+							userId: currentUserId,
+							username: sender?.username || "Anonymous",
+							displayName: sender?.display_name || sender?.username || "Anonymous",
+							avatarUrl: sender?.avatar_url || "avatar-1",
+							role: sender?.role || "user",
+							customTag: sender?.custom_tag || null,
+							frame: sender?.equipped_frame || "none",
+							nameTheme: sender?.equipped_name_theme || "none",
+							chatTheme: sender?.equipped_chat_theme || "none",
+							content,
+							createdAt: new Date().toISOString()
+						};
+
+						broadcastGlobalChat(messageObj);
+					}
+				}
 			} else if (data.type === "ping") {
 				if (currentUserId) touchUserActive(currentUserId);
 				else if (data.guestId) touchGuestPresence(data.guestId, req.socket?.remoteAddress);

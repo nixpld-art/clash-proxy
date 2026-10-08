@@ -131,9 +131,18 @@ db.exec(`
 		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	);
 
+	CREATE TABLE IF NOT EXISTS global_messages (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER NOT NULL,
+		content TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+	);
+
 	CREATE INDEX IF NOT EXISTS idx_game_saves_user ON game_saves(user_id, game_key);
 	CREATE INDEX IF NOT EXISTS idx_user_cosmetics_user ON user_cosmetics(user_id);
 	CREATE INDEX IF NOT EXISTS idx_userscripts_user ON userscripts(user_id);
+	CREATE INDEX IF NOT EXISTS idx_global_messages_created ON global_messages(created_at);
 `);
 
 // Safe migrations for bookmarks columns

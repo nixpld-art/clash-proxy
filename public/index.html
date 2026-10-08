@@ -306,7 +306,97 @@
 		</section>
 
 		<!-- ============================================================
-		     5. SETTINGS & STEALTH SUITE
+		     5. COMMUNITY CHAT (SIGN-IN REQUIRED)
+		     ============================================================ -->
+		<section id="view-chat" class="aura-view">
+			<div class="chat-container">
+				<!-- State A: Not Signed In - Auth Gate -->
+				<div id="chat-auth-gate" class="chat-auth-card">
+					<div class="chat-auth-header">
+						<div class="chat-badge-icon">
+							<img src="/assets/icons/chat.svg" class="large-icon-img" alt="Chat" />
+						</div>
+						<h2 class="chat-auth-title">Community Chat</h2>
+						<p class="chat-auth-subtitle">Web browsing & 3,958 Arcade games remain 100% anonymous without accounts. To prevent spam and trolling, chat requires a verified username & password.</p>
+					</div>
+
+					<div class="chat-auth-tabs">
+						<button id="chat-tab-login" class="chat-tab-btn active" type="button">Sign In</button>
+						<button id="chat-tab-register" class="chat-tab-btn" type="button">Create Account</button>
+					</div>
+
+					<!-- Form: Login -->
+					<form id="chat-login-form" class="chat-form">
+						<div class="form-group">
+							<label class="form-label" for="chat-login-username">Username</label>
+							<input type="text" id="chat-login-username" class="aura-input" placeholder="Enter your username" autocomplete="username" required />
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="chat-login-password">Password</label>
+							<input type="password" id="chat-login-password" class="aura-input" placeholder="••••••••" autocomplete="current-password" required />
+						</div>
+						<div id="chat-login-status" class="auth-status-msg"></div>
+						<button type="submit" id="chat-login-submit" class="auth-submit-btn">Sign In to Chat →</button>
+					</form>
+
+					<!-- Form: Register -->
+					<form id="chat-register-form" class="chat-form hidden">
+						<div class="form-group">
+							<label class="form-label" for="chat-reg-username">Choose Username</label>
+							<input type="text" id="chat-reg-username" class="aura-input" placeholder="3-20 letters/numbers" autocomplete="username" required />
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="chat-reg-display">Display Name (Optional)</label>
+							<input type="text" id="chat-reg-display" class="aura-input" placeholder="Public alias in chat" />
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="chat-reg-password">Password</label>
+							<input type="password" id="chat-reg-password" class="aura-input" placeholder="Minimum 6 characters" autocomplete="new-password" required />
+						</div>
+						<div id="chat-reg-status" class="auth-status-msg"></div>
+						<button type="submit" id="chat-reg-submit" class="auth-submit-btn">Create Chat Account →</button>
+					</form>
+				</div>
+
+				<!-- State B: Signed In - Chat Room Feed & Composer -->
+				<div id="chat-active-panel" class="chat-active-panel hidden">
+					<div class="chat-active-header">
+						<div class="chat-user-badge">
+							<div class="chat-avatar" id="chat-user-avatar">◈</div>
+							<div class="chat-user-info">
+								<div class="chat-user-name-row">
+									<span id="chat-user-display" class="chat-display-name">Username</span>
+									<span id="chat-user-tag" class="chat-role-badge">MEMBER</span>
+								</div>
+								<span class="chat-status-text"><span class="chat-dot online"></span> Active in Community Chat</span>
+							</div>
+						</div>
+						<div class="chat-header-actions">
+							<button id="chat-signout-btn" class="deck-btn" type="button" title="Sign out of chat">Sign Out</button>
+						</div>
+					</div>
+
+					<div class="chat-messages-scroller" id="chat-messages-container">
+						<div class="chat-welcome-banner">
+							<div class="cw-icon">◈</div>
+							<h3>Welcome to Aura Community Chat</h3>
+							<p>Keep conversations civil. No harassment or spam. Enjoy!</p>
+						</div>
+						<!-- Messages dynamically rendered here -->
+					</div>
+
+					<form id="chat-composer-form" class="chat-composer-bar">
+						<input type="text" id="chat-composer-input" class="chat-composer-input" placeholder="Type a message... (Press Enter to send)" maxlength="500" autocomplete="off" />
+						<button type="submit" id="chat-send-btn" class="chat-send-btn" title="Send Message">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+						</button>
+					</form>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     6. SETTINGS & STEALTH SUITE
 		     ============================================================ -->
 		<section id="view-settings" class="aura-view">
 			<div class="settings-container">
@@ -580,6 +670,10 @@
 		<button class="dock-item" data-view="ai" title="Aura AI">
 			<span class="dock-icon"><img src="/assets/icons/ai.svg" class="dock-icon-img" alt="Aura AI" /></span>
 			<span class="dock-label">Aura AI</span>
+		</button>
+		<button class="dock-item" data-view="chat" title="Community Chat">
+			<span class="dock-icon"><img src="/assets/icons/chat.svg" class="dock-icon-img" alt="Chat" /></span>
+			<span class="dock-label">Chat</span>
 		</button>
 		<button class="dock-item" data-view="soundboard" title="Soundboard">
 			<span class="dock-icon"><img src="/assets/icons/sound.svg" class="dock-icon-img" alt="Sounds" /></span>

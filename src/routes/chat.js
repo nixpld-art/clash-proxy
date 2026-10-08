@@ -1,5 +1,6 @@
 import db from "../db.js";
 import { extractAuthUser } from "../auth-utils.js";
+import { broadcastGlobalChat } from "../presence.js";
 
 export default async function chatRoutes(fastify, options) {
 	// Helper: Check if two users are accepted friends
@@ -146,5 +147,86 @@ export default async function chatRoutes(fastify, options) {
 		`).run(friendId, auth.id);
 
 		return { success: true, markedRead: result.changes };
+	});
+
+	// GET /api/chat/global - Fetch recent global community chat messages
+	fastify.get("/api/chat/global", async (req, reply) => {
+		const auth = extractAuthUser(req);
+		if (!auth) {
+			return reply.code(401).send({ error: "Please sign in with a username and password to view and participate in Community Chat." });
+		}
+
+		const rows = db.prepare(`
+			SELECT 
+				gm.id, gm.user_id as userId, gm.content, gm.created_at as createdAt,
+				u.username, u.display_name as displayName, u.avatar_url as avatarUrl,
+				u.role, u.custom_tag as customTag, u.equipped_frame as frame,
+				u.equipped_name_theme as nameTheme, u.equipped_chat_theme as chatTheme
+			FROM global_messages gm
+			JOIN users u ON u.id = gm.user_id
+			ORDER BY gm.id DESC
+			LIMIT 60
+		`).all();
+
+		rows.reverse();
+
+		return { success: true, messages: rows };
+	});
+
+	// POST /api/chat/global - Send a message to global community chat
+	fastify.post("/api/chat/global", async (req, reply) => {
+		const auth = extractAuthUser(req);
+		if (!auth) {
+			return reply.code(401).send({ error: "You must sign in with a username and password to chat." });
+		}
+
+		const content = String(req.body?.content || "").trim().slice(0, 500);
+		if (!content) {
+			return reply.code(400).send({ error: "Message content cannot be empty." });
+		}
+
+		const user = db.prepare("SELECT role, custom_tag, display_name, avatar_url, equipped_frame, equipped_name_theme, equipped_chat_theme, banned, banned_until, muted, muted_until FROM users WHERE id = ?").get(auth.id);
+		if (!user) return reply.code(404).send({ error: "User account not found." });
+
+		if (user.banned) {
+			if (user.banned_until && Date.now() >= user.banned_until) {
+				db.prepare("UPDATE users SET banned = 0, banned_until = NULL WHERE id = ?").run(auth.id);
+			} else {
+				return reply.code(403).send({ error: "Your account is suspended." });
+			}
+		}
+
+		if (user.muted) {
+			if (user.muted_until && Date.now() >= user.muted_until) {
+				db.prepare("UPDATE users SET muted = 0, muted_until = NULL WHERE id = ?").run(auth.id);
+			} else {
+				return reply.code(403).send({ error: "You are currently muted." });
+			}
+		}
+
+		const insertResult = db.prepare(`
+			INSERT INTO global_messages (user_id, content) VALUES (?, ?)
+		`).run(auth.id, content);
+
+		const messageObj = {
+			id: insertResult.lastInsertRowid,
+			userId: auth.id,
+			username: auth.username,
+			displayName: user.display_name || auth.username,
+			avatarUrl: user.avatar_url || "avatar-1",
+			role: user.role || "user",
+			customTag: user.custom_tag || null,
+			frame: user.equipped_frame || "none",
+			nameTheme: user.equipped_name_theme || "none",
+			chatTheme: user.equipped_chat_theme || "none",
+			content,
+			createdAt: new Date().toISOString()
+		};
+
+		try {
+			broadcastGlobalChat(messageObj);
+		} catch (e) {}
+
+		return { success: true, message: messageObj };
 	});
 }
