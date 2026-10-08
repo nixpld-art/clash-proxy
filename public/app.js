@@ -1322,6 +1322,13 @@ function handleOmnibarSubmit() {
 	if (val) navigateProxy(val);
 }
 
+const omnibarForm = document.getElementById("omnibar-form");
+if (omnibarForm) {
+	omnibarForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		handleOmnibarSubmit();
+	});
+}
 if (omnibarInput) {
 	omnibarInput.addEventListener("keydown", (e) => {
 		if (e.key === "Enter") {
@@ -1333,6 +1340,20 @@ if (omnibarInput) {
 if (omnibarGoBtn) omnibarGoBtn.addEventListener("click", handleOmnibarSubmit);
 
 // In-Deck URL Bar navigation
+const deckUrlForm = document.getElementById("deck-url-form");
+if (deckUrlForm) {
+	deckUrlForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const val = deckUrlInput ? deckUrlInput.value.trim() : "";
+		if (!val) return;
+		const currentTab = browserTabs.find(t => t.id === activeTabId);
+		if (currentTab) {
+			loadTabUrl(currentTab, val);
+		} else {
+			createTab(val);
+		}
+	});
+}
 if (deckUrlInput) {
 	deckUrlInput.addEventListener("keydown", (e) => {
 		if (e.key === "Enter") {

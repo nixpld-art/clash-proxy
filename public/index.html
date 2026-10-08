@@ -125,18 +125,18 @@
 					<p class="hero-subtitle">High-speed encrypted web navigation with zero trace</p>
 
 					<!-- Raycast-style Omnibar -->
-					<div class="omnibar-card">
+					<form id="omnibar-form" class="omnibar-card" role="search" action="javascript:void(0)" autocomplete="off" onsubmit="return false;">
 						<div class="omnibar-prefix">
 							<span id="omnibar-engine-badge" class="engine-badge">Google</span>
 						</div>
-						<input type="text" id="omnibar-input" class="omnibar-input" placeholder="Search the web or type a URL..." autocomplete="off" spellcheck="false" />
+						<input type="search" id="omnibar-input" name="search_query" role="searchbox" class="omnibar-input" placeholder="Search the web or type a URL..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" />
 						<div class="omnibar-meta">
 							<span class="omnibar-shortcut"><kbd>↵</kbd></span>
-							<button id="omnibar-go-btn" class="omnibar-btn" title="Navigate">
+							<button type="button" id="omnibar-go-btn" class="omnibar-btn" title="Navigate">
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
 							</button>
 						</div>
-					</div>
+					</form>
 
 					<!-- Speed Dial Quick Cards -->
 					<div class="speed-dial-grid" id="speed-dial-grid">
@@ -188,11 +188,11 @@
 						<button id="deck-forward-btn" class="deck-btn" title="Forward">→</button>
 						<button id="deck-reload-btn" class="deck-btn" title="Reload">↻</button>
 					</div>
-					<div class="deck-url-bar">
+					<form id="deck-url-form" class="deck-url-bar" role="search" action="javascript:void(0)" autocomplete="off" onsubmit="return false;">
 						<img src="/assets/icons/shield.svg" class="deck-icon-img" alt="Secure" />
-						<input type="text" id="deck-url-input" class="deck-url-input" placeholder="Search the web or type a URL..." autocomplete="off" spellcheck="false" />
-						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
-					</div>
+						<input type="search" id="deck-url-input" name="browser_url" role="searchbox" class="deck-url-input" placeholder="Search the web or type a URL..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" />
+						<button type="button" id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
+					</form>
 					<div class="deck-actions">
 						<!-- Quick VPN Tunnel Button in Deck -->
 						<button id="deck-vpn-btn" class="deck-btn deck-vpn-btn connected" title="Aura VPN Tunnel — Virtual Location &amp; IP Cloak">
@@ -303,7 +303,7 @@
 						<button id="arcade-add-custom-btn" class="deck-btn" title="Add Custom Game or Embed URL" style="white-space: nowrap;"><img src="/assets/icons/plus.svg" class="inline-icon-img" alt="" /> Add Custom Game</button>
 						<div class="arcade-search-bar">
 							<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-							<input type="text" id="arcade-search-input" class="arcade-search-input" placeholder="Search across 3,958 games..." autocomplete="off" />
+							<input type="search" id="arcade-search-input" name="arcade_q" class="arcade-search-input" placeholder="Search across 3,958 games..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" />
 						</div>
 					</div>
 				</div>
@@ -359,7 +359,7 @@
 
 					<div class="arcade-search-bar">
 						<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-						<input type="text" id="apps-search-input" class="arcade-search-input" placeholder="Search unblocked apps..." autocomplete="off" />
+						<input type="search" id="apps-search-input" name="apps_q" class="arcade-search-input" placeholder="Search unblocked apps..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" />
 					</div>
 				</div>
 
@@ -1057,14 +1057,14 @@
 			<div class="owner-login-card">
 				<span style="font-size: 0.8rem; font-weight: 700; color: #fff;">AUTHORIZED OWNER ACCESS</span>
 				<p style="font-size: 0.75rem; color: #94a3b8; margin: 4px 0 10px 0;">Sign in with your Owner Credentials to open the full Owner Panel (/panel).</p>
-				<div style="display: flex; flex-direction: column; gap: 8px;">
-					<input type="text" id="owner-login-username" class="aura-input" placeholder="Owner Username (Nils, Ted, Ozzy)" />
-					<input type="password" id="owner-login-password" class="aura-input" placeholder="Owner Password" />
+				<form id="owner-login-form" autocomplete="off" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 8px;">
+					<input type="text" id="owner-login-username" name="owner_username" autocomplete="username" class="aura-input" placeholder="Owner Username (Nils, Ted, Ozzy)" />
+					<input type="password" id="owner-login-password" name="owner_password" autocomplete="current-password" class="aura-input" placeholder="Owner Password" />
 					<div class="owner-login-row">
-						<button id="owner-login-submit" class="deck-btn" style="flex: 1; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">Unlock & Open Owner Panel (/panel) →</button>
+						<button type="submit" id="owner-login-submit" class="deck-btn" style="flex: 1; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">Unlock & Open Owner Panel (/panel) →</button>
 					</div>
 					<div id="owner-login-msg" style="font-size: 0.8rem; min-height: 18px;"></div>
-				</div>
+				</form>
 			</div>
 
 			<div class="owner-actions-row">
