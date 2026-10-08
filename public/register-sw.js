@@ -1,4 +1,6 @@
-const stockSW = "/sw.js?v=3";
+"use strict";
+
+const stockSW = "/sw.js";
 
 /**
  * Hostnames allowed to run service workers on http:// (non-HTTPS)

@@ -372,10 +372,12 @@ if (brandHomeBtn) {
 // ============================================================
 // 4. Scramjet V2 & Classic Fallback Proxy Engine
 // ============================================================
-const PROXY_MODE_KEY = "aura_proxy_mode";
+const PROXY_MODE_KEY = "clash_proxy_mode";
 function getProxyMode() {
-	const mode = localStorage.getItem(PROXY_MODE_KEY);
-	return mode === "sw" || mode === "classic" ? mode : "auto";
+	try {
+		const v = localStorage.getItem("clash_proxy_mode") || localStorage.getItem("aura_proxy_mode");
+		return v === "sw" || v === "classic" ? v : "auto";
+	} catch (e) { return "auto"; }
 }
 
 // ============================================================
@@ -722,53 +724,83 @@ let sjController = null;
 let classicMode = false;
 let activeProxyIframe = null;
 
-const initSWPromise = (async () => {
-	const chosenMode = getProxyMode();
-	if (chosenMode === "classic") {
-		classicMode = true;
-		console.log("[Aura] Forced Classic mode via user settings");
-		return false;
+function enableClassicMode(reason) {
+	const first = !classicMode;
+	classicMode = true;
+	console.log("[Clash Proxy] Classic mode active:", reason);
+	if (first) {
+		fetch("/api/log", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ type: "classic_mode", reason: String(reason || "").slice(0, 120) })
+		}).catch(() => {});
 	}
+}
 
-	// Automatic environment detection:
-	// Worker mirrors (*.workers.dev, *.pages.dev) and embedded frames (offline launcher) cannot reliably run Wisp WebSockets
-	const isWorkerMirror = location.hostname.endsWith(".workers.dev") || location.hostname.endsWith(".pages.dev");
-	const isEmbedded = window.self !== window.top;
-	if (isWorkerMirror || isEmbedded) {
-		classicMode = true;
-		console.log("[Aura] Detected Worker Mirror or Embedded Launcher — automatically utilizing rock-solid Classic Proxy Engine");
-		return false;
-	}
-
+function stripYTConsent(html) {
+	let out = html;
+	let cut = 0;
 	try {
-		if (!("serviceWorker" in navigator)) {
-			classicMode = true;
+		const idx = out.indexOf('"interstitial"');
+		if (idx >= 0) {
+			const brace = out.indexOf("{", idx);
+			if (brace > 0 && brace - idx < 30) {
+				let depth = 0, i = brace, inStr = false, esc = false, end = -1;
+				for (; i < out.length; i++) {
+					const c = out[i];
+					if (inStr) {
+						if (esc) esc = false;
+						else if (c === "\\") esc = true;
+						else if (c === '"') inStr = false;
+						continue;
+					}
+					if (c === '"') { inStr = true; continue; }
+					if (c === "{") depth++;
+					else if (c === "}") { depth--; if (depth === 0) { end = i; break; } }
+				}
+				if (end > 0 && out.slice(brace, brace + 80).includes("consentBumpV2Renderer")) {
+					let from = idx, to = end + 1;
+					if (out[to] === ",") to++;
+					else if (idx > 0 && out[idx - 1] === ",") from = idx - 1;
+					out = out.slice(0, from) + out.slice(to);
+					cut++;
+				}
+			}
+		}
+		out = out.replace(/"consentBumpV2Renderer",\s*/g, "").replace(/,\s*"consentBumpV2Renderer"/g, "").replace(/\[\s*"consentBumpV2Renderer"\s*\]/g, "[]");
+	} catch (e) {}
+	return { html: out, cut };
+}
+
+const initSWPromise = (async function initSW() {
+	try {
+		if (getProxyMode() === "classic") {
+			enableClassicMode("forced by settings");
 			return false;
 		}
 
+		// Register with a timeout: on networks that block Service
+		// Workers, register()/ready can hang forever instead of throwing.
 		let registration = null;
 		try {
 			registration = await Promise.race([
-				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW missing")),
-				new Promise((_, rej) => setTimeout(() => rej(new Error("sw_timeout")), 2500))
+				typeof registerSW === "function" ? registerSW() : Promise.reject(new Error("registerSW unavailable")),
+				new Promise((_, rej) => setTimeout(() => rej(new Error("service-worker-timeout")), 6000)),
 			]);
 		} catch (swErr) {
-			if (chosenMode === "auto") {
-				classicMode = true;
-				console.log("[Aura] SW blocked or timed out, auto falling back to Classic mode");
-				return false;
-			}
-			throw swErr;
+			enableClassicMode(swErr && swErr.message ? swErr.message : swErr);
+			return false;
 		}
 
 		if (navigator.serviceWorker && !navigator.serviceWorker.controller) {
-			await new Promise(res => {
+			await new Promise((res) => {
 				navigator.serviceWorker.addEventListener("controllerchange", () => res(), { once: true });
-				setTimeout(res, 400);
+				setTimeout(res, 500);
 			});
 		}
 
 		const swController = (navigator.serviceWorker && navigator.serviceWorker.controller) || (registration && registration.active);
+
 		const workerPath = (typeof _CONFIG !== "undefined" && _CONFIG.baremuxWorkerPath) ? _CONFIG.baremuxWorkerPath : "/baremux/worker.js";
 		const transportPath = (typeof _CONFIG !== "undefined" && _CONFIG.transportPath) ? _CONFIG.transportPath : "/libcurl/index.mjs";
 		const wispUrl = (typeof _CONFIG !== "undefined" && _CONFIG.wispUrl) ? _CONFIG.wispUrl : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`;
@@ -778,49 +810,213 @@ const initSWPromise = (async () => {
 			const libcurlMod = await import(transportPath);
 			const LibcurlClass = libcurlMod.default;
 			const libcurlClient = new LibcurlClass({ wisp: wispUrl });
-			// Quick connection check (up to 4 tries = 1.6s)
-			for (let i = 0; i < 4 && !libcurlClient.ready; i++) {
-				try { await libcurlClient.init(); } catch (e) { await new Promise(r => setTimeout(r, 400)); }
-			}
-			if (!libcurlClient.ready) {
-				console.warn("[Aura] Wisp transport not reachable, falling back to Classic mode");
-				classicMode = true;
-				return false;
-			}
+			const ensureTransport = async () => {
+				for (let i = 0; i < 40 && !libcurlClient.ready; i++) {
+					try { await libcurlClient.init(); } catch (e) { await new Promise((r) => setTimeout(r, 400)); }
+				}
+			};
+			await ensureTransport();
 			transportAdapter = {
 				ready: true,
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
-					let hdrs = headers;
-					if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) {
-						hdrs = Array.from(hdrs.entries());
-					} else if (hdrs && typeof hdrs === "object" && !Array.isArray(hdrs)) {
-						hdrs = Object.entries(hdrs);
-					}
-					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
-					let rawHeaders = [];
-					if (resp && resp.headers) {
-						if (typeof resp.headers.entries === "function") {
-							rawHeaders = Array.from(resp.headers.entries());
-						} else if (Array.isArray(resp.headers)) {
-							rawHeaders = resp.headers;
-						} else if (typeof resp.headers === "object") {
-							rawHeaders = Object.entries(resp.headers);
+					if (!libcurlClient.ready) await ensureTransport();
+					// Clash Shield Check
+					if (typeof ClashShield !== "undefined") {
+						const activeTab = browserTabs.find((t) => t.id === activeTabId);
+						const currentHost = activeTab && activeTab.url ? activeTab.url : "";
+						if (ClashShield.shouldBlock(remote, currentHost)) {
+							ClashShield.recordBlock(remote, activeTabId);
+							return {
+								body: new ReadableStream({ start(c) { c.close(); } }),
+								status: 204,
+								statusText: "Blocked by Clash Shield",
+								headers: [["Content-Type", "text/plain"], ["X-Clash-Shield", "Blocked"]]
+							};
 						}
 					}
-					return {
-						status: resp.status || 200,
-						statusText: resp.statusText || "OK",
-						headers: rawHeaders,
-						body: resp.body
-					};
+
+					let hdrs = headers;
+					if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) hdrs = Array.from(hdrs.entries());
+					if (Array.isArray(hdrs) && method === "GET" && /^https:\/\/www\.youtube\.com\/(watch|results|shorts|feed|@|@)/.test(String(remote))) {
+						const destEntry = hdrs.find((h) => String(h[0]).toLowerCase() === "sec-fetch-dest");
+						if (!destEntry || String(destEntry[1]) !== "document") {
+							const keep = new Set(["cookie", "user-agent", "sec-ch-ua", "sec-ch-ua-mobile", "sec-ch-ua-platform", "sec-ch-ua-arch", "sec-ch-ua-bitness", "sec-ch-ua-full-version", "sec-ch-ua-full-version-list", "sec-ch-ua-model", "sec-ch-ua-platform-version", "sec-ch-ua-wow64", "sec-ch-ua-form-factors", "referer", "viewport-width", "dpr", "device-memory"]);
+							hdrs = hdrs.filter((h) => keep.has(String(h[0]).toLowerCase()));
+							hdrs.push(["accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"]);
+							hdrs.push(["accept-language", "en-GB,en;q=0.9"]);
+							hdrs.push(["sec-fetch-dest", "document"]);
+							hdrs.push(["sec-fetch-mode", "navigate"]);
+							hdrs.push(["sec-fetch-site", "none"]);
+							hdrs.push(["sec-fetch-user", "?1"]);
+							hdrs.push(["upgrade-insecure-requests", "1"]);
+						}
+					}
+					try {
+						if (/youtube\.com\/watch/.test(String(remote))) {
+							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 40) : "-"; };
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_fix", dest: g("sec-fetch-dest"), mode: g("sec-fetch-mode"), accept: g("accept") }) }).catch(() => {});
+						}
+					} catch (e) {}
+					try {
+						const rh = new URL(String(remote));
+						const SFX = [".youtube.com", ".googlevideo.com", ".ytimg.com", ".ggpht.com", ".googleapis.com", ".gstatic.com", ".google.com", ".google.co.uk", ".googleusercontent.com", ".googleadservices.com", ".googlesyndication.com", ".google-analytics.com", ".gvt1.com", ".doubleclick.net"];
+						const hn = rh.hostname.toLowerCase();
+						const matched = SFX.some((s) => hn === s.slice(1) || hn.endsWith(s));
+						const CANON_SOCS = "SOCS=CAISFggDEgk5ODk5ODk1NzQaBWVuLUdCIAEaBgiAovHVBg";
+						if (matched) {
+							const ci = hdrs.findIndex((h) => String(h[0]).toLowerCase() === "cookie");
+							if (ci >= 0) {
+								const parts = String(hdrs[ci][1]).split(";").map((s) => s.trim()).filter((s) => s && !/^SOCS=/i.test(s));
+								parts.push(CANON_SOCS);
+								hdrs[ci] = [hdrs[ci][0], parts.join("; ")];
+							} else {
+								hdrs.push(["cookie", CANON_SOCS]);
+							}
+						}
+						if (hn === "www.youtube.com" || hn === "youtube.com" || hn === "consent.youtube.com") {
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force", host: hn, matched, n: hdrs.length, ct: method }) }).catch(() => {});
+						}
+					} catch (e) {
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_force_err", err: String(e).slice(0, 150) }) }).catch(() => {});
+					}
+					// libcurl transport drops all custom headers when given [[k,v],...]:
+					// HeadersDict() iterates `for key in obj` and turns array indices into
+					// header names. Convert to a plain object so Cookie / Content-Encoding /
+					// X-YouTube-* actually reach the server.
+					let hdrsOut = hdrs;
+					if (Array.isArray(hdrsOut)) {
+						const ho = {};
+						for (const h of hdrsOut) {
+							if (h && h.length >= 2 && h[0] != null) ho[String(h[0])] = String(h[1]);
+						}
+						hdrsOut = ho;
+					}
+					const resp = await libcurlClient.request(remote, method, body, hdrsOut, signal);
+					try {
+						const ru = String(remote);
+						if (/consent|set_consent|\/watch|youtube\.com\/(\?|$)|themeRefresh|upgrade_visitor|youtube\.com\/t/.test(ru)) {
+							const g = (k) => { const e = (hdrs || []).find((h) => String(h[0]).toLowerCase() === k); return e ? String(e[1]).slice(0, 90) : "-"; };
+							const ck = (hdrs || []).find((h) => String(h[0]).toLowerCase() === "cookie");
+							const ckv = ck ? String(ck[1]) : "";
+							let hd = "";
+							try { hd = JSON.stringify((hdrs || []).map((h) => [String(h[0]).toLowerCase(), String(h[1]).slice(0, 80)])).slice(0, 1400); } catch (e) {}
+							fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_req", url: ru.slice(0, 130), hasSocs: /(^|;\s*)SOCS=/.test(ckv), socsPos: ckv.indexOf("SOCS="), cklen: ckv.length, ckfull: ckv, ua: g("user-agent"), ref: g("referer"), org: g("origin"), ct: g("content-type") }) }).catch(() => {});
+						}
+						if (/youtube|consent/.test(ru)) {
+							const sc = [];
+							let loc = "";
+							for (const [k, vals] of Object.entries(resp.headers || {})) {
+								if (String(k).toLowerCase() === "set-cookie") {
+									for (const v of (Array.isArray(vals) ? vals : [vals])) sc.push(String(v).slice(0, 130));
+								}
+								if (String(k).toLowerCase() === "location") loc = String(Array.isArray(vals) ? vals[0] : vals).slice(0, 120);
+							}
+							if (sc.length || (resp.status >= 300 && resp.status < 400)) {
+								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_ck_resp", url: ru.slice(0, 100), status: resp.status, loc, sc }) }).catch(() => {});
+							}
+						}
+					} catch (e) {}
+					let sanitizedCut = 0;
+					try {
+						const scanRu = String(remote);
+						let ctHdr = "";
+						for (const [k, vals] of Object.entries(resp.headers || {})) {
+							if (String(k).toLowerCase() === "content-type") { ctHdr = String(Array.isArray(vals) ? vals[0] : vals); break; }
+						}
+						const isYtDoc = (/^https:\/\/(www\.)?youtube\.com\/(\?|$)|themeRefresh/.test(scanRu)) && resp.status === 200 && resp.body && typeof resp.body.getReader === "function" && /text\/html/.test(ctHdr);
+						if (isYtDoc) {
+							const reader = resp.body.getReader();
+							const dec = new TextDecoder();
+							const MAX = 4000000;
+							const chunks = [];
+							let total = 0;
+							let scanBuf = "";
+							let decided = false;
+							let stopReason = "";
+							const post = (type, extra) => {
+								const base = {
+									type,
+									url: scanRu.slice(0, 110),
+									homePos: scanBuf.indexOf("ytInitialData"),
+									histPos: scanBuf.indexOf("Your YouTube History is off"),
+									beforePos: scanBuf.indexOf("Before you continue to YouTube"),
+									rejPos: scanBuf.indexOf("Reject all"),
+									scanned: total
+								};
+								fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...base, ...extra }) }).catch(() => {});
+							};
+							const decide = (tag) => {
+								if (decided) return;
+								decided = true;
+								post("yt_page_kind", { kind: tag });
+							};
+							while (!stopReason) {
+								let timer = null;
+								const timeout = new Promise((res) => { timer = setTimeout(() => res("t"), 25000); });
+								const r = await Promise.race([reader.read(), timeout]);
+								clearTimeout(timer);
+								if (r === "t") { stopReason = "idle-timeout"; break; }
+								if (r.done) { stopReason = "end"; break; }
+								if (r.value) {
+									chunks.push(r.value);
+									total += r.value.length;
+									scanBuf += dec.decode(r.value, { stream: true });
+									if (scanBuf.length > 2500000) scanBuf = scanBuf.slice(-1500000);
+									if (!decided) {
+										if (/ytInitialData/.test(scanBuf)) decide("home");
+										else if (/cbrd|Reject all|Before you continue|consent\.youtube\.com/.test(scanBuf)) decide("consent");
+									}
+									if (total > MAX) { stopReason = "overcap"; break; }
+								}
+							}
+							try { scanBuf += dec.decode(); } catch (e) {}
+							post("yt_page_final", { kind: decided ? "decided" : "none", stop: stopReason, total });
+							let emit = chunks;
+							let more = stopReason === "overcap";
+							if (stopReason !== "idle-timeout" && stopReason !== "overcap" && scanBuf.includes("consentBumpV2Renderer")) {
+								const s = stripYTConsent(scanBuf);
+								post("yt_strip", { cut: s.cut, len: s.html.length, before: scanBuf.length });
+								if (s.cut > 0) {
+									sanitizedCut = s.cut;
+									emit = [new TextEncoder().encode(s.html)];
+									more = false;
+									try { reader.cancel(); } catch (e) {}
+								}
+							}
+							resp.body = new ReadableStream({
+								start(controller) {
+									try { for (const c of emit) controller.enqueue(c); } catch (e) {}
+									if (more) {
+										const pump = () => {
+											reader.read().then((rr) => {
+												if (rr.done) { try { controller.close(); } catch (e) {} return; }
+												try { controller.enqueue(rr.value); pump(); } catch (e) {}
+											}).catch(() => { try { controller.close(); } catch (e) {} });
+										};
+										pump();
+									} else {
+										try { controller.close(); } catch (e) {}
+									}
+								}
+							});
+						}
+					} catch (e) {
+						fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "yt_strip_err", err: String(e).slice(0, 150) }) }).catch(() => {});
+					}
+					const rawPairs = [];
+					for (const [k, vals] of Object.entries(resp.headers || {})) {
+						if (sanitizedCut > 0 && String(k).toLowerCase() === "content-length") continue;
+						if (Array.isArray(vals)) { for (const v of vals) rawPairs.push([k, v]); }
+						else rawPairs.push([k, vals]);
+					}
+					return { body: resp.body, status: resp.status, statusText: resp.statusText, headers: rawPairs };
 				},
-				connect: (remote, protocols) => libcurlClient.connect(remote, protocols)
+				connect: (...args) => libcurlClient.connect(...args),
 			};
-		} catch (tpErr) {
-			console.warn("[Aura] libcurl transport fallback to classic:", tpErr);
-			classicMode = true;
-			return false;
+		} catch (e) {
+			console.error("[Clash Proxy] libcurl transport init failed:", e);
+			fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "transport_error", message: e.message }) }).catch(() => {});
 		}
 
 		if (transportAdapter) {
@@ -841,14 +1037,28 @@ const initSWPromise = (async () => {
 					},
 					transport: transportAdapter,
 				});
-				if (typeof sjController.init === "function") await sjController.init();
+
+				if (typeof sjController.init === "function") {
+					await sjController.init();
+				}
+				console.log("[Clash Proxy] Scramjet Controller active with prefix:", sjController.prefix);
 			}
 		}
 
-		if (!sjController && chosenMode === "auto") classicMode = true;
+		// If the SW/scramjet stack didn't fully come up (blocked
+		// registration, missing controller, transport failure), fall
+		// back to the Service-Worker-free Classic engine instead of
+		// hanging on "Connecting to Proxy...".
+		if (!sjController) {
+			enableClassicMode("service worker or controller unavailable");
+			return false;
+		}
+
 		return true;
 	} catch (err) {
-		classicMode = true;
+		console.error("[Clash Proxy] Initialization error:", err);
+		fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "initSW_error", message: err.message, stack: err.stack }) }).catch(()=>{});
+		enableClassicMode(err && err.message ? err.message : err);
 		return false;
 	}
 })();
@@ -1285,23 +1495,30 @@ async function loadTabUrl(tab, rawInput) {
 	await initSWPromise;
 
 	const isYouTube = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\b/i.test(targetUrl);
-	const mode = getProxyMode();
 	let routed = false;
-
-	// In SW mode, try Scramjet. In Auto or Classic mode, use the rock-solid Classic proxy engine!
-	if (mode === "sw" && !classicMode && !isYouTube && sjController) {
+	if (!classicMode && !isYouTube && sjController) {
 		try {
 			const frame = sjController.createFrame(tab.iframe);
 			frame.go(targetUrl);
 			routed = true;
-		} catch (e) {
-			console.warn("[Aura] Scramjet route failed, falling back to Classic:", e);
+		} catch (err) {
+			console.warn("[Clash Proxy] createFrame initial attempt:", err);
+			try {
+				if (typeof sjController.wait === "function") await sjController.wait();
+				const frame = sjController.createFrame(tab.iframe);
+				frame.go(targetUrl);
+				routed = true;
+			} catch (e2) {
+				console.error("[Clash Proxy] createFrame retry failed:", e2);
+			}
 		}
 	}
 
-	// Always fall back to the rock-solid Classic engine (/classic/<url>)
 	if (!routed) {
-		tab.iframe.src = "/classic/" + targetUrl;
+		// Classic mode (or YouTube or scramjet failed): server-side proxy, no SW
+		tab.iframe.src = (classicMode || isYouTube)
+			? "/classic/" + targetUrl
+			: "/scram/service/" + encodeURIComponent(targetUrl);
 	}
 }
 
