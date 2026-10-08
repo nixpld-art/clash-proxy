@@ -2998,5 +2998,358 @@ body.potato-mode .background-grid {
 	filter: brightness(1.1);
 }
 
+/* ============================================================
+   Aura Built-in VPN Tunnel UI
+   ============================================================ */
+
+/* Topbar Header VPN Status Pill */
+.vpn-status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 5px 12px;
+	border-radius: var(--radius-pill);
+	background: rgba(16, 185, 129, 0.12);
+	border: 1px solid rgba(16, 185, 129, 0.35);
+	color: #10b981;
+	font-size: 0.76rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+.vpn-status-pill:hover {
+	background: rgba(16, 185, 129, 0.2);
+	border-color: rgba(16, 185, 129, 0.55);
+	transform: translateY(-1px);
+	box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+}
+.vpn-status-pill.connecting {
+	background: rgba(245, 158, 11, 0.12);
+	border-color: rgba(245, 158, 11, 0.35);
+	color: #f59e0b;
+	box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+}
+.vpn-status-pill.disconnected {
+	background: rgba(239, 68, 68, 0.1);
+	border-color: rgba(239, 68, 68, 0.25);
+	color: #ef4444;
+	box-shadow: none;
+	opacity: 0.85;
+}
+
+.vpn-pulse-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #10b981;
+	box-shadow: 0 0 8px #10b981;
+	animation: vpnPulse 2s infinite;
+}
+.vpn-status-pill.connecting .vpn-pulse-dot {
+	background: #f59e0b;
+	box-shadow: 0 0 8px #f59e0b;
+	animation: vpnPulse 0.8s infinite;
+}
+.vpn-status-pill.disconnected .vpn-pulse-dot {
+	background: #ef4444;
+	box-shadow: none;
+	animation: none;
+}
+@keyframes vpnPulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.vpn-node-chip {
+	font-family: var(--font-mono);
+	font-size: 0.68rem;
+	font-weight: 800;
+	padding: 1px 6px;
+	border-radius: 10px;
+	background: rgba(0, 0, 0, 0.35);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: rgba(255, 255, 255, 0.9);
+}
+
+/* In-Deck VPN Button */
+.deck-vpn-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	position: relative;
+}
+.deck-vpn-btn.connected {
+	color: #10b981;
+	border-color: rgba(16, 185, 129, 0.35);
+}
+.deck-vpn-btn.disconnected {
+	color: #ef4444;
+	border-color: rgba(239, 68, 68, 0.3);
+	opacity: 0.75;
+}
+.vpn-dot-sm {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	box-shadow: 0 0 6px currentColor;
+}
+
+/* VPN Hub Modal Box */
+.vpn-modal-box {
+	max-width: 620px;
+	width: 95%;
+	background: rgba(12, 16, 26, 0.96);
+	border: 1px solid rgba(16, 185, 129, 0.25);
+	box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(16, 185, 129, 0.12);
+}
+
+/* Hero Status Card inside VPN Modal */
+.vpn-hero-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 18px 20px;
+	border-radius: var(--radius-md);
+	background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(10, 15, 28, 0.85));
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	margin-bottom: 16px;
+	position: relative;
+	overflow: hidden;
+}
+.vpn-hero-card.disconnected {
+	background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(15, 18, 28, 0.85));
+	border-color: rgba(239, 68, 68, 0.25);
+}
+.vpn-status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 9px;
+	border-radius: 12px;
+	background: rgba(16, 185, 129, 0.16);
+	border: 1px solid rgba(16, 185, 129, 0.4);
+	color: #10b981;
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	margin-bottom: 6px;
+}
+.vpn-status-badge.disconnected {
+	background: rgba(239, 68, 68, 0.15);
+	border-color: rgba(239, 68, 68, 0.4);
+	color: #ef4444;
+}
+.vpn-ip-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+.vpn-ip-label {
+	font-size: 0.78rem;
+	color: var(--text-secondary);
+}
+.vpn-ip-val {
+	font-family: var(--font-mono);
+	font-size: 0.95rem;
+	font-weight: 800;
+	color: #ffffff;
+	letter-spacing: 0.02em;
+}
+.vpn-badge-tag {
+	font-size: 0.62rem;
+	font-weight: 800;
+	padding: 2px 5px;
+	border-radius: 4px;
+	background: #10b981;
+	color: #07080c;
+	letter-spacing: 0.04em;
+}
+.vpn-node-summary {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.82rem;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+.vpn-flag {
+	font-size: 1.1rem;
+}
+
+/* Big Interactive Power Button */
+.vpn-power-btn {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	border: 2px solid #10b981;
+	background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.05) 70%);
+	color: #10b981;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 0 24px rgba(16, 185, 129, 0.35);
+}
+.vpn-power-btn:hover {
+	transform: scale(1.05);
+	box-shadow: 0 0 32px rgba(16, 185, 129, 0.55);
+}
+.vpn-power-btn.disconnected {
+	border-color: rgba(239, 68, 68, 0.5);
+	background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(20, 24, 35, 0.5) 70%);
+	color: #ef4444;
+	box-shadow: none;
+}
+.vpn-power-btn.disconnected:hover {
+	box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+.vpn-power-btn span {
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	font-family: var(--font-mono);
+}
+
+/* Telemetry Grid */
+.vpn-telemetry-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	margin-bottom: 18px;
+}
+.vpn-stat-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 8px;
+	border-radius: var(--radius-sm);
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	text-align: center;
+}
+.vpn-stat-lbl {
+	font-size: 0.68rem;
+	color: var(--text-muted);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	margin-bottom: 4px;
+}
+.vpn-stat-num {
+	font-size: 1rem;
+	font-weight: 800;
+	color: #ffffff;
+	font-family: var(--font-mono);
+}
+
+/* Section Headings */
+.vpn-section-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.78rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+	margin-bottom: 10px;
+}
+.vpn-sub-tag {
+	font-size: 0.65rem;
+	font-weight: 700;
+	color: #10b981;
+	background: rgba(16, 185, 129, 0.12);
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+
+/* Server Nodes Grid */
+.vpn-nodes-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+	gap: 8px;
+	margin-bottom: 14px;
+}
+.vpn-node-card {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	text-align: left;
+}
+.vpn-node-card:hover {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(16, 185, 129, 0.35);
+	transform: translateY(-1px);
+}
+.vpn-node-card.active {
+	background: rgba(16, 185, 129, 0.12);
+	border-color: #10b981;
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+.vpn-node-card-flag {
+	font-size: 1.3rem;
+	line-height: 1;
+}
+.vpn-node-card-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
+}
+.vpn-node-card-name {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: #ffffff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.vpn-node-card-ping {
+	font-family: var(--font-mono);
+	font-size: 0.65rem;
+	color: #10b981;
+	font-weight: 600;
+}
+
+/* Security Toggles in Modal */
+.vpn-toggles-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.vpn-toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.vpn-toggle-title {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #ffffff;
+	margin-bottom: 2px;
+}
+.vpn-toggle-desc {
+	font-size: 0.7rem;
+	color: var(--text-muted);
+	line-height: 1.25;
+}
+
 
 

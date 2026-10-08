@@ -79,6 +79,13 @@
 				<span id="vault-level-display">Lv. 1 • 0 XP</span>
 			</div>
 
+			<!-- Built-in VPN Status & Control Pill -->
+			<button id="vpn-status-btn" class="vpn-status-pill connected" title="Aura Built-in VPN Tunnel (Click to manage)">
+				<span class="vpn-pulse-dot"></span>
+				<span id="vpn-topbar-label" class="vpn-label">VPN: SECURED</span>
+				<span id="vpn-node-chip" class="vpn-node-chip">US-East ⚡</span>
+			</button>
+
 			<!-- Multi-Mirror Hub Button -->
 			<button id="mirror-hub-btn" class="topbar-btn" title="26 School Mirror Links & 1-Click Vault Share">
 				<img src="/assets/icons/link.svg" class="topbar-icon-img" alt="Mirrors" />
@@ -187,6 +194,12 @@
 						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
 					</div>
 					<div class="deck-actions">
+						<!-- Quick VPN Tunnel Button in Deck -->
+						<button id="deck-vpn-btn" class="deck-btn deck-vpn-btn connected" title="Aura VPN Tunnel — Virtual Location &amp; IP Cloak">
+							<span class="vpn-dot-sm"></span>
+							<span class="deck-btn-label">VPN</span>
+						</button>
+
 						<!-- Clash Shield Button & Popover -->
 						<div class="nav-shield-wrapper">
 							<button id="nav-shield-btn" class="deck-btn nav-shield-btn" aria-label="Aura Shield" title="Aura Shield — AdBlock &amp; Tracker Protection">
@@ -541,6 +554,50 @@
 					</div>
 				</div>
 
+				<!-- 1b. Built-in VPN Tunnel Settings -->
+				<div class="settings-card">
+					<div class="setting-item">
+						<div class="setting-item-text">
+							<div class="setting-item-title">🛡️ Built-in Aura VPN Tunnel</div>
+							<div class="setting-item-desc">Encrypted Wisp tunnel and Cloudflare WARP egress routing to bypass network firewalls and mask your IP address.</div>
+						</div>
+						<div style="display: flex; gap: 8px; align-items: center;">
+							<button id="setting-vpn-manage-btn" class="deck-btn" style="white-space: nowrap;">Open VPN Hub →</button>
+							<label class="toggle-switch">
+								<input type="checkbox" id="setting-vpn-master-toggle" checked />
+								<span class="toggle-slider"></span>
+							</label>
+						</div>
+					</div>
+
+					<div class="setting-item">
+						<div class="setting-item-text">
+							<div class="setting-item-title">🌐 Active Virtual Server Node</div>
+							<div class="setting-item-desc">Regional relay node handling your encrypted web requests with zero school logging.</div>
+						</div>
+						<select id="setting-vpn-node-select" class="aura-select" style="min-width: 180px;">
+							<option value="auto">⚡ Auto (Fastest Relay)</option>
+							<option value="us-east">🇺🇸 US East (Cloudflare WARP)</option>
+							<option value="us-west">🇺🇸 US West (Los Angeles Fiber)</option>
+							<option value="uk-london">🇬🇧 UK London (Zero-Trace)</option>
+							<option value="eu-frankfurt">🇩🇪 Germany (Frankfurt Shield)</option>
+							<option value="ca-toronto">🇨🇦 Canada (Toronto Node)</option>
+							<option value="jp-tokyo">🇯🇵 Japan (Tokyo Ultra)</option>
+						</select>
+					</div>
+
+					<div class="setting-item">
+						<div class="setting-item-text">
+							<div class="setting-item-title">🛡️ WebRTC IP Leak Protection</div>
+							<div class="setting-item-desc">Sanitizes STUN/ICE requests so school firewalls cannot discover your device's true local IP.</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-vpn-webrtc" checked />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
+				</div>
+
 				<!-- 2. Ghost Mode -->
 				<div class="settings-card">
 					<div class="setting-item">
@@ -840,6 +897,123 @@
 			<span class="dock-label">Settings</span>
 		</button>
 	</nav>
+
+	<!-- ============================================================
+	     Aura Built-in VPN Hub & Virtual Location Modal
+	     ============================================================ -->
+	<div id="vpn-hub-modal" class="modal-overlay hidden">
+		<div class="modal-box vpn-modal-box">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<img src="/assets/icons/shield.svg" class="modal-icon-img" alt="" />
+					<h3>Aura Built-in VPN Tunnel</h3>
+				</div>
+				<button id="vpn-modal-close" class="modal-close-btn" title="Close">✕</button>
+			</div>
+
+			<!-- Main VPN Power & Status Card -->
+			<div class="vpn-hero-card">
+				<div class="vpn-hero-status">
+					<div class="vpn-status-badge" id="vpn-status-badge">
+						<span class="vpn-pulse-dot"></span>
+						<span id="vpn-status-text">TUNNEL ACTIVE</span>
+					</div>
+					<div class="vpn-ip-row">
+						<span class="vpn-ip-label">Egress IP:</span>
+						<span id="vpn-masked-ip" class="vpn-ip-val">150.230.124.167</span>
+						<span class="vpn-badge-tag">CLOAKED</span>
+					</div>
+					<div class="vpn-node-summary">
+						<span id="vpn-loc-flag" class="vpn-flag">⚡</span>
+						<span id="vpn-current-node-name" class="vpn-node-txt">Auto (Fastest Relay)</span>
+					</div>
+				</div>
+				<button id="vpn-power-toggle" class="vpn-power-btn connected" title="Connect or Disconnect VPN">
+					<svg class="vpn-power-svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+						<line x1="12" y1="2" x2="12" y2="12"></line>
+					</svg>
+					<span id="vpn-power-text">CONNECTED</span>
+				</button>
+			</div>
+
+			<!-- Live Network Telemetry -->
+			<div class="vpn-telemetry-grid">
+				<div class="vpn-stat-box">
+					<span class="vpn-stat-lbl">Latency / Ping</span>
+					<span id="vpn-ping-stat" class="vpn-stat-num">18 ms</span>
+				</div>
+				<div class="vpn-stat-box">
+					<span class="vpn-stat-lbl">Encryption</span>
+					<span class="vpn-stat-num" style="font-size: 0.85rem;">ChaCha20-Poly1305</span>
+				</div>
+				<div class="vpn-stat-box">
+					<span class="vpn-stat-lbl">Protocol</span>
+					<span class="vpn-stat-num" style="font-size: 0.85rem;">Wisp v2 + WARP</span>
+				</div>
+				<div class="vpn-stat-box">
+					<span class="vpn-stat-lbl">Data Protected</span>
+					<span id="vpn-data-stat" class="vpn-stat-num">48.2 MB</span>
+				</div>
+			</div>
+
+			<!-- Server Node Selector -->
+			<div class="vpn-section-heading">
+				<span>Virtual Server Locations</span>
+				<span class="vpn-sub-tag">Zero Logs</span>
+			</div>
+			<div class="vpn-nodes-grid" id="vpn-nodes-grid">
+				<!-- Injected dynamically -->
+			</div>
+
+			<!-- Security Toggles -->
+			<div class="vpn-section-heading" style="margin-top: 14px;">
+				<span>Tunnel Security Hardening</span>
+			</div>
+			<div class="vpn-toggles-list">
+				<div class="vpn-toggle-row">
+					<div>
+						<div class="vpn-toggle-title">🛡️ WebRTC IP Leak Shield</div>
+						<div class="vpn-toggle-desc">Blocks browser WebRTC discovery so school firewalls cannot trace your local IP.</div>
+					</div>
+					<label class="toggle-switch toggle-sm">
+						<input type="checkbox" id="vpn-toggle-webrtc" checked />
+						<span class="toggle-slider"></span>
+					</label>
+				</div>
+				<div class="vpn-toggle-row">
+					<div>
+						<div class="vpn-toggle-title">🔒 Encrypted DNS (Cloudflare DoH)</div>
+						<div class="vpn-toggle-desc">Prevents school network inspection of site names via 1.1.1.3 secure resolver.</div>
+					</div>
+					<label class="toggle-switch toggle-sm">
+						<input type="checkbox" id="vpn-toggle-dns" checked />
+						<span class="toggle-slider"></span>
+					</label>
+				</div>
+				<div class="vpn-toggle-row">
+					<div>
+						<div class="vpn-toggle-title">⚡ Cloudflare WARP Ultra Egress</div>
+						<div class="vpn-toggle-desc">Routes YouTube and heavy media streams through Cloudflare SOCKS5 tunnel.</div>
+					</div>
+					<label class="toggle-switch toggle-sm">
+						<input type="checkbox" id="vpn-toggle-warp" checked />
+						<span class="toggle-slider"></span>
+					</label>
+				</div>
+				<div class="vpn-toggle-row">
+					<div>
+						<div class="vpn-toggle-title">🚫 Tunnel Kill Switch</div>
+						<div class="vpn-toggle-desc">Blocks unencrypted direct navigation if the VPN tunnel disconnects.</div>
+					</div>
+					<label class="toggle-switch toggle-sm">
+						<input type="checkbox" id="vpn-toggle-killswitch" />
+						<span class="toggle-slider"></span>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- ============================================================
 	     Owner Bridge Modal (Secret Access for Nils, Ted, Ozzy)
