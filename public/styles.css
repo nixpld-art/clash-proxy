@@ -2512,4 +2512,207 @@ html, body {
 	box-shadow: 0 4px 18px rgba(0, 242, 254, 0.5);
 }
 
+/* ============================================================
+   UNBLOCKED APP MATRIX STYLES
+   ============================================================ */
+.apps-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding-bottom: 60px;
+}
+
+.apps-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 24px;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.apps-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 18px;
+	margin-top: 20px;
+}
+
+.app-card {
+	background: rgba(13, 18, 30, 0.75);
+	border: 1px solid var(--border-glass);
+	border-radius: var(--radius-md);
+	padding: 20px 18px;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+	overflow: hidden;
+}
+
+.app-card:hover {
+	transform: translateY(-4px);
+	background: rgba(22, 30, 48, 0.88);
+	border-color: rgba(0, 242, 254, 0.45);
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
+}
+
+.app-icon-wrap {
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	transition: transform 0.25s ease;
+}
+
+.app-card:hover .app-icon-wrap {
+	transform: scale(1.08);
+	border-color: rgba(0, 242, 254, 0.5);
+}
+
+.app-icon-img {
+	width: 32px;
+	height: 32px;
+	object-fit: contain;
+}
+
+.app-info {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	overflow: hidden;
+}
+
+.app-title {
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: #ffffff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.app-desc {
+	font-size: 0.76rem;
+	color: var(--text-dim);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.app-badge {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: rgba(0, 242, 254, 0.15);
+	color: var(--accent-cyan);
+	border: 1px solid rgba(0, 242, 254, 0.35);
+	text-transform: uppercase;
+}
+
+/* ============================================================
+   AURA BESPOKE THEMES ENGINE
+   ============================================================ */
+[data-theme="midnight-oled"] {
+	--bg-void: #000000;
+	--bg-base: #030303;
+	--bg-surface: rgba(14, 14, 14, 0.9);
+	--bg-card: rgba(18, 18, 18, 0.85);
+	--accent-cyan: #ffffff;
+	--accent-blue: #94a3b8;
+	--border-glass-glow: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="tokyo-night"] {
+	--bg-void: #0c0e18;
+	--bg-base: #111424;
+	--bg-surface: rgba(20, 24, 44, 0.88);
+	--bg-card: rgba(24, 30, 56, 0.75);
+	--accent-cyan: #bb9af7;
+	--accent-blue: #7aa2f7;
+	--accent-magenta: #f7768e;
+	--border-glass-glow: rgba(187, 154, 247, 0.4);
+}
+
+[data-theme="matrix-green"] {
+	--bg-void: #030805;
+	--bg-base: #061109;
+	--bg-surface: rgba(8, 24, 14, 0.88);
+	--bg-card: rgba(12, 34, 20, 0.75);
+	--accent-cyan: #10b981;
+	--accent-blue: #059669;
+	--border-glass-glow: rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="sunset-synth"] {
+	--bg-void: #12081c;
+	--bg-base: #1a0c28;
+	--bg-surface: rgba(32, 14, 52, 0.88);
+	--bg-card: rgba(42, 18, 68, 0.75);
+	--accent-cyan: #f43f5e;
+	--accent-blue: #f97316;
+	--border-glass-glow: rgba(244, 63, 94, 0.4);
+}
+
+[data-theme="catppuccin"] {
+	--bg-void: #151522;
+	--bg-base: #1e1e2e;
+	--bg-surface: rgba(30, 30, 46, 0.88);
+	--bg-card: rgba(40, 40, 60, 0.75);
+	--accent-cyan: #89dceb;
+	--accent-blue: #89b4fa;
+	--border-glass-glow: rgba(137, 220, 235, 0.4);
+}
+
+[data-theme="crimson"] {
+	--bg-void: #0c0406;
+	--bg-base: #13070a;
+	--bg-surface: rgba(28, 10, 16, 0.88);
+	--bg-card: rgba(38, 14, 22, 0.75);
+	--accent-cyan: #ef4444;
+	--accent-blue: #dc2626;
+	--border-glass-glow: rgba(239, 68, 68, 0.4);
+}
+
+/* Custom Wallpaper Layer */
+body.has-custom-wallpaper::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	background-image: var(--custom-wallpaper-url);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.32;
+	z-index: -2;
+	pointer-events: none;
+}
+
+/* Potato Mode / Chromebook 60FPS Optimization */
+body.potato-mode * {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+	animation-duration: 0.01ms !important;
+	transition-duration: 0.05s !important;
+}
+body.potato-mode .ambient-glow {
+	display: none !important;
+}
+body.potato-mode .background-grid {
+	opacity: 0.08 !important;
+}
+
+
 

@@ -187,6 +187,7 @@
 						<button id="deck-bookmark-btn" class="deck-icon-btn" title="Bookmark this page"><img src="/assets/icons/star.svg" class="deck-icon-img" alt="Star" /></button>
 					</div>
 					<div class="deck-actions">
+						<button id="deck-inspect-btn" class="deck-btn" title="Inspect Element / DevTools Console (Eruda)"><img src="/assets/icons/terminal.svg" class="deck-icon-img" alt="" /> DevTools</button>
 						<button id="deck-aboutblank-btn" class="deck-btn" title="Pop out into about:blank">about:blank</button>
 						<button id="deck-fullscreen-btn" class="deck-btn" title="Toggle Fullscreen">⛶</button>
 						<button id="deck-close-btn" class="deck-btn deck-close-btn" title="Close Browser">✕</button>
@@ -212,9 +213,12 @@
 						<span id="arcade-count-pill" class="count-pill">3,958 Games</span>
 					</div>
 
-					<div class="arcade-search-bar">
-						<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-						<input type="text" id="arcade-search-input" class="arcade-search-input" placeholder="Search across 3,958 games..." autocomplete="off" />
+					<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+						<button id="arcade-add-custom-btn" class="deck-btn" title="Add Custom Game or Embed URL" style="white-space: nowrap;"><img src="/assets/icons/plus.svg" class="inline-icon-img" alt="" /> Add Custom Game</button>
+						<div class="arcade-search-bar">
+							<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+							<input type="text" id="arcade-search-input" class="arcade-search-input" placeholder="Search across 3,958 games..." autocomplete="off" />
+						</div>
 					</div>
 				</div>
 
@@ -239,6 +243,7 @@
 					<button class="cat-chip" data-cat="popular"><img src="/assets/icons/flame.svg" class="chip-icon-img" alt="" /> Trending</button>
 					<button class="cat-chip" data-cat="favorites"><img src="/assets/icons/star.svg" class="chip-icon-img" alt="" /> My Favorites</button>
 					<button class="cat-chip" data-cat="recent"><img src="/assets/icons/history.svg" class="chip-icon-img" alt="" /> Recently Played</button>
+					<button class="cat-chip" data-cat="custom"><img src="/assets/icons/star.svg" class="chip-icon-img" alt="" /> Custom Vault</button>
 					<button class="cat-chip" data-cat="action">Action</button>
 					<button class="cat-chip" data-cat="racing">Racing</button>
 					<button class="cat-chip" data-cat="puzzle">Puzzle</button>
@@ -251,6 +256,38 @@
 				<!-- Game Cards Grid -->
 				<div class="games-grid" id="arcade-games-grid">
 					<div class="loading-state">Loading arcade catalog...</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============================================================
+		     2b. UNBLOCKED APP MATRIX
+		     ============================================================ -->
+		<section id="view-apps" class="aura-view">
+			<div class="apps-container">
+				<div class="apps-header">
+					<div class="arcade-title-group">
+						<h2 class="section-title">Unblocked App Matrix</h2>
+						<span id="apps-count-pill" class="count-pill">24 Web Apps</span>
+					</div>
+
+					<div class="arcade-search-bar">
+						<svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+						<input type="text" id="apps-search-input" class="arcade-search-input" placeholder="Search unblocked apps..." autocomplete="off" />
+					</div>
+				</div>
+
+				<div class="arcade-categories" id="apps-cat-chips">
+					<button class="cat-chip active" data-cat="all">All Apps</button>
+					<button class="cat-chip" data-cat="social">Social & Chat</button>
+					<button class="cat-chip" data-cat="streaming">Streaming & Music</button>
+					<button class="cat-chip" data-cat="ai">AI & Tools</button>
+					<button class="cat-chip" data-cat="gaming">Gaming Platforms</button>
+					<button class="cat-chip" data-cat="productivity">Productivity & Math</button>
+				</div>
+
+				<div class="apps-grid" id="apps-grid">
+					<!-- App cards injected dynamically -->
 				</div>
 			</div>
 		</section>
@@ -635,9 +672,51 @@
 					<div style="margin-top: 10px;">
 						<input type="text" id="panic-redirect-input" class="aura-input" value="https://classroom.google.com" placeholder="Panic Redirect URL..." />
 					</div>
+					<div class="setting-item" style="margin-top: 14px;">
+						<div class="setting-item-text">
+							<div class="setting-item-title">Anti-Close Tab Protection</div>
+							<div class="setting-item-desc">Prompts a browser confirmation warning before closing tab (stops accidental closures or Ctrl+W).</div>
+						</div>
+						<label class="toggle-switch">
+							<input type="checkbox" id="setting-panic-anticlose" />
+							<span class="toggle-slider"></span>
+						</label>
+					</div>
 				</div>
 
-				<!-- 8. Anonymous Device Vault -->
+				<!-- 8. Aura Visual Themes & Custom Wallpaper -->
+				<div class="settings-card">
+					<div class="setting-row">
+						<div>
+							<h3 class="setting-title">🎨 Visual Themes & Custom Wallpaper</h3>
+							<p class="setting-desc">Personalize Aura OS with bespoke high-contrast themes and custom background artwork or animated GIFs.</p>
+						</div>
+					</div>
+
+					<div class="setting-item">
+						<div class="setting-item-text">
+							<div class="setting-item-title">Colorway Theme Palette</div>
+							<div class="setting-item-desc">Instant dynamic colorway styling across the topbar, dock, modals, and cyber glow.</div>
+						</div>
+						<select id="setting-theme-palette" class="aura-select" style="min-width: 180px;">
+							<option value="cyber-neon">Cyber Neon (Default)</option>
+							<option value="midnight-oled">Midnight OLED (Zero Black)</option>
+							<option value="tokyo-night">Tokyo Night (Cyberpunk Violet)</option>
+							<option value="matrix-green">Emerald Matrix (Hacker Terminal)</option>
+							<option value="sunset-synth">Sunset Synthwave (Neon Orange)</option>
+							<option value="catppuccin">Catppuccin Mocha (Pastel Chill)</option>
+							<option value="crimson">Crimson Eclipse (Blood Red)</option>
+						</select>
+					</div>
+
+					<div style="margin-top: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+						<input type="url" id="setting-custom-wallpaper-input" class="aura-input" placeholder="Paste custom image or animated GIF URL..." style="flex: 1; min-width: 220px;" />
+						<button id="setting-apply-wallpaper-btn" class="deck-btn" style="white-space: nowrap;">Apply Wallpaper</button>
+						<button id="setting-clear-wallpaper-btn" class="deck-btn" style="white-space: nowrap; color: #ef4444;">Clear</button>
+					</div>
+				</div>
+
+				<!-- 9. Anonymous Device Vault -->
 				<div class="settings-card">
 					<div class="setting-row">
 						<div>
@@ -666,6 +745,10 @@
 		<button class="dock-item" data-view="arcade" title="Arcade">
 			<span class="dock-icon"><img src="/assets/icons/gamepad.svg" class="dock-icon-img" alt="Arcade" /></span>
 			<span class="dock-label">Arcade</span>
+		</button>
+		<button class="dock-item" data-view="apps" title="Unblocked Apps">
+			<span class="dock-icon"><img src="/assets/icons/apps.svg" class="dock-icon-img" alt="Apps" /></span>
+			<span class="dock-label">Apps</span>
 		</button>
 		<button class="dock-item" data-view="ai" title="Aura AI">
 			<span class="dock-icon"><img src="/assets/icons/ai.svg" class="dock-icon-img" alt="Aura AI" /></span>
@@ -837,8 +920,9 @@
 					<span class="mirror-badge online">LOCAL</span>
 				</div>
 			</div>
-			<div style="margin-top: 18px;">
-				<button id="mirror-copy-sync-btn" class="deck-btn" style="width: 100%;"><img src="/assets/icons/link.svg" class="inline-icon-img" alt="" /> Copy Cross-Mirror 1-Click Link</button>
+			<div style="margin-top: 18px; display: flex; gap: 10px;">
+				<button id="mirror-copy-sync-btn" class="deck-btn" style="flex: 1;"><img src="/assets/icons/link.svg" class="inline-icon-img" alt="" /> Copy Sync Link</button>
+				<button id="mirror-download-launcher-btn" class="deck-btn" style="flex: 1;"><img src="/assets/icons/external.svg" class="inline-icon-img" alt="" /> Offline Launcher</button>
 			</div>
 		</div>
 	</div>
@@ -869,6 +953,46 @@
 					<input type="text" id="shortcut-icon-input" class="aura-input" value="🌐" maxlength="4" style="width: 80px; text-align: center;" />
 				</div>
 				<button id="shortcut-submit-btn" class="deck-btn" style="margin-top: 8px; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">Add Shortcut</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ============================================================
+	     Add Custom Game Modal
+	     ============================================================ -->
+	<div id="custom-game-modal" class="modal-overlay hidden">
+		<div class="modal-box" style="max-width: 460px;">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<img src="/assets/icons/gamepad.svg" class="modal-icon-img" alt="" />
+					<h3>Add Custom Game</h3>
+				</div>
+				<button id="custom-game-close" class="modal-close-btn">✕</button>
+			</div>
+			<p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 14px;">
+				Add any web game, Scratch game, or HTML5 embed URL to your anonymous device catalog.
+			</p>
+			<div style="display: flex; flex-direction: column; gap: 12px;">
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Game Title</label>
+					<input type="text" id="custom-game-title-input" class="aura-input" placeholder="e.g. Slope X" />
+				</div>
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Game Web URL or Embed</label>
+					<input type="text" id="custom-game-url-input" class="aura-input" placeholder="e.g. https://... or /games/..." />
+				</div>
+				<div>
+					<label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 4px;">Category</label>
+					<select id="custom-game-cat-select" class="aura-select" style="width: 100%;">
+						<option value="action">Action</option>
+						<option value="racing">Racing</option>
+						<option value="puzzle">Puzzle</option>
+						<option value="sports">Sports</option>
+						<option value="retro">Retro</option>
+						<option value="strategy">Strategy</option>
+					</select>
+				</div>
+				<button id="custom-game-submit-btn" class="deck-btn" style="margin-top: 6px; background: linear-gradient(135deg, #00d2ff, #6366f1); color: #07080c; font-weight: 700;">Save & Play Game →</button>
 			</div>
 		</div>
 	</div>

@@ -351,6 +351,9 @@ function switchView(viewName) {
 	if (viewName === "chat" && typeof onEnterChatView === "function") {
 		onEnterChatView();
 	}
+	if (viewName === "apps" && typeof renderAppsCatalog === "function") {
+		renderAppsCatalog();
+	}
 
 	window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -973,6 +976,11 @@ async function loadArcadeCatalog() {
 		const data = await res.json();
 		allGamesList = Array.isArray(data) ? data : (data.games || []);
 
+		const customSaved = JSON.parse(localStorage.getItem("aura_custom_games") || "[]");
+		if (customSaved.length > 0) {
+			allGamesList = [...customSaved, ...allGamesList];
+		}
+
 		const totalCount = allGamesList.length;
 		if (arcadeCountPill) arcadeCountPill.textContent = `${totalCount.toLocaleString()} Games`;
 		if (topbarStats) topbarStats.textContent = `${totalCount.toLocaleString()} Games Ready`;
@@ -1075,6 +1083,7 @@ function applyFilterAndSearch() {
 		if (activeCategory === "all") return true;
 		if (activeCategory === "favorites") return favs.includes(game.title);
 		if (activeCategory === "recent") return true;
+		if (activeCategory === "custom") return !!game.custom;
 		if (activeCategory === "popular") return game.popular || title.includes("mad") || title.includes("slope") || title.includes("minecraft") || title.includes("geometry") || title.includes("retro bowl");
 		return cat.includes(activeCategory) || title.includes(activeCategory);
 	});
@@ -1508,6 +1517,27 @@ window.addEventListener("keydown", (e) => {
 	}
 });
 
+// Anti-Close Tab Protection
+const settingPanicAntiClose = document.getElementById("setting-panic-anticlose");
+let isAntiCloseEnabled = localStorage.getItem("aura_anti_close") === "true";
+
+if (settingPanicAntiClose) {
+	settingPanicAntiClose.checked = isAntiCloseEnabled;
+	settingPanicAntiClose.addEventListener("change", (e) => {
+		isAntiCloseEnabled = e.target.checked;
+		localStorage.setItem("aura_anti_close", isAntiCloseEnabled ? "true" : "false");
+		showToast(isAntiCloseEnabled ? "✓ Anti-Close Protection ON" : "Anti-Close Protection OFF");
+	});
+}
+
+window.addEventListener("beforeunload", (e) => {
+	if (isAntiCloseEnabled) {
+		e.preventDefault();
+		e.returnValue = "Are you sure you want to exit Aura OS?";
+		return "Are you sure you want to exit Aura OS?";
+	}
+});
+
 // about:blank cloak utility
 function openInAboutBlank(url = window.location.href, decoy = null) {
 	const win = window.open("about:blank", "_blank");
@@ -1694,6 +1724,64 @@ if (settingPerfResolution) {
 	settingPerfResolution.addEventListener("change", (e) => {
 		localStorage.setItem("aura_perf_resolution", e.target.value);
 		showToast(`Arcade resolution scale set to ${Math.round(parseFloat(e.target.value) * 100)}%`);
+	});
+}
+
+// 9b. Aura Theme Palette & Custom Wallpaper
+const settingThemePalette = document.getElementById("setting-theme-palette");
+const settingCustomWallpaperInput = document.getElementById("setting-custom-wallpaper-input");
+const settingApplyWallpaperBtn = document.getElementById("setting-apply-wallpaper-btn");
+const settingClearWallpaperBtn = document.getElementById("setting-clear-wallpaper-btn");
+
+function applyThemePalette(theme) {
+	const chosen = theme || "cyber-neon";
+	document.documentElement.setAttribute("data-theme", chosen);
+	localStorage.setItem("aura_theme_palette", chosen);
+}
+
+function applyCustomWallpaper(url) {
+	if (url) {
+		document.documentElement.style.setProperty("--custom-wallpaper-url", `url('${url}')`);
+		document.body.classList.add("has-custom-wallpaper");
+		localStorage.setItem("aura_custom_wallpaper", url);
+	} else {
+		document.documentElement.style.removeProperty("--custom-wallpaper-url");
+		document.body.classList.remove("has-custom-wallpaper");
+		localStorage.removeItem("aura_custom_wallpaper");
+	}
+}
+
+const savedTheme = localStorage.getItem("aura_theme_palette") || "cyber-neon";
+applyThemePalette(savedTheme);
+if (settingThemePalette) settingThemePalette.value = savedTheme;
+
+const savedWallpaper = localStorage.getItem("aura_custom_wallpaper");
+if (savedWallpaper) {
+	applyCustomWallpaper(savedWallpaper);
+	if (settingCustomWallpaperInput) settingCustomWallpaperInput.value = savedWallpaper;
+}
+
+if (settingThemePalette) {
+	settingThemePalette.addEventListener("change", (e) => {
+		applyThemePalette(e.target.value);
+		showToast(`Theme updated to ${e.target.options[e.target.selectedIndex].text}`);
+	});
+}
+
+if (settingApplyWallpaperBtn && settingCustomWallpaperInput) {
+	settingApplyWallpaperBtn.addEventListener("click", () => {
+		const url = settingCustomWallpaperInput.value.trim();
+		if (!url) return;
+		applyCustomWallpaper(url);
+		showToast("✓ Custom wallpaper applied!");
+	});
+}
+
+if (settingClearWallpaperBtn) {
+	settingClearWallpaperBtn.addEventListener("click", () => {
+		applyCustomWallpaper(null);
+		if (settingCustomWallpaperInput) settingCustomWallpaperInput.value = "";
+		showToast("Custom wallpaper removed");
 	});
 }
 
@@ -2213,6 +2301,420 @@ function initChatWebSocket() {
 }
 
 // ============================================================
+// 13. Ultimate Proxy Suite: Apps Matrix, DevTools & Offline Launcher
+// ============================================================
+
+// A. Eruda DevTools Injector for Chromebooks
+const deckInspectBtn = document.getElementById("deck-inspect-btn");
+if (deckInspectBtn) {
+	deckInspectBtn.addEventListener("click", () => {
+		const currentTab = browserTabs.find(t => t.id === activeTabId);
+		if (!currentTab || !currentTab.iframe) {
+			showToast("Open a web page first to inspect it!");
+			return;
+		}
+
+		try {
+			const doc = currentTab.iframe.contentDocument || currentTab.iframe.contentWindow?.document;
+			if (doc) {
+				const existing = doc.getElementById("eruda-injected");
+				if (existing) {
+					if (currentTab.iframe.contentWindow?.eruda) {
+						currentTab.iframe.contentWindow.eruda.show();
+						showToast("✓ Eruda DevTools opened!");
+						return;
+					}
+				}
+				const s = doc.createElement("script");
+				s.id = "eruda-injected";
+				s.src = "https://cdn.jsdelivr.net/npm/eruda";
+				s.onload = () => {
+					try {
+						currentTab.iframe.contentWindow.eruda.init();
+						currentTab.iframe.contentWindow.eruda.show();
+						showToast("✓ Eruda DevTools injected into page!");
+					} catch(e) {}
+				};
+				doc.head.appendChild(s);
+			} else {
+				showToast("⚠️ Tip: Cross-origin sandbox active. DevTools bridge invoked.");
+			}
+		} catch (err) {
+			showToast("✓ DevTools console bridge requested!");
+		}
+	});
+}
+
+// B. Unblocked Apps Matrix Catalog & Interactive Filtering
+const UNBLOCKED_APPS = [
+	{
+		id: "discord",
+		title: "Discord",
+		desc: "Talk, chat & hang out with friends",
+		url: "https://discord.com/app",
+		icon: "/assets/icons/discord.svg",
+		category: "social",
+		badge: "POPULAR"
+	},
+	{
+		id: "spotify",
+		title: "Spotify Web",
+		desc: "Millions of songs, playlists, podcasts",
+		url: "https://open.spotify.com",
+		icon: "https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico",
+		category: "streaming",
+		badge: "MUSIC"
+	},
+	{
+		id: "youtube",
+		title: "YouTube",
+		desc: "Watch videos, livestreams, podcasts",
+		url: "https://youtube.com",
+		icon: "/assets/icons/youtube.svg",
+		category: "streaming",
+		badge: "HOT"
+	},
+	{
+		id: "tiktok",
+		title: "TikTok",
+		desc: "Trending short-form videos & creator feed",
+		url: "https://tiktok.com",
+		icon: "https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uomluhz_lm_qvo/tiktok_favicon.ico",
+		category: "social",
+		badge: "TRENDING"
+	},
+	{
+		id: "chatgpt",
+		title: "ChatGPT",
+		desc: "OpenAI conversational AI assistant",
+		url: "https://chatgpt.com",
+		icon: "/assets/icons/ai.svg",
+		category: "ai",
+		badge: "AI"
+	},
+	{
+		id: "twitch",
+		title: "Twitch",
+		desc: "Live game streams, esports, creators",
+		url: "https://twitch.tv",
+		icon: "/assets/icons/twitch.svg",
+		category: "streaming",
+		badge: "LIVE"
+	},
+	{
+		id: "reddit",
+		title: "Reddit",
+		desc: "Communities, subreddits, memes, discussions",
+		url: "https://reddit.com",
+		icon: "/assets/icons/reddit.svg",
+		category: "social",
+		badge: "FORUM"
+	},
+	{
+		id: "pinterest",
+		title: "Pinterest",
+		desc: "Inspiration, aesthetic photography, designs",
+		url: "https://pinterest.com",
+		icon: "https://s.pinimg.com/webapp/favicon-54a5b2af.png",
+		category: "social",
+		badge: "PHOTO"
+	},
+	{
+		id: "soundcloud",
+		title: "SoundCloud",
+		desc: "Underground beats, unreleased tracks, mixes",
+		url: "https://soundcloud.com",
+		icon: "/assets/icons/sound.svg",
+		category: "streaming",
+		badge: "AUDIO"
+	},
+	{
+		id: "geforcenow",
+		title: "GeForce NOW",
+		desc: "Cloud gaming on AAA PC titles",
+		url: "https://play.geforcenow.com",
+		icon: "/assets/icons/gamepad.svg",
+		category: "gaming",
+		badge: "CLOUD"
+	},
+	{
+		id: "chess",
+		title: "Chess.com",
+		desc: "Play live speed chess, puzzles, lessons",
+		url: "https://chess.com",
+		icon: "https://www.chess.com/favicon.ico",
+		category: "gaming",
+		badge: "TACTICS"
+	},
+	{
+		id: "github",
+		title: "GitHub",
+		desc: "Open-source repositories, developer code",
+		url: "https://github.com",
+		icon: "/assets/icons/github.svg",
+		category: "productivity",
+		badge: "CODE"
+	},
+	{
+		id: "desmos",
+		title: "Desmos Graphing",
+		desc: "Advanced math graphing & scientific calculator",
+		url: "https://www.desmos.com/calculator",
+		icon: "https://www.desmos.com/favicon.ico",
+		category: "productivity",
+		badge: "MATH"
+	},
+	{
+		id: "mathpapa",
+		title: "MathPapa Algebra",
+		desc: "Step-by-step algebra equation solver",
+		url: "https://www.mathpapa.com/algebra-calculator.html",
+		icon: "https://www.mathpapa.com/favicon.ico",
+		category: "productivity",
+		badge: "SOLVER"
+	},
+	{
+		id: "duolingo",
+		title: "Duolingo",
+		desc: "Learn Spanish, French, Japanese, languages",
+		url: "https://www.duolingo.com",
+		icon: "https://d35aaqx5ub95lt.cloudfront.net/favicon.ico",
+		category: "productivity",
+		badge: "LEARN"
+	},
+	{
+		id: "scratch",
+		title: "Scratch MIT",
+		desc: "Interactive game programming & animations",
+		url: "https://scratch.mit.edu",
+		icon: "https://scratch.mit.edu/favicon.ico",
+		category: "productivity",
+		badge: "DEV"
+	},
+	{
+		id: "coolmath",
+		title: "Cool Math Games",
+		desc: "Strategy puzzles, logic challenges & games",
+		url: "https://www.coolmathgames.com",
+		icon: "https://www.coolmathgames.com/favicon.ico",
+		category: "gaming",
+		badge: "GAMES"
+	},
+	{
+		id: "docs",
+		title: "Google Docs",
+		desc: "Online document writing & school essays",
+		url: "https://docs.google.com",
+		icon: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+		category: "productivity",
+		badge: "OFFICE"
+	},
+	{
+		id: "wikipedia",
+		title: "Wikipedia",
+		desc: "Free global collaborative encyclopedia",
+		url: "https://wikipedia.org",
+		icon: "/assets/icons/wikipedia.svg",
+		category: "productivity",
+		badge: "INFO"
+	},
+	{
+		id: "crazygames",
+		title: "CrazyGames",
+		desc: "Free online browser games portal",
+		url: "https://www.crazygames.com",
+		icon: "/assets/icons/gamepad.svg",
+		category: "gaming",
+		badge: "ARCADE"
+	},
+	{
+		id: "y8",
+		title: "Y8 Games",
+		desc: "Classic Flash and Unity browser games",
+		url: "https://www.y8.com",
+		icon: "/assets/icons/gamepad.svg",
+		category: "gaming",
+		badge: "RETRO"
+	},
+	{
+		id: "armorgames",
+		title: "Armor Games",
+		desc: "Award-winning indie browser games",
+		url: "https://armorgames.com",
+		icon: "/assets/icons/shield.svg",
+		category: "gaming",
+		badge: "INDIE"
+	},
+	{
+		id: "x",
+		title: "X (Twitter)",
+		desc: "Real-time news, memes, global discussions",
+		url: "https://x.com",
+		icon: "/assets/icons/globe.svg",
+		category: "social",
+		badge: "FEED"
+	},
+	{
+		id: "instagram",
+		title: "Instagram",
+		desc: "Explore photos, videos, Stories, Reels",
+		url: "https://instagram.com",
+		icon: "https://static.cdninstagram.com/rsrc.php/v3/yI/r/VsNE-OHk_8a.png",
+		category: "social",
+		badge: "MEDIA"
+	}
+];
+
+let currentAppsCategory = "all";
+let currentAppsSearch = "";
+
+function renderAppsCatalog() {
+	const grid = document.getElementById("apps-grid");
+	if (!grid) return;
+	grid.innerHTML = "";
+
+	const filtered = UNBLOCKED_APPS.filter(app => {
+		const matchesCat = currentAppsCategory === "all" || app.category === currentAppsCategory;
+		const q = currentAppsSearch.toLowerCase().trim();
+		const matchesSearch = !q || app.title.toLowerCase().includes(q) || app.desc.toLowerCase().includes(q);
+		return matchesCat && matchesSearch;
+	});
+
+	if (filtered.length === 0) {
+		grid.innerHTML = `<div class="loading-state">No apps found matching "${escapeHtml(currentAppsSearch)}".</div>`;
+		return;
+	}
+
+	filtered.forEach(app => {
+		const card = document.createElement("div");
+		card.className = "app-card";
+		card.innerHTML = `
+			<div class="app-badge">${escapeHtml(app.badge || "APP")}</div>
+			<div class="app-icon-wrap">
+				<img src="${escapeHtml(app.icon)}" class="app-icon-img" alt="${escapeHtml(app.title)}" onerror="this.src='/assets/icons/globe.svg'" />
+			</div>
+			<div class="app-info">
+				<span class="app-title">${escapeHtml(app.title)}</span>
+				<span class="app-desc">${escapeHtml(app.desc)}</span>
+			</div>
+		`;
+		card.addEventListener("click", () => {
+			createTab(app.url);
+			showToast(`Launching ${app.title}...`);
+		});
+		grid.appendChild(card);
+	});
+}
+
+// Apps Search & Category Chips
+const appsSearchInput = document.getElementById("apps-search-input");
+if (appsSearchInput) {
+	appsSearchInput.addEventListener("input", (e) => {
+		currentAppsSearch = e.target.value;
+		renderAppsCatalog();
+	});
+}
+
+const appsCatChips = document.querySelectorAll("#apps-cat-chips .cat-chip");
+appsCatChips.forEach(chip => {
+	chip.addEventListener("click", () => {
+		appsCatChips.forEach(c => c.classList.remove("active"));
+		chip.classList.add("active");
+		currentAppsCategory = chip.dataset.cat || "all";
+		renderAppsCatalog();
+	});
+});
+
+// C. Custom Vault Games & Modal
+const arcadeAddCustomBtn = document.getElementById("arcade-add-custom-btn");
+const customGameModal = document.getElementById("custom-game-modal");
+const customGameClose = document.getElementById("custom-game-close");
+const customGameSubmitBtn = document.getElementById("custom-game-submit-btn");
+
+if (arcadeAddCustomBtn && customGameModal) {
+	arcadeAddCustomBtn.addEventListener("click", () => {
+		customGameModal.classList.remove("hidden");
+	});
+}
+
+if (customGameClose && customGameModal) {
+	customGameClose.addEventListener("click", () => {
+		customGameModal.classList.add("hidden");
+	});
+}
+
+if (customGameSubmitBtn) {
+	customGameSubmitBtn.addEventListener("click", () => {
+		const title = document.getElementById("custom-game-title-input")?.value?.trim();
+		const url = document.getElementById("custom-game-url-input")?.value?.trim();
+		const category = document.getElementById("custom-game-cat-select")?.value || "action";
+
+		if (!title || !url) {
+			showToast("Please provide both a game title and URL.");
+			return;
+		}
+
+		const customGame = {
+			id: "custom_" + Date.now(),
+			title,
+			url,
+			category,
+			custom: true
+		};
+
+		const saved = JSON.parse(localStorage.getItem("aura_custom_games") || "[]");
+		saved.unshift(customGame);
+		localStorage.setItem("aura_custom_games", JSON.stringify(saved));
+
+		if (customGameModal) customGameModal.classList.add("hidden");
+		showToast(`✓ "${title}" saved to your private catalog!`);
+		
+		openGamePlayer(title, url);
+	});
+}
+
+// D. Single-File HTML Offline Launcher Generator
+const mirrorDownloadLauncherBtn = document.getElementById("mirror-download-launcher-btn");
+if (mirrorDownloadLauncherBtn) {
+	mirrorDownloadLauncherBtn.addEventListener("click", () => {
+		const activeHost = window.location.origin;
+		const launcherHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Drive - Google Drive</title>
+<link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #07090f; font-family: sans-serif; }
+iframe { width: 100%; height: 100%; border: none; display: block; }
+</style>
+</head>
+<body>
+<iframe id="aura-frame" src="${activeHost}/"></iframe>
+<script>
+window.addEventListener("keydown", function(e) {
+	if (e.key === "\`" || e.key === "Escape") {
+		window.location.replace("https://classroom.google.com");
+	}
+});
+<\/script>
+</body>
+</html>`;
+
+		const blob = new Blob([launcherHtml], { type: "text/html" });
+		const a = document.createElement("a");
+		a.href = URL.createObjectURL(blob);
+		a.download = "Aura-Offline-Launcher.html";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		showToast("✓ Aura Offline Launcher downloaded!");
+	});
+}
+
+// ============================================================
 // 11. Initialization
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -2220,6 +2722,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	renderSpeedDials();
 	renderBookmarksBar();
 	loadArcadeCatalog();
+	renderAppsCatalog();
 	loadSoundboard();
 	updateShieldDisplay();
 	checkChatAuth();
