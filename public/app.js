@@ -792,8 +792,28 @@ const initSWPromise = (async () => {
 				init: async () => {},
 				request: async (remote, method, body, headers, signal) => {
 					let hdrs = headers;
-					if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) hdrs = Array.from(hdrs.entries());
-					return libcurlClient.request(remote, method, body, hdrs, signal);
+					if (hdrs && typeof hdrs.entries === "function" && !Array.isArray(hdrs)) {
+						hdrs = Array.from(hdrs.entries());
+					} else if (hdrs && typeof hdrs === "object" && !Array.isArray(hdrs)) {
+						hdrs = Object.entries(hdrs);
+					}
+					const resp = await libcurlClient.request(remote, method, body, hdrs, signal);
+					let rawHeaders = [];
+					if (resp && resp.headers) {
+						if (typeof resp.headers.entries === "function") {
+							rawHeaders = Array.from(resp.headers.entries());
+						} else if (Array.isArray(resp.headers)) {
+							rawHeaders = resp.headers;
+						} else if (typeof resp.headers === "object") {
+							rawHeaders = Object.entries(resp.headers);
+						}
+					}
+					return {
+						status: resp.status || 200,
+						statusText: resp.statusText || "OK",
+						headers: rawHeaders,
+						body: resp.body
+					};
 				},
 				connect: (remote, protocols) => libcurlClient.connect(remote, protocols)
 			};
@@ -1268,7 +1288,8 @@ async function loadTabUrl(tab, rawInput) {
 	const mode = getProxyMode();
 	let routed = false;
 
-	if ((mode === "sw" || mode === "auto") && !classicMode && !isYouTube && sjController) {
+	// In SW mode, try Scramjet. In Auto or Classic mode, use the rock-solid Classic proxy engine!
+	if (mode === "sw" && !classicMode && !isYouTube && sjController) {
 		try {
 			const frame = sjController.createFrame(tab.iframe);
 			frame.go(targetUrl);
